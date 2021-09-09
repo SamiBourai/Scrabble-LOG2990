@@ -1,0 +1,23 @@
+
+<mat-card>
+    <mat-card-title>Inscription</mat-card-title>
+    <mat-card-subtitle>Entrez votre nom d'utilisateur afin de commencer la partie ! </mat-card-subtitle>
+    <form class="example-form">
+        <div>
+            <mat-form-field class="example-full-width">
+            <mat-label>Name
+            </mat-label>
+            <input matInput placeholder="Name" #message maxlength="8" placeholder="Ex. Sami1234">
+            <mat-hint align="end">{{message.value.length}} / 8</mat-hint>
+            <mat-icon matSuffix mat-icon-button color="primary" >info</mat-icon>
+            </mat-form-field>
+        </div>
+    </form>
+    <mat-card-actions>
+        <div class="play-btn"> 
+            <button mat-raised-button>Annuler</button>
+            <button mat-raised-button color="primary">Jouer</button>
+        </div>
+    </mat-card-actions>
+
+</mat-card>
