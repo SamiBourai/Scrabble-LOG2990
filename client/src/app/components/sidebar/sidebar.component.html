@@ -1,19 +1,24 @@
 <div class="container">
     
 
-    <form [formGroup] = "form">
-
+    
+<form [formGroup] = "form">
         <div class = "form-group">
 
             <div class = "messageList">
 
               <ul>
-                <p  *ngIf = "form.errors.isValid" *ngFor="let message of messageY "> 
+                <div *ngFor="let message of messageY "> 
                   {{ message }}
-                </p>
-            
+                  
+                </div>
+                
                </ul>
+               
+                
+               
             </div>
+            <div *ngIf = "Message?.errors?.isValid"> debug content</div>
                
             
             <div class = "chatBar">
@@ -21,13 +26,14 @@
                     <div class="input-group-prepend">
                     <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
                     </div>
-                    <input formControlName = "message"  maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter)="print_value()" type = "text"  class = "form-control" autofocus/>
+                    <input formControlName = "message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter)="logMessage()" type = "text"  class = "form-control" autofocus/>
                     <!-- <mat-hint align="end">{{message.value.length}} / 512 </mat-hint>  -->
                 </div>
             </div>
 
         </div>
     </form>
+    
                
 
 </div>

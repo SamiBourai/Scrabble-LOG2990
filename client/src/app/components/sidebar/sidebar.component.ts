@@ -1,42 +1,27 @@
+import { MessageValidators } from './message.validators';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CommandValidators } from './command.validators';
-
-
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent  {
+export class SidebarComponent {
+    messageY: string[] = [];
+    typeArea: string = '';
+    form = new FormGroup({
+        message: new FormControl('', MessageValidators.isValid),
+    });
 
-    
-     messageY: string[] = []
-     typeArea: string = ''
-     form:FormGroup    
-     
-
-     constructor(fb:FormBuilder){
-
-        this.form = fb.group({
-            message: ['',CommandValidators.validCommand]
-        })
-
-     }
-
-     get message(){return this.form.get("message")}
-    
-
-    print_value(){
-        
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    get Message() {
+        return this.form.get('message');
+    }
+    logMessage() {
         this.messageY.push(this.typeArea);
+        // eslint-disable-next-line no-console
         console.log(this.messageY);
         this.typeArea = '';
     }
-
-    
-
-
-
 }
