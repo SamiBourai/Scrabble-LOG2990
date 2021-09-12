@@ -6,8 +6,8 @@ describe('GridService', () => {
     let service: GridService;
     let ctxStub: CanvasRenderingContext2D;
 
-    const CANVAS_WIDTH = 500;
-    const CANVAS_HEIGHT = 500;
+    const CANVAS_WIDTH = 600;
+    const CANVAS_HEIGHT = 600;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -56,8 +56,8 @@ describe('GridService', () => {
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
 
-    it(' drawGrid should call moveTo and lineTo 4 times', () => {
-        const expectedCallTimes = 4;
+    it(' drawGrid should call moveTo and lineTo 32 times', () => {
+        const expectedCallTimes = 32;
         const moveToSpy = spyOn(service.gridContext, 'moveTo').and.callThrough();
         const lineToSpy = spyOn(service.gridContext, 'lineTo').and.callThrough();
         service.drawGrid();

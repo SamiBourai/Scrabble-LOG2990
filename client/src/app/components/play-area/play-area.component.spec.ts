@@ -24,14 +24,16 @@ describe('PlayAreaComponent', () => {
     });
 
     it('mouseHitDetect should assign the mouse position to mousePosition variable', () => {
-        const expectedPosition: Vec2 = { x: 100, y: 200 };
+        const expectedPosition: Vec2 = { x: 400, y: 400 };
+        const boxPosition: Vec2 = { x: 8, y: 9 };
         mouseEvent = {
             offsetX: expectedPosition.x,
             offsetY: expectedPosition.y,
             button: 0,
         } as MouseEvent;
         component.mouseHitDetect(mouseEvent);
-        expect(component.mousePosition).toEqual(expectedPosition);
+
+        expect(component.mousePosition).toEqual(boxPosition);
     });
 
     /* eslint-disable @typescript-eslint/no-magic-numbers -- Add reason */
