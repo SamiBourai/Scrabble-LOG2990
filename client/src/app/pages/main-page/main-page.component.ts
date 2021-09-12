@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Message } from '@app/classes/message';
+import { ModalScrableClassiqueComponent } from '@app/modal-scrable-classique/modal-scrable-classique.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
-import { ModalScrableClassiqueComponent } from '@app/modal-scrable-classique/modal-scrable-classique.component';
-
 
 @Component({
     selector: 'app-main-page',
@@ -15,14 +14,18 @@ import { ModalScrableClassiqueComponent } from '@app/modal-scrable-classique/mod
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    private _isClicked: boolean =false; 
+    private isClicked: boolean = false;
 
-    get isClicked(): boolean {return this._isClicked;}
-    set isClicked(value :boolean) { this._isClicked = value;}
+    get btnClicked(): boolean {
+        return this.isClicked;
+    }
+    set btnClicked(value: boolean) {
+        this.isClicked = value;
+    }
 
-    constructor(private readonly communicationService: CommunicationService,private dialogRef: MatDialog ) {}
-    openDialog(){
-      this.dialogRef.open(ModalScrableClassiqueComponent );
+    constructor(private readonly communicationService: CommunicationService, private dialogRef: MatDialog) {}
+    openDialog() {
+        this.dialogRef.open(ModalScrableClassiqueComponent);
     }
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
@@ -44,7 +47,7 @@ export class MainPageComponent {
             )
             .subscribe(this.message);
     }
-    openModal(): void{
-        this.isClicked =true; 
+    openModal(): void {
+        this.isClicked = true;
     }
 }
