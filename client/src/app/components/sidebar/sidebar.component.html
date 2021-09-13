@@ -1,11 +1,45 @@
 <div class="container">
-    <p>Barre latérale pour vos outils!</p>
-    <p>
-        Ceci est un exemple de base pour vous aider à débuter le projet <br />
-        L'implémentation ici ne couvre pas les critères d'acceptation du projet! <br />
-        La grille et le mot "Scrabble" sont écrits sur le Canvas avec du code, <br />
-        mais à des positions fixes <br />
-        Vous devez modifier et compléter le code.<br />
-        <strong>N'oubliez pas de regarder les tests dans les fichiers spec.ts aussi!</strong>
-    </p>
+    
+<form [formGroup] = "form">
+        <div class = "form-group">
+
+            <div class = "messageList">
+
+              <ul>
+                <div *ngFor="let message of messageY "> 
+                  {{ message }}
+                  
+                </div>
+                
+               </ul>
+               
+                
+               
+            </div>
+            <hr>
+            
+            <div *ngIf = "Message?.errors?.isValid"> debug content</div>
+               
+            
+              <div class = "chatBar">
+                  <div  class="input-group mb-3">
+                      <div class="input-group-prepend">
+                      <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
+                      </div>
+                      <input formControlName = "message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter)="logMessage()" type = "text"  class = "form-control" autofocus/>
+                      
+                       <mat-hint id = "hint" align="end">{{message.value.length}} / 512 </mat-hint>  
+                  </div>
+                  
+              </div>
+              
+          
+            
+            
+
+        </div>
+    </form>
+    
+               
+
 </div>

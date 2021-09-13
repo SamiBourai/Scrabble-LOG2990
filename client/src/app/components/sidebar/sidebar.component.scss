@@ -1,7 +1,59 @@
+
+
+
+
 .container {
-    height: auto;
-    min-height: 98vh;
+    
+    position: absolute;
     border: 1px solid black;
-    padding: 0 5px 0 5px;
-    margin-right: 5px;
+    border-radius: 15px;
+    flex-basis: 30%;
+    overflow-y:auto;
+    width: 18%;
+    right:81%;
+    height:100%;
+    margin: 2px 2px 2px 2px;
+    
+}
+
+hr{
+    position: fixed;
+    width: 18%;
+    margin-left:-14px;
+    top: 60px;
+    border-radius: 5px;
+    height: 2px;
+    
+    
+}
+
+
+.chatBar{
+
+    position: fixed;
+    top:20px;
+    width: 16%;
+    
+}
+
+#hint{
+    width: 100%;
+    position:fixed;
+    top:60px;
+
+}
+
+
+
+
+
+.messageList{
+
+    height:auto;
+    position: relative;
+    top:80px;
+    
+    
+    
+    
 }
