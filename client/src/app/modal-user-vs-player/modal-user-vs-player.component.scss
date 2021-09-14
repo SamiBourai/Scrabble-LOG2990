@@ -1,0 +1,27 @@
+.header-user-vs-player{
+    text-align: center;
+    font-weight: 500;
+    font-size: 24px; 
+    color: #3f51b5;
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
+    pointer-events: auto;
+}
+
+.mat-card{
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.mat-card-image{
+    border-radius: .5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.span-player{
+    text-align: center;
+    color: var(--globalColorThemeFull);
+    font-family: var(--globalSecondaryFont);
+    font-weight: 800;
+}

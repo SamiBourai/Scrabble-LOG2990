@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalUserNameComponent } from '@app/modal-user-name/modal-user-name.component';
 
 @Component({
   selector: 'app-modal-scrable-classique',
@@ -7,8 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ModalScrableClassiqueComponent implements OnInit {
 
-  constructor() { }
+  constructor(private dialogRef: MatDialog) { }
+
   ngOnInit(): void {
   }
+  openDialog(){
+
+    //const dialogConfig = new MatDialogConfig();
+    //dialogConfig.autoFocus=true;
+    this.dialogRef.open(ModalUserNameComponent);
+    //this.dialogRef.open(ModalUserVsPlayerComponent);
+     
+  }
+ 
+  
 
 }
