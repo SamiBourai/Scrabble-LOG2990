@@ -14,14 +14,7 @@ import { map } from 'rxjs/operators';
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    private isClicked: boolean = false;
-
-    get btnClicked(): boolean {
-        return this.isClicked;
-    }
-    set btnClicked(value: boolean) {
-        this.isClicked = value;
-    }
+    isclicked: boolean = false;
 
     constructor(private readonly communicationService: CommunicationService, private dialogRef: MatDialog) {}
     openDialog() {
@@ -46,8 +39,5 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
-    }
-    openModal(): void {
-        this.isClicked = true;
     }
 }

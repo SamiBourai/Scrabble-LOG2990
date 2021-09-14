@@ -1,4 +1,6 @@
-<p> Voulez-vous jouer une partie en solo? </p>
-
-<button> oui</button>
-<button>non </button>
+<mat-card  class= "modalScrable">
+    <mat-card-title>Voulez-vous jouer une partie en solo? </mat-card-title>
+    <mat-card-subtitle>La partie solo se joue contre un ordinateur </mat-card-subtitle>
+    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close >Non je ne veux pas</button>
+    <button mat-raised-button color="primary"  id = "yesButton" routerLink="/game"  >Allons-y</button>
+    
