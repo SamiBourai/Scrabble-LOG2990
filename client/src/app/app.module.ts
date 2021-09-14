@@ -11,7 +11,9 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { ValidMotComponent } from './components/valid-mot/valid-mot.component';
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
+import { ValidWorldService } from './services/valid-world.service';
 
 /**
  * Main module that is used in main.ts.
@@ -19,6 +21,8 @@ import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-
  * Please do not move this module in the module folder.
  * Otherwise Angular Cli will not know in which module to put new component
  */
+
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -28,9 +32,10 @@ import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-
         PlayAreaComponent,
         SidebarComponent,
         ModalScrableClassiqueComponent,
+        ValidMotComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
-    providers: [],
+    providers: [ValidWorldService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
