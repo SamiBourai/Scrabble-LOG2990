@@ -13,6 +13,8 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { NameSoloComponent } from './components/name-solo/name-solo.component';
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
+import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
+import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
 
 /**
  * Main module that is used in main.ts.
@@ -21,18 +23,8 @@ import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [
-        AppComponent,
-        GamePageComponent,
-        MainPageComponent,
-        MaterialPageComponent,
-        PlayAreaComponent,
-        SidebarComponent,
-        NameSoloComponent,
-        ModalScrableClassiqueComponent,
-    ],
+    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PlayAreaComponent, SidebarComponent, NameSoloComponent, ModalScrableClassiqueComponent, ModalUserNameComponent, ModalUserVsPlayerComponent],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
-
     providers: [],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
