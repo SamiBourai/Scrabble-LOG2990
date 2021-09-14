@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { AppMaterialModule } from '@app/modules/material.module';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { of } from 'rxjs';
@@ -17,7 +18,7 @@ describe('MainPageComponent', () => {
         communicationServiceSpy.basicPost.and.returnValue(of());
 
         await TestBed.configureTestingModule({
-            imports: [RouterTestingModule, HttpClientModule],
+            imports: [RouterTestingModule, HttpClientModule, AppMaterialModule],
             declarations: [MainPageComponent],
             providers: [{ provide: CommunicationService, useValue: communicationServiceSpy }],
         }).compileComponents();

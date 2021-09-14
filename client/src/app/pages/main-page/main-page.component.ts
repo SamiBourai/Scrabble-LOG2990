@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Message } from '@app/classes/message';
+import { ModalScrableClassiqueComponent } from '@app/modal-scrable-classique/modal-scrable-classique.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,9 +14,19 @@ import { map } from 'rxjs/operators';
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    private isClicked: boolean = false;
 
-    constructor(private readonly communicationService: CommunicationService) {}
+    get btnClicked(): boolean {
+        return this.isClicked;
+    }
+    set btnClicked(value: boolean) {
+        this.isClicked = value;
+    }
 
+    constructor(private readonly communicationService: CommunicationService, private dialogRef: MatDialog) {}
+    openDialog() {
+        this.dialogRef.open(ModalScrableClassiqueComponent);
+    }
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
             title: 'Hello from the client',
@@ -34,5 +46,8 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
+    }
+    openModal(): void {
+        this.isClicked = true;
     }
 }
