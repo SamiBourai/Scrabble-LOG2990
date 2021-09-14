@@ -10,7 +10,7 @@ export class SidebarComponent {
     constructor(vws: ValidWorldService) {
         console.log('Valid mot component created');
         vws.load_dictionary().then(() => {
-            if (vws.verify_word('tableeeee')) {
+            if (vws.verify_word('labiteee')) {
                 console.log('Mot existant');
             } else {
                 console.log('Mot inexistant');

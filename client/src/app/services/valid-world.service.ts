@@ -11,43 +11,40 @@ interface JsonData {
     providedIn: 'root',
 })
 export class ValidWorldService {
-    private dictionnary_loaded: boolean = false;
-    // private dictionnary = new Array<Set<string>>(24);
-    private dictionnary : Set<string>;
+    private dictionary_loaded: boolean = false;
+    private dictionary: Array<Set<string>>;
 
-    constructor(private http: HttpClient) {
-        //for (let i = 0; i < this.dictionnary.length; ++i) {
-        //    this.dictionnary[i] = new Set();
-        //}
-    }
+    constructor(private http: HttpClient) {}
 
-    private get_dictionnary(): Observable<JsonData> {
+    private get_dictionary(): Observable<JsonData> {
         return this.http.get<JsonData>('/assets/dictionnary.json');
     }
 
-    private accent_fix(str: string) {
-        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    }
+    public async load_dictionary() {
+        const data = await this.get_dictionary().toPromise();
 
-    public load_dictionary() {
-        return this.get_dictionnary().toPromise().then(({words}) => {
-            const len = words.length;
-            for (let i = 0; i < len; ++i) {
-                words[i] = this.accent_fix(words[i]);
+        const words = data.words.map((str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+        const letter_indexes = new Array();
+
+        let tail_letter = words[0].charCodeAt(0);
+        let tail = 0;
+        for (let head = 0; head < words.length; ++head) {
+            const head_letter = words[head].charCodeAt(0);
+            if (head_letter != tail_letter) {
+                tail_letter = head_letter;
+                letter_indexes.push([tail, head]);
+                tail = head;
             }
+        }
+        letter_indexes.push([tail, words.length]);
 
-            //for (let i = 0; i < len; ++i) {
-            //    const letter_index = words[i].charCodeAt(0) - 'a'.charCodeAt(0);
-            //    this.dictionnary[letter_index].add(words[i]);
-            //}
-            this.dictionnary = new Set(words);
-            
-            this.dictionnary_loaded = true;;
-        });
+        this.dictionary = letter_indexes.map(([t, h]) => new Set(words.slice(t, h)));
+        this.dictionary_loaded = true;
     }
 
     public verify_word(word: string) {
-        if (!this.dictionnary_loaded) {
+        if (!this.dictionary_loaded) {
             console.log('ntm t a pas chargé');
             return;
         }
@@ -55,9 +52,8 @@ export class ValidWorldService {
             console.log('Mot vide!');
             return;
         }
-        
-        //const letter_index_input = word.charCodeAt(0) - 'a'.charCodeAt(0);
-        //return this.dictionnary[letter_index_input].has(word);
-        return this.dictionnary.has(word);
+
+        const letter_index_input = word.charCodeAt(0) - 'a'.charCodeAt(0);
+        return this.dictionary[letter_index_input].has(word);
     }
 }
