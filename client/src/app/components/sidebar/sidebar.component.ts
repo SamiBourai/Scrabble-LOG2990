@@ -10,8 +10,9 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class SidebarComponent {
     messageY: string[] = [];
     typeArea: string = '';
+
     form = new FormGroup({
-        message: new FormControl('', MessageValidators.isValid),
+        message: new FormControl('', [MessageValidators.isValid, MessageValidators.commandOrChat]),
     });
 
     // eslint-disable-next-line @typescript-eslint/naming-convention

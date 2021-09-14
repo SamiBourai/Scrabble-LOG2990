@@ -6,21 +6,16 @@
             <div class = "messageList">
 
               <ul>
-                <div *ngFor="let message of messageY "> 
+                <div *ngIf = "  Message?.errors?.commandOrChat && !Message?.errors?.isValid" class = "alert alert-danger" > invalid</div>
+                <div *ngIf = "Message?.errors?.commandOrChat">ceci est une commande</div>
+                <div   *ngFor="let message of messageY "> 
                   {{ message }}
-                  
                 </div>
-                
                </ul>
-               
-                
                
             </div>
             <hr>
-            
-            <div *ngIf = "Message?.errors?.isValid"> debug content</div>
-               
-            
+
               <div class = "chatBar">
                   <div  class="input-group mb-3">
                       <div class="input-group-prepend">
@@ -32,6 +27,8 @@
                   </div>
                   
               </div>
+
+             
               
           
             
