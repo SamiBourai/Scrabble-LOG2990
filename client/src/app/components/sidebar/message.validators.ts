@@ -5,8 +5,7 @@ export class MessageValidators {
 
         if (x.length > 0 && (x === '!debug' || x === '!aide')) {
             // eslint-disable-next-line no-console
-            console.log(x.length);
-
+        
             return { isValid: true };
         }
         return null;
@@ -16,7 +15,7 @@ export class MessageValidators {
         const input = control.value as string;
 
         if (input[0] === '!' && input.length > 2) {
-            console.log(input);
+            
             return { commandOrChat: true };
         }
         return null;

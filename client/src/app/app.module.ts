@@ -1,3 +1,4 @@
+import { MessageService } from './message.service';
 import { CommandService } from './command.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -32,7 +33,7 @@ import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-
     ],
 
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
-    providers: [CommandService],
+    providers: [CommandService,MessageService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
