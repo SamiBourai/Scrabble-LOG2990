@@ -5,13 +5,17 @@
 
             <div class = "messageList">
 
-              <ul>
-                <div *ngIf = "  Message?.errors?.commandOrChat && !Message?.errors?.isValid" class = "alert alert-danger" > invalid</div>
+              
+                <div *ngIf = "  Message?.errors?.commandOrChat && !Message?.errors?.isValid" class = "alert alert-danger" > invalid command </div>
                 <div *ngIf = "Message?.errors?.commandOrChat">ceci est une commande</div>
-                <div   *ngFor="let message of messageY "> 
-                  {{ message }}
-                </div>
-               </ul>
+                <ng-container *ngIf = "!Message?.errors?.commandOrChat || (Message?.errors?.commandOrChat && Message?.errors?.isValid ) " >
+    
+                  <div  *ngFor="let message of messageY "> 
+                    {{ message }}
+                  </div>
+                </ng-container>
+                
+               
                
             </div>
             <hr>
@@ -21,6 +25,7 @@
                       <div class="input-group-prepend">
                       <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
                       </div>
+                      
                       <input formControlName = "message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter)="logMessage()" type = "text"  class = "form-control" autofocus/>
                       
                        <mat-hint id = "hint" align="end">{{message.value.length}} / 512 </mat-hint>  

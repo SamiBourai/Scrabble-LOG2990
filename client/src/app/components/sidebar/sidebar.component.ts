@@ -20,7 +20,9 @@ export class SidebarComponent {
         return this.form.get('message');
     }
     logMessage() {
-        this.messageY.push(this.typeArea);
+        console.log()
+        if(this.Message?.errors?.commandOrChat && !this.Message?.errors?.isValid ) window.alert("votre commande n'est pas valide")
+        else this.messageY.push(this.typeArea);
         // eslint-disable-next-line no-console
         console.log(this.messageY);
         this.typeArea = '';

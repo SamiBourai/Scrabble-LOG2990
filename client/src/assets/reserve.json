@@ -1,0 +1,166 @@
+{
+
+"reserve" : [
+    {
+        "lettre": "A",
+        "quantite" : "9",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "B",
+        "quantite" : "2",
+        "points" : "3"
+    },
+
+    {
+        "lettre": "C",
+        "quantite" : "2",
+        "points" : "3"
+    },
+
+    {
+        "lettre": "D",
+        "quantite" : "3",
+        "points" : "2"
+    },
+
+    {
+        "lettre": "E",
+        "quantite" : "15",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "F",
+        "quantite" : "2",
+        "points" : "4"
+    },
+
+    {
+        "lettre": "G",
+        "quantite" : "2",
+        "points" : "2"
+    },
+
+    {
+        "lettre": "H",
+        "quantite" : "2",
+        "points" : "4"
+    },
+
+    {
+        "lettre": "I",
+        "quantite" : "8",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "J",
+        "quantite" : "1",
+        "points" : "8"
+    },
+
+    {
+        "lettre": "K",
+        "quantite" : "1",
+        "points" : "10"
+    },
+
+    {
+        "lettre": "L",
+        "quantite" : "5",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "M",
+        "quantite" : "3",
+        "points" : "2"
+    },
+
+    {
+        "lettre": "N",
+        "quantite" : "6",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "O",
+        "quantite" : "6",
+        "points" : "1"
+    },
+    {
+        "lettre": "P",
+        "quantite" : "2",
+        "points" : "3"
+    },
+
+    {
+        "lettre": "Q",
+        "quantite" : "1",
+        "points" : "8"
+    },
+
+    {
+        "lettre": "R",
+        "quantite" : "6",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "S",
+        "quantite" : "6",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "T",
+        "quantite" : "6",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "U",
+        "quantite" : "6",
+        "points" : "1"
+    },
+
+    {
+        "lettre": "V",
+        "quantite" : "2",
+        "points" : "4"
+    },
+    {
+        "lettre": "W",
+        "quantite" : "1",
+        "points" : "10"
+    },
+
+    {
+        "lettre": "X",
+        "quantite" : "1",
+        "points" : "10"
+    },
+    {
+        "lettre": "Y",
+        "quantite" : "1",
+        "points" : "10"
+    },
+    {
+        "lettre": "Z",
+        "quantite" : "1",
+        "points" : "10"
+    },
+
+    {
+        "lettre": "*",
+        "quantite" : "2",
+        "points" : "0"
+    }
+
+    
+    
+
+
+]
