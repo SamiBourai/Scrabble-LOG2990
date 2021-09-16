@@ -57,7 +57,6 @@ export class PlayAreaComponent implements AfterViewInit {
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
-        console.log('yoo', this.canvasSize);
         if (
             event.button === MouseButton.Left
             // &&
