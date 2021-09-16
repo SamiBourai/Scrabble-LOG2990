@@ -3,6 +3,8 @@
 import { MessageValidators } from './message.validators';
 import { Component } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { MessageService } from '@app/message.service';
+// import { Parameter } from '@app/classes/parameter';
 
 @Component({
     selector: 'app-sidebar',
@@ -15,6 +17,11 @@ export class SidebarComponent {
     form = new FormGroup({
         message: new FormControl('', [MessageValidators.isValid, MessageValidators.commandOrChat]),
     });
+    // parameter:Parameter;
+
+    constructor(private m:MessageService){
+
+    }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     get Message() {
@@ -26,8 +33,11 @@ export class SidebarComponent {
         else this.messageY.push(this.typeArea);
             
         // eslint-disable-next-line no-console
+        let p = this.m.getParameters(this.typeArea);
+
+        console.log(p);
          
-        console.log(this.getParameter())
+        // console.log(this.getParameter())
         console.log(this.messageY);
         
         this.typeArea = '';
