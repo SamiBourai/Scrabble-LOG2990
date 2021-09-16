@@ -1,31 +1,37 @@
 /* eslint-disable no-console */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
-
-interface JsonData {
-    words: string[];
-}
 
 @Injectable({
     providedIn: 'root',
 })
 export class ValidWorldService {
-    private dictionary_loaded: boolean = false;
-    private dictionary: Array<Set<string>>;
+    private static utf8_decoder = new TextDecoder('utf-8');
+
+    private dictionary?: Array<Set<string>>;
 
     constructor(private http: HttpClient) {}
 
-    private get_dictionary(): Observable<JsonData> {
-        return this.http.get<JsonData>('/assets/dictionnary.json');
+    private get_dictionary(): Observable<ArrayBuffer> {
+        return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
     }
 
     public async load_dictionary() {
-        const data = await this.get_dictionary().toPromise();
+        const compressed_data_ab = await this.get_dictionary().toPromise();
 
-        const words = data.words.map((str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+        const compressed_data_u8a = new Uint8Array(compressed_data_ab);
 
-        const letter_indexes = new Array();
+        const decompressed_data_u8a = decompress(compressed_data_u8a);
+
+        const decompressed_data_str = ValidWorldService.utf8_decoder.decode(decompressed_data_u8a);
+
+        const words = JSON.parse(decompressed_data_str);
+
+        // const words = data.words.map((str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+        const letter_indexes = new Array<number[]>();
 
         let tail_letter = words[0].charCodeAt(0);
         let tail = 0;
@@ -40,11 +46,10 @@ export class ValidWorldService {
         letter_indexes.push([tail, words.length]);
 
         this.dictionary = letter_indexes.map(([t, h]) => new Set(words.slice(t, h)));
-        this.dictionary_loaded = true;
     }
 
     public verify_word(word: string) {
-        if (!this.dictionary_loaded) {
+        if (!this.dictionary) {
             console.log('ntm t a pas chargé');
             return;
         }

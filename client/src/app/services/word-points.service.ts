@@ -35,16 +35,15 @@ export class WordPointsService {
             ['y', 10],
             ['z', 10],
         ]);
-        let somme: number = 0;
+        let somme = 0;
         for (let letter_index = 0; letter_index < word.length; ++letter_index) {
-            let point = points_letters.get(word[letter_index]);
-            if (!point) {
-                continue;
+            const point = points_letters.get(word[letter_index]);
+            if (point !== undefined) {
+                somme += point;
             }
-            somme = somme + point;
         }
         if (word.length == 7) {
-            somme = somme + 50;
+            somme += 50;
         }
         return somme;
     }
