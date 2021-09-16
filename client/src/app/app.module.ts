@@ -23,7 +23,18 @@ import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PlayAreaComponent, SidebarComponent, NameSoloComponent, ModalScrableClassiqueComponent, ModalUserNameComponent, ModalUserVsPlayerComponent],
+    declarations: [
+        AppComponent,
+        GamePageComponent,
+        MainPageComponent,
+        MaterialPageComponent,
+        PlayAreaComponent,
+        SidebarComponent,
+        NameSoloComponent,
+        ModalScrableClassiqueComponent,
+        ModalUserNameComponent,
+        ModalUserVsPlayerComponent,
+    ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
     providers: [],
     bootstrap: [AppComponent],

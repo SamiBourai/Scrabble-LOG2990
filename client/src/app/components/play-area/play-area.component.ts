@@ -1,13 +1,9 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
+import { HEIGHT, WIDTH } from '@app/constants/constants';
 import { GridService } from '@app/services/grid.service';
-
-// TODO : Avoir un fichier séparé pour les constantes!
-export const WIDTH = 800;
-export const HEIGHT = 800;
-export const BOX = 15;
-export const TOPSPACE = 50;
-export const LEFTSPACE = 2 * TOPSPACE;
+import { LettersService } from '@app/services/letters.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -27,9 +23,10 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
+    letters: Letter = { score: 1, charac: 'a', img: '../../../assets/letter-A.png' };
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
-    constructor(private readonly gridService: GridService) {}
+    constructor(private readonly gridService: GridService, private readonly lettersService: LettersService) {}
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -45,6 +42,7 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawHand();
         this.gridService.drawWord('NIKOUMOUK');
         this.gridService.drawPlayer();
+        this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
         this.gridCanvas.nativeElement.focus();
     }
     get width(): number {
@@ -58,15 +56,17 @@ export class PlayAreaComponent implements AfterViewInit {
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (
-            event.button === MouseButton.Left &&
-            event.offsetX > LEFTSPACE &&
-            event.offsetX < this.gridService.width + LEFTSPACE &&
-            event.offsetY > TOPSPACE &&
-            event.offsetY < this.gridService.height + TOPSPACE
+            event.button === MouseButton.Left
+            // event.offsetX > LEFTSPACE &&
+            // event.offsetX < DEFAULT_WIDTH + LEFTSPACE &&
+            // event.offsetY > TOPSPACE &&
+            // event.offsetY < DEFAULT_HEIGHT + TOPSPACE
         ) {
             this.mousePosition = {
-                x: Math.ceil((event.offsetX - LEFTSPACE) / (this.gridService.width / BOX)),
-                y: Math.ceil((event.offsetY - TOPSPACE) / (this.gridService.height / BOX)),
+                // x: Math.ceil((event.offsetX - LEFTSPACE) / (DEFAULT_WIDTH / BOX)),
+                // y: Math.ceil((event.offsetY - TOPSPACE) / (DEFAULT_HEIGHT / BOX)),
+                x: event.offsetX,
+                y: event.offsetY,
             };
         }
     }
