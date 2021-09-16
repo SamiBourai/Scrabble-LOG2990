@@ -1,3 +1,5 @@
+import { MessageService } from './message.service';
+import { CommandService } from './command.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -38,7 +40,7 @@ import { ValidWorldService } from './services/valid-world.service';
         ModalUserVsPlayerComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
-    providers: [ValidWorldService],
+    providers: [CommandService,MessageService,ValidWorldService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
