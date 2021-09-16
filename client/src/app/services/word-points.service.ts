@@ -35,6 +35,7 @@ export class WordPointsService {
             ['y', 10],
             ['z', 10],
         ]);
+        // TODO: somme -> sum
         let somme = 0;
         for (let letter_index = 0; letter_index < word.length; ++letter_index) {
             const point = points_letters.get(word[letter_index]);
@@ -42,7 +43,9 @@ export class WordPointsService {
                 somme += point;
             }
         }
-        if (word.length == 7) {
+        // TODO(estarossa): magic numbers!
+        // private static BONUS_WORD_LENGTH = 7, BONUS_POINTS = 50;
+        if (word.length === 7) {
             somme += 50;
         }
         return somme;

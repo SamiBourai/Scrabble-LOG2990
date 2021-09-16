@@ -190,10 +190,14 @@ export class GridService {
 
     drawPlayer(): void {
         const plyr1 = new Image();
-        plyr1.src = '../../../assets/pngwing.com.png';
+        const plyr2 = new Image();
+        plyr1.src = '/assets/pngwing.png';
+        plyr2.src = '/assets/pngwing2.png';
         plyr1.onload = () => {
-            this.gridContext.drawImage(plyr1, WIDTH - LEFTSPACE * 2, HEIGHT - TOPSPACE * 2, 2 * LEFTSPACE, 2 * TOPSPACE);
-            this.gridContext.drawImage(plyr1, 0, HEIGHT - TOPSPACE * 2, 2 * LEFTSPACE, 2 * TOPSPACE);
+            this.gridContext.drawImage(plyr1, WIDTH - LEFTSPACE * 2, HEIGHT - TOPSPACE * 2.5, 2 * LEFTSPACE, 2 * TOPSPACE);
+        };
+        plyr2.onload = () => {
+            this.gridContext.drawImage(plyr2, 0, HEIGHT - TOPSPACE * 2.8, 2 * LEFTSPACE, 2.5 * TOPSPACE);
         };
     }
 
