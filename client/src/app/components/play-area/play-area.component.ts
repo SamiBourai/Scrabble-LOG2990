@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { HEIGHT, WIDTH } from '@app/constants/constants';
+import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 
@@ -35,7 +35,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        // this.gridService.playerImage=this.imgPlayer.nativeElement.getAt
+        this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.drawCoor();
         this.gridService.drawBonusBox();
         this.gridService.drawGrid();
@@ -56,17 +56,15 @@ export class PlayAreaComponent implements AfterViewInit {
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (
-            event.button === MouseButton.Left
-            // event.offsetX > LEFTSPACE &&
-            // event.offsetX < DEFAULT_WIDTH + LEFTSPACE &&
-            // event.offsetY > TOPSPACE &&
-            // event.offsetY < DEFAULT_HEIGHT + TOPSPACE
+            event.button === MouseButton.Left &&
+            event.offsetX > LEFTSPACE &&
+            event.offsetX < DEFAULT_WIDTH + LEFTSPACE &&
+            event.offsetY > TOPSPACE &&
+            event.offsetY < DEFAULT_HEIGHT + TOPSPACE
         ) {
             this.mousePosition = {
-                // x: Math.ceil((event.offsetX - LEFTSPACE) / (DEFAULT_WIDTH / BOX)),
-                // y: Math.ceil((event.offsetY - TOPSPACE) / (DEFAULT_HEIGHT / BOX)),
-                x: event.offsetX,
-                y: event.offsetY,
+                x: Math.ceil((event.offsetX - LEFTSPACE) / (DEFAULT_WIDTH / BOX)),
+                y: Math.ceil((event.offsetY - TOPSPACE) / (DEFAULT_HEIGHT / BOX)),
             };
         }
     }

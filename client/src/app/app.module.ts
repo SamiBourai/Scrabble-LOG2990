@@ -15,6 +15,7 @@ import { NameSoloComponent } from './components/name-solo/name-solo.component';
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
+import { ValidWorldService } from './services/valid-world.service';
 
 /**
  * Main module that is used in main.ts.
@@ -22,6 +23,7 @@ import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs
  * Please do not move this module in the module folder.
  * Otherwise Angular Cli will not know in which module to put new component
  */
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -36,7 +38,7 @@ import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs
         ModalUserVsPlayerComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
-    providers: [],
+    providers: [ValidWorldService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

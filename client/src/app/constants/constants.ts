@@ -1,8 +1,8 @@
 import { Vec2 } from '@app/classes/vec2';
 
 // grid-service
-export const DEFAULT_WIDTH = 100;
-export const DEFAULT_HEIGHT = 100;
+export const DEFAULT_WIDTH = 600;
+export const DEFAULT_HEIGHT = 600;
 export const NB_LETTER_HAND = 7;
 export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;

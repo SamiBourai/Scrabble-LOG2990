@@ -1,6 +1,7 @@
 <mat-card  class= "modalScrable">
-    <mat-card-title>Voulez-vous jouer une partie en solo? </mat-card-title>
-    <mat-card-subtitle>La partie solo se joue contre un ordinateur </mat-card-subtitle>
-    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close >Non je ne veux pas</button>
-    <button mat-raised-button color="primary"  id = "yesButton" mat-dialog-close (click)="openDialog()" >Allons-y</button>
-    
+    <mat-card-title>quelle partie voulez-vous jouer ?</mat-card-title>
+    <mat-card-subtitle>choisissez parmis les 4 choix suivants </mat-card-subtitle>
+    <button mat-raised-button color="primary"  id = "yesButton" mat-dialog-close (click)="openDialog()" >jouer une partie solo</button>
+    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close >créer une partie multijoueur</button>
+    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close >joindre une partie multijoueur</button>
+    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close >Non je ne veux pas jouer</button>
