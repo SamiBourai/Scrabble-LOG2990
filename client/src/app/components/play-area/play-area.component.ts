@@ -43,6 +43,8 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawWord('NIKOUMOUK');
         this.gridService.drawPlayer();
         this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
+        this.gridService.drawPlayerName("bob");
+        this.gridService.drawOpponentName("bob");
         this.gridCanvas.nativeElement.focus();
     }
     get width(): number {
