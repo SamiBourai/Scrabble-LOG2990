@@ -7,20 +7,14 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class MessageService {
-
-  
-
   private ligne:string;
   private colonne:number;
   private orientation:string
   private mot:string;
+
+  private isDebug:boolean
   
-
-  constructor(){}
-  
-
-
-  getParameters(input:string){
+  commandPlacer(input:string){
 
     input = input.substring(8,input.length);
     let array = []
@@ -28,10 +22,6 @@ export class MessageService {
     this.ligne = input.substring(0,1);
 
     let n = input.substring(0,4)
-    console.log(n.length)
-    console.log(n.substr(2,3))
-    console.log(n.includes(" "))
-
     if(n.length == 4 && !n.includes(" ")){
       this.colonne = parseInt(n.substring(1,3));
       this.orientation = n.substring(3,4);
@@ -44,29 +34,25 @@ export class MessageService {
       this.mot = input.substring(3,input.length);
     
     }
-    console.log(this.orientation)
     //console.log(n.length)
-  
     //console.log(this.mot)
     array.push(this.ligne);
     array.push(this.colonne);
     array.push(this.orientation);
     array.push(this.mot);
-    
-
     return array;
-
-     
-    //  this.parameter.position = input.substring(3,4);
-    //  this.parameter.mot = input.substring(4,input.length);
-
-     
-     
-
-    
-    
-    
   }
+
+
+  commandEchanger(input:string){
+    return input.substring(9,input.length) // recuperer les lettres a echanger
+}
+
+
+commandDebug(input:string){
+  if(input === "!debug") this.isDebug = true;
+  return this.isDebug 
+}
  
 }
 

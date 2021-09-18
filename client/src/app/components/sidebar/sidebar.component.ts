@@ -32,10 +32,11 @@ export class SidebarComponent {
         if(this.Message?.errors?.commandOrChat && !this.Message?.errors?.isValid ) window.alert("votre commande n'est pas valide")
         else this.messageY.push(this.typeArea);
             
-        // eslint-disable-next-line no-console
-        let p = this.m.getParameters(this.typeArea);
-
-        console.log(p);
+        // test que les parametres des commandes sont biens recuperes
+        let placer = this.m.commandPlacer(this.typeArea);
+        let echanger = this.m.commandEchanger(this.typeArea)
+        console.log(placer);
+        console.log(echanger);
          
         // console.log(this.getParameter())
         console.log(this.messageY);
@@ -43,12 +44,12 @@ export class SidebarComponent {
         this.typeArea = '';
     }
 
-    getParameter(){
 
-        return this.typeArea.substring(9,this.typeArea.length) // recuperer les lettres a echanger
-        
-
+    logDebug(){
+        return this.m.commandDebug(this.typeArea)
     }
+
+    
 
 
 }

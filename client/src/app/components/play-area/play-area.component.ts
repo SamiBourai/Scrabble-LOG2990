@@ -43,7 +43,7 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawBonusBox();
         this.gridService.drawGrid();
         this.gridService.drawHand();
-        this.gridService.drawWord('NIKOUMOUK');
+        this.gridService.drawWord('Scrabble');
         this.gridService.drawPlayer();
         this.gridCanvas.nativeElement.focus();
     }

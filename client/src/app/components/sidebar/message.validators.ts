@@ -3,7 +3,7 @@ export class MessageValidators {
     static isValid(control: AbstractControl): ValidationErrors | null {
         const x = control.value as string;
 
-        if (x.length > 0 && (x === '!debug' || x === '!aide')) {
+        if (x.length > 0 && (x === '!debug' || x === '!aide' || x.includes('!placer') || x.includes('!echanger') )) {
             // eslint-disable-next-line no-console
         
             return { isValid: true };
