@@ -25,14 +25,14 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
-    letters: Letter = { score: 1, charac: 'a', img: '../../../assets/letter-z.png' };
+    letters: Letter[] = [];
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
-        private readonly easelLogisticsService :EaselLogiscticsService
+        private readonly easelLogisticsService: EaselLogiscticsService,
     ) {}
 
     @HostListener('keydown', ['$event'])
@@ -51,7 +51,8 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawWord('NIKBABAKUS');
         this.gridService.drawPlayer();
         //this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
-        this.easelLogisticsService.placeEaselLetters(this.reserveService.getRandomLetter());
+        this.getLetters();
+        this.easelLogisticsService.placeEaselLetters(this.letters);
 
         // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 2, y: 2 });
         // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 6, y: 6 });
@@ -69,6 +70,11 @@ export class PlayAreaComponent implements AfterViewInit {
         return this.canvasSize.y;
     }
 
+    getLetters(): void {
+        for (let i = 0; i < 7; i++) {
+            this.letters.push(this.reserveService.getRandomLetter());
+        }
+    }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (
@@ -84,5 +90,4 @@ export class PlayAreaComponent implements AfterViewInit {
             };
         }
     }
-
 }
