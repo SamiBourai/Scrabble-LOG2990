@@ -52,7 +52,7 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawPlayer();
         //this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
         this.getLetters();
-        this.easelLogisticsService.placeEaselLetters(this.letters);
+        
 
         // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 2, y: 2 });
         // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 6, y: 6 });
@@ -71,9 +71,9 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     getLetters(): void {
-        for (let i = 0; i < 7; i++) {
+        
             this.letters.push(this.reserveService.getRandomLetter());
-        }
+        
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
