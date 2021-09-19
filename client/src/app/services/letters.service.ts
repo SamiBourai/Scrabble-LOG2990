@@ -9,11 +9,11 @@ export class LettersService {
     gridContext: CanvasRenderingContext2D;
 
     placeLetter(lett: Letter, pos: Vec2): void {
-        const img = new Image();
-        img.src = lett.img;
-        img.onload = () => {
+        const imgLetter = new Image();
+        imgLetter.src = lett.img;
+        imgLetter.onload = () => {
             this.gridContext.drawImage(
-                img,
+                imgLetter,
                 LEFTSPACE + ((pos.x - 1) * DEFAULT_WIDTH) / BOX,
                 TOPSPACE + ((pos.y - 1) * DEFAULT_WIDTH) / BOX,
                 DEFAULT_WIDTH / BOX,

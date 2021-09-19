@@ -5,6 +5,7 @@ import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH 
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
+import { ReserveService } from '@app/services/reserve.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -27,7 +28,12 @@ export class PlayAreaComponent implements AfterViewInit {
     letters: Letter = { score: 1, charac: 'a', img: '../../../assets/letter-z.png' };
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
-    constructor(private readonly gridService: GridService, private readonly lettersService: LettersService, private readonly easelLogisticsService :EaselLogiscticsService) {}
+    constructor(
+        private readonly gridService: GridService,
+        private readonly lettersService: LettersService,
+        private readonly reserveService: ReserveService,
+        private readonly easelLogisticsService :EaselLogiscticsService
+    ) {}
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -42,12 +48,19 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawBonusBox();
         this.gridService.drawGrid();
         this.gridService.drawHand();
-        this.gridService.drawWord('NIKOUMOUK');
+        this.gridService.drawWord('NIKBABAKUS');
         this.gridService.drawPlayer();
-        this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
+        //this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
         this.easelLogisticsService.placeEaselLetters(this.letters);
+
+        this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 2, y: 2 });
+        this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 6, y: 6 });
+
+        this.gridService.drawPlayerName('bob');
+        this.gridService.drawOpponentName('bob');
         this.gridCanvas.nativeElement.focus();
     }
+
     get width(): number {
         return this.canvasSize.x;
     }
