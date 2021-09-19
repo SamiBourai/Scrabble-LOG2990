@@ -52,14 +52,17 @@ export class SidebarComponent {
             this.isValid = true;
             this.messageY.push(this.typeArea)
         }
-        else if( placer.length == 0 && !this.typeArea.includes('!debug') && !this.typeArea.includes('!echanger') && !this.typeArea.includes('!aide')  ){
+        else if( placer.length == 0 && !this.typeArea.includes('!debug') && !this.typeArea.includes('!echanger') && !this.typeArea.includes('!aide') && (!this.messageY[this.messageY.length-1].includes('!echanger') || !this.messageY[this.messageY.length-1].includes('!placer') || !this.messageY[this.messageY.length-1].includes('!') ) ){
+
             this.isValid = false;
+            this.messageY.pop()
             
         }
         // console.log(this.getParameter())
         console.log(this.messageY);
         
         this.typeArea = '';
+        
     }
     
     logDebug(){
