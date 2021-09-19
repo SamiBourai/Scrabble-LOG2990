@@ -50,12 +50,6 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawHand();
         this.gridService.drawWord('NIKBABAKUS');
         this.gridService.drawPlayer();
-        //this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
-        this.getLetters();
-        this.easelLogisticsService.placeEaselLetters(this.letters);
-
-        // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 2, y: 2 });
-        // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 6, y: 6 });
 
         this.gridService.drawPlayerName('bob');
         this.gridService.drawOpponentName('bob');
@@ -70,10 +64,16 @@ export class PlayAreaComponent implements AfterViewInit {
         return this.canvasSize.y;
     }
 
+    placeFromEasel(): void {
+        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 2, y: 2 });
+    }
+
     getLetters(): void {
         for (let i = 0; i < 7; i++) {
-            this.letters.push(this.reserveService.getRandomLetter());
+            if (this.reserveService.size != 0 && !this.easelLogisticsService.isFull())
+                this.easelLogisticsService.placeEaselLetters(this.reserveService.getRandomLetter());
         }
+        console.log(this.reserveService.size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
