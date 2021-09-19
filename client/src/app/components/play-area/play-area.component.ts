@@ -50,11 +50,6 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawHand();
         this.gridService.drawWord('NIKBABAKUS');
         this.gridService.drawPlayer();
-        //this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
-        this.getLetters();
-
-        // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 2, y: 2 });
-        // this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 6, y: 6 });
 
         this.gridService.drawPlayerName('bob');
         this.gridService.drawOpponentName('bob');

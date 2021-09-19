@@ -33,8 +33,8 @@ export class EaselLogiscticsService {
 
         this.temp.index = this.pos.length - 1;
         this.temp.letters = lett;
-
         this.easelLetters.add(this.temp);
+
         img.onload = () => {
             this.occupiedPos[this.pos.length - 1] = true;
             this.gridContext.drawImage(
