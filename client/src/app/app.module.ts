@@ -18,6 +18,7 @@ import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
 import { ValidWorldService } from './services/valid-world.service';
+import { EaselComponent } from './components/easel/easel.component';
 
 /**
  * Main module that is used in main.ts.
@@ -38,6 +39,7 @@ import { ValidWorldService } from './services/valid-world.service';
         ModalScrableClassiqueComponent,
         ModalUserNameComponent,
         ModalUserVsPlayerComponent,
+        EaselComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
     providers: [CommandService,MessageService,ValidWorldService],
