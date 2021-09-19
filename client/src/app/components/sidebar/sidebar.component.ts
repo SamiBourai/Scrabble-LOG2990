@@ -1,8 +1,8 @@
 // import { MessageService } from './../../message.service';
 
 import { MessageValidators } from './message.validators';
-import { Component } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MessageService } from '@app/message.service';
 // import { Parameter } from '@app/classes/parameter';
 
@@ -20,13 +20,13 @@ export class SidebarComponent {
     });
     // parameter:Parameter;
 
-    constructor(private m:MessageService){
+    constructor(private m:MessageService, cd :ChangeDetectorRef){
 
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     get Message() {
-        return this.form.get('message');
+        return this.form.get('message') as AbstractControl
     }
     logMessage() {
 
@@ -46,7 +46,7 @@ export class SidebarComponent {
         console.log(echanger);
 
         if(echanger){
-            this.isValid = false;
+            this.isValid = true;
         }
         if(!this.Message?.errors?.commandOrChat){
             this.isValid = true;
