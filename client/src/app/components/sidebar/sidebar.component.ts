@@ -54,7 +54,7 @@ export class SidebarComponent {
         }
         else if( placer.length == 0 && !this.typeArea.includes('!debug') && !this.typeArea.includes('!echanger') && !this.typeArea.includes('!aide')  ){
             this.isValid = false;
-            this.messageY.pop()
+            
         }
         // console.log(this.getParameter())
         console.log(this.messageY);
