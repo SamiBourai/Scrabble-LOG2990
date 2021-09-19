@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
+import { ReserveService } from '@app/services/reserve.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -23,10 +23,14 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
-    letters: Letter = { score: 1, charac: 'a', img: '../../../assets/letter-A.png' };
+
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
-    constructor(private readonly gridService: GridService, private readonly lettersService: LettersService) {}
+    constructor(
+        private readonly gridService: GridService,
+        private readonly lettersService: LettersService,
+        private readonly reserveService: ReserveService,
+    ) {}
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -40,11 +44,14 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawBonusBox();
         this.gridService.drawGrid();
         this.gridService.drawHand();
-        this.gridService.drawWord('NIKOUMOUK');
+        this.gridService.drawWord('NIKBABAKUS');
         this.gridService.drawPlayer();
-        this.lettersService.placeLetter(this.letters, { x: 2, y: 2 });
+
+        this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 2, y: 2 });
+        this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 6, y: 6 });
         this.gridCanvas.nativeElement.focus();
     }
+
     get width(): number {
         return this.canvasSize.x;
     }
