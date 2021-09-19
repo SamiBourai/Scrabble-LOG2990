@@ -9,6 +9,7 @@
                   <div *ngIf = "  Message?.errors?.commandOrChat && !Message?.errors?.isValid" class = "alert alert-danger" > invalid command </div>
                   <div *ngIf = "Message?.errors?.commandOrChat">ceci est une commande</div>
                   <div *ngIf = "logDebug()">affichage de debogage active</div>
+                  <div id = "errorMessage" *ngIf = " !isValid">syntax error</div>
                   <ng-container *ngIf = "!Message?.errors?.commandOrChat || (Message?.errors?.commandOrChat && Message?.errors?.isValid ) " >
       
                     <div  *ngFor="let message of messageY "> 

@@ -14,9 +14,13 @@ import { MessageService } from '@app/message.service';
 export class SidebarComponent {
     messageY: string[] = [];
     typeArea: string = '';
+     isValid: boolean = true;
     form = new FormGroup({
         message: new FormControl('', [MessageValidators.isValid, MessageValidators.commandOrChat]),
     });
+    
+    
+    
     // parameter:Parameter;
 
     constructor(private m:MessageService){
@@ -28,15 +32,37 @@ export class SidebarComponent {
         return this.form.get('message');
     }
     logMessage() {
+
+        let placer = this.m.commandPlacer(this.typeArea);
+
+        //console.log(placer.length)
         
-        if(this.Message?.errors?.commandOrChat && !this.Message?.errors?.isValid ) window.alert("votre commande n'est pas valide")
+        let echanger = this.m.commandEchanger(this.typeArea);
+        
+        if((this.Message?.errors?.commandOrChat && !this.Message?.errors?.isValid ) || (placer.length == 0 && !this.Message?.errors?.isValid )  ) this.isValid = false  //window.alert("votre commande n'est pas valide")
         else this.messageY.push(this.typeArea);
             
         // test que les parametres des commandes sont biens recuperes
-        let placer = this.m.commandPlacer(this.typeArea);
-        let echanger = this.m.commandEchanger(this.typeArea)
+       
+        
         console.log(placer);
         console.log(echanger);
+
+        if(echanger){
+            this.isValid = false;
+        }
+
+        if(!this.Message?.errors?.commandOrChat){
+            this.isValid = true;
+            this.messageY.push(this.typeArea)
+        }
+        else if( placer.length == 0 && !this.typeArea.includes('!debug') && !this.typeArea.includes('!echanger') && !this.typeArea.includes('!aide')  ){
+            this.isValid = false;
+            this.messageY.pop()
+
+        }
+
+        
          
         // console.log(this.getParameter())
         console.log(this.messageY);
@@ -48,6 +74,8 @@ export class SidebarComponent {
     logDebug(){
         return this.m.commandDebug(this.typeArea)
     }
+
+    
 
     
 
