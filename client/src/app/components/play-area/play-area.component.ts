@@ -49,6 +49,9 @@ export class PlayAreaComponent implements AfterViewInit {
 
         this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 2, y: 2 });
         this.lettersService.placeLetter(this.reserveService.getRandomLetter(), { x: 6, y: 6 });
+
+        this.gridService.drawPlayerName('bob');
+        this.gridService.drawOpponentName('bob');
         this.gridCanvas.nativeElement.focus();
     }
 
