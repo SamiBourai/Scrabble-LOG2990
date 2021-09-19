@@ -51,7 +51,6 @@ export class SidebarComponent {
         if(echanger){
             this.isValid = false;
         }
-
         if(!this.Message?.errors?.commandOrChat){
             this.isValid = true;
             this.messageY.push(this.typeArea)
@@ -59,25 +58,15 @@ export class SidebarComponent {
         else if( placer.length == 0 && !this.typeArea.includes('!debug') && !this.typeArea.includes('!echanger') && !this.typeArea.includes('!aide')  ){
             this.isValid = false;
             this.messageY.pop()
-
         }
-
-        
-         
         // console.log(this.getParameter())
         console.log(this.messageY);
-        
         this.typeArea = '';
     }
-
-
+    
     logDebug(){
         return this.m.commandDebug(this.typeArea)
     }
-
-    
-
-    
 
 
 }
