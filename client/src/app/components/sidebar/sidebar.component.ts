@@ -20,9 +20,13 @@ export class SidebarComponent {
     });
     // parameter:Parameter;
 
-    constructor(private m:MessageService, cd :ChangeDetectorRef){
+    constructor(private m:MessageService, private cd :ChangeDetectorRef){
 
     }
+
+    ngAfterViewChecked(): void {
+        this.cd.detectChanges();
+      }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     get Message() {
