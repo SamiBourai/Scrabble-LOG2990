@@ -25,7 +25,7 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
-    letters: Letter[] = [];
+
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
     constructor(
@@ -65,14 +65,23 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     placeFromEasel(): void {
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 2, y: 2 });
+        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(0), { x: 2, y: 2 });
     }
 
     getLetters(): void {
         for (let i = 0; i < 7; i++) {
-            if (this.reserveService.size != 0 && !this.easelLogisticsService.isFull())
-                this.easelLogisticsService.placeEaselLetters(this.reserveService.getRandomLetter());
+            if (this.reserveService.size != 0 && !this.easelLogisticsService.isFull()) {
+                let temp: Letter = this.reserveService.getRandomLetter();
+
+                this.easelLogisticsService.easelLetters.push({
+                    index: i,
+                    letters: temp,
+                });
+
+                this.easelLogisticsService.placeEaselLetters(temp);
+            }
         }
+        console.log(this.easelLogisticsService.easelLetters);
         console.log(this.reserveService.size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!

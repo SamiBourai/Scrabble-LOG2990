@@ -9,63 +9,46 @@ import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, 
 })
 export class EaselLogiscticsService {
     gridContext: CanvasRenderingContext2D;
-    easelLetters = new Set<Easel>();
+    easelLetters = new Array<Easel>();
+    size: number = 0;
     temp: Easel = { index: 0, letters: A };
-    pos = new Array<number>();
+
     occupiedPos: Array<Boolean> = [false, false, false, false, false, false, false];
     first: boolean = true;
-
-    positions(): void {
-        //let easel : Easel = {occupied : false ,letters : lett , pos: pos} ;
-        for (let i = 0; i <= 6; i++) {
-            let position = LEFTSPACE + ((HAND_POSITION_START + i) * DEFAULT_WIDTH) / BOX;
-            this.pos.push(position);
-        }
-    }
 
     placeEaselLetters(lett: Letter): void {
         const img = new Image();
         img.src = lett.img;
-        if (this.first) {
-            this.positions();
-            this.first = false;
-        }
-
-        this.temp.index = this.pos.length - 1;
-        this.temp.letters = lett;
-        this.easelLetters.add(this.temp);
 
         img.onload = () => {
-            this.occupiedPos[this.pos.length - 1] = true;
+            this.occupiedPos[this.size] = true;
+
             this.gridContext.drawImage(
                 img,
-                this.pos.pop() as number,
+                LEFTSPACE + ((HAND_POSITION_START + this.size) * DEFAULT_WIDTH) / BOX,
                 TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2,
                 DEFAULT_WIDTH / BOX,
                 DEFAULT_HEIGHT / BOX,
             );
+            this.size++;
         };
     }
 
     deleteletterFromEasel(easel: Easel): void {
-        this.easelLetters.delete(easel);
+        delete this.easelLetters[easel.index];
         this.occupiedPos[easel.index] = false;
     }
 
     getLetterFromEasel(index: number): Letter {
-        console.log(this.easelLetters);
-        for (let lett of this.easelLetters) {
-            if (lett.index == index) {
-                this.easelLetters.delete(lett);
-                this.gridContext.clearRect(
-                    LEFTSPACE + ((HAND_POSITION_START + lett.index) * DEFAULT_WIDTH) / BOX,
-                    TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2,
-                    DEFAULT_WIDTH / BOX,
-                    DEFAULT_HEIGHT / BOX,
-                );
-                this.occupiedPos[lett.index] = false;
-                return lett.letters;
-            }
+        if (this.occupiedPos[index] == true) {
+            this.gridContext.clearRect(
+                LEFTSPACE + ((HAND_POSITION_START + index) * DEFAULT_WIDTH) / BOX,
+                TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2,
+                DEFAULT_WIDTH / BOX,
+                DEFAULT_HEIGHT / BOX,
+            );
+            this.occupiedPos[index] = false;
+            return this.easelLetters[index].letters;
         }
         return A;
     }
