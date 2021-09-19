@@ -10,7 +10,7 @@ export class LettersService {
 
     placeLetter(lett: Letter, pos: Vec2): void {
         const img = new Image();
-        img.src = '../../../assets/letter-A.png';
+        img.src = lett.img;
         img.onload = () => {
             this.gridContext.drawImage(
                 img,
