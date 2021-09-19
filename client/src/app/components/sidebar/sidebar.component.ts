@@ -14,7 +14,7 @@ import { MessageService } from '@app/message.service';
 export class SidebarComponent {
     messageY: string[] = [];
     typeArea: string = '';
-     isValid: boolean = true;
+    isValid: boolean = true;
     form = new FormGroup({
         message: new FormControl('', [MessageValidators.isValid, MessageValidators.commandOrChat]),
     });
