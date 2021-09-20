@@ -7,16 +7,15 @@
     pointer-events: auto;
 }
 
-.mat-card{
+.player-user-card{
     border: none !important;
     box-shadow: none !important;
 }
 
 .mat-card-image{
-    border-radius: .5rem;
+  
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    
 }
 
 .span-player{
@@ -24,4 +23,17 @@
     color: var(--globalColorThemeFull);
     font-family: var(--globalSecondaryFont);
     font-weight: 800;
+}
+
+// .mat-card-actions{
+//     align: center;
+// }
+
+// .btn-user-player{
+//     margin-left: 5%;
+    
+// }
+
+.avatar{
+
 }

@@ -1,6 +1,39 @@
 <div id="grid-container">
-    <p>Scrabble!</p>
-    <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
+
+    <div>
+        <div class="user-component" fxLayout="row" fxLayoutAlign="space-between center">
+            <div fxLayout="column" >
+                <div>
+                    <app-real-player></app-real-player>
+                </div>
+                <div>
+                    chronometre
+                </div>
+            </div>
+            <div class="button-play-area" >
+                <button mat-raised-button color="primary">Passer son tour</button>
+                <br>
+                <br>
+                <button mat-raised-button color="accent" routerLink="/home" >Quitter la partie</button>
+                <br>
+                <br>
+                <button mat-raised-button color="accent" routerLink="/home" >Abandonner</button>
+
+            </div>
+            <div fxLayout="column">
+                <div>
+                    <app-vr-user></app-vr-user>
+                </div>
+                <div>
+                    chronometre
+                </div>
+            </div>
+        </div>
+
+        <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
+    </div>
+
+
     <button id="getRandomReserve" (click)="getLetters()" mat-raised-button color="accent" class="button">Get Letters</button>
     <button id="Pl" (click)="placeFromEasel()" mat-raised-button color="accent" class="button">place</button>
     <div id="mouse-position-display">

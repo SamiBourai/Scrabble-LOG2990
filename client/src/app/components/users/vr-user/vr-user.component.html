@@ -1,0 +1,12 @@
+
+<mat-card  fxLayout="row">
+    <!-- <ngx-avatar class="avatar" size="50" name="{{ name }}"></ngx-avatar> -->
+    <ngx-avatar class="avatar" size="50" name="{{ name }}" src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"></ngx-avatar>
+    <mat-card-header>
+        <mat-card-title>{{name}}</mat-card-title>
+        <mat-card-subtitle>{{level}}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time"> Temps par tour : {{round}} </mat-card-subtitle>
+        <mat-card-subtitle class="score-time"> Score : {{score}} </mat-card-subtitle>
+        <mat-card-subtitle class="score-time"> Chronomètre : {{chronometer}} </mat-card-subtitle>
+    </mat-card-header>
+</mat-card>
