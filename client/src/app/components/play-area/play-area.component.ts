@@ -65,24 +65,22 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     placeFromEasel(): void {
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(0), { x: 2, y: 2 });
+        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
+        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 7, y: 8 });
     }
 
     getLetters(): void {
         for (let i = 0; i < 7; i++) {
-            if (this.reserveService.size != 0 && !this.easelLogisticsService.isFull()) {
+            if (this.easelLogisticsService.occupiedPos[i] == false) {
                 let temp: Letter = this.reserveService.getRandomLetter();
-
-                this.easelLogisticsService.easelLetters.push({
+                this.easelLogisticsService.easelLetters[i] = {
                     index: i,
                     letters: temp,
-                });
-
-                this.easelLogisticsService.placeEaselLetters(temp);
+                };
             }
         }
+        this.easelLogisticsService.placeEaselLetters();
         console.log(this.easelLogisticsService.easelLetters);
-        console.log(this.reserveService.size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
