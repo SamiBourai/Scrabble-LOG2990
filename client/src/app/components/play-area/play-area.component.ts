@@ -6,6 +6,8 @@ import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
+import { MessageService } from '@app/message.service'; 
+//import { Easel } from '@app/classes/easel';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -25,6 +27,8 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
+    containsAllChars : boolean = true; 
+    chatWord: string  ; 
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
@@ -33,6 +37,7 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
+        private readonly messageService : MessageService,
     ) {}
 
     @HostListener('keydown', ['$event'])
@@ -92,4 +97,71 @@ export class PlayAreaComponent implements AfterViewInit {
             };
         }
     }
+    getLettersFromChat(): void {
+        this.chatWord = this.messageService.array.pop()!.word;  
+        for(let letters of this.easelLogisticsService.easelLetters){
+            if( ! this.chatWord.indexOf(letters.letters.charac)){
+                 window.alert('Le chevalet ne contient pas toutes les lettres de votre mot');
+                 this.containsAllChars = false;   
+                break; 
+            } 
+        } 
+        if (this.containsAllChars){
+            //for(let word of this.chatWord){ 
+             //let lett : Easel = this.easelLogisticsService!.easelLetters!.find!(letter => letter.letters.charac = word); 
+            // this.lettersService.placeLetter(word, {x : this.messageService.array.pop()!.column, y :this.getLineNumber(this.messageService.array.pop()!.line) })
+        //}
+    }
+    }
+    getLineNumber(charac: string): number {
+        switch (charac) {
+            case 'a': {
+                return 1;
+            }
+            case 'b': {
+                return 2;
+            }
+            case 'c': {
+                return 3;
+            }
+            case 'd': {
+                return 4;
+            }
+            case 'e': {
+                return 5;
+            }
+            case 'f': {
+                return 6;
+            }
+            case 'g': {
+                return 7;
+            }
+            case 'h': {
+                return 8;
+            }
+            case 'i': {
+                return 9;
+            }
+            case 'j': {
+                return 10;
+            }
+            case 'k': {
+                return 11;
+            }
+            case 'l': {
+                return 12;
+            }
+            case 'm': {
+                return 13;
+            }
+            case 'n': {
+                return 14;
+            }
+            case 'o': {
+                return 15;
+            }
+        }
+        return -1;
+    }
+  
 }

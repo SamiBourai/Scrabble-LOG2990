@@ -3,11 +3,13 @@ import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
 import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
 
+
 @Injectable({
     providedIn: 'root',
 })
 export class EaselLogiscticsService {
     gridContext: CanvasRenderingContext2D;
+    
     easelLetters: Array<Easel> = [
         { index: 0, letters: A },
         { index: 0, letters: A },
@@ -59,6 +61,9 @@ export class EaselLogiscticsService {
         }
         return A;
     }
+    // findLetterIndexInEasel(letter : string) : number{
+    //     this.easelLetters.find( lett => letter )
+    // }
 
     isFull(): boolean {
         for (let i = 0; i <= 6; i++) {
