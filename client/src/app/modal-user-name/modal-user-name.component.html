@@ -27,7 +27,7 @@
                 <mat-hint class="no-error-hint" align="start" *ngIf="userName.value.length >= 8 && userName.valid">
                     &#9679; Le nom entré est valide !!! <br />
                 </mat-hint>
-
+                <!-- <p>{{userName.value}}xx</p> -->
                 <mat-icon matSuffix mat-icon-button color="primary">info</mat-icon>
             </mat-form-field>
         </div>
@@ -41,6 +41,7 @@
                 [disabled]="userName.value.length < 8 || userName.invalid"
                 mat-dialog-close
                 (click)="openDialogOfVrUser()"
+                (click)="storeNameInLocalStorage()"
             >
                 Suivant
             </button>

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NameSoloComponent } from './name-solo.component';
+import { VrUserComponent } from './vr-user.component';
 
-describe('NameSoloComponent', () => {
-  let component: NameSoloComponent;
-  let fixture: ComponentFixture<NameSoloComponent>;
+describe('VrUserComponent', () => {
+  let component: VrUserComponent;
+  let fixture: ComponentFixture<VrUserComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NameSoloComponent ]
+      declarations: [ VrUserComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NameSoloComponent);
+    fixture = TestBed.createComponent(VrUserComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

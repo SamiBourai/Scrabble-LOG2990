@@ -13,10 +13,14 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
-import { NameSoloComponent } from './components/name-solo/name-solo.component';
+
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
+import { AvatarModule } from 'ngx-avatar';
+import { RealPlayerComponent } from './components/users/real-player/real-player.component';
+import { VrUserComponent } from './components/users/vr-user/vr-user.component';
+
 import { ValidWorldService } from './services/valid-world.service';
 import { EaselComponent } from './components/easel/easel.component';
 
@@ -35,13 +39,14 @@ import { EaselComponent } from './components/easel/easel.component';
         MaterialPageComponent,
         PlayAreaComponent,
         SidebarComponent,
-        NameSoloComponent,
         ModalScrableClassiqueComponent,
         ModalUserNameComponent,
         ModalUserVsPlayerComponent,
-        EaselComponent,
+        RealPlayerComponent,
+        VrUserComponent,
+        EaselComponent
     ],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
+    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule, AvatarModule],
     providers: [CommandService,MessageService,ValidWorldService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],

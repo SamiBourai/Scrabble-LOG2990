@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
-//import { Vec2 } from '@app/classes/vec2';
 import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
 
 @Injectable({
@@ -20,7 +19,6 @@ export class EaselLogiscticsService {
     ];
     size: number = 0;
     temp: Easel = { index: 0, letters: A };
-
     occupiedPos: Array<Boolean> = [false, false, false, false, false, false, false];
     first: boolean = true;
 

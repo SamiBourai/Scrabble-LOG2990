@@ -1,0 +1,10 @@
+<mat-card class="" fxLayout="row">
+    <ngx-avatar class="avatar" size="50" name="{{ getUserName() }}"></ngx-avatar>
+    <mat-card-header>
+        <mat-card-title>{{ getUserName() }}</mat-card-title>
+        <mat-card-subtitle>{{ 'Joueur en ligne' }}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time">Temps par tour : {{ roundTime }}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time">Score : {{ score }}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time">Chronomètre : <span>{{this.userService.counter.min}} : {{this.userService.counter.sec}}</span></mat-card-subtitle>
+    </mat-card-header>
+</mat-card>
