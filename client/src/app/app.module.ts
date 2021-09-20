@@ -47,6 +47,7 @@ import { EaselComponent } from './components/easel/easel.component';
         EaselComponent
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule, AvatarModule],
+  
     providers: [CommandService,MessageService,ValidWorldService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
