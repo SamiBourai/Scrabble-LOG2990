@@ -32,9 +32,19 @@ import { EaselComponent } from './components/easel/easel.component';
  */
 
 @NgModule({
-    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PlayAreaComponent,
-        SidebarComponent, ModalScrableClassiqueComponent, ModalUserNameComponent, ModalUserVsPlayerComponent,
-        RealPlayerComponent, VrUserComponent, EaselComponent
+    declarations: [
+        AppComponent,
+        GamePageComponent,
+        MainPageComponent,
+        MaterialPageComponent,
+        PlayAreaComponent,
+        SidebarComponent,
+        ModalScrableClassiqueComponent,
+        ModalUserNameComponent,
+        ModalUserVsPlayerComponent,
+        RealPlayerComponent,
+        VrUserComponent,
+        EaselComponent
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule, AvatarModule],
     providers: [CommandService,MessageService,ValidWorldService],
