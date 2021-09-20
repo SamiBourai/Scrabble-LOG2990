@@ -1,9 +1,9 @@
 // import { MessageService } from './../../message.service';
 
-import { MessageValidators } from './message.validators';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { MessageService } from '@app/message.service';
+import { MessageValidators } from './message.validators';
 // import { Parameter } from '@app/classes/parameter';
 
 @Component({
@@ -20,59 +20,58 @@ export class SidebarComponent {
     });
     // parameter:Parameter;
 
-    constructor(private m:MessageService, private cd :ChangeDetectorRef){
-
-    }
+    constructor(private m: MessageService, private cd: ChangeDetectorRef) {}
 
     ngAfterViewChecked(): void {
         this.cd.detectChanges();
-      }
+    }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     get Message() {
-        return this.form.get('message') as AbstractControl
+        return this.form.get('message') as AbstractControl;
     }
     logMessage() {
-
         let placer = this.m.commandPlacer(this.typeArea);
 
         //console.log(placer.length)
-        
+
         let echanger = this.m.commandEchanger(this.typeArea);
-        
-        if((this.Message?.errors?.commandOrChat && !this.Message?.errors?.isValid ) || (placer.length == 0 && !this.Message?.errors?.isValid )  ) this.isValid = false  //window.alert("votre commande n'est pas valide")
+
+        if ((this.Message?.errors?.commandOrChat && !this.Message?.errors?.isValid) || (placer.length == 0 && !this.Message?.errors?.isValid))
+            this.isValid = false;
+        //window.alert("votre commande n'est pas valide")
         else this.messageY.push(this.typeArea);
-            
+
         // test que les parametres des commandes sont biens recuperes
-       
-        
+
         console.log(placer);
         console.log(echanger);
 
-        if(echanger){
+        if (echanger) {
             this.isValid = true;
         }
-        if(!this.Message?.errors?.commandOrChat){
+        if (!this.Message?.errors?.commandOrChat) {
             this.isValid = true;
-            this.messageY.push(this.typeArea)
-        }
-        else if( placer.length == 0 && !this.typeArea.includes('!debug') && !this.typeArea.includes('!echanger') && !this.typeArea.includes('!aide') && (!this.messageY[this.messageY.length-1].includes('!echanger') || !this.messageY[this.messageY.length-1].includes('!placer') || !this.messageY[this.messageY.length-1].includes('!') ) ){
-
+            this.messageY.push(this.typeArea);
+        } else if (
+            placer.length == 0 &&
+            !this.typeArea.includes('!debug') &&
+            !this.typeArea.includes('!echanger') &&
+            !this.typeArea.includes('!aide') &&
+            (!this.messageY[this.messageY.length - 1].includes('!echanger') ||
+                !this.messageY[this.messageY.length - 1].includes('!placer') ||
+                !this.messageY[this.messageY.length - 1].includes('!'))
+        ) {
             this.isValid = false;
-            this.messageY.pop()
-            
+            this.messageY.pop();
         }
         // console.log(this.getParameter())
         console.log(this.messageY);
-        
+
         this.typeArea = '';
-        
-    }
-    
-    logDebug(){
-        return this.m.commandDebug(this.typeArea)
     }
 
-
+    logDebug() {
+        return this.m.commandDebug(this.typeArea);
+    }
 }
-
