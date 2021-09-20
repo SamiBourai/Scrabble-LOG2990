@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
-//import { Vec2 } from '@app/classes/vec2';
 import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
 
 @Injectable({
@@ -12,26 +11,27 @@ export class EaselLogiscticsService {
     easelLetters = new Array<Easel>();
     size: number = 0;
     temp: Easel = { index: 0, letters: A };
-
     occupiedPos: Array<Boolean> = [false, false, false, false, false, false, false];
     first: boolean = true;
 
-    placeEaselLetters(lett: Letter): void {
-        const img = new Image();
-        img.src = lett.img;
-
-        img.onload = () => {
+    placeEaselLetters(lett: Letter): void {   
+    const img = new Image();
+    img.src = lett.img;
+    
+        img.onload = () => {  
+             
             this.occupiedPos[this.size] = true;
-
+            
             this.gridContext.drawImage(
                 img,
-                LEFTSPACE + ((HAND_POSITION_START + this.size) * DEFAULT_WIDTH) / BOX,
+                (LEFTSPACE  + this.size* 40),
                 TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2,
                 DEFAULT_WIDTH / BOX,
-                DEFAULT_HEIGHT / BOX,
-            );
-            this.size++;
-        };
+                DEFAULT_HEIGHT / BOX)
+            
+           this.size ++;
+           console.log(this.size);
+        }; 
     }
 
     deleteletterFromEasel(easel: Easel): void {

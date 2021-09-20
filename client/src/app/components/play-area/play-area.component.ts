@@ -72,13 +72,12 @@ export class PlayAreaComponent implements AfterViewInit {
         for (let i = 0; i < 7; i++) {
             if (this.reserveService.size != 0 && !this.easelLogisticsService.isFull()) {
                 let temp: Letter = this.reserveService.getRandomLetter();
-
+                console.log(temp);
+                this.easelLogisticsService.placeEaselLetters(temp);
                 this.easelLogisticsService.easelLetters.push({
                     index: i,
                     letters: temp,
                 });
-
-                this.easelLogisticsService.placeEaselLetters(temp);
             }
         }
         console.log(this.easelLogisticsService.easelLetters);
