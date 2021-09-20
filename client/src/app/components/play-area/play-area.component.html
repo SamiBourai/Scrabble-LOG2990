@@ -10,14 +10,16 @@
                     chronometre
                 </div>
             </div>
-            <div class="button-play-area" >
-                <button mat-raised-button color="primary">Passer son tour</button>
-                <br>
-                <br>
-                <button mat-raised-button color="accent" routerLink="/home" >Quitter la partie</button>
-                <br>
-                <br>
-                <button mat-raised-button color="accent" routerLink="/home" >Abandonner</button>
+            <div fxLayout="column" fxLayoutAlign="space-between center" >
+                <div>
+                    <button mat-raised-button color="primary">Passer son tour</button>
+                </div>
+                <div>
+                    <button mat-raised-button color="accent" routerLink="/home" >Abandonner</button>
+                </div>
+                <div>
+                    <ngb-timepicker></ngb-timepicker>
+                </div>
 
             </div>
             <div fxLayout="column">
