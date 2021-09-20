@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ChatCommand } from './classes/chat-command';
 // import { Parameter } from './classes/parameter';
 // import { Parameter } from './classes/parameter';
 
@@ -11,6 +12,7 @@ export class MessageService {
   private colonne:number;
   private orientation:string
   private mot:string;
+  array= new Array <ChatCommand>() ; 
 
   private isDebug:boolean
   private possibleLigne: string = 'abcdefghijklmno';
@@ -22,7 +24,7 @@ export class MessageService {
   commandPlacer(input:string){
 
     input = input.substring(8,input.length);
-    let array = []
+
     
     this.ligne = input.substring(0,1);
 
@@ -42,17 +44,11 @@ export class MessageService {
     //console.log(n.length)
     //console.log(this.mot)
     if(this.possibleLigne.includes(this.ligne) && this.possibleColonne.includes(this.colonne) && this.possibleOrientation.includes(this.orientation) ){
-
-      array.push(this.ligne);
-      array.push(this.colonne);
-      array.push(this.orientation);
-      array.push(this.mot);
-
+      let word : ChatCommand = {word: this.mot, line : this.ligne, column : this.colonne, direction: this.orientation }; 
+      this.array.push(word); 
     }
+    return this.array; 
     
-     
-   
-    return array;
   }
 
 
