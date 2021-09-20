@@ -2,21 +2,22 @@
 
 <div id= "header" >
     <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
-     
+    <div class="topNav">
+        <a><button mat-raised-button color="primary" id = "scrableClassiqueButton" (click)= "openDialog()">Scrabble classique</button></a>
+        <a><button mat-raised-button color="primary" id = "scrableLOG2990Button">Scrabble LOG2990</button></a>
+        <a><button mat-raised-button color="primary" id = "meilleursScoresButton">meilleurs scores</button></a>
+    </div>
+    
         </div> 
     <img src="./../../assets/giphy.gif" width="600" height="280">
     <img src="https://bit.ly/3m206ss" width="400" height="80" alt="Logo Scrabble" />
     <section id="server-message">
-        <!-- <p>Petit message du serveur : {{ message.getValue() }}</p> -->
-        <div class="justified">          
+        <p>Petit message du serveur : {{ message.getValue() }}</p>
+        <div class="justified">
+            
          
             <!-- <button class="button" (click)="getMessagesFromServer()">Récupérer un message du serveur</button>
             <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button> -->
-            <div class="topNav">
-                <a><button mat-raised-button color="primary" id = "scrableClassiqueButton" (click)= "openDialog()">Scrabble classique</button></a>
-                <a><button mat-raised-button color="primary" id = "scrableLOG2990Button">Scrabble LOG2990</button></a>
-                <a><button mat-raised-button color="primary" id = "meilleursScoresButton">Meilleurs scores</button></a>
-            </div>
             <button class="button" routerLink="/material">Voir la page démo Angular Material</button>
         </div>
     </section>

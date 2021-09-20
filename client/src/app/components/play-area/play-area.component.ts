@@ -65,9 +65,11 @@ export class PlayAreaComponent implements AfterViewInit {
             event.offsetY < this.gridService.height + TOPSPACE
         ) {
             this.mousePosition = {
-                x: Math.ceil((event.offsetX - LEFTSPACE) / (this.gridService.width / BOX)),
-                y: Math.ceil((event.offsetY - TOPSPACE) / (this.gridService.height / BOX)),
+                 x: Math.ceil((event.offsetX - LEFTSPACE) / (this.gridService.width / BOX)),
+                 y: Math.ceil((event.offsetY - TOPSPACE) / (this.gridService.height / BOX)),
             };
         }
     }
+
+    
 }
