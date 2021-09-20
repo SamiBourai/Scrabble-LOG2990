@@ -2,11 +2,11 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { MessageService } from '@app/message.service';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
-import { MessageService } from '@app/message.service'; 
 //import { Easel } from '@app/classes/easel';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -81,6 +81,7 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         this.easelLogisticsService.placeEaselLetters();
         console.log(this.easelLogisticsService.easelLetters);
+        console.log(this.reserveService._size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
