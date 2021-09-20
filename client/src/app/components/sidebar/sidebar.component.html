@@ -1,45 +1,50 @@
 <div class="container">
     
-<form [formGroup] = "form">
-        <div class = "form-group">
-
-            <div class = "messageList">
-
-              <ul>
-                <div *ngFor="let message of messageY "> 
-                  {{ message }}
-                  
-                </div>
+  <form [formGroup] = "form">
+          <div class = "form-group">
+  
+              <div class = "messageList">
+  
                 
-               </ul>
-               
-                
-               
-            </div>
-            <hr>
-            
-            <div *ngIf = "Message?.errors?.isValid"> debug content</div>
-               
-            
-              <div class = "chatBar">
-                  <div  class="input-group mb-3">
-                      <div class="input-group-prepend">
-                      <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
-                      </div>
-                      <input formControlName = "message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter)="logMessage()" type = "text"  class = "form-control" autofocus/>
-                      
-                       <mat-hint id = "hint" align="end">{{message.value.length}} / 512 </mat-hint>  
-                  </div>
+                  <div *ngIf = "  Message?.errors?.commandOrChat && !Message?.errors?.isValid" class = "alert alert-danger" > invalid command </div>
+                  <div *ngIf = "Message?.errors?.commandOrChat">ceci est une commande</div>
+                  <div *ngIf = "logDebug()">affichage de debogage active</div>
+                  <div id = "errorMessage" *ngIf = " !isValid">syntax error</div>
+                  <ng-container *ngIf = "!Message?.errors?.commandOrChat || (Message?.errors?.commandOrChat && Message?.errors?.isValid ) " >
+      
+                    <div  *ngFor="let message of messageY "> 
+                      {{ message }}
+                    </div>
+                  </ng-container>
                   
+                 
+                 
               </div>
-              
-          
-            
-            
-
-        </div>
-    </form>
-    
+              <hr>
+  
+                <div class = "chatBar">
+                    <div  class="input-group mb-3">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
+                        </div>
+                        
+                         <input formControlName ="message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter)="logMessage() " type = "text"  class = "form-control" autofocus/>
+                        
+                         <mat-hint id = "hint" align="end">{{message.value.length}} / 512 </mat-hint>  
+                    </div>
+                    
+                </div>
+  
                
-
-</div>
+                
+            
+              
+              
+  
+          </div>
+      </form>
+      
+                 
+  
+  </div>
+  

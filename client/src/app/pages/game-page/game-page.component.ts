@@ -5,4 +5,6 @@ import { Component } from '@angular/core';
     templateUrl: './game-page.component.html',
     styleUrls: ['./game-page.component.scss'],
 })
-export class GamePageComponent {}
+export class GamePageComponent {
+    getRandomLetters() {}
+}

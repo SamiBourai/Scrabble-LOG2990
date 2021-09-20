@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 // import { FormBuilder } from '@angular/forms';
 // import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-//import { Component, OnInit } from '@angular/core';
+// import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalUserNameComponent } from '@app/modal-user-name/modal-user-name.component';
 
@@ -24,17 +24,15 @@ export class ModalScrableClassiqueComponent {
     //         console.log(this.abc.nativeElement.innerText);
     //     }, 1000);
     // }
-    constructor(private dialogRef: MatDialog) { }
-    openDialog(){
+    constructor(private dialogRef: MatDialog) {}
+    openDialog() {
+        // const dialogConfig = new MatDialogConfig();
+        // dialogConfig.autoFocus=true;
+        this.dialogRef.open(ModalUserNameComponent);
+        // this.dialogRef.open(ModalUserVsPlayerComponent);
+    }
 
-    //const dialogConfig = new MatDialogConfig();
-    //dialogConfig.autoFocus=true;
-    this.dialogRef.open(ModalUserNameComponent);
-    //this.dialogRef.open(ModalUserVsPlayerComponent);
-     
-  }
- 
-  closeWindow(): void {
+    closeWindow(): void {
         if (this.button) this.button.nativeElement.click();
-  }
+    }
 }

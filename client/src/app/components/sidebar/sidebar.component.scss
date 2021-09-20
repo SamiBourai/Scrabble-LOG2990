@@ -13,6 +13,7 @@
     right:81%;
     height:100%;
     margin: 2px 2px 2px 2px;
+    background-color: white;
     
 }
 
@@ -27,12 +28,16 @@ hr{
     
 }
 
+#errorMessage{
+    color:red
+}
 
 .chatBar{
 
     position: fixed;
     top:20px;
     width: 16%;
+    ;
     
 }
 

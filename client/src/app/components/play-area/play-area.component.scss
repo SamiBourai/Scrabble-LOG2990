@@ -1,18 +1,18 @@
 #canvas {
     border: 1px solid black;
+    background-color: #ffe4c4;
 }
 
-#grid-container{
-    position:fixed;
-    height: 70%;
-    width: 80%;
-    position:fixed;
-    top:0%;
-    bottom:0%;
-    margin:auto;
-    right:0px;
-    left:20%;
-    display:flex;
+#grid-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    top: 0%;
+    bottom: 0%;
+    margin: auto;
+    right: 0px;
+    left: 20%;
+    display: flex;
     flex-direction: row;
 }
 // .user-component{

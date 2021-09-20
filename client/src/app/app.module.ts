@@ -1,3 +1,5 @@
+import { MessageService } from './message.service';
+import { CommandService } from './command.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,6 +21,8 @@ import { AvatarModule } from 'ngx-avatar';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
 
+import { ValidWorldService } from './services/valid-world.service';
+import { EaselComponent } from './components/easel/easel.component';
 
 /**
  * Main module that is used in main.ts.
@@ -26,10 +30,14 @@ import { VrUserComponent } from './components/users/vr-user/vr-user.component';
  * Please do not move this module in the module folder.
  * Otherwise Angular Cli will not know in which module to put new component
  */
+
 @NgModule({
-    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PlayAreaComponent, SidebarComponent, ModalScrableClassiqueComponent, ModalUserNameComponent, ModalUserVsPlayerComponent, RealPlayerComponent, VrUserComponent],
+    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PlayAreaComponent,
+        SidebarComponent, ModalScrableClassiqueComponent, ModalUserNameComponent, ModalUserVsPlayerComponent,
+        RealPlayerComponent, VrUserComponent, EaselComponent
+    ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule, AvatarModule],
-    providers: [],
+    providers: [CommandService,MessageService,ValidWorldService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
