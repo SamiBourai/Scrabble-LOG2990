@@ -16,7 +16,6 @@ export class WordPointsService {
     points_word(word: Letter[], position: Vec2[]): number {
         let sum = 0;
         let word_multiplier = 1;
-        console.log(word.length == position.length);
         for (let letter_index = 0; letter_index < word.length; ++letter_index) {
             let score = word[letter_index].score;
             for (let i of RED_BOX) {

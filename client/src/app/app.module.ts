@@ -15,13 +15,12 @@ import { AvatarModule } from 'ngx-avatar';
 import { EaselComponent } from './components/easel/easel.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
-
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
 import { CommandService } from './services/command.service';
 import { MessageService } from './services/message.service';
-import { ValidWorldService } from './services/valid-world.service';
+import { ValidWordService } from './services/valid-world.service';
 
 /**
  * Main module that is used in main.ts.
@@ -56,7 +55,7 @@ import { ValidWorldService } from './services/valid-world.service';
         AvatarModule,
     ],
 
-    providers: [CommandService, MessageService, ValidWorldService],
+    providers: [CommandService, MessageService, ValidWordService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
