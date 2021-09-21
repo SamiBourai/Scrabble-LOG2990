@@ -24,7 +24,7 @@ fdescribe('MessageService', () => {
         expect(service.comOrChat(text)).toBeFalse();
     });
 
-    it('it should confirm that string dont possess an !', () => {
+    it('it should confirm that its valid only if the ! is at the fisrt position', () => {
         const text = 'bonjour!';
         expect(service.comOrChat(text)).toBeFalse();
     });

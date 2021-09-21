@@ -53,9 +53,10 @@ export class SidebarComponent {
         if (!this.m.comOrChat(this.typeArea) || this.m.isValid(this.typeArea)) {
             this.messageY.push(this.typeArea);
             this.parameters = this.m.commandPlacer(this.typeArea);
+            this.getLettersFromChat();
             
         }
-        this.getLettersFromChat();
+        
 
         console.log(this.messageY);
         console.log(this.parameters);
