@@ -2,10 +2,10 @@
 
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { MessageService } from '@app/message.service';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageValidators } from './message.validators';
-import { MessageService } from '@app/message.service';
 
 // import { Parameter } from '@app/classes/parameter';
 

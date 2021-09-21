@@ -15,11 +15,11 @@ import { AvatarModule } from 'ngx-avatar';
 import { EaselComponent } from './components/easel/easel.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
+import { MessageService } from './message.service';
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
 import { CommandService } from './services/command.service';
-import { MessageService } from './message.service';
 import { ValidWorldService } from './services/valid-world.service';
 
 /**
