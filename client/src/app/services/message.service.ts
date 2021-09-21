@@ -1,5 +1,7 @@
+
 import { Injectable } from '@angular/core';
-import { ChatCommand } from './classes/chat-command';
+import { ChatCommand } from '@app/classes/chat-command';
+
 // import { Parameter } from './classes/parameter';
 // import { Parameter } from './classes/parameter';
 
@@ -21,7 +23,7 @@ export class MessageService {
   command : ChatCommand = {word : "" , line :"" , column : 10, direction : "h" }; 
  
   comOrChat(input:string){
-    if(input.includes('!')) return true;
+    if(input.includes('!') && input.indexOf('!') == 0) return true;
     return false;
   }
 

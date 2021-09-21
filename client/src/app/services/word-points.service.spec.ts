@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { A, B, S } from '@app/constants/constants';
 import { WordPointsService } from './word-points.service';
 
-fdescribe('WordPointsService', () => {
+describe('WordPointsService', () => {
     let service: WordPointsService;
 
     beforeEach(() => {

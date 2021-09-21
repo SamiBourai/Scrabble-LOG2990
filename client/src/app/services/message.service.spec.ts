@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { MessageService } from '@app/message.service';
+import { MessageService } from './message.service';
 
-describe('MessageService', () => {
+
+fdescribe('MessageService', () => {
     let service: MessageService;
 
     beforeEach(() => {
@@ -11,5 +12,20 @@ describe('MessageService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('it should confirm that string possess an !', () => {
+        const text = '!bonjour';
+        expect(service.comOrChat(text)).toBeTrue();
+    });
+
+    it('it should confirm that string dont possess an !', () => {
+        const text = 'bonjour';
+        expect(service.comOrChat(text)).toBeFalse();
+    });
+
+    it('it should confirm that string dont possess an !', () => {
+        const text = 'bonjour!';
+        expect(service.comOrChat(text)).toBeFalse();
     });
 });

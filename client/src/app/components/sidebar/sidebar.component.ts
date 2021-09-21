@@ -1,11 +1,12 @@
-// import { MessageService } from './../../message.service';
+
 
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
-import { MessageService } from '@app/message.service';
+
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
+import { MessageService } from '@app/services/message.service';
 import { MessageValidators } from './message.validators';
 
 // import { Parameter } from '@app/classes/parameter';
@@ -52,8 +53,9 @@ export class SidebarComponent {
         if (!this.m.comOrChat(this.typeArea) || this.m.isValid(this.typeArea)) {
             this.messageY.push(this.typeArea);
             this.parameters = this.m.commandPlacer(this.typeArea);
-            this.getLettersFromChat();
+            
         }
+        this.getLettersFromChat();
 
         console.log(this.messageY);
         console.log(this.parameters);
