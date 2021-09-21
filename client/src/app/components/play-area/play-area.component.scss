@@ -1,8 +1,11 @@
 #canvas {
     border: 1px solid black;
     background-color: #ffe4c4;
+    margin-left: -150px;
 }
-
+// #getRandomReserve{
+//     //margin-bottom: -1000px;
+// }
 #grid-container {
     position: relative;
     height: 100%;
@@ -15,8 +18,29 @@
     display: flex;
     flex-direction: row;
 }
+#getRandomReserve{
+    display: inline-flex;
+    margin-top: 400PX;
+}
 // .user-component{
 //     gap: 200px;
 // }
 
-
+#getRandomReserve, #Pl{
+    width: 430px;
+    height: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 400px;
+    align-content: center;
+    font-size: x-large;
+    font-family: 'Courier New', Courier, monospace;
+    align-content: center;
+    color: blanchedalmond;
+}
+.buttom-button{
+    margin-top: -400px;
+}
+.p-div{
+    margin-left: 40px;
+}

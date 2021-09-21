@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import {
+    ADJUSTEMENT_TOPSPACE,
     AZUR_BOX,
     BLUE_BOX,
     BOX,
@@ -15,7 +16,7 @@ import {
     PINK_BOX,
     RED_BOX,
     TOPSPACE,
-    WIDTH,
+    WIDTH
 } from '@app/constants/constants';
 
 @Injectable({
@@ -42,16 +43,6 @@ export class GridService {
 
         this.gridContext.stroke();
     }
-
-    drawWord(word: string) {
-        const step = 20;
-        const startPosition: Vec2 = { x: DEFAULT_WIDTH / 2, y: TOPSPACE - step };
-        this.gridContext.font = '20px system-ui';
-        for (let i = 0; i < word.length; i++) {
-            this.gridContext.fillText(word[i], startPosition.x + step * i, startPosition.y);
-        }
-    }
-
     drawHand() {
         this.gridContext.beginPath();
         this.gridContext.strokeStyle = 'black';
@@ -77,18 +68,18 @@ export class GridService {
     }
 
     drawCoor() {
-        this.gridContext.font = '15px system-ui';
+        this.gridContext.font = 'bold 15px system-ui';
         this.gridContext.strokeStyle = 'black';
 
         for (let i = 1; i <= BOX; i++) {
-            this.gridContext.fillText(String(i), LEFTSPACE + (i * DEFAULT_WIDTH) / BOX - DEFAULT_WIDTH / (2 * BOX), TOPSPACE);
+            this.gridContext.fillText(String(i), LEFTSPACE + (i * DEFAULT_WIDTH) / BOX - DEFAULT_WIDTH / (2 * BOX), TOPSPACE - ADJUSTEMENT_TOPSPACE);
             this.gridContext.fillText(this.alpha[i - 1], LEFTSPACE - CTX_PX, TOPSPACE + (i * DEFAULT_WIDTH) / BOX - DEFAULT_WIDTH / (2 * BOX));
         }
     }
 
     drawBonusBox() {
         // triple letter score
-        this.gridContext.font = 'bold 9px system-ui';
+        this.gridContext.font = 'bold 15px system-ui';
 
         for (const v of RED_BOX) {
             this.gridContext.fillStyle = 'red';
@@ -99,16 +90,14 @@ export class GridService {
                 DEFAULT_HEIGHT / BOX,
             );
             this.gridContext.fillStyle = 'black';
-            const str = "TRIPLE WORD SCORE";
+            const str = "MOT  X3";
             const array = str.split(" ");
             for (let i = 0; i < array.length; i++)
             {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * this.width) / BOX + 5, TOPSPACE + (v.y * this.height) / BOX + this.height/40 + i*10 , this.width/BOX);
+                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX +DEFAULT_WIDTH/BOX/4 , TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height/40 + i*10 , DEFAULT_WIDTH/BOX);
 
             }
-            // this.gridContext.fillText('TRIPLE', LEFTSPACE + (v.x * this.width) / BOX, TOPSPACE + (v.y * this.height) / BOX + this.height/40 , this.width/BOX);
-            // this.gridContext.fillText('WORD', LEFTSPACE + (v.x * this.width) / BOX, TOPSPACE + (v.y * this.height) / BOX + this.height/40 + 10, this.width/BOX);
-            // this.gridContext.fillText('SCORE', LEFTSPACE + (v.x * this.width) / BOX, TOPSPACE + (v.y * this.height) / BOX + this.height/40 + 20 , this.width/BOX);
+
 
         }
         // triple letter score
@@ -122,11 +111,11 @@ export class GridService {
                 DEFAULT_HEIGHT / BOX,
             );
             this.gridContext.fillStyle = 'black';
-            const str = "DOUBLE WORD SCORE";
+            const str = "MOT  X2";
             const array = str.split(" ");
             for (let i = 0; i < array.length; i++)
             {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * this.width) / BOX + 5, TOPSPACE + (v.y * this.height) / BOX + this.height/40 + i*10 , this.width/BOX);
+                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX +DEFAULT_WIDTH/BOX/4 , TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height/40 + i*10 , DEFAULT_WIDTH/BOX);
 
             }
         }
@@ -140,12 +129,12 @@ export class GridService {
                 DEFAULT_WIDTH / BOX,
                 DEFAULT_HEIGHT / BOX,
             );
-            this.gridContext.fillStyle = 'black';
-            const str = "TRIPLE LETTER SCORE";
+            this.gridContext.fillStyle = 'white';
+            const str = "L.  X3";
             const array = str.split(" ");
             for (let i = 0; i < array.length; i++)
             {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * this.width) / BOX + 5, TOPSPACE + (v.y * this.height) / BOX + this.height/40 + i*10 , this.width/BOX);
+                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX +DEFAULT_WIDTH/BOX/4 , TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height/40 + i*10 , DEFAULT_WIDTH/BOX);
 
             }
         }
@@ -162,28 +151,15 @@ export class GridService {
                 DEFAULT_HEIGHT / BOX,
             );
             this.gridContext.fillStyle = 'black';
-            const str = "DOUBLE LETTER SCORE";
+            const str = "L.  X2";
             const array = str.split(" ");
             for (let i = 0; i < array.length; i++)
             {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * this.width) / BOX + 5, TOPSPACE + (v.y * this.height) / BOX + this.height/40 + i*10 , this.width/BOX);
+                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX +DEFAULT_WIDTH/BOX/4 , TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height/40 + i*10 , DEFAULT_WIDTH/BOX);
 
             }
         }
         this.gridContext.fillStyle = 'black';
-    }
-
-    drawPlayer(): void {
-        const plyr1 = new Image();
-        const plyr2 = new Image();
-        plyr1.src = '/assets/pngwing.png';
-        plyr2.src = '/assets/pngwing2.png';
-        plyr1.onload = () => {
-            this.gridContext.drawImage(plyr1, WIDTH - LEFTSPACE * 2, HEIGHT - TOPSPACE * 2.5, 2 * LEFTSPACE, 2 * TOPSPACE);
-        };
-        plyr2.onload = () => {
-            this.gridContext.drawImage(plyr2, 0, HEIGHT - TOPSPACE * 2.8, 2 * LEFTSPACE, 2.5 * TOPSPACE);
-        };
     }
 
     drawPlayerName(s : string) {

@@ -2,19 +2,20 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 
 // grid-service
-export const DEFAULT_WIDTH = 600;
-export const DEFAULT_HEIGHT = 600;
+export const DEFAULT_WIDTH = 800;
+export const DEFAULT_HEIGHT = 800;
 export const NB_LETTER_HAND = 7;
 export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;
 export const CTX_PX = 15;
+export const ADJUSTEMENT_TOPSPACE = 5 ; 
 
 // play-area-comp
-export const WIDTH = 800;
-export const HEIGHT = 800;
+export const WIDTH = 900;
+export const HEIGHT = 900;
 export const BOX = 15;
-export const TOPSPACE = 50;
-export const LEFTSPACE = 100;
+export const TOPSPACE = 25;
+export const LEFTSPACE = 50;
 
 // LETTERS
 export const A: Letter = { score: 1, charac: 'a', img: '../../assets/letter-A.png' };

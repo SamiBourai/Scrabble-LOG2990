@@ -4,3 +4,4 @@ export interface ChatCommand {
     column : number,
     direction : string, 
 }
+//enum Direction { h,v}

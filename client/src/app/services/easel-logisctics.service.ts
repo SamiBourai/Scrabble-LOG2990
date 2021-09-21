@@ -61,9 +61,6 @@ export class EaselLogiscticsService {
         }
         return A;
     }
-    // findLetterIndexInEasel(letter : string) : number{
-    //     this.easelLetters.find( lett => letter )
-    // }
 
     isFull(): boolean {
         for (let i = 0; i <= 6; i++) {

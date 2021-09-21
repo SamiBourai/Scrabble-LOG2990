@@ -17,7 +17,8 @@ export class MessageService {
   private isDebug:boolean
   private possibleLigne: string = 'abcdefghijklmno';
   private possibleColonne:number[] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]; 
-  private possibleOrientation:string = 'hv'
+  private possibleOrientation:string = 'hv';
+  command : ChatCommand = {word : "" , line :"" , column : 10, direction : "h" }; 
  
   
   
@@ -44,8 +45,8 @@ export class MessageService {
     //console.log(n.length)
     //console.log(this.mot)
     if(this.possibleLigne.includes(this.ligne) && this.possibleColonne.includes(this.colonne) && this.possibleOrientation.includes(this.orientation) ){
-      let word : ChatCommand = {word: this.mot, line : this.ligne, column : this.colonne, direction: this.orientation }; 
-      this.array.push(word); 
+      this.command = {word: this.mot, line : this.ligne, column : this.colonne, direction: this.orientation }; 
+      this.array.push(this.command); 
     }
     return this.array; 
     
