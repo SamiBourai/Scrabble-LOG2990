@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { CommandService } from './command.service';
 
 describe('CommandService', () => {

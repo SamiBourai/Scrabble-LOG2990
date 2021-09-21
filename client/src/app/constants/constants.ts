@@ -1,6 +1,10 @@
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 
+// word-point-service
+export const BONUS_WORD_LENGTH = 7;
+export const BONUS_POINTS_50 = 50;
+
 // grid-service
 export const DEFAULT_WIDTH = 600;
 export const DEFAULT_HEIGHT = 600;

@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, I, L, LEFTSPACE, R, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
+import { WordPointsService } from '@app/services/word-points.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -25,6 +26,17 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
+    testWord: Letter[] = [T, A, B, L, I, E, R, S];
+    testPosition: Vec2[] = [
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+        { x: 3, y: 0 },
+        { x: 4, y: 0 },
+        { x: 5, y: 0 },
+        { x: 6, y: 0 },
+        { x: 7, y: 0 },
+    ];
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
@@ -33,7 +45,10 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-    ) {}
+        psv: WordPointsService,
+    ) {
+        console.log(psv.points_word(this.testWord, this.testPosition));
+    }
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
