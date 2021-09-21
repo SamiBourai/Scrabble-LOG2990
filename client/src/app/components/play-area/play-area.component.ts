@@ -28,8 +28,8 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
-    containsAllChars : boolean = true; 
-    chatWord: string  ; 
+    containsAllChars: boolean = true;
+    chatWord: string;
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
@@ -38,7 +38,7 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-        private readonly messageService : MessageService,
+        private readonly messageService: MessageService,
     ) {}
 
     @HostListener('keydown', ['$event'])
@@ -100,20 +100,20 @@ export class PlayAreaComponent implements AfterViewInit {
         }
     }
     getLettersFromChat(): void {
-        this.chatWord = this.messageService.array.pop()!.word;  
-        for(let letters of this.easelLogisticsService.easelLetters){
-            if( ! this.chatWord.indexOf(letters.letters.charac)){
-                 window.alert('Le chevalet ne contient pas toutes les lettres de votre mot');
-                 this.containsAllChars = false;   
-                break; 
-            } 
-        } 
-        if (this.containsAllChars){
-            //for(let word of this.chatWord){ 
-             //let lett : Easel = this.easelLogisticsService!.easelLetters!.find!(letter => letter.letters.charac = word); 
+        this.chatWord = this.messageService.array.pop()!.word;
+        for (let letters of this.easelLogisticsService.easelLetters) {
+            if (!this.chatWord.indexOf(letters.letters.charac)) {
+                window.alert('Le chevalet ne contient pas toutes les lettres de votre mot');
+                this.containsAllChars = false;
+                break;
+            }
+        }
+        if (this.containsAllChars) {
+            //for(let word of this.chatWord){
+            //let lett : Easel = this.easelLogisticsService!.easelLetters!.find!(letter => letter.letters.charac = word);
             // this.lettersService.placeLetter(word, {x : this.messageService.array.pop()!.column, y :this.getLineNumber(this.messageService.array.pop()!.line) })
-        //}
-    }
+            //}
+        }
     }
     getLineNumber(charac: string): number {
         switch (charac) {
@@ -165,5 +165,4 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         return -1;
     }
-  
 }

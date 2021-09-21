@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Letter } from '@app/classes/letter';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -25,7 +26,6 @@ export class ValidWorldService {
         //const decompressed_data_str = ValidWorldService.utf8_decoder.decode(decompressed_data_u8a);
         //const words = JSON.parse(decompressed_data_str);
         const words = await this.get_dictionary().toPromise();
-
         // const words = data.words.map((str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
 
         const letter_indexes = new Array<number[]>();
@@ -45,15 +45,19 @@ export class ValidWorldService {
         this.dictionary = letter_indexes.map(([t, h]) => new Set(words.slice(t, h)));
     }
 
-    public verify_word(word: string) {
+    public verify_word(word: Letter[]) {
+        let concatWord: string = '';
         if (this.dictionary === undefined) {
             return;
         }
         if (word.length == 0) {
             return;
         }
-
-        const letter_index_input = word.charCodeAt(0) - 'a'.charCodeAt(0);
-        return this.dictionary[letter_index_input].has(word);
+        for (let i = 0; i < word.length; i++) {
+            const letter = word[i].charac;
+            concatWord += letter;
+        }
+        const letter_index_input = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
+        return this.dictionary[letter_index_input].has(concatWord);
     }
 }
