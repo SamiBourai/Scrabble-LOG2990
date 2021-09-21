@@ -18,20 +18,22 @@ export class SidebarComponent {
     messageY: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
-    containsAllChars : boolean = true; 
-    //chatWord: string = '' ; 
-    foundLetter: Array<Boolean> = [false, false, false, false, false, false, false];
-    index : Array<number> = [];
+    containsAllChars: boolean = true;
+    // chatWord: string = '' ;
+    foundLetter: Boolean[] = [false, false, false, false, false, false, false];
+    index: number[] = [];
     form = new FormGroup({
         message: new FormControl('', [MessageValidators.isValid, MessageValidators.commandOrChat]),
     });
-    //window: any;
+    // window: any;
     // parameter:Parameter;
 
-    constructor(private m:MessageService, private cd :ChangeDetectorRef, private easelLogiscticsService : EaselLogiscticsService
-        , private lettersService:LettersService     ){
-
-    }
+    constructor(
+        private m: MessageService,
+        private cd: ChangeDetectorRef,
+        private easelLogiscticsService: EaselLogiscticsService,
+        private lettersService: LettersService,
+    ) {}
 
     ngAfterViewChecked(): void {
         this.cd.detectChanges();
@@ -42,19 +44,19 @@ export class SidebarComponent {
         return this.form.get('message') as AbstractControl;
     }
     logMessage() {
-        let placer = this.m.commandPlacer(this.typeArea);
+        const placer = this.m.commandPlacer(this.typeArea);
 
-        //console.log(placer.length)
+        // console.log(placer.length)
 
-        let echanger = this.m.commandEchanger(this.typeArea);
+        const echanger = this.m.commandEchanger(this.typeArea);
 
         if ((this.Message?.errors?.commandOrChat && !this.Message?.errors?.isValid) || (placer.length == 0 && !this.Message?.errors?.isValid))
             this.isValid = false;
-        //window.alert("votre commande n'est pas valide")
+        // window.alert("votre commande n'est pas valide")
         else this.messageY.push(this.typeArea);
 
         // test que les parametres des commandes sont biens recuperes
-       
+
         console.log(echanger);
 
         if (echanger) {
@@ -75,57 +77,59 @@ export class SidebarComponent {
             this.isValid = false;
             this.messageY.pop();
         }
-        this.getLettersFromChat(); 
-        
+        this.getLettersFromChat();
+
         this.typeArea = '';
     }
-    
-    logDebug(){
-        return this.m.commandDebug(this.typeArea)
+
+    logDebug() {
+        return this.m.commandDebug(this.typeArea);
     }
     getLettersFromChat(): void {
-        //this.chatWord = this.m.array.pop()!.word; 
-        //console.log(this.chatWord);  
-        let found : boolean = false; 
-        let first : boolean = true; 
-        for( var i=1 ;i<this.m.command.word.length;i++){ 
-            if(found || first ){
+        // this.chatWord = this.m.array.pop()!.word;
+        // console.log(this.chatWord);
+        let found = false;
+        let first = true;
+        for (let i = 1; i < this.m.command.word.length; i++) {
+            if (found || first) {
                 first = false;
-                found = false; 
-                console.log(this.m.command.word.charAt(i)) ;            
-            for(let j  = 0 ; j < 7; j ++ ){
-                console.log(this.easelLogiscticsService.easelLetters[j].letters.charac) ;  
-            if( this.m.command.word.charAt(i) == this.easelLogiscticsService.easelLetters[j].letters.charac && this.foundLetter[j]== false ){
-                this.foundLetter[j]= true; 
-                this.index.push(j); 
-                found = true; 
-                break; 
-                //  window.alert('Le chevalet ne contient pas toutes les lettres de votre mot');
-                //  this.containsAllChars = false; 
+                found = false;
+                console.log(this.m.command.word.charAt(i));
+                for (let j = 0; j < 7; j++) {
+                    console.log(this.easelLogiscticsService.easelLetters[j].letters.charac);
+                    if (this.m.command.word.charAt(i) == this.easelLogiscticsService.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
+                        this.foundLetter[j] = true;
+                        this.index.push(j);
+                        found = true;
+                        break;
+                        //  window.alert('Le chevalet ne contient pas toutes les lettres de votre mot');
+                        //  this.containsAllChars = false;
+                    }
+                }
+            } else {
+                window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                break;
             }
         }
+        console.log(this.foundLetter);
 
-        } else { window.alert('votre mot ne contient pas les lettres dans le chavlet')   
-            break; }
-    } console.log(this.foundLetter); 
-    
-    this.resetVariables();
-        if(found){
-            console.log(this.index); 
+        this.resetVariables();
+        if (found) {
+            console.log(this.index);
             this.placeLettersInScrable();
         }
-
     }
-    
-    placeLettersInScrable(): void {         
-            for(let i = this.m.command.word.length-2;i>=0;i--){         
-                this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!),
-                 { x: this.m.command.column, y: (this.getLineNumber(this.m.command.line)+i)});
-                  
-            }
+
+    placeLettersInScrable(): void {
+        for (let i = this.m.command.word.length - 2; i >= 0; i--) {
+            this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!), {
+                x: this.m.command.column,
+                y: this.getLineNumber(this.m.command.line) + i,
+            });
         }
+    }
     resetVariables(): void {
-        for(let i =0 ; i < this.foundLetter.length; i++) this.foundLetter[i] = false; 
+        for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;
     }
     getLineNumber(charac: string): number {
         switch (charac) {

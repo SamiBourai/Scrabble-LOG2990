@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 export class ValidWordService {
     private readonly utf8_decoder = new TextDecoder('UTF-8');
 
-    private dictionary?: Array<Set<string>>;
+    private dictionary?: Set<string>[];
 
     constructor(private http: HttpClient) {}
 
@@ -31,7 +31,7 @@ export class ValidWordService {
         );
     }
 
-    public async load_dictionary() {
+    async load_dictionary() {
         const words_obs = this.get_words();
         const words = await words_obs.toPromise();
         const letter_indexes = new Array<number[]>();
@@ -51,8 +51,8 @@ export class ValidWordService {
         this.dictionary = letter_indexes.map(([t, h]) => new Set(words.slice(t, h)));
     }
 
-    public verify_word(word: Letter[]) {
-        let concatWord: string = '';
+    verify_word(word: Letter[]) {
+        let concatWord = '';
         if (this.dictionary === undefined) {
             return;
         }

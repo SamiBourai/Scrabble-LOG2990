@@ -13,20 +13,20 @@ export class RealPlayerComponent implements OnInit {
     // Set strictNullChecks=false in tsconfig.json.
     // Declare your variable type as any
 
-    name: any;
+    name: unknown;
     roundTime: string = '1 min';
-    turnToplay: string ='Premier à jouer'
-    score:number=0;
-    chronometer:Chronometer;
-    counter: { min: number, sec: number }
-    constructor(public userService:UserService) {}
+    turnToplay: string = 'Premier à jouer';
+    score: number = 0;
+    chronometer: Chronometer;
+    counter: { min: number; sec: number };
+    constructor(public userService: UserService) {}
 
     ngOnInit(): void {
-     this.userService.startTimer();
+        this.userService.startTimer();
     }
 
     getUserName() {
-      this.name=localStorage.getItem('userName')
-      return this.name;
+        this.name = localStorage.getItem('userName');
+        return this.name;
     }
 }
