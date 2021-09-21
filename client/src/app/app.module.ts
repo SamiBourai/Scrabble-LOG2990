@@ -20,7 +20,7 @@ import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
 import { CommandService } from './services/command.service';
-import { ValidWordService } from './services/valid-world.service';
+import { ValidWorldService } from './services/valid-world.service';
 
 /**
  * Main module that is used in main.ts.
@@ -55,7 +55,7 @@ import { ValidWordService } from './services/valid-world.service';
         AvatarModule,
     ],
 
-    providers: [CommandService, MessageService, ValidWordService],
+    providers: [CommandService, MessageService, ValidWorldService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
