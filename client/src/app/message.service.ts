@@ -20,8 +20,53 @@ export class MessageService {
   private possibleOrientation:string = 'hv';
   command : ChatCommand = {word : "" , line :"" , column : 10, direction : "h" }; 
  
+  comOrChat(input:string){
+    if(input.includes('!')) return true;
+    return false;
+  }
+
+  isValid(command:string){
+    if(this.comOrChat(command) ){
+
+      if(( this.isPlacer(command) && command.length != 7 && this.commandPlacer(command).length != 0)  ){
+        return true
+      }
+      else if(this.isEchanger(command) && command.length != 9){
+        return true
+      }
+      else if(this.isInside(command,['!aide','!debug','!passer'])){
+        return true;
+      }
+      
+ 
+    }
+    else return true
+    return false;
+  }
+
+  isPlacer(command:string){
+
+    if(command.includes('!placer')) return true;
+    return false;
+    
+  }
+
+  isEchanger(command:string){
+    if(command.includes('!echanger')) return true
+    return false;
+  }
+
+  isInside(command:string,lookFor:string[]){
+    for(let i = 0; i < lookFor.length; i ++){
+      if(command ==(lookFor[i])) return true;
+    }
+    return false;
+  }
   
   
+  
+
+
   commandPlacer(input:string){
 
     input = input.substring(8,input.length);
