@@ -1,12 +1,14 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, I, L, LEFTSPACE, R, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
+import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
-import { WordPointsService } from '@app/services/word-points.service';
+
+//import { Easel } from '@app/classes/easel';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -26,17 +28,8 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
-    testWord: Letter[] = [T, A, B, L, I, E, R, S];
-    testPosition: Vec2[] = [
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 2, y: 0 },
-        { x: 3, y: 0 },
-        { x: 4, y: 0 },
-        { x: 5, y: 0 },
-        { x: 6, y: 0 },
-        { x: 7, y: 0 },
-    ];
+    containsAllChars : boolean = true; 
+    chatWord: string  ; 
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
@@ -45,10 +38,8 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-        psv: WordPointsService,
-    ) {
-        console.log(psv.points_word(this.testWord, this.testPosition));
-    }
+        private readonly messageService : MessageService,
+    ) {}
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -63,11 +54,6 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawBonusBox();
         this.gridService.drawGrid();
         this.gridService.drawHand();
-        this.gridService.drawWord('NIKBABAKUS');
-        this.gridService.drawPlayer();
-
-        this.gridService.drawPlayerName('bob');
-        this.gridService.drawOpponentName('bob');
         this.gridCanvas.nativeElement.focus();
     }
 
@@ -96,6 +82,7 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         this.easelLogisticsService.placeEaselLetters();
         console.log(this.easelLogisticsService.easelLetters);
+        console.log(this.reserveService._size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
@@ -112,4 +99,71 @@ export class PlayAreaComponent implements AfterViewInit {
             };
         }
     }
+    getLettersFromChat(): void {
+        this.chatWord = this.messageService.array.pop()!.word;  
+        for(let letters of this.easelLogisticsService.easelLetters){
+            if( ! this.chatWord.indexOf(letters.letters.charac)){
+                 window.alert('Le chevalet ne contient pas toutes les lettres de votre mot');
+                 this.containsAllChars = false;   
+                break; 
+            } 
+        } 
+        if (this.containsAllChars){
+            //for(let word of this.chatWord){ 
+             //let lett : Easel = this.easelLogisticsService!.easelLetters!.find!(letter => letter.letters.charac = word); 
+            // this.lettersService.placeLetter(word, {x : this.messageService.array.pop()!.column, y :this.getLineNumber(this.messageService.array.pop()!.line) })
+        //}
+    }
+    }
+    getLineNumber(charac: string): number {
+        switch (charac) {
+            case 'a': {
+                return 1;
+            }
+            case 'b': {
+                return 2;
+            }
+            case 'c': {
+                return 3;
+            }
+            case 'd': {
+                return 4;
+            }
+            case 'e': {
+                return 5;
+            }
+            case 'f': {
+                return 6;
+            }
+            case 'g': {
+                return 7;
+            }
+            case 'h': {
+                return 8;
+            }
+            case 'i': {
+                return 9;
+            }
+            case 'j': {
+                return 10;
+            }
+            case 'k': {
+                return 11;
+            }
+            case 'l': {
+                return 12;
+            }
+            case 'm': {
+                return 13;
+            }
+            case 'n': {
+                return 14;
+            }
+            case 'o': {
+                return 15;
+            }
+        }
+        return -1;
+    }
+  
 }
