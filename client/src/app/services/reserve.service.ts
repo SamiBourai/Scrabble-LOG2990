@@ -82,4 +82,15 @@ export class ReserveService {
     get size(): number {
         return this._size;
     }
+
+    reFillReserve(lett: Letter): boolean {
+        for (let i = 0; i < this.letters.length; i++) {
+            if (this.letters[i] == null) {
+                this.letters[i] = lett;
+                console.log(this.letters[i]);
+                return true;
+            }
+        }
+        return false;
+    }
 }

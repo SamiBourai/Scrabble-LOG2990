@@ -26,7 +26,8 @@ export class PlayAreaComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
-
+    containsAllChars: boolean = true;
+    chatWord: string;
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
@@ -50,8 +51,6 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawBonusBox();
         this.gridService.drawGrid();
         this.gridService.drawHand();
-       
-
         this.gridCanvas.nativeElement.focus();
     }
 
@@ -80,6 +79,7 @@ export class PlayAreaComponent implements AfterViewInit {
         }
         this.easelLogisticsService.placeEaselLetters();
         console.log(this.easelLogisticsService.easelLetters);
+        console.log(this.reserveService._size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
