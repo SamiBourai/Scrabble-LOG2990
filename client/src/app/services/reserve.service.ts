@@ -57,7 +57,6 @@ export class ReserveService {
             this.letters.push(E);
             this._size++;
         }
-
         this.letters.push(J);
         this.letters.push(K);
         this.letters.push(Q);

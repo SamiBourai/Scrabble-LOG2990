@@ -10,15 +10,21 @@ import { ReserveService } from './reserve.service';
 })
 export class LettersService {
     gridContext: CanvasRenderingContext2D;
-    usedPosition = new Set<Vec2>();
     foundLetter: Array<Boolean> = [false, false, false, false, false, false, false];
-    index: Array<number> = [];
+    indexOfEaselLetters: Array<number> = [];
+    indexOfBoardLetters: Array<number> = [];
 
-    constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {}
+    tiles = new Array<Array<Letter>>(15);
+
+    constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {
+        for (let i = 0; i < this.tiles.length; ++i) {
+            this.tiles[i] = new Array<Letter>(15);
+        }
+    }
 
     placeLetter(lett: Letter, pos: Vec2): void {
         if (this.boxIsEmpty(pos)) {
-            this.usedPosition.add(pos);
+            this.tiles[pos.x - 1][pos.y - 1] = lett;
             const imgLetter = new Image();
             imgLetter.src = lett.img;
             imgLetter.onload = () => {
@@ -34,19 +40,14 @@ export class LettersService {
     }
 
     boxIsEmpty(pos: Vec2): boolean {
-        for (let position of this.usedPosition) {
-            if (pos.x == position.x && pos.y == position.y) {
-                return false;
-            }
-        }
-        return true;
+        if (this.tiles[pos.x - 1][pos.y - 1] != undefined) return false;
+        else return true;
     }
 
     wordInEasel(word: string): boolean {
         let found: boolean = false;
         let first: boolean = true;
         for (var i = 0; i < word.length; i++) {
-            console.log(word.charAt(i));
             if (found || first) {
                 first = false;
                 found = false;
@@ -55,7 +56,7 @@ export class LettersService {
                     console.log(this.easelLogisticsService.easelLetters[j]);
                     if (word.charAt(i) == this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
                         this.foundLetter[j] = true;
-                        this.index.push(j);
+                        this.indexOfEaselLetters.push(j);
                         found = true;
                         break;
                     }
@@ -73,13 +74,13 @@ export class LettersService {
         if (this.wordInEasel(letterToChange)) {
             for (let i = 0; i < letterToChange.length; i++) {
                 let temp: Letter = {
-                    score: this.easelLogisticsService.easelLetters[this.index[i]]?.letters?.score,
-                    charac: this.easelLogisticsService.easelLetters[this.index[i]]?.letters?.charac,
-                    img: this.easelLogisticsService.easelLetters[this.index[i]]?.letters?.img,
+                    score: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.score,
+                    charac: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.charac,
+                    img: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.img,
                 };
 
-                this.easelLogisticsService.easelLetters[this.index[i]] = {
-                    index: this.index[i],
+                this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]] = {
+                    index: this.indexOfEaselLetters[i],
                     letters: this.reserveService.getRandomLetter(),
                 };
 
@@ -92,15 +93,30 @@ export class LettersService {
     }
     resetVariables(): void {
         for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;
-        this.index.splice(0, this.index.length);
+        this.indexOfEaselLetters.splice(0, this.indexOfEaselLetters.length);
+        this.indexOfBoardLetters.splice(0, this.indexOfEaselLetters.length);
     }
-    placeLettersInScrable(command: ChatCommand): void {
+    placeLettersInScrable(command: ChatCommand, indexOfBoardLetter: number[]): void {
+        let boardLetterCounter: number = 0;
+
         for (let i = 0; i < command.word.length; i++) {
-            this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.index[i]), {
-                x: command.column,
-                y: command.line + i,
-            });
+            if (i == indexOfBoardLetter[boardLetterCounter]) {
+                boardLetterCounter++;
+            } else {
+                if (command.direction == 'h') {
+                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[i]), {
+                        x: command.column,
+                        y: command.line + i,
+                    });
+                } else if (command.direction == 'v') {
+                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[i]), {
+                        x: command.column + i,
+                        y: command.line,
+                    });
+                }
+            }
         }
+
         this.resetVariables();
         this.refillEasel();
     }
@@ -116,5 +132,27 @@ export class LettersService {
             }
         }
         this.easelLogisticsService.placeEaselLetters();
+    }
+
+    wordIsPlacable(command: ChatCommand): boolean {
+        let saveLetter: string = '';
+        let letterFromEasel: string = '';
+        for (let i = 0; i < command.word.length; i++) {
+            if (command.direction == 'h') {
+                saveLetter = this.tiles[command.column - 1][command.line - 1 + i]?.charac;
+            }
+            if (command.direction == 'v') {
+                saveLetter = this.tiles[command.column - 1 + i][command.line - 1]?.charac;
+            }
+            if (saveLetter == command.word.charAt(i)) {
+                this.indexOfBoardLetters.push(i);
+            } else {
+                letterFromEasel = letterFromEasel + command.word.charAt(i);
+                console.log(letterFromEasel);
+            }
+        }
+        if (this.wordInEasel(letterFromEasel)) return true;
+
+        return false;
     }
 }
