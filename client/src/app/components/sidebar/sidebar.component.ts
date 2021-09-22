@@ -3,11 +3,11 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
-
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
-import { MessageValidators } from './message.validators';
+
+
 
 // import { Parameter } from '@app/classes/parameter';
 
@@ -17,30 +17,31 @@ import { MessageValidators } from './message.validators';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    messageY: string[] = [];
+    arrayOfMessages: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
     isCommand: boolean = false;
+    inEasel:boolean = true;
     parameters: ChatCommand[] = [];
     containsAllChars: boolean = true;
     //chatWord: string = '' ;
     foundLetter: Array<Boolean> = [false, false, false, false, false, false, false];
     index: Array<number> = [];
     form = new FormGroup({
-        message: new FormControl('', [MessageValidators.isValid, MessageValidators.commandOrChat]),
+        message: new FormControl(''),
     });
     //window: any;
     // parameter:Parameter;
 
     constructor(
         private messageService: MessageService,
-        private cd: ChangeDetectorRef,
+        private changeDetectorRef: ChangeDetectorRef,
         private easelLogiscticsService: EaselLogiscticsService,
         private lettersService: LettersService,
     ) {}
 
     ngAfterViewChecked(): void {
-        this.cd.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -48,24 +49,25 @@ export class SidebarComponent {
         return this.form.get('message') as AbstractControl;
     }
     logMessage() {
-        this.isCommand = this.messageService.comOrChat(this.typeArea);
+        this.isCommand = this.messageService.isCommand(this.typeArea);
         this.isValid = this.messageService.isValid(this.typeArea);
-        if (!this.messageService.comOrChat(this.typeArea) || this.messageService.isValid(this.typeArea)) {
-            this.messageY.push(this.typeArea);
-            this.parameters = this.messageService.commandPlacer(this.typeArea);
-            this.getLettersFromChat();
+        if (!this.messageService.isCommand(this.typeArea) || this.messageService.isValid(this.typeArea)) {
+            this.arrayOfMessages.push(this.typeArea);
+            this.parameters = this.messageService.placeCommand(this.typeArea);
             
         }
+       
+        this.getLettersFromChat();
         
 
-        console.log(this.messageY);
+        console.log(this.arrayOfMessages);
         console.log(this.parameters);
 
         this.typeArea = '';
     }
 
     logDebug() {
-        return this.messageService.commandDebug(this.typeArea);
+        return this.messageService.debugCommand(this.typeArea);
     }
     getLettersFromChat(): void {
         //this.chatWord = this.m.array.pop()!.word;
@@ -89,7 +91,8 @@ export class SidebarComponent {
                     }
                 }
             } else {
-                window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                //window.alert('votre mot ne contient pas les lettres dans le chevalet');
+                this.inEasel = false;
                 break;
             }
         }

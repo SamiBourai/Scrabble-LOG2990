@@ -118,3 +118,50 @@ export const PINK_BOX: Vec2[] = [
     { x: 10, y: 10 },
     { x: 7, y: 7 },
 ];
+
+//sidebar
+
+// the length of the command !placer and !echanger
+export const PLACE_LENGTH = 7;
+export const SWAP_LENGTH = 9;
+
+// the index for cut the (!placer) and only keep the parameters
+export const INDEX_OF_PLACE_PARAMETERS = 8;
+
+// to get the line element of the command place. ex : !placer h12h mot => h
+export const INDEX_0 = 0;
+export const INDEX_LINE = 1;
+
+// index for get the parameters. ex:  !placer h12h mot=> h12h
+export const INDEX_PARAMETERS = 4
+
+// for get the column of the command when the column > 10. ex: !placer h12h mot => 12
+export const FIRST_INDEX_2COLUMN = 1;
+export const LAST_INDEX_2COLUMN = 3;
+
+// for get the orientation of the command when the column > 10. ex: !placer h12h mot => h
+export const FIRST_INDEX_2ORIENTATION = 3;
+export const LAST_INDEX_2ORIENTATION = 4;
+
+// for get the word of the command. ex: !placer h12h
+export const INDEX_WORD = 4;
+
+// for get the column of the command when the column < 10. ex: !placer h2h mot => 2
+export const FIRST_INDEX_COLUMN = 1;
+export const LAST_INDEX_COLUMN = 2;
+
+//  for get the orientation of the command when the column < 10. ex: !placer h1h mot => h
+export const FIRST_INDEX_ORIENTATION = 2;
+export const LAST_INDEX_ORIENTATION = 3;
+
+// to be sure that the command !echanger is not given without parameters
+export const MIN_SWAP_LENGTH = 8;
+// for get the parametre of the command !echanger. ex: !echanger as => as
+export const PARAMETERS_OF_SWAP = 10;
+
+
+
+
+
+
+
