@@ -13,8 +13,11 @@ export class ValidWordService {
     private readonly utf8_decoder = new TextDecoder('UTF-8');
 
     private dictionary?: Set<string>[];
+    matchWords: Array<string> = [];
+    concatWord: string = '';
 
-    constructor(private http: HttpClient) {}
+
+    constructor(private http: HttpClient) { }
 
     private get_compressed_words(): Observable<ArrayBuffer> {
         // return this.http.get<string[]>('/assets/dictionary.json');
@@ -53,6 +56,7 @@ export class ValidWordService {
 
     verify_word(word: Letter[]) {
         let concatWord = '';
+        console.log(this.dictionary, 'ditionary');
         if (this.dictionary === undefined) {
             return;
         }
@@ -66,4 +70,27 @@ export class ValidWordService {
         const letter_index_input = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
         return this.dictionary[letter_index_input].has(concatWord);
     }
+    async generateAllWordsPossible(word: Letter[]) {
+        await this.load_dictionary();
+        for (let i = 0; i < word.length; i++) {
+            const letter = word[i].charac;
+            this.concatWord += letter;
+        }
+        let regexp = new RegExp('[ ${this.concatWord} ]');
+        console.log(this.concatWord, 'concatword');
+        // console.log(this.verify_word(word), 'verify');
+        if (this.verify_word(word)) {
+            for (let words of this.dictionary!)
+                for (let dictionaryWord of words) {
+                    if (this.concatWord.length == dictionaryWord.length) {
+                        let match = regexp.test(dictionaryWord);
+                        if (match) this.matchWords.push(dictionaryWord);
+                        //console.log(this.concatWord, 'matchhhhh');
+                        break;
+                    }
+                }
+        }
+        console.log(this.matchWords, 'match');
+    }
+
 }

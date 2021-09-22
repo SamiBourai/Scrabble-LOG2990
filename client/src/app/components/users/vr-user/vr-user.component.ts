@@ -33,4 +33,5 @@ export class VrUserComponent implements OnInit {
     pickRandomLetter(): string[] {
         return ['a', 'b', 'c', 'd', 'e', 'f', '7'];
     }
+    
 }

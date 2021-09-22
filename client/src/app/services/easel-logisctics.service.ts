@@ -61,6 +61,7 @@ export class EaselLogiscticsService {
         }
         return A;
     }
+  
 
     isFull(): boolean {
         for (let i = 0; i <= 6; i++) {
