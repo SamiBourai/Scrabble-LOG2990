@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { MessageService } from './message.service';
 
-
 fdescribe('MessageService', () => {
     let service: MessageService;
 
@@ -16,16 +15,16 @@ fdescribe('MessageService', () => {
 
     it('it should confirm that string possess an !', () => {
         const text = '!bonjour';
-        expect(service.comOrChat(text)).toBeTrue();
+        expect(service.isCommand(text)).toBeTrue();
     });
 
     it('it should confirm that string dont possess an !', () => {
         const text = 'bonjour';
-        expect(service.comOrChat(text)).toBeFalse();
+        expect(service.isCommand(text)).toBeFalse();
     });
 
     it('it should confirm that string dont possess an !', () => {
         const text = 'bonjour!';
-        expect(service.comOrChat(text)).toBeFalse();
+        expect(service.isCommand(text)).toBeFalse();
     });
 });

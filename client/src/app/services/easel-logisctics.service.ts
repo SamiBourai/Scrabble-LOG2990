@@ -3,13 +3,14 @@ import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
 import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
 
-
 @Injectable({
     providedIn: 'root',
 })
 export class EaselLogiscticsService {
     gridContext: CanvasRenderingContext2D;
-    
+    foundLetter: Array<Boolean> = [false, false, false, false, false, false, false];
+    index: Array<number> = [];
+
     easelLetters: Array<Easel> = [
         { index: 0, letters: A },
         { index: 0, letters: A },
@@ -67,5 +68,31 @@ export class EaselLogiscticsService {
             if (!this.occupiedPos[i]) return false;
         }
         return true;
+    }
+
+    wordInEasel(word: string): boolean {
+        let found: boolean = false;
+        let first: boolean = true;
+        for (var i = 0; i < word.length; i++) {
+            console.log(word.charAt(i));
+            if (found || first) {
+                first = false;
+                found = false;
+
+                for (let j = 0; j < 7; j++) {
+                    console.log(this.easelLetters[j]);
+                    if (word.charAt(i) == this.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
+                        this.foundLetter[j] = true;
+                        this.index.push(j);
+                        found = true;
+                        break;
+                    }
+                }
+            } else {
+                window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                break;
+            }
+        }
+        return found;
     }
 }

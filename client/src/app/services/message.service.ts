@@ -18,15 +18,15 @@ export class MessageService {
     private possibleLigne: string = 'abcdefghijklmno';
     private possibleColonne: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     private possibleOrientation: string = 'hv';
-    command: ChatCommand = { word: '', line: '', column: 10, direction: 'h' };
+    command: ChatCommand = { word: '', line: 0, column: 10, direction: 'h' };
 
-    comOrChat(input: string) {
+    isCommand(input: string) {
         if (input.includes('!') && input.indexOf('!') == 0) return true;
         return false;
     }
 
     isValid(command: string) {
-        if (this.comOrChat(command)) {
+        if (this.isCommand(command)) {
             if (this.isPlacer(command) && command.length != 7 && this.commandPlacer(command).length != 0) {
                 return true;
             } else if (this.isEchanger(command) && command.length != 9) {
@@ -76,7 +76,7 @@ export class MessageService {
             this.possibleColonne.includes(this.colonne) &&
             this.possibleOrientation.includes(this.orientation)
         ) {
-            this.command = { word: this.mot, line: this.ligne, column: this.colonne, direction: this.orientation };
+            this.command = { word: this.mot, line: this.getLineNumber(this.ligne), column: this.colonne, direction: this.orientation };
             this.array.push(this.command);
         }
         return this.array;
@@ -94,5 +94,55 @@ export class MessageService {
     commandDebug(input: string) {
         if (input === '!debug') this.isDebug = true;
         return this.isDebug;
+    }
+    getLineNumber(charac: string): number {
+        switch (charac) {
+            case 'a': {
+                return 1;
+            }
+            case 'b': {
+                return 2;
+            }
+            case 'c': {
+                return 3;
+            }
+            case 'd': {
+                return 4;
+            }
+            case 'e': {
+                return 5;
+            }
+            case 'f': {
+                return 6;
+            }
+            case 'g': {
+                return 7;
+            }
+            case 'h': {
+                return 8;
+            }
+            case 'i': {
+                return 9;
+            }
+            case 'j': {
+                return 10;
+            }
+            case 'k': {
+                return 11;
+            }
+            case 'l': {
+                return 12;
+            }
+            case 'm': {
+                return 13;
+            }
+            case 'n': {
+                return 14;
+            }
+            case 'o': {
+                return 15;
+            }
+        }
+        return -1;
     }
 }
