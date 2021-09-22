@@ -2,6 +2,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
+import { Vec2 } from '@app/classes/vec2';
+import Denque from 'denque';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -65,5 +67,11 @@ export class ValidWordService {
         }
         const letter_index_input = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
         return this.dictionary[letter_index_input].has(concatWord);
+    }
+
+    public readWords(word: Letter[], position: Vec2[]) {
+        for (let i = 0; i < word.length; i++) {
+            const dequeWords = new Denque([]);
+        }
     }
 }
