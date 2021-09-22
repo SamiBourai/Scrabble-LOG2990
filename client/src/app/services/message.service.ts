@@ -21,7 +21,8 @@ export class MessageService {
   private possibleLigne: string = 'abcdefghijklmno';
   private possibleColonne:number[] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]; 
   private possibleOrientation:string = 'hv';
-  command : ChatCommand = {word : "" , line :"" , column : 10, direction : "h" }; 
+  command : ChatCommand = {word : "" , line :"" , column : 10, direction : "h" };
+  arrayOfSpecialChars:string[] = ['ç','é','è','ë'] ;
  
   isCommand(input:string){
     if(input.includes('!') && input.indexOf('!') == 0) return true;
@@ -67,8 +68,6 @@ export class MessageService {
   }
   
   
-  
-
 
   placeCommand(input:string){
 
@@ -111,6 +110,31 @@ debugCommand(input:string){
   if(input === "!debug") this.isDebug = true;
   return this.isDebug 
 }
+
+
+containsSpecialChar(input:string){
+  
+  for(let i = 0; i < input.length; i++){
+    if(this.arrayOfSpecialChars.includes(input[i])) return true;
+  }
+  return false;
 }
+
+remplaceSpecialChar(input:string){
+  
+  for(let i = 0; i < input.length; i++){
+    if(input[i] === 'ç') input = input.split(input[i]).join('c');
+    else if(input[i] === 'é' || input[i] === 'è' || input[i] === 'ë' ) input = input.split(input[i]).join('e');
+  }
+  return input;
+}
+
+  
+
+
+
+}
+
+
 
 

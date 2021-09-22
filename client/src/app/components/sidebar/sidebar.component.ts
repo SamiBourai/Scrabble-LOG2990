@@ -49,6 +49,9 @@ export class SidebarComponent {
         return this.form.get('message') as AbstractControl;
     }
     logMessage() {
+        if(this.messageService.containsSpecialChar(this.typeArea)){
+            this.typeArea = this.messageService.remplaceSpecialChar(this.typeArea);
+        } 
         this.isCommand = this.messageService.isCommand(this.typeArea);
         this.isValid = this.messageService.isValid(this.typeArea);
         if (!this.messageService.isCommand(this.typeArea) || this.messageService.isValid(this.typeArea)) {
