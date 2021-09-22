@@ -1,12 +1,11 @@
-
-
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
-
+import { Letter } from '@app/classes/letter';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
+import { ReserveService } from '@app/services/reserve.service';
 import { MessageValidators } from './message.validators';
 
 // import { Parameter } from '@app/classes/parameter';
@@ -35,8 +34,9 @@ export class SidebarComponent {
     constructor(
         private m: MessageService,
         private cd: ChangeDetectorRef,
-        private easelLogiscticsService: EaselLogiscticsService,
+        private easelLogisticsService: EaselLogiscticsService,
         private lettersService: LettersService,
+        private reserveService: ReserveService,
     ) {}
 
     ngAfterViewChecked(): void {
@@ -53,12 +53,9 @@ export class SidebarComponent {
         if (!this.m.comOrChat(this.typeArea) || this.m.isValid(this.typeArea)) {
             this.messageY.push(this.typeArea);
             this.parameters = this.m.commandPlacer(this.typeArea);
-            
+            this.changeLetterFromReserve(this.m.commandEchanger(this.typeArea));
         }
         this.getLettersFromChat();
-
-        console.log(this.messageY);
-        console.log(this.parameters);
 
         this.typeArea = '';
     }
@@ -67,24 +64,27 @@ export class SidebarComponent {
         return this.m.commandDebug(this.typeArea);
     }
     getLettersFromChat(): void {
-        //this.chatWord = this.m.array.pop()!.word;
-        //console.log(this.chatWord);
+        if (this.wordInEasel(this.m.command.word)) {
+            this.placeLettersInScrable();
+        }
+        this.resetVariables();
+    }
+    wordInEasel(word: string): boolean {
         let found: boolean = false;
         let first: boolean = true;
-        for (var i = 1; i < this.m.command.word.length; i++) {
+        for (var i = 0; i < word.length; i++) {
+            console.log(word.charAt(i));
             if (found || first) {
                 first = false;
                 found = false;
-                console.log(this.m.command.word.charAt(i));
+
                 for (let j = 0; j < 7; j++) {
-                    console.log(this.easelLogiscticsService.easelLetters[j].letters.charac);
-                    if (this.m.command.word.charAt(i) == this.easelLogiscticsService.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
+                    console.log(this.easelLogisticsService.easelLetters[j]);
+                    if (word.charAt(i) == this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
                         this.foundLetter[j] = true;
                         this.index.push(j);
                         found = true;
                         break;
-                        //  window.alert('Le chevalet ne contient pas toutes les lettres de votre mot');
-                        //  this.containsAllChars = false;
                     }
                 }
             } else {
@@ -94,23 +94,21 @@ export class SidebarComponent {
         }
         console.log(this.foundLetter);
 
-        this.resetVariables();
-        if (found) {
-            console.log(this.index);
-            this.placeLettersInScrable();
-        }
+        return found;
     }
-
     placeLettersInScrable(): void {
-        for (let i = this.m.command.word.length - 2; i >= 0; i--) {
-            this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!), {
+        for (let i = 0; i < this.m.command.word.length; i++) {
+            this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.index[i]), {
                 x: this.m.command.column,
                 y: this.getLineNumber(this.m.command.line) + i,
             });
         }
+
+        this.resetVariables();
     }
     resetVariables(): void {
         for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;
+        this.index.splice(0, this.index.length);
     }
     getLineNumber(charac: string): number {
         switch (charac) {
@@ -161,5 +159,26 @@ export class SidebarComponent {
             }
         }
         return -1;
+    }
+
+    changeLetterFromReserve(letterToChange: string): void {
+        if (this.wordInEasel(letterToChange)) {
+            for (let i = 0; i < letterToChange.length; i++) {
+                let temp: Letter = {
+                    score: this.easelLogisticsService.easelLetters[this.index[i]]?.letters?.score,
+                    charac: this.easelLogisticsService.easelLetters[this.index[i]]?.letters?.charac,
+                    img: this.easelLogisticsService.easelLetters[this.index[i]]?.letters?.img,
+                };
+
+                this.easelLogisticsService.easelLetters[this.index[i]] = {
+                    index: this.index[i],
+                    letters: this.reserveService.getRandomLetter(),
+                };
+
+                this.reserveService.reFillReserve(temp);
+            }
+            this.easelLogisticsService.placeEaselLetters();
+        }
+        this.resetVariables();
     }
 }

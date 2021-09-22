@@ -12,7 +12,7 @@ export const NB_LETTER_HAND = 7;
 export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;
 export const CTX_PX = 15;
-export const ADJUSTEMENT_TOPSPACE = 5 ; 
+export const ADJUSTEMENT_TOPSPACE = 5;
 
 // play-area-comp
 export const WIDTH = 900;
@@ -49,6 +49,7 @@ export const X: Letter = { score: 10, charac: 'x', img: '../../assets/letter-x.p
 export const Y: Letter = { score: 10, charac: 'y', img: '../../assets/letter-y.png' };
 export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.png' };
 
+// play-area
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },
     { x: 7, y: 0 },

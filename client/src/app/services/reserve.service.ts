@@ -73,24 +73,14 @@ export class ReserveService {
         while (this.letters[this.random] == null) this.random = Math.floor(Math.random() * this.letters.length);
         this.save = this.letters[this.random];
 
-        delete this.letters[this.random];
+        this.letters.slice(this.random, 1);
         this._size--;
 
         return this.save;
     }
 
-    get size(): number {
-        return this._size;
-    }
-
-    reFillReserve(lett: Letter): boolean {
-        for (let i = 0; i < this.letters.length; i++) {
-            if (this.letters[i] == null) {
-                this.letters[i] = lett;
-                console.log(this.letters[i]);
-                return true;
-            }
-        }
-        return false;
+    reFillReserve(lett: Letter) {
+        this.letters.push(lett);
+        this._size++;
     }
 }

@@ -7,7 +7,6 @@ import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 
-
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
     Left = 0,
@@ -63,8 +62,12 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     placeFromEasel(): void {
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 7, y: 8 });
+        if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
+            this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
+        }
+        if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
+            this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 2, y: 2 });
+        }
     }
 
     getLetters(): void {
@@ -96,6 +99,4 @@ export class PlayAreaComponent implements AfterViewInit {
             };
         }
     }
-   
-  
 }
