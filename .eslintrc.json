@@ -165,7 +165,7 @@
                 "constructor-super": "error",
                 "deprecation/deprecation": "error",
                 "dot-notation": "error",
-                "endOfLine": "auto",
+                //"endOfLine": "auto",
                 "eol-last": "off",
                 "eqeqeq": ["error", "smart"],
                 "guard-for-in": "error",
