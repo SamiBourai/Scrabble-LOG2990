@@ -21,6 +21,7 @@ import { ModalUserNameComponent } from './modal-user-name/modal-user-name.compon
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
 import { CommandService } from './services/command.service';
 import { ValidWordService } from './services/valid-world.service';
+import { WordPointsService } from './services/word-points.service';
 
 /**
  * Main module that is used in main.ts.
@@ -55,7 +56,7 @@ import { ValidWordService } from './services/valid-world.service';
         AvatarModule,
     ],
 
-    providers: [CommandService, MessageService, ValidWordService],
+    providers: [CommandService, MessageService, ValidWordService, WordPointsService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

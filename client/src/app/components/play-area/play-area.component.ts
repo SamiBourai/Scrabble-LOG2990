@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, LEFTSPACE, R, S, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
-
+import { ValidWordService } from '@app/services/valid-world.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -36,7 +36,18 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-    ) {}
+        pvs: ValidWordService,
+    ) {
+        let usedPosition = [[A, R, B, R, E, S], [S]];
+        let word = [A, S];
+        let position: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: 0, y: 1 },
+        ];
+        pvs.load_dictionary().then(() => {
+            pvs.readWordsAndGivePointsIfValid_Vertical(word, position, usedPosition);
+        });
+    }
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -96,6 +107,4 @@ export class PlayAreaComponent implements AfterViewInit {
             };
         }
     }
-   
-  
 }

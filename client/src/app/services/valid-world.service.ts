@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import Denque from 'denque';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { WordPointsService } from './word-points.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,7 +16,7 @@ export class ValidWordService {
 
     private dictionary?: Array<Set<string>>;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, private wps: WordPointsService) {}
 
     private get_compressed_words(): Observable<ArrayBuffer> {
         // return this.http.get<string[]>('/assets/dictionary.json');
@@ -69,9 +69,84 @@ export class ValidWordService {
         return this.dictionary[letter_index_input].has(concatWord);
     }
 
-    public readWords(word: Letter[], position: Vec2[]) {
-        for (let i = 0; i < word.length; i++) {
-            const dequeWords = new Denque([]);
+    public readWordsAndGivePointsIfValid_Vertical(word: Letter[], positions: Vec2[], usedPosition: Letter[][]) {
+        let totalPointsSum = 0;
+        for (let letter_index = 0; letter_index < word.length; letter_index++) {
+            let array: Array<Letter> = [];
+            let arrayPosition: Array<Vec2> = [];
+            let counter: number = 1;
+            let currentPosition = positions[letter_index];
+
+            // Check right side
+
+            while (currentPosition !== undefined && currentPosition.x < 15) {
+                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+                if (currentLetter !== undefined) {
+                    array.push(currentLetter);
+                    arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+                currentPosition.x++;
+                counter++;
+            }
+            if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x - counter;
+            counter = 0;
+
+            //check left side
+
+            while (currentPosition !== undefined && currentPosition.x >= 0) {
+                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+                if (currentLetter !== undefined) {
+                    array.unshift(currentLetter);
+                    arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+                currentPosition.x--;
+            }
+
+            if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x + counter;
+            counter = 0;
+
+            //check top side
+
+            while (currentPosition !== undefined && currentPosition.y >= 0) {
+                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+
+                if (currentLetter !== undefined) {
+                    array.unshift(currentLetter);
+                    arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+                currentPosition.y++;
+            }
+            if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y + counter;
+            counter = 0;
+
+            //check bot side
+
+            while (currentPosition !== undefined && currentPosition.y < 15) {
+                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+                if (currentLetter !== undefined) {
+                    array.unshift(currentLetter);
+                    arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+                currentPosition.y--;
+            }
+            if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y - counter;
+            counter = 0;
+            console.log(array);
+            if (this.verify_word(array)) {
+                totalPointsSum += this.wps.points_word(array, arrayPosition);
+            } else {
+                return;
+            }
         }
+        console.log(totalPointsSum);
+        return totalPointsSum;
     }
 }
