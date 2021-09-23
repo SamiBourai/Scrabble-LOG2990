@@ -48,12 +48,14 @@ export class LettersService {
         console.log(word);
         let found: boolean = false;
         let first: boolean = true;
+
         for (var i = 0; i < word.length; i++) {
             if (found || first) {
                 first = false;
                 found = false;
 
                 for (let j = 0; j < 7; j++) {
+                    console.log(word.charAt(i) + ' : ' + this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j]);
                     if (word.charAt(i) == this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
                         this.foundLetter[j] = true;
 
