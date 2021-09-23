@@ -12,7 +12,7 @@ export const NB_LETTER_HAND = 7;
 export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;
 export const CTX_PX = 15;
-export const ADJUSTEMENT_TOPSPACE = 5 ; 
+export const ADJUSTEMENT_TOPSPACE = 5;
 
 // play-area-comp
 export const WIDTH = 900;
@@ -119,7 +119,7 @@ export const PINK_BOX: Vec2[] = [
     { x: 7, y: 7 },
 ];
 
-//sidebar
+// sidebar
 
 // the length of the command !placer and !echanger
 export const PLACE_LENGTH = 7;
@@ -133,7 +133,7 @@ export const INDEX_0 = 0;
 export const INDEX_LINE = 1;
 
 // index for get the parameters. ex:  !placer h12h mot=> h12h
-export const INDEX_PARAMETERS = 4
+export const INDEX_PARAMETERS = 4;
 
 // for get the column of the command when the column > 10. ex: !placer h12h mot => 12
 export const FIRST_INDEX_2COLUMN = 1;
@@ -160,10 +160,3 @@ export const LAST_INDEX_ORIENTATION = 3;
 export const MIN_SWAP_LENGTH = 8;
 // for get the parametre of the command !echanger. ex: !echanger as => as
 export const PARAMETERS_OF_SWAP = 10;
-
-
-
-
-
-
-

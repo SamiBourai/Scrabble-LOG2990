@@ -19,25 +19,25 @@ export class WordPointsService {
         console.log(word.length == position.length);
         for (let letter_index = 0; letter_index < word.length; ++letter_index) {
             let score = word[letter_index].score;
-            for (let i of RED_BOX) {
+            for (const i of RED_BOX) {
                 if (this.compare_vec2(position[letter_index], i)) {
                     word_multiplier *= 3;
                 }
             }
 
-            for (let i of PINK_BOX) {
+            for (const i of PINK_BOX) {
                 if (this.compare_vec2(position[letter_index], i)) {
                     word_multiplier *= 2;
                 }
             }
 
-            for (let i of BLUE_BOX) {
+            for (const i of BLUE_BOX) {
                 if (this.compare_vec2(position[letter_index], i)) {
                     score = word[letter_index].score * 3;
                 }
             }
 
-            for (let i of AZUR_BOX) {
+            for (const i of AZUR_BOX) {
                 if (this.compare_vec2(position[letter_index], i)) {
                     score = word[letter_index].score * 2;
                 }

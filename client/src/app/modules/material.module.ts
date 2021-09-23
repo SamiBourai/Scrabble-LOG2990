@@ -66,7 +66,7 @@ const modules = [
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    MatCardModule
+    MatCardModule,
 ];
 
 /**

@@ -1,7 +1,4 @@
-export interface Parameter{
+export interface Parameter {
     ligne: string;
-    colonne:string;
-   
+    colonne: string;
 }
-
-

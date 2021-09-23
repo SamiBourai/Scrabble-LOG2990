@@ -1,13 +1,9 @@
-
-
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
-
-
 
 // import { Parameter } from '@app/classes/parameter';
 
@@ -21,16 +17,16 @@ export class SidebarComponent {
     typeArea: string = '';
     isValid: boolean = true;
     isCommand: boolean = false;
-    inEasel:boolean = true;
+    inEasel: boolean = true;
     parameters: ChatCommand[] = [];
     containsAllChars: boolean = true;
-    //chatWord: string = '' ;
-    foundLetter: Array<Boolean> = [false, false, false, false, false, false, false];
-    index: Array<number> = [];
+    // chatWord: string = '' ;
+    foundLetter: Boolean[] = [false, false, false, false, false, false, false];
+    index: number[] = [];
     form = new FormGroup({
         message: new FormControl(''),
     });
-    //window: any;
+    // window: any;
     // parameter:Parameter;
 
     constructor(
@@ -49,19 +45,17 @@ export class SidebarComponent {
         return this.form.get('message') as AbstractControl;
     }
     logMessage() {
-        if(this.messageService.containsSpecialChar(this.typeArea)){
+        if (this.messageService.containsSpecialChar(this.typeArea)) {
             this.typeArea = this.messageService.remplaceSpecialChar(this.typeArea);
-        } 
+        }
         this.isCommand = this.messageService.isCommand(this.typeArea);
         this.isValid = this.messageService.isValid(this.typeArea);
         if (!this.messageService.isCommand(this.typeArea) || this.messageService.isValid(this.typeArea)) {
             this.arrayOfMessages.push(this.typeArea);
             this.parameters = this.messageService.placeCommand(this.typeArea);
-            
         }
-       
+
         this.getLettersFromChat();
-        
 
         console.log(this.arrayOfMessages);
         console.log(this.parameters);
@@ -73,18 +67,22 @@ export class SidebarComponent {
         return this.messageService.debugCommand(this.typeArea);
     }
     getLettersFromChat(): void {
-        //this.chatWord = this.m.array.pop()!.word;
-        //console.log(this.chatWord);
-        let found: boolean = false;
-        let first: boolean = true;
-        for (var i = 0; i < this.messageService.command.word.length; i++) { // jai remis i = 0 car jai enleve le probleme de l espace
+        // this.chatWord = this.m.array.pop()!.word;
+        // console.log(this.chatWord);
+        let found = false;
+        let first = true;
+        for (let i = 0; i < this.messageService.command.word.length; i++) {
+            // jai remis i = 0 car jai enleve le probleme de l espace
             if (found || first) {
                 first = false;
                 found = false;
                 console.log(this.messageService.command.word.charAt(i));
                 for (let j = 0; j < 7; j++) {
                     console.log(this.easelLogiscticsService.easelLetters[j].letters.charac);
-                    if (this.messageService.command.word.charAt(i) == this.easelLogiscticsService.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
+                    if (
+                        this.messageService.command.word.charAt(i) == this.easelLogiscticsService.easelLetters[j].letters.charac &&
+                        this.foundLetter[j] == false
+                    ) {
                         this.foundLetter[j] = true;
                         this.index.push(j);
                         found = true;
@@ -94,7 +92,7 @@ export class SidebarComponent {
                     }
                 }
             } else {
-                //window.alert('votre mot ne contient pas les lettres dans le chevalet');
+                // window.alert('votre mot ne contient pas les lettres dans le chevalet');
                 this.inEasel = false;
                 break;
             }
@@ -109,7 +107,8 @@ export class SidebarComponent {
     }
 
     placeLettersInScrable(): void {
-        for (let i = this.messageService.command.word.length - 1; i >= 0; i--) { // jai mi length - 1 a la place de -2 car jai regle le probleme de l espace
+        for (let i = this.messageService.command.word.length - 1; i >= 0; i--) {
+            // jai mi length - 1 a la place de -2 car jai regle le probleme de l espace
             this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!), {
                 x: this.messageService.command.column,
                 y: this.getLineNumber(this.messageService.command.line) + i,

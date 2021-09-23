@@ -23,7 +23,5 @@ export class LettersService {
         };
     }
 
-    placeWord (placecommand:ChatCommand):void{
-        
-    }
+    placeWord(placecommand: ChatCommand): void {}
 }
