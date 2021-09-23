@@ -26,13 +26,40 @@
 //     gap: 200px;
 // }
 
+.chronometer-title{
+  text-align: center;
+  background: #3f51b5;
+  color: #fff;
+  display: inline-block;
+  text-align: center;
+  border-radius: 15%;
+  margin-top: 15%;
+  margin-bottom: 5%;
+  margin-left: 4%;
+  margin-right: 4%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px;
+}
+
+
+.mat-card{
+    width:30%;
+    height: auto;
+
+
+}
+.mat-card-header{
+    font-size: 10px;
+}
 #getRandomReserve, #Pl{
     width: 430px;
     height: 50px;
-    margin-top: 400px;
+    margin-top: 0px;
     align-content: center;
-    font-size: x-large;
-    font-family: 'Courier New', Courier, monospace;
+    font-size: 30px;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
     align-content: center;
     color: blanchedalmond;
 }
