@@ -73,7 +73,7 @@ export class PlayAreaComponent implements AfterViewInit {
     getLetters(): void {
         for (let i = 0; i < 7; i++) {
             if (this.easelLogisticsService.occupiedPos[i] == false) {
-                let temp: Letter = this.reserveService.getRandomLetter();
+                const temp: Letter = this.reserveService.getRandomLetter();
                 this.easelLogisticsService.easelLetters[i] = {
                     index: i,
                     letters: temp,

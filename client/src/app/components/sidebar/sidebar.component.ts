@@ -3,7 +3,6 @@ import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
-import { MessageValidators } from './message.validators';
 
 // import { Parameter } from '@app/classes/parameter';
 
@@ -13,25 +12,31 @@ import { MessageValidators } from './message.validators';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    messageY: string[] = [];
+    arrayOfMessages: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
     isCommand: boolean = false;
+    inEasel: boolean = true;
     parameters: ChatCommand[] = [];
     containsAllChars: boolean = true;
     firstTurn: boolean = true;
     //chatWord: string = '' ;
 
     form = new FormGroup({
-        message: new FormControl('', [MessageValidators.isValid, MessageValidators.commandOrChat]),
+        message: new FormControl(''),
     });
-    //window: any;
+    // window: any;
     // parameter:Parameter;
 
-    constructor(private messageService: MessageService, private cd: ChangeDetectorRef, private lettersService: LettersService) {}
+    constructor(
+        private messageService: MessageService,
+        private changeDetectorRef: ChangeDetectorRef,
+
+        private lettersService: LettersService,
+    ) {}
 
     ngAfterViewChecked(): void {
-        this.cd.detectChanges();
+        this.changeDetectorRef.detectChanges();
     }
 
     get Message() {
@@ -39,13 +44,13 @@ export class SidebarComponent {
     }
     logMessage() {
         if (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) {
-            if (this.messageService.isEchanger(this.typeArea)) {
-                this.lettersService.changeLetterFromReserve(this.messageService.commandEchanger(this.typeArea));
+            if (this.messageService.containsSwapCommand(this.typeArea)) {
+                this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
             }
-            if (this.messageService.isPlacer(this.typeArea)) {
+            if (this.messageService.containsPlaceCommand(this.typeArea)) {
                 this.getLettersFromChat();
             }
-            this.messageY.push(this.typeArea);
+            this.arrayOfMessages.push(this.typeArea);
         }
         this.isCommand = this.messageService.isCommand(this.typeArea);
         this.isValid = this.messageService.isValid(this.typeArea);
@@ -54,7 +59,7 @@ export class SidebarComponent {
     }
 
     logDebug() {
-        return this.messageService.commandDebug(this.typeArea);
+        return this.messageService.debugCommand(this.typeArea);
     }
 
     getLettersFromChat(): void {

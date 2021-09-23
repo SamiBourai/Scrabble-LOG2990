@@ -1,5 +1,23 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
+import {
+    FIRST_INDEX_2COLUMN,
+    FIRST_INDEX_2ORIENTATION,
+    FIRST_INDEX_COLUMN,
+    FIRST_INDEX_ORIENTATION,
+    INDEX_2WORD,
+    INDEX_OF_PLACE_PARAMETERS,
+    INDEX_PARAMETERS,
+    INDEX_WORD,
+    LAST_INDEX_2COLUMN,
+    LAST_INDEX_2ORIENTATION,
+    LAST_INDEX_COLUMN,
+    LAST_INDEX_ORIENTATION,
+    MIN_SWAP_LENGTH,
+    PARAMETERS_OF_SWAP,
+    PLACE_LENGTH,
+    SWAP_LENGTH,
+} from './../constants/constants';
 
 // import { Parameter } from './classes/parameter';
 // import { Parameter } from './classes/parameter';
@@ -8,17 +26,19 @@ import { ChatCommand } from '@app/classes/chat-command';
     providedIn: 'root',
 })
 export class MessageService {
-    private ligne: string;
-    private colonne: number;
+    private line: string;
+    private column: number;
     private orientation: string;
-    private mot: string;
+    private word: string;
     array = new Array<ChatCommand>();
+    arrayOfCommand: string[] = ['!aide', '!debug', '!passer'];
 
     private isDebug: boolean;
     private possibleLigne: string = 'abcdefghijklmno';
     private possibleColonne: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     private possibleOrientation: string = 'hv';
     command: ChatCommand = { word: '', position: { x: 0, y: 0 }, direction: 'h' };
+    arrayOfSpecialChars: string[] = ['ç', 'é', 'è', 'ë'];
 
     isCommand(input: string) {
         if (input.includes('!') && input.indexOf('!') == 0) return true;
@@ -27,23 +47,23 @@ export class MessageService {
 
     isValid(command: string) {
         if (this.isCommand(command)) {
-            if (this.isPlacer(command) && command.length != 7 && this.commandPlacer(command).length != 0) {
+            if (this.containsPlaceCommand(command) && command.length != PLACE_LENGTH && this.placeCommand(command).length != 0) {
                 return true;
-            } else if (this.isEchanger(command) && command.length != 9) {
+            } else if (this.containsSwapCommand(command) && command.length != SWAP_LENGTH) {
                 return true;
-            } else if (this.isInside(command, ['!aide', '!debug', '!passer'])) {
+            } else if (this.isInside(command, this.arrayOfCommand)) {
                 return true;
             }
         } else return true;
         return false;
     }
 
-    isPlacer(command: string) {
+    containsPlaceCommand(command: string) {
         if (command.includes('!placer')) return true;
         return false;
     }
 
-    isEchanger(command: string) {
+    containsSwapCommand(command: string) {
         if (command.includes('!echanger')) return true;
         return false;
     }
@@ -55,46 +75,63 @@ export class MessageService {
         return false;
     }
 
-    commandPlacer(input: string) {
-        input = input.substring(8, input.length);
+    placeCommand(input: string) {
+        input = input.substring(INDEX_OF_PLACE_PARAMETERS, input.length);
 
-        this.ligne = input.substring(0, 1);
+        this.line = input.substring(0, 1);
 
-        let letterPositionOrientation = input.substring(0, 4);
-        if (letterPositionOrientation.length == 4 && !letterPositionOrientation.includes(' ')) {
-            this.colonne = parseInt(letterPositionOrientation.substring(1, 3));
-            this.orientation = letterPositionOrientation.substring(3, 4);
-            this.mot = input.substring(5, input.length);
-        } else if (letterPositionOrientation.includes(' ')) {
-            this.colonne = parseInt(letterPositionOrientation.substring(1, 2));
-            this.orientation = letterPositionOrientation.substring(2, 3);
-
-            this.mot = input.substring(4, input.length);
+        const parametersString = input.substring(0, INDEX_PARAMETERS);
+        if (parametersString.length == INDEX_PARAMETERS && !parametersString.includes(' ')) {
+            this.column = parseInt(parametersString.substring(FIRST_INDEX_2COLUMN, LAST_INDEX_2COLUMN));
+            this.orientation = parametersString.substring(FIRST_INDEX_2ORIENTATION, LAST_INDEX_2ORIENTATION);
+            this.word = input.substring(INDEX_2WORD, input.length);
+        } else if (parametersString.includes(' ')) {
+            this.column = parseInt(parametersString.substring(FIRST_INDEX_COLUMN, LAST_INDEX_COLUMN));
+            this.orientation = parametersString.substring(FIRST_INDEX_ORIENTATION, LAST_INDEX_ORIENTATION);
+            this.word = input.substring(INDEX_WORD, input.length);
         }
+
+        // console.log(n.length)
+        // console.log(this.word)
         if (
-            this.possibleLigne.includes(this.ligne) &&
-            this.possibleColonne.includes(this.colonne) &&
-            this.possibleOrientation.includes(this.orientation)
+            this.possibleLigne.includes(this.line) &&
+            this.possibleColonne.includes(this.column) &&
+            this.possibleOrientation.includes(this.orientation) &&
+            this.word != ''
         ) {
-            this.command = { word: this.mot, position: { x: this.colonne, y: this.getLineNumber(this.ligne) }, direction: this.orientation };
-            console.log('command: ' + this.command.position.x);
+            this.command = { word: this.word, position: { x: this.column, y: this.getLineNumber(this.line) }, direction: this.orientation };
             this.array.push(this.command);
         }
         return this.array;
     }
 
-    commandEchanger(input: string) {
-        if (input.length > 8) {
-            return input.substring(10, input.length);
+    swapCommand(input: string) {
+        if (input.length > MIN_SWAP_LENGTH) {
+            return input.substring(PARAMETERS_OF_SWAP, input.length);
         }
         return '';
         // recuperer les lettres a echanger
     }
 
-    //!echanger
-    commandDebug(input: string) {
+    // !echanger
+    debugCommand(input: string) {
         if (input === '!debug') this.isDebug = true;
         return this.isDebug;
+    }
+
+    containsSpecialChar(input: string) {
+        for (let i = 0; i < input.length; i++) {
+            if (this.arrayOfSpecialChars.includes(input[i])) return true;
+        }
+        return false;
+    }
+
+    remplaceSpecialChar(input: string) {
+        for (let i = 0; i < input.length; i++) {
+            if (input[i] === 'ç') input = input.split(input[i]).join('c');
+            else if (input[i] === 'é' || input[i] === 'è' || input[i] === 'ë') input = input.split(input[i]).join('e');
+        }
+        return input;
     }
     getLineNumber(charac: string): number {
         switch (charac) {

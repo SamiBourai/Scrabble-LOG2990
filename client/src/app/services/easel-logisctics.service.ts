@@ -22,11 +22,11 @@ export class EaselLogiscticsService {
     ];
     size: number = 0;
     temp: Easel = { index: 0, letters: A };
-    occupiedPos: Array<Boolean> = [false, false, false, false, false, false, false];
+    occupiedPos: Boolean[] = [false, false, false, false, false, false, false];
     first: boolean = true;
 
     placeEaselLetters(): void {
-        for (let lett of this.easelLetters) {
+        for (const lett of this.easelLetters) {
             const img = new Image();
             img.src = lett.letters.img;
 
