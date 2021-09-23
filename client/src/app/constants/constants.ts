@@ -145,6 +145,8 @@ export const LAST_INDEX_2ORIENTATION = 4;
 
 // for get the word of the command. ex: !placer h12h
 export const INDEX_WORD = 4;
+// for get the word of the command. ex: !placer h2h
+export const INDEX_2WORD = 5;
 
 // for get the column of the command when the column < 10. ex: !placer h2h mot => 2
 export const FIRST_INDEX_COLUMN = 1;

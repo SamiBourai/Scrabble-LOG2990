@@ -77,7 +77,7 @@ export class SidebarComponent {
         //console.log(this.chatWord);
         let found: boolean = false;
         let first: boolean = true;
-        for (var i = 1; i < this.messageService.command.word.length; i++) {
+        for (var i = 0; i < this.messageService.command.word.length; i++) { // jai remis i = 0 car jai enleve le probleme de l espace
             if (found || first) {
                 first = false;
                 found = false;
@@ -109,7 +109,7 @@ export class SidebarComponent {
     }
 
     placeLettersInScrable(): void {
-        for (let i = this.messageService.command.word.length - 2; i >= 0; i--) {
+        for (let i = this.messageService.command.word.length - 1; i >= 0; i--) { // jai mi length - 1 a la place de -2 car jai regle le probleme de l espace
             this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!), {
                 x: this.messageService.command.column,
                 y: this.getLineNumber(this.messageService.command.line) + i,

@@ -1,4 +1,4 @@
-import { PLACE_LENGTH, SWAP_LENGTH, INDEX_OF_PLACE_PARAMETERS, INDEX_PARAMETERS, FIRST_INDEX_ORIENTATION, LAST_INDEX_ORIENTATION, FIRST_INDEX_2COLUMN, LAST_INDEX_2COLUMN, FIRST_INDEX_COLUMN, LAST_INDEX_COLUMN, FIRST_INDEX_2ORIENTATION, LAST_INDEX_2ORIENTATION, INDEX_WORD, MIN_SWAP_LENGTH, PARAMETERS_OF_SWAP } from './../constants/constants';
+import { PLACE_LENGTH, SWAP_LENGTH, INDEX_OF_PLACE_PARAMETERS, INDEX_PARAMETERS, FIRST_INDEX_ORIENTATION, LAST_INDEX_ORIENTATION, FIRST_INDEX_2COLUMN, LAST_INDEX_2COLUMN, FIRST_INDEX_COLUMN, LAST_INDEX_COLUMN, FIRST_INDEX_2ORIENTATION, LAST_INDEX_2ORIENTATION, INDEX_WORD, MIN_SWAP_LENGTH, PARAMETERS_OF_SWAP, INDEX_2WORD } from './../constants/constants';
 
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
@@ -15,7 +15,8 @@ export class MessageService {
   private column:number;
   private orientation:string
   private word:string;
-  array= new Array <ChatCommand>() ; 
+  array= new Array <ChatCommand>(); 
+  arrayOfCommand: string[] = ['!aide','!debug','!passer'];
 
   private isDebug:boolean
   private possibleLigne: string = 'abcdefghijklmno';
@@ -38,7 +39,7 @@ export class MessageService {
       else if(this.containsSwapCommand(command) && command.length != SWAP_LENGTH){
         return true
       }
-      else if(this.isInside(command,['!aide','!debug','!passer'])){
+      else if(this.isInside(command,this.arrayOfCommand)){
         return true;
       }
       
@@ -80,15 +81,17 @@ export class MessageService {
     if(parametersString.length == INDEX_PARAMETERS && !parametersString.includes(" ")){
       this.column = parseInt(parametersString.substring(FIRST_INDEX_2COLUMN,LAST_INDEX_2COLUMN));
       this.orientation = parametersString.substring(FIRST_INDEX_2ORIENTATION,LAST_INDEX_2ORIENTATION);
+      this.word = input.substring(INDEX_2WORD,input.length);
     }
     else if(parametersString.includes(" ")){
       this.column = parseInt(parametersString.substring(FIRST_INDEX_COLUMN,LAST_INDEX_COLUMN));
       this.orientation = parametersString.substring(FIRST_INDEX_ORIENTATION,LAST_INDEX_ORIENTATION);
+      this.word = input.substring(INDEX_WORD,input.length);
     }
-    this.word = input.substring(INDEX_WORD,input.length);
+   
     //console.log(n.length)
     //console.log(this.word)
-    if(this.possibleLigne.includes(this.line) && this.possibleColonne.includes(this.column) && this.possibleOrientation.includes(this.orientation) ){
+    if(this.possibleLigne.includes(this.line) && this.possibleColonne.includes(this.column) && this.possibleOrientation.includes(this.orientation) && this.word != ""){
       this.command = {word: this.word, line : this.line, column : this.column, direction: this.orientation }; 
       this.array.push(this.command); 
     }
