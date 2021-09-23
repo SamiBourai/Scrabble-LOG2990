@@ -78,4 +78,4 @@ const modules = [
     exports: [...modules],
     providers: [],
 })
-export class AppMaterialModule {}
+export class AppMaterialModule { }

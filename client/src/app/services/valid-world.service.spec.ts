@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ValidWordService } from './valid-world.service';
 
-fdescribe('ValidWorldService', () => {
+describe('ValidWorldService', () => {
     let service: ValidWordService;
 
     const json_zst_b64_str =

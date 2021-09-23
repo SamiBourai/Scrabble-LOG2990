@@ -1,12 +1,13 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
-
+import { ValidWordService } from '@app/services/valid-world.service';
+import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -28,6 +29,7 @@ export class PlayAreaComponent implements AfterViewInit {
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
+    let: Letter[] = [D, A, B, A];
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
@@ -36,7 +38,9 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-    ) {}
+        private readonly virtualPlayerService: VirtualPlayerService,
+        private readonly validWordService: ValidWordService
+    ) { }
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -52,6 +56,8 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
+        this.virtualPlayerService.generateVrPlayerEasel();
+        this.validWordService.generateAllWordsPossible(this.let);
     }
 
     get width(): number {
@@ -69,8 +75,8 @@ export class PlayAreaComponent implements AfterViewInit {
 
     getLetters(): void {
         for (let i = 0; i < 7; i++) {
-            if (this.easelLogisticsService.occupiedPos[i] == false) {
-                let temp: Letter = this.reserveService.getRandomLetter();
+            if (this.easelLogisticsService.occupiedPos[i] === false) {
+                const temp: Letter = this.reserveService.getRandomLetter();
                 this.easelLogisticsService.easelLetters[i] = {
                     index: i,
                     letters: temp,
@@ -96,6 +102,6 @@ export class PlayAreaComponent implements AfterViewInit {
             };
         }
     }
-   
-  
+
+
 }
