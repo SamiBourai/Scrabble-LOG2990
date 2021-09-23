@@ -81,8 +81,6 @@ export class PlayAreaComponent implements AfterViewInit {
             }
         }
         this.easelLogisticsService.placeEaselLetters();
-        console.log(this.easelLogisticsService.easelLetters);
-        console.log(this.reserveService._size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {

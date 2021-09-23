@@ -18,7 +18,7 @@ export class MessageService {
     private possibleLigne: string = 'abcdefghijklmno';
     private possibleColonne: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     private possibleOrientation: string = 'hv';
-    command: ChatCommand = { word: '', line: 0, column: 10, direction: 'h' };
+    command: ChatCommand = { word: '', position: { x: 0, y: 0 }, direction: 'h' };
 
     isCommand(input: string) {
         if (input.includes('!') && input.indexOf('!') == 0) return true;
@@ -64,7 +64,7 @@ export class MessageService {
         if (letterPositionOrientation.length == 4 && !letterPositionOrientation.includes(' ')) {
             this.colonne = parseInt(letterPositionOrientation.substring(1, 3));
             this.orientation = letterPositionOrientation.substring(3, 4);
-            this.mot = input.substring(4, input.length);
+            this.mot = input.substring(5, input.length);
         } else if (letterPositionOrientation.includes(' ')) {
             this.colonne = parseInt(letterPositionOrientation.substring(1, 2));
             this.orientation = letterPositionOrientation.substring(2, 3);
@@ -76,7 +76,8 @@ export class MessageService {
             this.possibleColonne.includes(this.colonne) &&
             this.possibleOrientation.includes(this.orientation)
         ) {
-            this.command = { word: this.mot, line: this.getLineNumber(this.ligne), column: this.colonne, direction: this.orientation };
+            this.command = { word: this.mot, position: { x: this.colonne, y: this.getLineNumber(this.ligne) }, direction: this.orientation };
+            console.log('command: ' + this.command.position.x);
             this.array.push(this.command);
         }
         return this.array;
@@ -143,6 +144,7 @@ export class MessageService {
                 return 15;
             }
         }
+        console.log('-1 swirtch');
         return -1;
     }
 }

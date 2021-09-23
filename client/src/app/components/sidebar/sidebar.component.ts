@@ -28,7 +28,7 @@ export class SidebarComponent {
     //window: any;
     // parameter:Parameter;
 
-    constructor(private m: MessageService, private cd: ChangeDetectorRef, private lettersService: LettersService) {}
+    constructor(private messageService: MessageService, private cd: ChangeDetectorRef, private lettersService: LettersService) {}
 
     ngAfterViewChecked(): void {
         this.cd.detectChanges();
@@ -38,33 +38,34 @@ export class SidebarComponent {
         return this.form.get('message') as AbstractControl;
     }
     logMessage() {
-        if (this.m.isCommand(this.typeArea) && this.m.isValid(this.typeArea)) {
-            if (this.m.isEchanger(this.typeArea)) {
-                this.lettersService.changeLetterFromReserve(this.m.commandEchanger(this.typeArea));
+        if (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) {
+            if (this.messageService.isEchanger(this.typeArea)) {
+                this.lettersService.changeLetterFromReserve(this.messageService.commandEchanger(this.typeArea));
             }
-            if (this.m.isPlacer(this.typeArea)) {
+            if (this.messageService.isPlacer(this.typeArea)) {
                 this.getLettersFromChat();
             }
             this.messageY.push(this.typeArea);
         }
-        this.isCommand = this.m.isCommand(this.typeArea);
-        this.isValid = this.m.isValid(this.typeArea);
+        this.isCommand = this.messageService.isCommand(this.typeArea);
+        this.isValid = this.messageService.isValid(this.typeArea);
 
         this.typeArea = '';
     }
 
     logDebug() {
-        return this.m.commandDebug(this.typeArea);
+        return this.messageService.commandDebug(this.typeArea);
     }
 
     getLettersFromChat(): void {
-        if (this.lettersService.wordInEasel(this.m.command.word) && this.firstTurn && this.m.command.line == 8 && this.m.command.column == 8) {
+        if (this.firstTurn && this.messageService.command.position.x == 8 && this.messageService.command.position.y == 8) {
             this.firstTurn = false;
             console.log('1er tour');
-            this.lettersService.placeLettersInScrable(this.m.command);
-        } else if (this.lettersService.wordIsPlacable(this.m.command)) {
-            console.log('2eme tour');
-            this.lettersService.placeLettersInScrable(this.m.command);
+            if (this.lettersService.wordInEasel(this.messageService.command.word)) {
+                this.lettersService.placeLettersInScrable(this.messageService.command);
+            }
+        } else if (this.lettersService.wordIsPlacable(this.messageService.command)) {
+            this.lettersService.placeLettersInScrable(this.messageService.command);
         }
     }
 }
