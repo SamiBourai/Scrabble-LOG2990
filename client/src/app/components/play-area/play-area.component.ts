@@ -2,7 +2,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -10,6 +10,8 @@ import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 // import { skip } from 'rxjs/operators';
 
+import { ValidWordService } from '@app/services/valid-world.service';
+import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -30,6 +32,10 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     //@ViewChild('skipTurn') private btnSkipTurn: HTMLButtonElement;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
+    containsAllChars: boolean = true;
+    chatWord: string;
+    let: Letter[] = [D, A, B, A];
+
     private canvasSize = { x: WIDTH, y: HEIGHT };
     remainingLetters:number;
 
@@ -38,8 +44,12 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-        public userService:UserService
+        public userService:UserService,
+        private readonly virtualPlayerService: VirtualPlayerService,
+        private readonly validWordService: ValidWordService
     ) {}
+
+    
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -81,14 +91,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawBonusBox();
         this.gridService.drawGrid();
         this.gridService.drawHand();
-        this.gridService.drawWord('NIKBABAKUS');
-        this.gridService.drawPlayer();
-
-        this.gridService.drawPlayerName('bob');
-        this.gridService.drawOpponentName('bob');
         this.gridCanvas.nativeElement.focus();
-
-
+        this.virtualPlayerService.generateVrPlayerEasel();
+        this.validWordService.generateAllWordsPossible(this.let);
     }
 
     get width(): number {
@@ -106,8 +111,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     getLetters(): void {
         for (let i = 0; i < 7; i++) {
-            if (this.easelLogisticsService.occupiedPos[i] == false) {
-                let temp: Letter = this.reserveService.getRandomLetter();
+            if (this.easelLogisticsService.occupiedPos[i] === false) {
+                const temp: Letter = this.reserveService.getRandomLetter();
                 this.easelLogisticsService.easelLetters[i] = {
                     index: i,
                     letters: temp,
@@ -134,8 +139,4 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
 
-    // listerToSkipTurn(){
-    //     this.btnSkipTurn.addEventListener("click", this.userService.skipTurn());
-
-    // }
 }

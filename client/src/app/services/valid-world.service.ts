@@ -1,36 +1,42 @@
 /* eslint-disable no-console */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Letter } from '@app/classes/letter';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
 })
-export class ValidWorldService {
-    private static utf8_decoder = new TextDecoder('utf-8');
+export class ValidWordService {
+    private readonly utf8_decoder = new TextDecoder('UTF-8');
 
-    private dictionary?: Array<Set<string>>;
+    private dictionary?: Set<string>[];
+    matchWords: Array<string> = [];
+    concatWord: string = '';
 
-    constructor(private http: HttpClient) {}
 
-    private get_dictionary(): Observable<ArrayBuffer> {
+    constructor(private http: HttpClient) { }
+
+    private get_compressed_words(): Observable<ArrayBuffer> {
+        // return this.http.get<string[]>('/assets/dictionary.json');
         return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
     }
 
-    public async load_dictionary() {
-        const compressed_data_ab = await this.get_dictionary().toPromise();
+    private get_words(): Observable<string[]> {
+        const compressed_words = this.get_compressed_words();
+        return compressed_words.pipe(
+            map((buf) => new Uint8Array(buf)),
+            map((data) => decompress(data)),
+            map((data) => this.utf8_decoder.decode(data)),
+            map((data) => JSON.parse(data)),
+        );
+    }
 
-        const compressed_data_u8a = new Uint8Array(compressed_data_ab);
-
-        const decompressed_data_u8a = decompress(compressed_data_u8a);
-
-        const decompressed_data_str = ValidWorldService.utf8_decoder.decode(decompressed_data_u8a);
-
-        const words = JSON.parse(decompressed_data_str);
-
-        // const words = data.words.map((str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-
+    async load_dictionary() {
+        const words_obs = this.get_words();
+        const words = await words_obs.toPromise();
         const letter_indexes = new Array<number[]>();
 
         let tail_letter = words[0].charCodeAt(0);
@@ -48,17 +54,48 @@ export class ValidWorldService {
         this.dictionary = letter_indexes.map(([t, h]) => new Set(words.slice(t, h)));
     }
 
-    public verify_word(word: string) {
-        if (!this.dictionary) {
-            console.log('ntm t a pas chargé');
+    verify_word(word: Letter[]) {
+        let concatWord = '';
+        console.log(this.dictionary, 'ditionary');
+        if (this.dictionary === undefined) {
             return;
         }
         if (word.length == 0) {
-            console.log('Mot vide!');
             return;
         }
-
-        const letter_index_input = word.charCodeAt(0) - 'a'.charCodeAt(0);
-        return this.dictionary[letter_index_input].has(word);
+        for (let i = 0; i < word.length; i++) {
+            const letter = word[i].charac;
+            concatWord += letter;
+        }
+        const letter_index_input = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
+        return this.dictionary[letter_index_input].has(concatWord);
     }
+    async generateAllWordsPossible(word: Letter[]) {
+        await this.load_dictionary();
+        for (let i = 0; i < word.length; i++) {
+            const letter = word[i].charac;
+            this.concatWord += letter;
+        }
+        console.log(word[1].charac)
+        let regexp = new RegExp('['+ word.pop()!.charac + '|' + word.pop()!.charac +'|' + word.pop()!.charac 
+        +'|' +word.pop()!.charac +']{'+ this.concatWord.length +'}','g');
+        console.log(regexp)
+        console.log(this.concatWord, 'concatword');
+        // console.log(this.verify_word(word), 'verify');
+        for (let words of this.dictionary!)
+            for (let dictionaryWord of words) {
+                console.log(this.concatWord.length)
+                if (this.concatWord.length == dictionaryWord.length) {
+                    let match = regexp.test(dictionaryWord);
+                    console.log(dictionaryWord,'suppoesed');
+                    console.log(match);
+                    if (match) this.matchWords.push(dictionaryWord);
+                    console.log(this.concatWord, 'matchhhhh');
+                    break;
+                }
+            }
+
+        console.log(this.matchWords, 'match');
+    }
+
 }

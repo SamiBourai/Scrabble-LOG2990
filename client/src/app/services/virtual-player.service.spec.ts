@@ -1,13 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { VirtualPlayerService } from './virtual-player.service';
 
-import { CommandService } from './command.service';
-
-describe('CommandService', () => {
-    let service: CommandService;
+describe('VirtualPlayerService', () => {
+    let service: VirtualPlayerService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(CommandService);
+        service = TestBed.inject(VirtualPlayerService);
     });
 
     it('should be created', () => {

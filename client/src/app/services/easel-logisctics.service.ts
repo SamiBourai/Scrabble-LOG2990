@@ -3,6 +3,7 @@ import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
 import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
 
+
 @Injectable({
     providedIn: 'root',
 })
@@ -17,10 +18,7 @@ export class EaselLogiscticsService {
         { index: 0, letters: A },
         { index: 0, letters: A },
     ];
-    size: number = 0;
-    temp: Easel = { index: 0, letters: A };
     occupiedPos: Array<Boolean> = [false, false, false, false, false, false, false];
-    first: boolean = true;
 
     placeEaselLetters(): void {
         for (let lett of this.easelLetters) {
@@ -59,6 +57,7 @@ export class EaselLogiscticsService {
         }
         return A;
     }
+
 
     isFull(): boolean {
         for (let i = 0; i <= 6; i++) {

@@ -1,8 +1,11 @@
 #canvas {
     border: 1px solid black;
     background-color: #ffe4c4;
+    margin-left: 5px;
 }
-
+// #getRandomReserve{
+//     //margin-bottom: -1000px;
+// }
 #grid-container {
     position: relative;
     height: 100%;
@@ -14,6 +17,10 @@
     left: 20%;
     display: flex;
     flex-direction: row;
+}
+#getRandomReserve{
+    display: inline-flex;
+    margin-top: 400PX;
 }
 // .user-component{
 //     gap: 200px;
@@ -45,4 +52,20 @@
 }
 .mat-card-header{
     font-size: 10px;
+}
+#getRandomReserve, #Pl{
+    width: 430px;
+    height: 50px;
+    margin-top: 0px;
+    align-content: center;
+    font-size: 30px;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    align-content: center;
+    color: blanchedalmond;
+}
+.buttom-button{
+    margin-top: -400px;
+}
+.p-div{
+    margin-left: 200px;
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
@@ -20,5 +21,9 @@ export class LettersService {
                 DEFAULT_HEIGHT / BOX,
             );
         };
+    }
+
+    placeWord(placecommand: ChatCommand): void {
+
     }
 }

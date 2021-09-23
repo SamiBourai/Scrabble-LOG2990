@@ -28,11 +28,24 @@
         </div>
 
         <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
+        <button id="getRandomReserve" (click)="getLetters()" mat-raised-button color="accent" class="button">Get Letters</button>
+        <button id="Pl" (click)="placeFromEasel()" mat-raised-button color="accent" class="button">place</button>
     </div>
 
-    <button id="getRandomReserve" (click)="getLetters()" mat-raised-button color="accent" class="button">Get Letters</button>
-    <button id="Pl" (click)="placeFromEasel()" mat-raised-button color="accent" class="button">place</button>
-<mat-card *ngIf="userService.time===59 else displayVrUser" fxLayout="row">
+
+
+
+
+<div>
+    <!-- <p class="chronometer-title"> Lettre restante : {{ remainingLetters }} </p> -->
+</div>
+
+
+</div>
+
+<div>
+
+    <mat-card *ngIf="userService.time===59 else displayVrUser" fxLayout="row">
             <ngx-avatar  class="avatar" size="25" name="{{ userService.realUser.name }}" ></ngx-avatar>
             <mat-card-header>
                 <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
@@ -49,11 +62,4 @@
     </mat-card-header>
 </mat-card>
 </ng-template>
-
-<div>
-    <!-- <p class="chronometer-title"> Lettre restante : {{ remainingLetters }} </p> -->
 </div>
-
-
-</div>
-

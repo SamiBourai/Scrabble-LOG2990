@@ -13,8 +13,6 @@ export class RealPlayerComponent implements OnInit {
     constructor(public userService:UserService) {}
 
     ngOnInit(): void {
-
-
     }
 
 }

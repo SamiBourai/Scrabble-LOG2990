@@ -1,11 +1,12 @@
 .container {
     // height: 100%;
+    flex-direction: column;
     display: flex;
     overflow-y: auto;
 }
 
 .play-area-container {
-   
+
     flex: 1 1 auto;
 }
 

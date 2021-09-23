@@ -14,7 +14,7 @@ export class ModalUserVsPlayerComponent implements OnInit {
     //   this.userService.chooseFirstToPlay();
     
   }
-  getNameFromLocalStorage(){
+  getNameFromLocalStorage() {
     return localStorage.getItem('userName');
   }
 }
