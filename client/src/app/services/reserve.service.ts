@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z } from '@app/constants/constants';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -10,6 +11,8 @@ export class ReserveService {
     random: number;
     save: Letter;
     _size: number = 0;
+    sizeObs= new BehaviorSubject(this._size);
+
 
     constructor() {
         for (let i = 0; i < 9; i++) {
@@ -74,12 +77,18 @@ export class ReserveService {
         this.save = this.letters[this.random];
 
         delete this.letters[this.random];
-        this._size--;
 
+        this._size--;
+        console.log("cout ligne 79 "+this._size);
+        this.sizeObs.next(this._size);
         return this.save;
     }
 
-    get size(): number {
-        return this._size;
+    get size(): BehaviorSubject<number> {
+        console.log("size "+ this._size);
+
+        return this.sizeObs;
     }
+
+
 }

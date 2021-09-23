@@ -31,6 +31,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CountdownModule } from 'ngx-countdown';
+
+
 const modules = [
     MatAutocompleteModule,
     MatButtonModule,
@@ -66,7 +69,8 @@ const modules = [
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    MatCardModule
+    MatCardModule,
+    CountdownModule
 ];
 
 /**

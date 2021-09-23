@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '@app/services/user.service';
 
 @Component({
   selector: 'app-modal-user-vs-player',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ModalUserVsPlayerComponent implements OnInit {
 
-  constructor() { }
+  constructor(public userService:UserService) { }
 
   ngOnInit(): void {
+    //   this.userService.chooseFirstToPlay();
+    
   }
   getNameFromLocalStorage(){
     return localStorage.getItem('userName');

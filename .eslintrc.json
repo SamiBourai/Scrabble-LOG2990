@@ -2,7 +2,14 @@
     "root": false,
     "extends": "eslint:recommended",
     "ignorePatterns": ["projects/**/*"],
-    "plugins": ["deprecation", "prettier", "import", "eslint-plugin-jsdoc", "eslint-plugin-prefer-arrow", "eslint-plugin-unicorn"],
+    "plugins": [
+        "deprecation",
+        "prettier",
+        "import",
+        "eslint-plugin-jsdoc",
+        "eslint-plugin-prefer-arrow",
+        "eslint-plugin-unicorn"
+    ],
     "overrides": [
         {
             "files": ["*.ts"],
@@ -165,7 +172,6 @@
                 "constructor-super": "error",
                 "deprecation/deprecation": "error",
                 "dot-notation": "error",
-                "endOfLine": "auto",
                 "eol-last": "off",
                 "eqeqeq": ["error", "smart"],
                 "guard-for-in": "error",
