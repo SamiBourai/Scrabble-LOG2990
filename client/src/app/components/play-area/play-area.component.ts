@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, R, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, M, O, P, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -38,29 +38,29 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly easelLogisticsService: EaselLogiscticsService,
         pvs: ValidWordService,
     ) {
-        // let usedPosition: any = [
-        //     [undefined, P, T],
-        //     [undefined, O, A],
-        //     [undefined, M, B],
-        //     [undefined, M, L],
-        //     [undefined, E, E],
-        //     [undefined, S, E],
-        //     [undefined, undefined, undefined],
-        // ];
         let usedPosition: any = [
-            [A, R, B, R, E, S],
-            [T, A, B, L, E, E],
+            [undefined, P, T],
+            [undefined, O, A],
+            [undefined, M, B],
+            [undefined, M, L],
+            [undefined, E, E],
+            [undefined, S, E],
+            [undefined, undefined, undefined],
         ];
+        // let usedPosition: Letter[][] = [
+        //     [A, R, B, R, E, S],
+        //     [T, A, B, L, E, E],
+        // ];
         let wordDirection = 'v';
         let word = [S, E];
-        // let position: Vec2[] = [
-        //     { x: 1, y: 5 },
-        //     { x: 2, y: 5 },
-        // ];
         let position: Vec2[] = [
-            { x: 5, y: 0 },
-            { x: 5, y: 1 },
+            { x: 1, y: 5 },
+            { x: 2, y: 5 },
         ];
+        // let position: Vec2[] = [
+        //     { x: 5, y: 0 },
+        //     { x: 5, y: 1 },
+        // ];
         pvs.load_dictionary().then(() => {
             pvs.readWordsAndGivePointsIfValid(word, position, usedPosition, wordDirection);
         });
