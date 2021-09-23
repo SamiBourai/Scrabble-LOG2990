@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, LEFTSPACE, R, S, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, M, O, P, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -38,11 +38,14 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly easelLogisticsService: EaselLogiscticsService,
         pvs: ValidWordService,
     ) {
-        let usedPosition = [[A, R, B, R, E, S], [S]];
-        let word = [A, S];
+        let usedPosition: any = [
+            [undefined, P, O, M, M, E, S],
+            [undefined, T, A, B, L, E, E],
+        ];
+        let word = [S, E];
         let position: Vec2[] = [
-            { x: 0, y: 0 },
-            { x: 0, y: 1 },
+            { x: 5, y: 0 },
+            { x: 5, y: 1 },
         ];
         pvs.load_dictionary().then(() => {
             pvs.readWordsAndGivePointsIfValid_Vertical(word, position, usedPosition);

@@ -69,83 +69,72 @@ export class ValidWordService {
         return this.dictionary[letter_index_input].has(concatWord);
     }
 
+    private checkSides(positions: Vec2[], array: Array<Letter>, arrayPosition: Array<Vec2>, letter_index: number, usedPosition: (Letter | undefined)[][] ) {
+        let counter: number = 1;
+        let currentPosition = positions[letter_index];
+        while (currentPosition !== undefined && currentPosition.x < 15) {
+            let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            if (currentLetter !== undefined) {
+                array.push(currentLetter);
+                arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
+            } else {
+                break;
+            }
+            currentPosition.x++;
+            counter++;
+        }
+        if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x - counter;
+        counter = 0;
+
+        //check left side
+
+        while (currentPosition !== undefined && currentPosition.x >= 0) {
+            let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            if (currentLetter !== undefined) {
+                array.unshift(currentLetter);
+                arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+            } else {
+                break;
+            }
+            currentPosition.x--;
+        }
+
+        if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x + counter;
+        counter = 0;
+    }
+
     public readWordsAndGivePointsIfValid_Vertical(word: Letter[], positions: Vec2[], usedPosition: Letter[][]) {
+        let readPositions: Array<Vec2> = [];
+        for (let i of positions) {
+            readPositions.push({ x: i.x, y: i.y });
+        }
         let totalPointsSum = 0;
         for (let letter_index = 0; letter_index < word.length; letter_index++) {
             let array: Array<Letter> = [];
             let arrayPosition: Array<Vec2> = [];
-            let counter: number = 1;
-            let currentPosition = positions[letter_index];
 
-            // Check right side
+            // Check side if word entered is vertical
+            this.checkSides(positions, array, arrayPosition, letter_index, usedPosition);
 
-            while (currentPosition !== undefined && currentPosition.x < 15) {
-                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-                if (currentLetter !== undefined) {
-                    array.push(currentLetter);
-                    arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
-                } else {
-                    break;
-                }
-                currentPosition.x++;
-                counter++;
-            }
-            if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x - counter;
-            counter = 0;
+            // Check top and bottom if word entered is horizontal
+            //this.checkTopBottom(positions, array, arrayPosition, letter_index, usedPosition);
 
-            //check left side
-
-            while (currentPosition !== undefined && currentPosition.x >= 0) {
-                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-                if (currentLetter !== undefined) {
-                    array.unshift(currentLetter);
-                    arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
-                } else {
-                    break;
-                }
-                currentPosition.x--;
-            }
-
-            if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x + counter;
-            counter = 0;
-
-            //check top side
-
-            while (currentPosition !== undefined && currentPosition.y >= 0) {
-                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-
-                if (currentLetter !== undefined) {
-                    array.unshift(currentLetter);
-                    arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
-                } else {
-                    break;
-                }
-                currentPosition.y++;
-            }
-            if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y + counter;
-            counter = 0;
-
-            //check bot side
-
-            while (currentPosition !== undefined && currentPosition.y < 15) {
-                let currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-                if (currentLetter !== undefined) {
-                    array.unshift(currentLetter);
-                    arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
-                } else {
-                    break;
-                }
-                currentPosition.y--;
-            }
-            if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y - counter;
-            counter = 0;
             console.log(array);
+            console.log(arrayPosition);
             if (this.verify_word(array)) {
                 totalPointsSum += this.wps.points_word(array, arrayPosition);
             } else {
-                return;
+                console.log('ntm');
+                totalPointsSum = 0;
+                console.log(totalPointsSum);
+                return totalPointsSum;
             }
         }
+        console.log(totalPointsSum);
+        console.log(readPositions);
+        let wordItselfPoints = this.wps.points_word(word, readPositions);
+        console.log(wordItselfPoints);
+        totalPointsSum += wordItselfPoints;
         console.log(totalPointsSum);
         return totalPointsSum;
     }
