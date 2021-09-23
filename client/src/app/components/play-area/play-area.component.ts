@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A,B,D, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -29,7 +29,7 @@ export class PlayAreaComponent implements AfterViewInit {
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
-    let : Letter[] = [D, A, B, A]; 
+    let: Letter[] = [D, A, B, A];
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
 
@@ -38,9 +38,9 @@ export class PlayAreaComponent implements AfterViewInit {
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-        private readonly virtualPlayerService : VirtualPlayerService,
-        private readonly validWordService : ValidWordService
-    ) {}
+        private readonly virtualPlayerService: VirtualPlayerService,
+        private readonly validWordService: ValidWordService
+    ) { }
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -56,7 +56,7 @@ export class PlayAreaComponent implements AfterViewInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
-        this.virtualPlayerService.generateVrPlayerEasel(); 
+        this.virtualPlayerService.generateVrPlayerEasel();
         this.validWordService.generateAllWordsPossible(this.let);
     }
 
@@ -75,7 +75,7 @@ export class PlayAreaComponent implements AfterViewInit {
 
     getLetters(): void {
         for (let i = 0; i < 7; i++) {
-            if (this.easelLogisticsService.occupiedPos[i] == false) {
+            if (this.easelLogisticsService.occupiedPos[i] === false) {
                 const temp: Letter = this.reserveService.getRandomLetter();
                 this.easelLogisticsService.easelLetters[i] = {
                     index: i,
@@ -103,5 +103,5 @@ export class PlayAreaComponent implements AfterViewInit {
         }
     }
 
-   
+
 }

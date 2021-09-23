@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ValidWordService } from './valid-world.service';
 
-fdescribe('ValidWorldService', () => {
+describe('ValidWorldService', () => {
     let service: ValidWordService;
 
     const json_zst_b64_str =
@@ -28,26 +28,26 @@ fdescribe('ValidWorldService', () => {
 
     it('get_compressed_words should return an observable of type arraybuffer', async () => {
         const ab = new ArrayBuffer(8);
-        spyOn<unknown>(service.http, 'get').and.returnValue(of(ab));
-        const ab2 = await service.get_compressed_words().toPromise();
+        spyOn<any>(service['http'], 'get').and.returnValue(of(ab));
+        const ab2 = await service['get_compressed_words']().toPromise();
         expect(ab).toBe(ab2);
     });
 
     it('get_words should return multiple words', async () => {
         const json_zst_buf_obs = of(json_zst_b64_str).pipe(map((b64_str) => b64_decode(b64_str)));
-        spyOn<unknown>(service, 'get_compressed_words').and.returnValue(json_zst_buf_obs);
+        spyOn<any>(service, 'get_compressed_words').and.returnValue(json_zst_buf_obs);
 
-        const words = await service.get_words().toPromise();
+        const words = await service['get_words']().toPromise();
         expect(words.length).not.toBeUndefined();
         expect(words.length).toBeGreaterThan(0);
     });
 
     it('load_dictionary should set dictionary to non empty', async () => {
         const words = ['pomme', 'punaise', 'banane'];
-        spyOn<unknown>(service, 'get_words').and.returnValue(of(words));
+        spyOn<any>(service, 'get_words').and.returnValue(of(words));
 
         await service.load_dictionary();
-        const dict = service.dictionary;
+        const dict = service['dictionary'];
         expect(dict?.length).toEqual(2);
     });
 
@@ -60,17 +60,17 @@ fdescribe('ValidWorldService', () => {
     });
 
     it('test_verifyWord EMPTY WORD', () => {
-        service.dictionary = [new Set(['amende'])];
+        service['dictionary'] = [new Set(['amende'])];
         expect(service.verify_word([])).toBeUndefined();
     });
 
     it('test_verifyWord 2 WORDS THAT MATCH', () => {
-        service.dictionary = [new Set(['arbre'])];
+        service['dictionary'] = [new Set(['arbre'])];
         expect(service.verify_word([A, R, B, R, E])).toBeTrue();
     });
 
     it('test_verifyWord 2 WORDS THAT DOESNT MATCH', () => {
-        service.dictionary = [new Set(['bonjour'])];
+        service['dictionary'] = [new Set(['bonjour'])];
         expect(service.verify_word([A, R, G, I, L, E])).toBeFalse();
     });
 });

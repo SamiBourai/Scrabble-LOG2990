@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EaselComponent } from './easel.component';
+
 
 describe('EaselComponent', () => {
   let component: EaselComponent;
@@ -8,9 +8,9 @@ describe('EaselComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EaselComponent ]
+      declarations: [EaselComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

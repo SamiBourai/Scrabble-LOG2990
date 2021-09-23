@@ -7,10 +7,9 @@ import { AZUR_BOX, BLUE_BOX, BONUS_POINTS_50, BONUS_WORD_LENGTH, PINK_BOX, RED_B
     providedIn: 'root',
 })
 export class WordPointsService {
-    constructor() {}
 
     private compare_vec2(a: Vec2, b: Vec2) {
-        return a.x == b.x && a.y == b.y;
+        return a.x === b.x && a.y === b.y;
     }
 
     points_word(word: Letter[], position: Vec2[]): number {

@@ -11,7 +11,7 @@ export class ModalUserVsPlayerComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  getNameFromLocalStorage(){
+  getNameFromLocalStorage() {
     return localStorage.getItem('userName');
   }
 }

@@ -33,7 +33,7 @@ export class SidebarComponent {
         private cd: ChangeDetectorRef,
         private easelLogiscticsService: EaselLogiscticsService,
         private lettersService: LettersService,
-    ) {}
+    ) { }
 
     ngAfterViewChecked(): void {
         this.cd.detectChanges();

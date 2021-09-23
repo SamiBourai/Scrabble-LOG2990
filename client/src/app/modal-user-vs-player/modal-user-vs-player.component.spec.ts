@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player.component';
 
 describe('ModalUserVsPlayerComponent', () => {
@@ -8,9 +7,9 @@ describe('ModalUserVsPlayerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModalUserVsPlayerComponent ]
+      declarations: [ModalUserVsPlayerComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

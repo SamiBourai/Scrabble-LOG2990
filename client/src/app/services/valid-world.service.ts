@@ -76,20 +76,25 @@ export class ValidWordService {
             const letter = word[i].charac;
             this.concatWord += letter;
         }
-        let regexp = new RegExp('[ ${this.concatWord} ]');
+        console.log(word[1].charac)
+        let regexp = new RegExp('['+ word.pop()!.charac + '|' + word.pop()!.charac +'|' + word.pop()!.charac 
+        +'|' +word.pop()!.charac +']{'+ this.concatWord.length +'}','g');
+        console.log(regexp)
         console.log(this.concatWord, 'concatword');
         // console.log(this.verify_word(word), 'verify');
-        if (this.verify_word(word)) {
-            for (let words of this.dictionary!)
-                for (let dictionaryWord of words) {
-                    if (this.concatWord.length == dictionaryWord.length) {
-                        let match = regexp.test(dictionaryWord);
-                        if (match) this.matchWords.push(dictionaryWord);
-                        //console.log(this.concatWord, 'matchhhhh');
-                        break;
-                    }
+        for (let words of this.dictionary!)
+            for (let dictionaryWord of words) {
+                console.log(this.concatWord.length)
+                if (this.concatWord.length == dictionaryWord.length) {
+                    let match = regexp.test(dictionaryWord);
+                    console.log(dictionaryWord,'suppoesed');
+                    console.log(match);
+                    if (match) this.matchWords.push(dictionaryWord);
+                    console.log(this.concatWord, 'matchhhhh');
+                    break;
                 }
-        }
+            }
+
         console.log(this.matchWords, 'match');
     }
 
