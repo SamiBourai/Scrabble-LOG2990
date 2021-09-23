@@ -51,7 +51,7 @@ export class PlayAreaComponent implements AfterViewInit {
         //     [A, R, B, R, E, S],
         //     [T, A, B, L, E, E],
         // ];
-        let wordDirection = 'v';
+        let wordDirection = 'h';
         let word = [S, E];
         let position: Vec2[] = [
             { x: 1, y: 5 },
