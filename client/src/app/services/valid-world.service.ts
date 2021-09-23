@@ -2,9 +2,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
+import { Vec2 } from '@app/classes/vec2';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { WordPointsService } from './word-points.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,11 +15,10 @@ export class ValidWordService {
     private readonly utf8_decoder = new TextDecoder('UTF-8');
 
     private dictionary?: Set<string>[];
-    matchWords: Array<string> = [];
+    matchWords: string[] = [];
     concatWord: string = '';
 
-
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private wps: WordPointsService) {}
 
     private get_compressed_words(): Observable<ArrayBuffer> {
         // return this.http.get<string[]>('/assets/dictionary.json');
@@ -76,18 +77,30 @@ export class ValidWordService {
             const letter = word[i].charac;
             this.concatWord += letter;
         }
-        console.log(word[1].charac)
-        let regexp = new RegExp('['+ word.pop()!.charac + '|' + word.pop()!.charac +'|' + word.pop()!.charac 
-        +'|' +word.pop()!.charac +']{'+ this.concatWord.length +'}','g');
-        console.log(regexp)
+        console.log(word[1].charac);
+        const regexp = new RegExp(
+            '[' +
+                word.pop()!.charac +
+                '|' +
+                word.pop()!.charac +
+                '|' +
+                word.pop()!.charac +
+                '|' +
+                word.pop()!.charac +
+                ']{' +
+                this.concatWord.length +
+                '}',
+            'g',
+        );
+        console.log(regexp);
         console.log(this.concatWord, 'concatword');
         // console.log(this.verify_word(word), 'verify');
-        for (let words of this.dictionary!)
-            for (let dictionaryWord of words) {
-                console.log(this.concatWord.length)
+        for (const words of this.dictionary!)
+            for (const dictionaryWord of words) {
+                console.log(this.concatWord.length);
                 if (this.concatWord.length == dictionaryWord.length) {
-                    let match = regexp.test(dictionaryWord);
-                    console.log(dictionaryWord,'suppoesed');
+                    const match = regexp.test(dictionaryWord);
+                    console.log(dictionaryWord, 'suppoesed');
                     console.log(match);
                     if (match) this.matchWords.push(dictionaryWord);
                     console.log(this.concatWord, 'matchhhhh');
@@ -98,4 +111,124 @@ export class ValidWordService {
         console.log(this.matchWords, 'match');
     }
 
+    private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letter_index: number, usedPosition: (Letter | undefined)[][]) {
+        let counter = 1;
+        const currentPosition = positions[letter_index];
+        while (currentPosition !== undefined && currentPosition.x < 15) {
+            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            if (currentLetter !== undefined) {
+                array.push(currentLetter);
+                arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
+            } else {
+                break;
+            }
+            currentPosition.x++;
+            counter++;
+        }
+        if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x - counter;
+        counter = 0;
+
+        // check left side
+
+        while (currentPosition !== undefined && currentPosition.x >= 0) {
+            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            if (currentLetter !== undefined) {
+                array.unshift(currentLetter);
+                arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+            } else {
+                break;
+            }
+            currentPosition.x--;
+        }
+
+        if (currentPosition !== undefined) currentPosition.x = positions[letter_index].x + counter;
+        counter = 0;
+    }
+
+    private checkBottomTopSide(
+        positions: Vec2[],
+        array: Letter[],
+        arrayPosition: Vec2[],
+        letter_index: number,
+        usedPosition: (Letter | undefined)[][],
+    ) {
+        // check bottom side
+        let counter = 1;
+        const currentPosition = positions[letter_index];
+        while (currentPosition !== undefined && currentPosition.y < 15) {
+            console.log("Pas d'erreur");
+            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            if (currentLetter !== undefined) {
+                array.push(currentLetter);
+                arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
+                console.log(currentLetter);
+            } else {
+                break;
+            }
+            currentPosition.y++;
+            counter++;
+            console.log(currentPosition);
+        }
+        console.log(currentPosition);
+        if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y - counter;
+        console.log(currentPosition);
+        counter = 0;
+
+        // check top side
+        console.log(currentPosition);
+        while (currentPosition !== undefined && currentPosition.y >= 0) {
+            console.log("Pas d'erreur");
+            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            if (currentLetter !== undefined) {
+                array.unshift(currentLetter);
+                arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+            } else {
+                break;
+            }
+            currentPosition.y--;
+        }
+
+        if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y + counter;
+        counter = 0;
+    }
+
+    readWordsAndGivePointsIfValid(word: Letter[], positions: Vec2[], usedPosition: Letter[][], wordDirection: string) {
+        const readPositions: Vec2[] = [];
+        for (const i of positions) {
+            readPositions.push({ x: i.x, y: i.y });
+        }
+        let totalPointsSum = 0;
+        for (let letter_index = 0; letter_index < word.length; letter_index++) {
+            const array: Letter[] = [];
+            const arrayPosition: Vec2[] = [];
+
+            // Check side if word entered is vertical
+            if (wordDirection === 'v') {
+                this.checkSides(positions, array, arrayPosition, letter_index, usedPosition);
+            }
+
+            if (wordDirection === 'h') {
+                this.checkBottomTopSide(positions, array, arrayPosition, letter_index, usedPosition);
+            }
+            //
+
+            console.log(array);
+            console.log(arrayPosition);
+            if (this.verify_word(array)) {
+                totalPointsSum += this.wps.points_word(array, arrayPosition);
+            } else {
+                console.log('ntm');
+                totalPointsSum = 0;
+                console.log(totalPointsSum);
+                return totalPointsSum;
+            }
+        }
+        console.log(totalPointsSum);
+        console.log(readPositions);
+        const wordItselfPoints = this.wps.points_word(word, readPositions);
+        console.log(wordItselfPoints);
+        totalPointsSum += wordItselfPoints;
+        console.log(totalPointsSum);
+        return totalPointsSum;
+    }
 }

@@ -33,7 +33,7 @@ export class SidebarComponent {
         private cd: ChangeDetectorRef,
         private easelLogiscticsService: EaselLogiscticsService,
         private lettersService: LettersService,
-    ) { }
+    ) {}
 
     ngAfterViewChecked(): void {
         this.cd.detectChanges();
@@ -121,12 +121,20 @@ export class SidebarComponent {
     }
 
     placeLettersInScrable(): void {
-        for (let i = this.m.command.word.length - 2; i >= 0; i--) {
-            this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!), {
-                x: this.m.command.column,
-                y: this.getLineNumber(this.m.command.line) + i,
-            });
-        }
+        if (this.m.command.direction === 'v') {
+            for (let i = this.m.command.word.length - 2; i >= 0; i--) {
+                this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!), {
+                    x: this.m.command.column,
+                    y: this.getLineNumber(this.m.command.line) + i,
+                });
+            }
+        } else if (this.m.command.direction === 'h')
+            for (let i = this.m.command.word.length - 2; i >= 0; i--) {
+                this.lettersService.placeLetter(this.easelLogiscticsService.getLetterFromEasel(this.index.pop()!), {
+                    x: this.m.command.column + i,
+                    y: this.getLineNumber(this.m.command.line),
+                });
+            }
     }
     resetVariables(): void {
         for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;

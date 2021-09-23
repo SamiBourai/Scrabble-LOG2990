@@ -1,15 +1,13 @@
-
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, M, O, P, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 // import { skip } from 'rxjs/operators';
-
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
@@ -29,7 +27,7 @@ export enum MouseButton {
 })
 export class PlayAreaComponent implements AfterViewInit, OnInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
-    //@ViewChild('skipTurn') private btnSkipTurn: HTMLButtonElement;
+    // @ViewChild('skipTurn') private btnSkipTurn: HTMLButtonElement;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
     containsAllChars: boolean = true;
@@ -37,20 +35,45 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     let: Letter[] = [D, A, B, A];
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
-    remainingLetters:number;
+    remainingLetters: number;
 
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-        public userService:UserService,
+        public userService: UserService,
         private readonly virtualPlayerService: VirtualPlayerService,
-        private readonly validWordService: ValidWordService
-    ) {}
-
-    
-
+        private readonly validWordService: ValidWordService,
+        pvs: ValidWordService,
+    ) {
+        const usedPosition: any = [
+            [undefined, P, T],
+            [undefined, O, A],
+            [undefined, M, B],
+            [undefined, M, L],
+            [undefined, E, E],
+            [undefined, S, E],
+            [undefined, undefined, undefined],
+        ];
+        // let usedPosition: Letter[][] = [
+        //     [A, R, B, R, E, S],
+        //     [T, A, B, L, E, E],
+        // ];
+        const wordDirection = 'h';
+        const word = [S, E];
+        const position: Vec2[] = [
+            { x: 1, y: 5 },
+            { x: 2, y: 5 },
+        ];
+        // let position: Vec2[] = [
+        //     { x: 5, y: 0 },
+        //     { x: 5, y: 1 },
+        // ];
+        pvs.load_dictionary().then(() => {
+            pvs.readWordsAndGivePointsIfValid(word, position, usedPosition, wordDirection);
+        });
+    }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
@@ -64,24 +87,22 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     //     this.userService.userSkipingTurn=true;
     //     console.log(this.userService.userSkipingTurn);
     // }
-    detectSkipTurnBtn(){
+    detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
 
-        console.log("!passer");
+        console.log('!passer');
 
-        this.userService.userSkipingTurn=true;
+        this.userService.userSkipingTurn = true;
         console.log(this.userService.userSkipingTurn);
     }
 
-    ngOnInit(){
+    ngOnInit() {
         this.userService.startTimer();
-        //this.onClick();
+        // this.onClick();
     }
     ngAfterViewInit(): void {
-
-
-        this.reserveService.size.subscribe(res=>{
-            this.remainingLetters=res;
+        this.reserveService.size.subscribe((res) => {
+            this.remainingLetters = res;
         });
 
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -137,6 +158,4 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             };
         }
     }
-
-
 }
