@@ -106,7 +106,7 @@ export class UserService {
                 this.counter.sec = 59;
             } else this.counter.sec -= 1;
 
-            if (this.counter.min === 0 && this.counter.sec == 0) {
+            if (this.counter.min === 0 && this.counter.sec === 0) {
                 clearInterval(intervalId);
                 this.startTimer();
             }
@@ -115,8 +115,8 @@ export class UserService {
 
 
     skipTurnValidUser(): boolean {
-        if (this.time == 59) return true;
-        else this.time == 20;
+        if (this.time ===59) return true;
+        else this.time === 20;
         return false;
     }
 

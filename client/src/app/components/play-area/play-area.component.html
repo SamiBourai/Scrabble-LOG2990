@@ -8,7 +8,7 @@
             </div>
             <div fxLayout="column" fxLayoutAlign="space-between center">
                 <div class="button-game-page">
-                    <button #skipTurn mat-raised-button color="primary" [disabled]="userService.skipTurnValidUser()==false" (click)="detectSkipTurnBtn()">Passer son tour</button>
+                    <button #skipTurn mat-raised-button color="primary" [disabled]="userService.skipTurnValidUser()===false" (click)="detectSkipTurnBtn()">Passer son tour</button>
                 </div>
                 <div class="button-game-page">
                     <span class="chronometer-title">
@@ -32,7 +32,7 @@
 
     <button id="getRandomReserve" (click)="getLetters()" mat-raised-button color="accent" class="button">Get Letters</button>
     <button id="Pl" (click)="placeFromEasel()" mat-raised-button color="accent" class="button">place</button>
-<mat-card *ngIf="userService.time==59 else displayVrUser" fxLayout="row">
+<mat-card *ngIf="userService.time===59 else displayVrUser" fxLayout="row">
             <ngx-avatar  class="avatar" size="25" name="{{ userService.realUser.name }}" ></ngx-avatar>
             <mat-card-header>
                 <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
