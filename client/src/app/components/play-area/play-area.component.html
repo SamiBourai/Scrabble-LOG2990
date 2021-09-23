@@ -8,12 +8,18 @@
             </div>
             <div fxLayout="column" fxLayoutAlign="space-between center">
                 <div class="button-game-page">
-                    <button #skipTurn mat-raised-button color="primary" [disabled]="userService.skipTurnValidUser()===false" (click)="detectSkipTurnBtn()">Passer son tour</button>
+                    <button
+                        #skipTurn
+                        mat-raised-button
+                        color="primary"
+                        [disabled]="userService.skipTurnValidUser() === false"
+                        (click)="detectSkipTurnBtn()"
+                    >
+                        Passer son tour
+                    </button>
                 </div>
                 <div class="button-game-page">
-                    <span class="chronometer-title">
-                       0{{userService.counter.min}}:{{userService.counter.sec}}
-                    </span>
+                    <span class="chronometer-title"> 0{{ userService.counter.min }}:{{ userService.counter.sec }} </span>
                 </div>
 
                 <div class="button-game-page">
@@ -32,34 +38,32 @@
         <button id="Pl" (click)="placeFromEasel()" mat-raised-button color="accent" class="button">place</button>
     </div>
 
-
-
-
-
-<div>
-    <!-- <p class="chronometer-title"> Lettre restante : {{ remainingLetters }} </p> -->
-</div>
-
-
+    <div>
+        <!-- <p class="chronometer-title"> Lettre restante : {{ remainingLetters }} </p> -->
+    </div>
 </div>
 
 <div>
+    <mat-card *ngIf="userService.time === 59; else displayVrUser" fxLayout="row">
+        <ngx-avatar class="avatar" size="25" name="{{ userService.realUser.name }}"></ngx-avatar>
+        <mat-card-header>
+            <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
+            <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
 
-    <mat-card *ngIf="userService.time===59 else displayVrUser" fxLayout="row">
-            <ngx-avatar  class="avatar" size="25" name="{{ userService.realUser.name }}" ></ngx-avatar>
+    <ng-template #displayVrUser>
+        <mat-card fxLayout="row">
+            <ngx-avatar
+                class="avatar"
+                size="25"
+                name="{{ userService.vrUser.name }}"
+                src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
+            ></ngx-avatar>
             <mat-card-header>
-                <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
+                <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
                 <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
             </mat-card-header>
-</mat-card>
-
-<ng-template #displayVrUser>
-<mat-card  fxLayout="row">
-    <ngx-avatar  class="avatar" size="25" name="{{ userService.vrUser.name }}" src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"></ngx-avatar>
-    <mat-card-header>
-        <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
-        <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
-    </mat-card-header>
-</mat-card>
-</ng-template>
+        </mat-card>
+    </ng-template>
 </div>

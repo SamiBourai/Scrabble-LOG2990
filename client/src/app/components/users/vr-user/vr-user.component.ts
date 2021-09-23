@@ -9,7 +9,5 @@ import { UserService } from '@app/services/user.service';
 export class VrUserComponent implements OnInit {
     constructor(public userService: UserService) {}
 
-    ngOnInit(): void {
-
-    }
+    ngOnInit(): void {}
 }

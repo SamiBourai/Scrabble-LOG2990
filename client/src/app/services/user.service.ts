@@ -10,14 +10,15 @@ export class UserService {
     // Set strictNullChecks=false in tsconfig.json.
     // Declare your variable type as any
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     counter: { min: number; sec: number };
     realUser: RealUser;
     vrUser: VrUser;
     intervalId = 0;
     time: number;
-    vrSkipingTurn:boolean;
-    userSkipingTurn:boolean
+    vrSkipingTurn: boolean;
+    userSkipingTurn: boolean;
 
     constructor() {
         this.realUser = {
@@ -34,8 +35,8 @@ export class UserService {
             round: '20 sec',
             score: 0,
         };
-        this.vrSkipingTurn=false;
-        this.userSkipingTurn=false;
+        this.vrSkipingTurn = false;
+        this.userSkipingTurn = false;
     }
 
     chooseFirstToPlay(): boolean {
@@ -55,7 +56,7 @@ export class UserService {
         // comme ces constante on en a besoin ici seulement
         const vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-        let randomInteger: number = 0;
+        let randomInteger = 0;
 
         while (true) {
             randomInteger = this.getRandomInt(3);
@@ -87,16 +88,16 @@ export class UserService {
             this.time = this.counter.sec;
             console.log('le Vr qui joue');
         }
-        let intervalId = setInterval(() => {
-            if(this.vrSkipingTurn){
+        const intervalId = setInterval(() => {
+            if (this.vrSkipingTurn) {
                 this.counter = { min: 0, sec: 59 };
-                this.vrSkipingTurn=false;
+                this.vrSkipingTurn = false;
                 clearInterval(intervalId);
                 this.startTimer();
             }
-            if(this.userSkipingTurn){
+            if (this.userSkipingTurn) {
                 this.counter = { min: 0, sec: 20 };
-                this.userSkipingTurn=false;
+                this.userSkipingTurn = false;
                 clearInterval(intervalId);
                 this.startTimer();
             }
@@ -112,13 +113,9 @@ export class UserService {
         }, 1000);
     }
 
-
     skipTurnValidUser(): boolean {
-        if (this.time ===59) return true;
+        if (this.time === 59) return true;
         else this.time === 20;
         return false;
     }
-
-
-
 }
