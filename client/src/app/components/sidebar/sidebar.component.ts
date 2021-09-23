@@ -60,11 +60,11 @@ export class SidebarComponent {
     getLettersFromChat(): void {
         if (this.lettersService.wordInEasel(this.m.command.word) && this.firstTurn && this.m.command.line == 8 && this.m.command.column == 8) {
             this.firstTurn = false;
-            let noIndex: number[] = [];
-            this.lettersService.placeLettersInScrable(this.m.command, noIndex);
+            console.log('1er tour');
+            this.lettersService.placeLettersInScrable(this.m.command);
         } else if (this.lettersService.wordIsPlacable(this.m.command)) {
-            console.log('nousLa');
-            this.lettersService.placeLettersInScrable(this.m.command, this.lettersService.indexOfBoardLetters);
+            console.log('2eme tour');
+            this.lettersService.placeLettersInScrable(this.m.command);
         }
     }
 }

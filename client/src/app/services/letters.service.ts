@@ -12,7 +12,7 @@ export class LettersService {
     gridContext: CanvasRenderingContext2D;
     foundLetter: Array<Boolean> = [false, false, false, false, false, false, false];
     indexOfEaselLetters: Array<number> = [];
-    indexOfBoardLetters: Array<number> = [];
+    indexLettersAlreadyInBoard: Array<number> = [];
 
     tiles = new Array<Array<Letter>>(15);
 
@@ -53,10 +53,10 @@ export class LettersService {
                 found = false;
 
                 for (let j = 0; j < 7; j++) {
-                    console.log(this.easelLogisticsService.easelLetters[j]);
                     if (word.charAt(i) == this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
                         this.foundLetter[j] = true;
                         this.indexOfEaselLetters.push(j);
+                        console.log('indexFind ' + j);
                         found = true;
                         break;
                     }
@@ -94,26 +94,30 @@ export class LettersService {
     resetVariables(): void {
         for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;
         this.indexOfEaselLetters.splice(0, this.indexOfEaselLetters.length);
-        this.indexOfBoardLetters.splice(0, this.indexOfEaselLetters.length);
-    }
-    placeLettersInScrable(command: ChatCommand, indexOfBoardLetter: number[]): void {
-        let boardLetterCounter: number = 0;
+        this.indexLettersAlreadyInBoard.splice(0, this.indexOfEaselLetters.length);
 
+        console.log(this.indexOfEaselLetters);
+        console.log(this.indexLettersAlreadyInBoard);
+    }
+    placeLettersInScrable(command: ChatCommand): void {
+        let boardLetterCounter: number = 0;
+        let easelLetterCounter: number = 0;
         for (let i = 0; i < command.word.length; i++) {
-            if (i == indexOfBoardLetter[boardLetterCounter]) {
+            if (i == this.indexLettersAlreadyInBoard[boardLetterCounter]) {
                 boardLetterCounter++;
             } else {
                 if (command.direction == 'h') {
-                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[i]), {
+                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[easelLetterCounter]), {
                         x: command.column,
                         y: command.line + i,
                     });
                 } else if (command.direction == 'v') {
-                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[i]), {
+                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[easelLetterCounter]), {
                         x: command.column + i,
                         y: command.line,
                     });
                 }
+                easelLetterCounter++;
             }
         }
 
@@ -140,15 +144,14 @@ export class LettersService {
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction == 'h') {
                 saveLetter = this.tiles[command.column - 1][command.line - 1 + i]?.charac;
-            }
-            if (command.direction == 'v') {
+            } else if (command.direction == 'v') {
                 saveLetter = this.tiles[command.column - 1 + i][command.line - 1]?.charac;
             }
+
             if (saveLetter == command.word.charAt(i)) {
-                this.indexOfBoardLetters.push(i);
+                this.indexLettersAlreadyInBoard.push(i);
             } else {
                 letterFromEasel = letterFromEasel + command.word.charAt(i);
-                console.log(letterFromEasel);
             }
         }
         if (this.wordInEasel(letterFromEasel)) return true;
