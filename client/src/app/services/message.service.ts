@@ -1,24 +1,23 @@
-import {
-    PLACE_LENGTH,
-    SWAP_LENGTH,
-    INDEX_OF_PLACE_PARAMETERS,
-    INDEX_PARAMETERS,
-    FIRST_INDEX_ORIENTATION,
-    LAST_INDEX_ORIENTATION,
-    FIRST_INDEX_2COLUMN,
-    LAST_INDEX_2COLUMN,
-    FIRST_INDEX_COLUMN,
-    LAST_INDEX_COLUMN,
-    FIRST_INDEX_2ORIENTATION,
-    LAST_INDEX_2ORIENTATION,
-    INDEX_WORD,
-    MIN_SWAP_LENGTH,
-    PARAMETERS_OF_SWAP,
-    INDEX_2WORD,
-} from './../constants/constants';
-
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
+import {
+    FIRST_INDEX_2COLUMN,
+    FIRST_INDEX_2ORIENTATION,
+    FIRST_INDEX_COLUMN,
+    FIRST_INDEX_ORIENTATION,
+    INDEX_2WORD,
+    INDEX_OF_PLACE_PARAMETERS,
+    INDEX_PARAMETERS,
+    INDEX_WORD,
+    LAST_INDEX_2COLUMN,
+    LAST_INDEX_2ORIENTATION,
+    LAST_INDEX_COLUMN,
+    LAST_INDEX_ORIENTATION,
+    MIN_SWAP_LENGTH,
+    PARAMETERS_OF_SWAP,
+    PLACE_LENGTH,
+    SWAP_LENGTH,
+} from './../constants/constants';
 
 // import { Parameter } from './classes/parameter';
 // import { Parameter } from './classes/parameter';
@@ -38,7 +37,7 @@ export class MessageService {
     private possibleLigne: string = 'abcdefghijklmno';
     private possibleColonne: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     private possibleOrientation: string = 'hv';
-    command: ChatCommand = { word: '', line: '', column: 10, direction: 'h' };
+    command: ChatCommand = { word: '', position: { x: 0, y: 0 }, direction: 'h' };
     arrayOfSpecialChars: string[] = ['ç', 'é', 'è', 'ë'];
 
     isCommand(input: string) {
@@ -100,7 +99,7 @@ export class MessageService {
             this.possibleOrientation.includes(this.orientation) &&
             this.word != ''
         ) {
-            this.command = { word: this.word, line: this.line, column: this.column, direction: this.orientation };
+            this.command = { word: this.word, position: { x: this.column, y: this.getLineNumber(this.line) }, direction: this.orientation };
             this.array.push(this.command);
         }
         return this.array;
@@ -133,5 +132,56 @@ export class MessageService {
             else if (input[i] === 'é' || input[i] === 'è' || input[i] === 'ë') input = input.split(input[i]).join('e');
         }
         return input;
+    }
+    getLineNumber(charac: string): number {
+        switch (charac) {
+            case 'a': {
+                return 1;
+            }
+            case 'b': {
+                return 2;
+            }
+            case 'c': {
+                return 3;
+            }
+            case 'd': {
+                return 4;
+            }
+            case 'e': {
+                return 5;
+            }
+            case 'f': {
+                return 6;
+            }
+            case 'g': {
+                return 7;
+            }
+            case 'h': {
+                return 8;
+            }
+            case 'i': {
+                return 9;
+            }
+            case 'j': {
+                return 10;
+            }
+            case 'k': {
+                return 11;
+            }
+            case 'l': {
+                return 12;
+            }
+            case 'm': {
+                return 13;
+            }
+            case 'n': {
+                return 14;
+            }
+            case 'o': {
+                return 15;
+            }
+        }
+        console.log('-1 swirtch');
+        return -1;
     }
 }

@@ -49,6 +49,7 @@ export const X: Letter = { score: 10, charac: 'x', img: '../../assets/letter-x.p
 export const Y: Letter = { score: 10, charac: 'y', img: '../../assets/letter-y.png' };
 export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.png' };
 
+// play-area
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },
     { x: 7, y: 0 },

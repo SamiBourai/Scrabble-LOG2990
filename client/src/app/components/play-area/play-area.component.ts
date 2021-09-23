@@ -62,8 +62,12 @@ export class PlayAreaComponent implements AfterViewInit {
     }
 
     placeFromEasel(): void {
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 7, y: 8 });
+        if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
+            this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
+        }
+        if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
+            this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 2, y: 2 });
+        }
     }
 
     getLetters(): void {
@@ -77,8 +81,6 @@ export class PlayAreaComponent implements AfterViewInit {
             }
         }
         this.easelLogisticsService.placeEaselLetters();
-        console.log(this.easelLogisticsService.easelLetters);
-        console.log(this.reserveService._size);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {

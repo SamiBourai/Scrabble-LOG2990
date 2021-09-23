@@ -1,6 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
-
 import { MessageService } from './message.service';
 
 fdescribe('MessageService', () => {
@@ -76,13 +74,13 @@ fdescribe('MessageService', () => {
     it('it should return the parameters of the place command inside an array. PS:the column is > 10', () => {
         const command = '!placer h12h mot';
 
-        expect(service.placeCommand(command)).toEqual([{ word: 'mot', line: 'h', column: 12, direction: 'h' }]);
+        expect(service.placeCommand(command)).toEqual([{ word: 'mot', position: { x: 12, y: 8 }, direction: 'h' }]);
     });
 
     it('it should return the parameters of the place command inside an array. PS:the column < 10', () => {
         const command = '!placer a2v mot';
 
-        expect(service.placeCommand(command)).toEqual([{ word: 'mot', line: 'a', column: 2, direction: 'v' }]);
+        expect(service.placeCommand(command)).toEqual([{ word: 'mot', position: { x: 2, y: 1 }, direction: 'v' }]);
     });
 
     it('confirm that if the parameters of the place command are out of the grid(here the line not between a and o), the return array is empty', () => {
@@ -112,8 +110,12 @@ fdescribe('MessageService', () => {
     // test for isValid
     it('confirm if the command is valid when it contains the command place and the parameters are valid ', () => {
         const command = '!placer a1h mot';
-        spyOn(service,"isCommand").and.callFake(()=>{return true;});
-        spyOn(service,"containsPlaceCommand").and.callFake(()=>{return true;});
+        spyOn(service, 'isCommand').and.callFake(() => {
+            return true;
+        });
+        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
+            return true;
+        });
         expect(service.isValid(command)).toBeTrue();
         // expect(spy).toHaveBeenCalled();
         // expect(service.containsPlaceCommand(command)).toBeTrue()
@@ -122,39 +124,56 @@ fdescribe('MessageService', () => {
 
     it('confirm if the command is valid when it contains the swap command with the valid parameters', () => {
         const command = '!echanger as ';
-        spyOn(service,"isCommand").and.callFake(()=>{return true;});
-        spyOn(service,"containsPlaceCommand").and.callFake(()=>{return false;});
-        spyOn(service,"containsSwapCommand").and.callFake(() => {return true})
+        spyOn(service, 'isCommand').and.callFake(() => {
+            return true;
+        });
+        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'containsSwapCommand').and.callFake(() => {
+            return true;
+        });
         expect(service.isValid(command)).toBeTrue();
     });
 
-    it('confirm if the command is valid when the command is !debug, !aide, !passer',() => {
+    it('confirm if the command is valid when the command is !debug, !aide, !passer', () => {
         const command = '!debug';
-        spyOn(service,"isCommand").and.callFake(()=>{return true;});
-        spyOn(service,"containsPlaceCommand").and.callFake(()=>{return false;});
-        spyOn(service,"containsSwapCommand").and.callFake(() => {return false});
-        spyOn(service,"isInside").and.callFake(() => {return true});
+        spyOn(service, 'isCommand').and.callFake(() => {
+            return true;
+        });
+        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'containsSwapCommand').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'isInside').and.callFake(() => {
+            return true;
+        });
         expect(service.isValid(command)).toBeTrue();
     });
 
-    it('confirm if the command is valid when its not a command',() => {
+    it('confirm if the command is valid when its not a command', () => {
         const command = 'message';
-        spyOn(service,"isCommand").and.callFake(()=>{return false;});
-        spyOn(service,"containsPlaceCommand").and.callFake(()=>{return false;});
-        spyOn(service,"containsSwapCommand").and.callFake(() => {return false});
-        spyOn(service,"isInside").and.callFake(() => {return false});
+        spyOn(service, 'isCommand').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'containsSwapCommand').and.callFake(() => {
+            return false;
+        });
+        spyOn(service, 'isInside').and.callFake(() => {
+            return false;
+        });
         expect(service.isValid(command)).toBeTrue();
-
-    })
+    });
 
     it('confirm if the command is invalid when the command dont correspond to a existant command', () => {
         const command = '!commande';
         expect(service.isValid(command)).toBeFalse();
-    })
+    });
 
     // test for debugCommand
-    
-
-
-
 });

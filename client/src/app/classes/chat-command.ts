@@ -1,7 +1,8 @@
+import { Vec2 } from './vec2';
+
 export interface ChatCommand {
     word: string;
-    line: string;
-    column: number;
+    position: Vec2;
     direction: string;
 }
-// enum Direction { h,v}
+//enum Direction { h,v}
