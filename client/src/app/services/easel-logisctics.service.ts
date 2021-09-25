@@ -47,11 +47,6 @@ export class EaselLogiscticsService {
         }
     }
 
-    deleteletterFromEasel(easel: Easel): void {
-        delete this.easelLetters[easel.index];
-        this.occupiedPos[easel.index] = false;
-    }
-
     getLetterFromEasel(index: number): Letter {
         if (this.occupiedPos[index] === true) {
             this.gridContext.clearRect(
@@ -64,13 +59,6 @@ export class EaselLogiscticsService {
             return this.easelLetters[index].letters;
         }
         return A;
-    }
-
-    isFull(): boolean {
-        for (let i = 0; i < EASEL_LENGTH; i++) {
-            if (!this.occupiedPos[i]) return false;
-        }
-        return true;
     }
 
     wordInEasel(word: string): boolean {
