@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, M, O, P, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, M, O,P, S, T, TOPSPACE, WIDTH, R, I } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -32,7 +32,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
-    let: Letter[] = [D, A, B, A];
+    let: Letter[] = [A,I,E,E,M,R];
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
     remainingLetters: number;
@@ -44,7 +44,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
         private readonly virtualPlayerService: VirtualPlayerService,
-        private readonly validWordService: ValidWordService,
         pvs: ValidWordService,
     ) {
         const usedPosition: any = [
@@ -72,7 +71,34 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         // ];
         pvs.load_dictionary().then(() => {
             pvs.readWordsAndGivePointsIfValid(word, position, usedPosition, wordDirection);
+            this.virtualPlayerService.manageVrPlayerActions(); 
         });
+    }
+    ngOnInit() {
+        this.userService.startTimer();
+        // this.onClick();
+    }
+    ngAfterViewInit(): void {
+        this.reserveService.size.subscribe((res) => {
+            this.remainingLetters = res;
+        });
+
+        this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.easelLogisticsService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridService.drawCoor();
+        this.gridService.drawBonusBox();
+        this.gridService.drawGrid();
+        this.gridService.drawHand();
+        this.gridCanvas.nativeElement.focus();
+        
+    }
+    get width(): number {
+        return this.canvasSize.x;
+    }
+
+    get height(): number {
+        return this.canvasSize.y;
     }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -95,36 +121,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.userService.userSkipingTurn = true;
         console.log(this.userService.userSkipingTurn);
     }
-
-    ngOnInit() {
-        this.userService.startTimer();
-        // this.onClick();
-    }
-    ngAfterViewInit(): void {
-        this.reserveService.size.subscribe((res) => {
-            this.remainingLetters = res;
-        });
-
-        this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.easelLogisticsService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridService.drawCoor();
-        this.gridService.drawBonusBox();
-        this.gridService.drawGrid();
-        this.gridService.drawHand();
-        this.gridCanvas.nativeElement.focus();
-        this.virtualPlayerService.generateVrPlayerEasel();
-        this.validWordService.generateAllWordsPossible(this.let);
-    }
-
-    get width(): number {
-        return this.canvasSize.x;
-    }
-
-    get height(): number {
-        return this.canvasSize.y;
-    }
-
     placeFromEasel(): void {
         if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
             this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });

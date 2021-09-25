@@ -1,6 +1,3 @@
-
-
-
 export interface VrUser
 {
   name:string;

@@ -72,41 +72,29 @@ export class ValidWordService {
         return this.dictionary[letter_index_input].has(concatWord);
     }
     async generateAllWordsPossible(word: Letter[]) {
-        await this.load_dictionary();
         for (let i = 0; i < word.length; i++) {
             const letter = word[i].charac;
             this.concatWord += letter;
         }
-        console.log(word[1].charac);
-        const regexp = new RegExp(
-            '[' +
-                word.pop()!.charac +
-                '|' +
-                word.pop()!.charac +
-                '|' +
-                word.pop()!.charac +
-                '|' +
-                word.pop()!.charac +
-                ']{' +
-                this.concatWord.length +
-                '}',
-            'g',
-        );
-        console.log(regexp);
-        console.log(this.concatWord, 'concatword');
-        // console.log(this.verify_word(word), 'verify');
-        for (const words of this.dictionary!)
+        console.log(this.concatWord);
+
+        // const regexp = new RegExp(
+        //     '^(?=['+ this.concatWord+']{' +
+        //         this.concatWord.length+
+        //         '}$)(?!.*(.).*\e).*$', 'g');
+        for(let i = this.concatWord.length; i >=1; i--){  
+          const regex = new RegExp(
+              '['+ this.concatWord+']{' +
+                  i+
+                  '}','g',);
+        // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})(?=(?!((?<1>.)\k<1>.)))(?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))(?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
+        for (const words of this.dictionary!){ 
             for (const dictionaryWord of words) {
-                console.log(this.concatWord.length);
-                if (this.concatWord.length == dictionaryWord.length) {
-                    const match = regexp.test(dictionaryWord);
-                    console.log(dictionaryWord, 'suppoesed');
-                    console.log(match);
-                    if (match) this.matchWords.push(dictionaryWord);
-                    console.log(this.concatWord, 'matchhhhh');
-                    break;
+                if (i === dictionaryWord.length) {
+                    const match = regex.test(dictionaryWord);
+                    if (match){ this.matchWords.push(dictionaryWord); } 
                 }
-            }
+            }}}
 
         console.log(this.matchWords, 'match');
     }
