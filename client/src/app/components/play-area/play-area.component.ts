@@ -1,7 +1,28 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, M, O, P, S, T, TOPSPACE, WIDTH } from '@app/constants/constants';
+import {
+    A,
+    B,
+    BOX,
+    D,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    E,
+    HEIGHT,
+    L,
+    LEFTSPACE,
+    M,
+    O,
+    P,
+    R,
+    S,
+    T,
+    TOPSPACE,
+    U,
+    V,
+    WIDTH,
+} from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -47,15 +68,27 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly validWordService: ValidWordService,
         pvs: ValidWordService,
     ) {
-        const usedPosition: any = [
-            [undefined, P, T],
-            [undefined, O, A],
-            [undefined, M, B],
-            [undefined, M, L],
-            [undefined, E, E],
-            [undefined, S, E],
-            [undefined, undefined, undefined],
-        ];
+        const usedPosition = new Array<Letter[]>(15);
+        for (let i = 0; i < usedPosition.length; ++i) {
+            usedPosition[i] = new Array<Letter>(15);
+        }
+        usedPosition[1][0] = P;
+        usedPosition[1][1] = O;
+        usedPosition[1][2] = M;
+        usedPosition[1][3] = M;
+        usedPosition[1][4] = E;
+        usedPosition[1][5] = S;
+        usedPosition[2][0] = T;
+        usedPosition[2][1] = A;
+        usedPosition[2][2] = B;
+        usedPosition[2][3] = L;
+        usedPosition[2][4] = E;
+        usedPosition[2][5] = E;
+        usedPosition[3][5] = R;
+        usedPosition[4][5] = V;
+        usedPosition[5][5] = E;
+        usedPosition[6][5] = U;
+        usedPosition[7][5] = R;
         // let usedPosition: Letter[][] = [
         //     [A, R, B, R, E, S],
         //     [T, A, B, L, E, E],
@@ -70,7 +103,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         //     { x: 5, y: 0 },
         //     { x: 5, y: 1 },
         // ];
-        pvs.load_dictionary().then(() => {
+        pvs.loadDictionary().then(() => {
             pvs.readWordsAndGivePointsIfValid(word, position, usedPosition, wordDirection);
         });
     }

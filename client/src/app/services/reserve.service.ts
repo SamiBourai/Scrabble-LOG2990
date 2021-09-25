@@ -11,8 +11,7 @@ export class ReserveService {
     random: number;
     save: Letter;
     _size: number = 0;
-    sizeObs= new BehaviorSubject(this._size);
-
+    sizeObs = new BehaviorSubject(this._size);
 
     constructor() {
         for (let i = 0; i < 9; i++) {
@@ -79,18 +78,16 @@ export class ReserveService {
         this._size--;
 
         this._size--;
-        console.log("cout ligne 79 "+this._size);
         this.sizeObs.next(this._size);
         return this.save;
     }
 
     get size(): BehaviorSubject<number> {
-        console.log("size "+ this._size);
+        console.log('size ' + this._size);
 
         return this.sizeObs;
     }
 
-       
     reFillReserve(lett: Letter) {
         this.letters.push(lett);
         this._size++;

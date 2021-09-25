@@ -4,6 +4,8 @@ import { Vec2 } from '@app/classes/vec2';
 // word-point-service
 export const BONUS_WORD_LENGTH = 7;
 export const BONUS_POINTS_50 = 50;
+export const MAX_LINES = 15;
+export const MIN_LINES = 0;
 
 // grid-service
 export const DEFAULT_WIDTH = 800;
@@ -50,6 +52,8 @@ export const Y: Letter = { score: 10, charac: 'y', img: '../../assets/letter-y.p
 export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.png' };
 
 // play-area
+export const usedBonus: Vec2[] = [];
+
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },
     { x: 7, y: 0 },
