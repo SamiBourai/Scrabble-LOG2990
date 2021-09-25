@@ -1,3 +1,4 @@
+import { UserService } from '@app/services/user.service';
 
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -34,7 +35,7 @@ export class SidebarComponent {
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
-
+        private userService: UserService,
         private lettersService: LettersService,
     ) {}
 
@@ -42,7 +43,15 @@ export class SidebarComponent {
         this.changeDetectorRef.detectChanges();
     }
 
+    isYourTurn(){
+        return this.userService.skipTurnValidUser()
+    }
+
     logMessage() {
+
+        this.isCommand = this.messageService.isCommand(this.typeArea);
+        this.isValid = this.messageService.isValid(this.typeArea);
+
         if (
             (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
             !this.messageService.isCommand(this.typeArea)
@@ -53,11 +62,21 @@ export class SidebarComponent {
             if (this.messageService.containsPlaceCommand(this.typeArea)) {
                 this.getLettersFromChat();
             }
-            this.arrayOfMessages.push(this.typeArea);
+            if(!this.isYourTurn() && this.typeArea === '!passer'){
+                this.skipTurn = true;
+                this.isValid = false;
+                
+            }
+            else{
+                this.arrayOfMessages.push(this.typeArea);
+            }
+            
+            
         }
 
-        this.isCommand = this.messageService.isCommand(this.typeArea);
-        this.isValid = this.messageService.isValid(this.typeArea);
+        
+        
+        
 
         console.log(this.arrayOfMessages);
         this.typeArea = '';
@@ -67,6 +86,7 @@ export class SidebarComponent {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.arrayOfMessages.push('!passer');
+            
             return true;
         }
         return false;
