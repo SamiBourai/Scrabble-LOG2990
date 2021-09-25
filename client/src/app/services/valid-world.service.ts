@@ -57,7 +57,6 @@ export class ValidWordService {
 
     verify_word(word: Letter[]) {
         let concatWord = '';
-        console.log(this.dictionary, 'ditionary');
         if (this.dictionary === undefined) {
             return;
         }
@@ -77,7 +76,6 @@ export class ValidWordService {
             const letter = word[i].charac;
             this.concatWord += letter;
         }
-        console.log(word[1].charac);
         const regexp = new RegExp(
             '[' +
                 word.pop()!.charac +
@@ -92,30 +90,22 @@ export class ValidWordService {
                 '}',
             'g',
         );
-        console.log(regexp);
-        console.log(this.concatWord, 'concatword');
         // console.log(this.verify_word(word), 'verify');
         for (const words of this.dictionary!)
             for (const dictionaryWord of words) {
-                console.log(this.concatWord.length);
                 if (this.concatWord.length == dictionaryWord.length) {
                     const match = regexp.test(dictionaryWord);
-                    console.log(dictionaryWord, 'suppoesed');
-                    console.log(match);
                     if (match) this.matchWords.push(dictionaryWord);
-                    console.log(this.concatWord, 'matchhhhh');
                     break;
                 }
             }
-
-        console.log(this.matchWords, 'match');
     }
 
-    private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letter_index: number, usedPosition: (Letter | undefined)[][]) {
+    private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letter_index: number, usedPosition: Letter[][]) {
         let counter = 1;
         const currentPosition = positions[letter_index];
         while (currentPosition !== undefined && currentPosition.x < 15) {
-            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            const currentLetter: Letter = usedPosition[currentPosition.x][currentPosition.y];
             if (currentLetter !== undefined) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
@@ -131,7 +121,7 @@ export class ValidWordService {
         // check left side
 
         while (currentPosition !== undefined && currentPosition.x >= 0) {
-            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
             if (currentLetter !== undefined) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
@@ -156,29 +146,22 @@ export class ValidWordService {
         let counter = 1;
         const currentPosition = positions[letter_index];
         while (currentPosition !== undefined && currentPosition.y < 15) {
-            console.log("Pas d'erreur");
-            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
             if (currentLetter !== undefined) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
-                console.log(currentLetter);
             } else {
                 break;
             }
             currentPosition.y++;
             counter++;
-            console.log(currentPosition);
         }
-        console.log(currentPosition);
         if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y - counter;
-        console.log(currentPosition);
         counter = 0;
 
         // check top side
-        console.log(currentPosition);
         while (currentPosition !== undefined && currentPosition.y >= 0) {
-            console.log("Pas d'erreur");
-            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
+            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
             if (currentLetter !== undefined) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
@@ -214,19 +197,76 @@ export class ValidWordService {
 
             console.log(array);
             console.log(arrayPosition);
-            if (this.verify_word(array)) {
+
+            if (array.length === 1) {
+                totalPointsSum += 0;
+            } else if (this.verify_word(array)) {
                 totalPointsSum += this.wps.points_word(array, arrayPosition);
             } else {
-                console.log('ntm');
                 totalPointsSum = 0;
                 console.log(totalPointsSum);
                 return totalPointsSum;
             }
         }
-        console.log(totalPointsSum);
-        console.log(readPositions);
-        const wordItselfPoints = this.wps.points_word(word, readPositions);
+
+        const wordArray = word;
+        let currentPosition = { x: readPositions[0].x, y: readPositions[0].y };
+        const wordArrayPosition = readPositions;
+
+        if (wordDirection === 'v') {
+            while (currentPosition !== undefined && currentPosition.y >= 0) {
+                currentPosition.y--;
+                const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
+                if (currentLetter !== undefined) {
+                    wordArray.unshift(currentLetter);
+                    wordArrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+            }
+            currentPosition = { x: readPositions[word.length - 1].x, y: readPositions[word.length - 1].y };
+            while (currentPosition !== undefined && currentPosition.y < 15) {
+                currentPosition.y++;
+                const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
+                if (currentLetter !== undefined) {
+                    wordArray.push(currentLetter);
+                    wordArrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (wordDirection === 'h') {
+            while (currentPosition !== undefined && currentPosition.x >= 0) {
+                currentPosition.x--;
+                const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
+                if (currentLetter !== undefined) {
+                    wordArray.unshift(currentLetter);
+                    wordArrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+            }
+            currentPosition = { x: readPositions[word.length - 1].x, y: readPositions[word.length - 1].y };
+            while (currentPosition !== undefined && currentPosition.x < 15) {
+                currentPosition.x++;
+                const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
+                if (currentLetter !== undefined) {
+                    wordArray.push(currentLetter);
+                    wordArrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
+                } else {
+                    break;
+                }
+            }
+        }
+        console.log(wordArray);
+        console.log(wordArrayPosition);
+
+        const wordItselfPoints = this.wps.points_word(wordArray, wordArrayPosition);
         console.log(wordItselfPoints);
+        console.log(totalPointsSum);
+
         totalPointsSum += wordItselfPoints;
         console.log(totalPointsSum);
         return totalPointsSum;
