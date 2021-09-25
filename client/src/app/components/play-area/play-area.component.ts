@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, L, LEFTSPACE, M, O,P, S, T, TOPSPACE, WIDTH, R, I } from '@app/constants/constants';
+import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, I, LEFTSPACE, M, R, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -32,7 +32,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
-    let: Letter[] = [A,I,E,E,M,R];
+    let: Letter[] = [A, I, E, E, M, R];
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
     remainingLetters: number;
@@ -46,32 +46,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly virtualPlayerService: VirtualPlayerService,
         pvs: ValidWordService,
     ) {
-        const usedPosition: any = [
-            [undefined, P, T],
-            [undefined, O, A],
-            [undefined, M, B],
-            [undefined, M, L],
-            [undefined, E, E],
-            [undefined, S, E],
-            [undefined, undefined, undefined],
-        ];
-        // let usedPosition: Letter[][] = [
-        //     [A, R, B, R, E, S],
-        //     [T, A, B, L, E, E],
-        // ];
-        const wordDirection = 'h';
-        const word = [S, E];
-        const position: Vec2[] = [
-            { x: 1, y: 5 },
-            { x: 2, y: 5 },
-        ];
-        // let position: Vec2[] = [
-        //     { x: 5, y: 0 },
-        //     { x: 5, y: 1 },
-        // ];
         pvs.load_dictionary().then(() => {
-            pvs.readWordsAndGivePointsIfValid(word, position, usedPosition, wordDirection);
-            this.virtualPlayerService.manageVrPlayerActions(); 
+            this.virtualPlayerService.manageVrPlayerActions();
         });
     }
     ngOnInit() {
@@ -91,7 +67,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
-        
     }
     get width(): number {
         return this.canvasSize.x;

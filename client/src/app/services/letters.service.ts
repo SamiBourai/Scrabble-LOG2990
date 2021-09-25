@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, LEFTSPACE, TOPSPACE,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z } from '@app/constants/constants';
+import {
+    A,
+    B,
+    BOX, C, D, DEFAULT_HEIGHT,
+    DEFAULT_WIDTH, E, F, G, H, I, J, K, L, LEFTSPACE, M, N, O, P, Q, R, S, T, TOPSPACE, U, V, W, X, Y, Z
+} from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
 @Injectable({
@@ -10,11 +15,11 @@ import { ReserveService } from './reserve.service';
 })
 export class LettersService {
     gridContext: CanvasRenderingContext2D;
-    foundLetter: Array<Boolean> = [false, false, false, false, false, false, false];
-    indexOfEaselLetters: Array<number> = [];
-    indexLettersAlreadyInBoard: Array<number> = [];
+    foundLetter: Boolean[] = [false, false, false, false, false, false, false];
+    indexOfEaselLetters: number[] = [];
+    indexLettersAlreadyInBoard: number[] = [];
 
-    tiles = new Array<Array<Letter>>(15);
+    tiles = new Array<Letter[]>(15);
 
     constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {
         for (let i = 0; i < this.tiles.length; ++i) {
@@ -46,10 +51,10 @@ export class LettersService {
 
     wordInEasel(word: string): boolean {
         console.log(word);
-        let found: boolean = false;
-        let first: boolean = true;
+        let found = false;
+        let first = true;
 
-        for (var i = 0; i < word.length; i++) {
+        for (let i = 0; i < word.length; i++) {
             if (found || first) {
                 first = false;
                 found = false;
@@ -77,7 +82,7 @@ export class LettersService {
     changeLetterFromReserve(letterToChange: string): void {
         if (this.wordInEasel(letterToChange)) {
             for (let i = 0; i < letterToChange.length; i++) {
-                let temp: Letter = {
+                const temp: Letter = {
                     score: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.score,
                     charac: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.charac,
                     img: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.img,
@@ -104,8 +109,8 @@ export class LettersService {
         console.log(this.indexLettersAlreadyInBoard);
     }
     placeLettersInScrable(command: ChatCommand): void {
-        let boardLetterCounter: number = 0;
-        let easelLetterCounter: number = 0;
+        let boardLetterCounter = 0;
+        let easelLetterCounter = 0;
         for (let i = 0; i < command.word.length; i++) {
             if (i == this.indexLettersAlreadyInBoard[boardLetterCounter]) {
                 boardLetterCounter++;
@@ -131,8 +136,8 @@ export class LettersService {
 
     refillEasel(): void {
         for (let i = 0; i < 7; i++) {
-            if (this.easelLogisticsService.occupiedPos[i] == false) {
-                let temp: Letter = this.reserveService.getRandomLetter();
+            if (this.easelLogisticsService.occupiedPos[i] === false) {
+                const temp: Letter = this.reserveService.getRandomLetter();
                 this.easelLogisticsService.easelLetters[i] = {
                     index: i,
                     letters: temp,
@@ -143,8 +148,8 @@ export class LettersService {
     }
 
     wordIsPlacable(command: ChatCommand): boolean {
-        let saveLetter: string = '';
-        let letterFromEasel: string = '';
+        let saveLetter = '';
+        let letterFromEasel = '';
         console.log('direction : ' + command.direction);
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
