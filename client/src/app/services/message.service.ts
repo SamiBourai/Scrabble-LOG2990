@@ -35,8 +35,6 @@ export class MessageService {
     private column: number;
     private orientation: string;
     private word: string;
-
-    
     private possibleLigne: string = 'abcdefghijklmno';
     private possibleColonne: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     private possibleOrientation: string = 'hv';
@@ -72,6 +70,13 @@ export class MessageService {
     isInside(command: string, lookFor: string[]) {
         for (const commandToFind of lookFor) {
             if (command === commandToFind) return true;
+        }
+        return false;
+    }
+
+    isSubstring(command: string, lookFor: string[]){
+        for (const commandToFind of lookFor) {
+            if (command.includes(commandToFind)) return true;
         }
         return false;
     }

@@ -10,7 +10,7 @@
                   <div *ngIf = "  isCommand && !isValid" class = "alert alert-danger" > invalid command </div>
                   <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div>
                   <div *ngIf = "logDebug()">affichage de debogage active</div>
-                  <div *ngIf = "skipTurn">ce n est pas votre tour</div>
+                  <div  id = "turn" *ngIf = "skipTurn">ce n est pas votre tour</div>
                   
                   <div id = "errorMessage" *ngIf = " !isValid">syntax error</div>
                   

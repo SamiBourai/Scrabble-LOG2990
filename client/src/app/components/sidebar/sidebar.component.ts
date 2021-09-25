@@ -56,13 +56,13 @@ export class SidebarComponent {
             (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
             !this.messageService.isCommand(this.typeArea)
         ) {
-            if (this.messageService.containsSwapCommand(this.typeArea)) {
+            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() ) {
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
             }
-            if (this.messageService.containsPlaceCommand(this.typeArea)) {
+            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() ) {
                 this.getLettersFromChat();
             }
-            if (!this.isYourTurn() && this.typeArea === '!passer') {
+            if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea,['!passer', '!placer','!echanger'])) {
                 this.skipTurn = true;
                 this.isValid = false;
             } else {
