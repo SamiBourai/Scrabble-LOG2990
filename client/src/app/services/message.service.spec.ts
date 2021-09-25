@@ -83,13 +83,13 @@ fdescribe('MessageService', () => {
         expect(service.placeCommand(command)).toEqual([{ word: 'mot', position: { x: 2, y: 1 }, direction: 'v' }]);
     });
 
-    it('confirm that if the parameters of the place command are out of the grid(here the line not between a and o), the return array is empty', () => {
+    it('confirm that if the parameters of the place command are out of the grid( line not between a and o), the return array is empty', () => {
         const command = '!placer q1h mot';
 
         expect(service.placeCommand(command)).toEqual([]);
     });
 
-    it('confirm that if the parameters of the place command are out of the grid(here the column not between 1 and 15), the return array is empty', () => {
+    it('confirm that if the parameters of the place command are out of the grid( column not between 1 and 15), the return array is empty', () => {
         const command = '!placer a18h mot';
 
         expect(service.placeCommand(command)).toEqual([]);

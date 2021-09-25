@@ -118,4 +118,9 @@ export class UserService {
         else this.time === 20;
         return false;
     }
+    // detectSkipTurnBtn():boolean {
+    //     this.messageService.skipTurnIsPressed = true;
+    //     this.userService.userSkipingTurn = true;
+    //     return true;
+    // }
 }

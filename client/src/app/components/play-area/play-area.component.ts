@@ -1,3 +1,4 @@
+import { MessageService } from '@app/services/message.service';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -10,6 +11,7 @@ import { UserService } from '@app/services/user.service';
 // import { skip } from 'rxjs/operators';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
+
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -46,6 +48,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly virtualPlayerService: VirtualPlayerService,
         private readonly validWordService: ValidWordService,
         pvs: ValidWordService,
+        private messageService:MessageService
     ) {
         const usedPosition: any = [
             [undefined, P, T],
@@ -88,12 +91,10 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     //     console.log(this.userService.userSkipingTurn);
     // }
     detectSkipTurnBtn() {
-        console.log(this.userService.userSkipingTurn);
 
-        console.log('!passer');
-
+        this.messageService.skipTurnIsPressed = true;
         this.userService.userSkipingTurn = true;
-        console.log(this.userService.userSkipingTurn);
+       
     }
 
     ngOnInit() {

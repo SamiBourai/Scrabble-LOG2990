@@ -10,13 +10,21 @@
                   <div *ngIf = "  isCommand && !isValid" class = "alert alert-danger" > invalid command </div>
                   <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div>
                   <div *ngIf = "logDebug()">affichage de debogage active</div>
+                  
                   <div id = "errorMessage" *ngIf = " !isValid">syntax error</div>
-                  <ng-container *ngIf = "!isCommand || ( isCommand && isValid ) " >
+                  
+                  <ng-container *ngIf = "!isCommand || ( isCommand && isValid )   " >
       
                     <div  *ngFor="let message of arrayOfMessages "> 
                       {{ message }}
                     </div>
                   </ng-container>
+
+                  <ng-container *ngIf = "isSkipButtonClicked()"  >
+                  </ng-container>
+
+                  
+                  
                   
                  
                  
@@ -29,7 +37,7 @@
                         <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
                         </div>
                         
-                         <input formControlName ="message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter)="logMessage() " type = "text"  class = "form-control" autofocus/>
+                         <input formControlName ="message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter) ="logMessage()"  type = "text"  class = "form-control" autofocus/>
                         
                          <mat-hint id = "hint" align="end">{{message.value.length}} / 512 </mat-hint>  
                     </div>

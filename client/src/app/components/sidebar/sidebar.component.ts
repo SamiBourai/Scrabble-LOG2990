@@ -1,5 +1,7 @@
+
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
+
 import { ChatCommand } from '@app/classes/chat-command';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
@@ -20,7 +22,8 @@ export class SidebarComponent {
     parameters: ChatCommand[] = [];
     containsAllChars: boolean = true;
     firstTurn: boolean = true;
-    //chatWord: string = '' ;
+    skipTurn: boolean = false;
+    // chatWord: string = '' ;
 
     form = new FormGroup({
         message: new FormControl(''),
@@ -39,11 +42,11 @@ export class SidebarComponent {
         this.changeDetectorRef.detectChanges();
     }
 
-    get Message() {
-        return this.form.get('message') as AbstractControl;
-    }
     logMessage() {
-        if (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) {
+        if (
+            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
+            !this.messageService.isCommand(this.typeArea)
+        ) {
             if (this.messageService.containsSwapCommand(this.typeArea)) {
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
             }
@@ -52,10 +55,21 @@ export class SidebarComponent {
             }
             this.arrayOfMessages.push(this.typeArea);
         }
+
         this.isCommand = this.messageService.isCommand(this.typeArea);
         this.isValid = this.messageService.isValid(this.typeArea);
 
+        console.log(this.arrayOfMessages);
         this.typeArea = '';
+    }
+
+    isSkipButtonClicked() {
+        if (this.messageService.skipTurnIsPressed) {
+            this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
+            this.arrayOfMessages.push('!passer');
+            return true;
+        }
+        return false;
     }
 
     logDebug() {
@@ -63,7 +77,7 @@ export class SidebarComponent {
     }
 
     getLettersFromChat(): void {
-        if (this.firstTurn && this.messageService.command.position.x == 8 && this.messageService.command.position.y == 8) {
+        if (this.firstTurn && this.messageService.command.position.x === 8 && this.messageService.command.position.y === 8) {
             this.firstTurn = false;
             console.log('1er tour');
             if (this.lettersService.wordInEasel(this.messageService.command.word)) {
@@ -71,6 +85,6 @@ export class SidebarComponent {
             }
         } else if (this.lettersService.wordIsPlacable(this.messageService.command)) {
             this.lettersService.placeLettersInScrable(this.messageService.command);
-        }
+        } else this.inEasel = false;
     }
 }
