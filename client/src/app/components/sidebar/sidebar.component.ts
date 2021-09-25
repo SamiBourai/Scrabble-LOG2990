@@ -44,7 +44,7 @@ export class SidebarComponent {
     }
 
     isYourTurn(){
-        return this.userService.skipTurnValidUser()
+        return this.userService.skipTurnValidUser();
     }
 
     logMessage() {
@@ -62,21 +62,19 @@ export class SidebarComponent {
             if (this.messageService.containsPlaceCommand(this.typeArea)) {
                 this.getLettersFromChat();
             }
-            if(!this.isYourTurn() && this.typeArea === '!passer'){
+            if (!this.isYourTurn() && this.typeArea === '!passer') {
                 this.skipTurn = true;
                 this.isValid = false;
-                
-            }
-            else{
+            } else {
                 this.arrayOfMessages.push(this.typeArea);
             }
-            
-            
-        }
+            if (this.typeArea === '!passer' && this.isYourTurn()) {
 
-        
-        
-        
+                this.userService.detectSkipTurnBtn();
+                const index = this.arrayOfMessages.indexOf('!passer',0);
+                if (index > -1) this.arrayOfMessages.splice(index, 1);
+            }
+        }
 
         console.log(this.arrayOfMessages);
         this.typeArea = '';
@@ -86,7 +84,7 @@ export class SidebarComponent {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.arrayOfMessages.push('!passer');
-            
+
             return true;
         }
         return false;

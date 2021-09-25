@@ -13,10 +13,9 @@ export class VirtualPlayerService {
     vrPlayerEaselLetters : Array<Easel> = [];
     letters : Array<Letter> =[]; 
     generateVrPlayerEasel():void {
-      for(let i = 0 ; i < 7 ; i++)
-      this.vrPlayerEaselLetters.push({index : i , letters: this.reserveService.getRandomLetter() }); 
-      console.log( this.vrPlayerEaselLetters, "VrPlayer"); 
-  }
+        for (let i = 0; i < 7; i++) this.vrPlayerEaselLetters.push({ index: i, letters: this.reserveService.getRandomLetter() });
+        console.log(this.vrPlayerEaselLetters, 'VrPlayer');
+    }
 
   easelToLetters(): Letter[] {
     for(let playerLetters of this.vrPlayerEaselLetters){

@@ -36,7 +36,7 @@ export class MessageService {
     private orientation: string;
     private word: string;
 
-    private isDebug: boolean;
+    
     private possibleLigne: string = 'abcdefghijklmno';
     private possibleColonne: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     private possibleOrientation: string = 'hv';
@@ -117,8 +117,8 @@ export class MessageService {
 
     // !echanger
     debugCommand(input: string) {
-        if (input === '!debug') this.isDebug = true;
-        return this.isDebug;
+        if (input === '!debug') return true;
+        return false;
     }
 
     containsSpecialChar(input: string) {

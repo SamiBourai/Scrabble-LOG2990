@@ -1,3 +1,4 @@
+import { MessageService } from './message.service';
 import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
 
@@ -20,7 +21,7 @@ export class UserService {
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
 
-    constructor() {
+    constructor(private messageService:MessageService) {
         this.realUser = {
             name: this.getUserName(),
             level: 'Joueur en ligne',
@@ -37,6 +38,7 @@ export class UserService {
         };
         this.vrSkipingTurn = false;
         this.userSkipingTurn = false;
+        
     }
 
     chooseFirstToPlay(): boolean {
@@ -118,9 +120,9 @@ export class UserService {
         else this.time === 20;
         return false;
     }
-    // detectSkipTurnBtn():boolean {
-    //     this.messageService.skipTurnIsPressed = true;
-    //     this.userService.userSkipingTurn = true;
-    //     return true;
-    // }
+    detectSkipTurnBtn():boolean {
+        this.messageService.skipTurnIsPressed = true;
+        this.userSkipingTurn = true;
+        return true;
+    }
 }
