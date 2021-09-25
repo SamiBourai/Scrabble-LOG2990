@@ -20,7 +20,7 @@ export class SidebarComponent {
     parameters: ChatCommand[] = [];
     containsAllChars: boolean = true;
     firstTurn: boolean = true;
-    //chatWord: string = '' ;
+    // chatWord: string = '' ;
 
     form = new FormGroup({
         message: new FormControl(''),
@@ -63,14 +63,27 @@ export class SidebarComponent {
     }
 
     getLettersFromChat(): void {
-        if (this.firstTurn && this.messageService.command.position.x == 8 && this.messageService.command.position.y == 8) {
-            this.firstTurn = false;
-            console.log('1er tour');
-            if (this.lettersService.wordInEasel(this.messageService.command.word)) {
-                this.lettersService.placeLettersInScrable(this.messageService.command);
+        if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
+            if (this.firstTurn) {
+                if (this.messageService.command.position.x === 8 && this.messageService.command.position.y === 8) {
+                    this.firstTurn = false;
+                    if (this.lettersService.wordInEasel(this.messageService.command.word)) {
+                        this.lettersService.placeLettersInScrable(this.messageService.command);
+                    }
+                } else {
+                    window.alert('*PREMIER TOUR*: votre mot dois etre placer à la position central(h8)!');
+                    return;
+                }
+            } else if (this.lettersService.wordIsAttached(this.messageService.command)) {
+                if (this.lettersService.wordIsPlacable(this.messageService.command))
+                    this.lettersService.placeLettersInScrable(this.messageService.command);
+            } else {
+                window.alert('*MOT DETTACHÉ*: votre mot dois etre attaché à ceux déjà présent dans la grille!');
+                return;
             }
-        } else if (this.lettersService.wordIsPlacable(this.messageService.command)) {
-            this.lettersService.placeLettersInScrable(this.messageService.command);
+        } else {
+            window.alert('*LE MOT DEPASSE LA GRILLE*: votre mot dois etre contenue dans la grille!');
+            return;
         }
     }
 }

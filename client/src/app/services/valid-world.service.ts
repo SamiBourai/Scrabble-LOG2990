@@ -57,7 +57,7 @@ export class ValidWordService {
 
     verify_word(word: Letter[]) {
         let concatWord = '';
-        console.log(this.dictionary, 'ditionary');
+
         if (this.dictionary === undefined) {
             return;
         }
@@ -145,28 +145,24 @@ export class ValidWordService {
         let counter = 1;
         const currentPosition = positions[letter_index];
         while (currentPosition !== undefined && currentPosition.y < 15) {
-            console.log("Pas d'erreur");
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== undefined) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
-                console.log(currentLetter);
             } else {
                 break;
             }
             currentPosition.y++;
             counter++;
-            console.log(currentPosition);
         }
-        console.log(currentPosition);
+
         if (currentPosition !== undefined) currentPosition.y = positions[letter_index].y - counter;
-        console.log(currentPosition);
+
         counter = 0;
 
         // check top side
-        console.log(currentPosition);
+
         while (currentPosition !== undefined && currentPosition.y >= 0) {
-            console.log("Pas d'erreur");
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== undefined) {
                 array.unshift(currentLetter);
@@ -201,23 +197,19 @@ export class ValidWordService {
             }
             //
 
-            console.log(array);
-            console.log(arrayPosition);
             if (this.verify_word(array)) {
                 totalPointsSum += this.wps.points_word(array, arrayPosition);
             } else {
-                console.log('ntm');
                 totalPointsSum = 0;
-                console.log(totalPointsSum);
+
                 return totalPointsSum;
             }
         }
-        console.log(totalPointsSum);
-        console.log(readPositions);
+
         const wordItselfPoints = this.wps.points_word(word, readPositions);
-        console.log(wordItselfPoints);
+
         totalPointsSum += wordItselfPoints;
-        console.log(totalPointsSum);
+
         return totalPointsSum;
     }
 }

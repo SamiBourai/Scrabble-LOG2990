@@ -181,7 +181,6 @@ export class MessageService {
                 return 15;
             }
         }
-        console.log('-1 swirtch');
         return -1;
     }
 }

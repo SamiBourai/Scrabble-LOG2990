@@ -6,8 +6,8 @@ export const BONUS_WORD_LENGTH = 7;
 export const BONUS_POINTS_50 = 50;
 
 // grid-service
-export const DEFAULT_WIDTH = 800;
-export const DEFAULT_HEIGHT = 800;
+export const BOARD_WIDTH = 800;
+export const BOARD_HEIGHT = 800;
 export const NB_LETTER_HAND = 7;
 export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;
@@ -15,9 +15,9 @@ export const CTX_PX = 15;
 export const ADJUSTEMENT_TOPSPACE = 5;
 
 // play-area-comp
-export const WIDTH = 900;
-export const HEIGHT = 900;
-export const BOX = 15;
+export const CANEVAS_WIDTH = 900;
+export const CANEVAS_HEIGHT = 900;
+export const NB_TILES = 15;
 export const TOPSPACE = 25;
 export const LEFTSPACE = 50;
 
@@ -48,6 +48,10 @@ export const W: Letter = { score: 10, charac: 'w', img: '../../assets/letter-w.p
 export const X: Letter = { score: 10, charac: 'x', img: '../../assets/letter-x.png' };
 export const Y: Letter = { score: 10, charac: 'y', img: '../../assets/letter-y.png' };
 export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.png' };
+
+// easel
+export const EASEL_LENGTH = 7;
+export const CLEAR_RECT_FIX = 5;
 
 // play-area
 export const RED_BOX: Vec2[] = [
@@ -117,7 +121,6 @@ export const PINK_BOX: Vec2[] = [
     { x: 12, y: 12 },
     { x: 11, y: 11 },
     { x: 10, y: 10 },
-    { x: 7, y: 7 },
 ];
 
 // sidebar
