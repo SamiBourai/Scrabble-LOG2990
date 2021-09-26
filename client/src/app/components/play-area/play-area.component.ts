@@ -49,38 +49,32 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly validWordService: ValidWordService
     ) {}
 
-    
+
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
     }
-    // @HostListener('click', ['$skipTurn'])
-    // onClick(){
-    //     console.log(this.userService.userSkipingTurn);
-
-    //     console.log("!passer");
-
-    //     this.userService.userSkipingTurn=true;
-    //     console.log(this.userService.userSkipingTurn);
-    // }
     detectSkipTurnBtn(){
         console.log(this.userService.userSkipingTurn);
 
         console.log("!passer");
 
         this.userService.userSkipingTurn=true;
+
         console.log(this.userService.userSkipingTurn);
     }
 
     ngOnInit(){
+        //this.userService.waitTwenySecond(true);
+
         this.userService.startTimer();
-        //this.onClick();
+
     }
     ngAfterViewInit(): void {
 
 
-        this.reserveService.size.subscribe(res=>{
+        this.reserveService.size.subscribe((res: number)=>{
             this.remainingLetters=res;
         });
 

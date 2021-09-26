@@ -85,7 +85,7 @@ export class ReserveService {
     }
 
     get size(): BehaviorSubject<number> {
-        console.log("size "+ this._size);
+        console.log("size reserve"+ this._size);
 
         return this.sizeObs;
     }

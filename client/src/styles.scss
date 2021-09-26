@@ -79,19 +79,14 @@ $indigo-pink-theme: mat.define-light-theme(
 html,
 body {
     height: 100%;
-    
+    width: 100%;
 }
 body {
     margin: 0;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
-    background-image: url('https://shawfloors.widen.net/content/insm9rbila/jpeg/vv035-00911-evp-vinyl-flooring-roomscene.jpg?crop=true&position=c&q=80&r=0&color=ffffffff&w=1920&h=1080');
-}
-
-html,
-body {
-    height: 100%;
-}
-body {
-    margin: 0;
-    font-family: Roboto, 'Helvetica Neue', sans-serif;
+    background-color: #e5e5f7;
+    opacity: 1.0;
+    background-image:  radial-gradient(#0d0f31 0.7000000000000001px, transparent 0.7000000000000001px), radial-gradient(#0d0f31 0.7000000000000001px, #e5e5f7 0.7000000000000001px);
+    background-size: 28px 28px;
+    background-position: 0 0,14px 14px;
 }

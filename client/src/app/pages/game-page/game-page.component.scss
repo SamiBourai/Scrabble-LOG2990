@@ -1,17 +1,35 @@
+
+
 .container {
-    // height: 100%;
-    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
     display: flex;
     overflow-y: auto;
 }
 
-.play-area-container {
-
-    flex: 1 1 auto;
-}
 
 .play-area {
-    display: grid;
-    width: min-content;
-    outline: none;
+    width: 60%;
+    height: 100%;
+    float: left;
+    border-collapse: collapse;
+
+
+}
+
+
+.side-bar{
+    width: 20%;
+    height: 100%;
+    float: left;
+    border-collapse: collapse;
+}
+
+.informations-div{
+    width: 20%;
+    height: 100%;
+    float: left;
+    border-collapse: collapse;
 }

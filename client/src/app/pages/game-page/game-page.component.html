@@ -1,17 +1,34 @@
-<div class="container" fxLayout="column">
+<div class="container" >
     <div class="side-bar" >
          <app-sidebar id = "sideBar"></app-sidebar>
     </div>
 
-    <!-- <section class="play-area-container">
-
-    </section> -->
+    
     <div class="play-area">
          <app-play-area class="play-area" tabindex="0"></app-play-area>
     </div>
 
     <div class="informations-div">
-        <span>Current player informations</span>
+        <div>
+
+            <mat-card *ngIf="userService.time===59 else displayVrUser" fxLayout="row">
+                    <ngx-avatar  class="avatar" size="25" name="{{ userService.realUser.name }}" ></ngx-avatar>
+                    <mat-card-header>
+                        <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
+                        <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
+                    </mat-card-header>
+        </mat-card>
+
+        <ng-template #displayVrUser>
+        <mat-card  fxLayout="row">
+            <ngx-avatar  class="avatar" size="25" name="{{ userService.vrUser.name }}" src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"></ngx-avatar>
+            <mat-card-header>
+                <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
+                <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+        </ng-template>
+
     </div>
 
 </div>
