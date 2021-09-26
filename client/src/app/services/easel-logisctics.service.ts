@@ -3,13 +3,15 @@ import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
 import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
 
-
 @Injectable({
     providedIn: 'root',
 })
 export class EaselLogiscticsService {
     gridContext: CanvasRenderingContext2D;
-    easelLetters: Array<Easel> = [
+    foundLetter: Boolean[] = [false, false, false, false, false, false, false];
+    index: number[] = [];
+
+    easelLetters: Easel[] = [
         { index: 0, letters: A },
         { index: 0, letters: A },
         { index: 0, letters: A },
@@ -18,10 +20,13 @@ export class EaselLogiscticsService {
         { index: 0, letters: A },
         { index: 0, letters: A },
     ];
-    occupiedPos: Array<Boolean> = [false, false, false, false, false, false, false];
+    size: number = 0;
+    temp: Easel = { index: 0, letters: A };
+    occupiedPos: Boolean[] = [false, false, false, false, false, false, false];
+    first: boolean = true;
 
     placeEaselLetters(): void {
-        for (let lett of this.easelLetters) {
+        for (const lett of this.easelLetters) {
             const img = new Image();
             img.src = lett.letters.img;
 
@@ -58,11 +63,36 @@ export class EaselLogiscticsService {
         return A;
     }
 
-
     isFull(): boolean {
         for (let i = 0; i <= 6; i++) {
             if (!this.occupiedPos[i]) return false;
         }
         return true;
+    }
+
+    wordInEasel(word: string): boolean {
+        let found = false;
+        let first = true;
+        for (let i = 0; i < word.length; i++) {
+            console.log(word.charAt(i));
+            if (found || first) {
+                first = false;
+                found = false;
+
+                for (let j = 0; j < 7; j++) {
+                    console.log(this.easelLetters[j]);
+                    if (word.charAt(i) == this.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
+                        this.foundLetter[j] = true;
+                        this.index.push(j);
+                        found = true;
+                        break;
+                    }
+                }
+            } else {
+                window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                break;
+            }
+        }
+        return found;
     }
 }

@@ -10,6 +10,7 @@ export class UserService {
     // Set strictNullChecks=false in tsconfig.json.
     // Declare your variable type as any
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     counter: { min: number; sec: number };
     realUser: RealUser;
@@ -35,8 +36,8 @@ export class UserService {
             round: '20 sec',
             score: 0,
         };
-        this.vrSkipingTurn=false;
-        this.userSkipingTurn=false;
+        this.vrSkipingTurn = false;
+        this.userSkipingTurn = false;
     }
 
     chooseFirstToPlay(): boolean {
@@ -56,7 +57,7 @@ export class UserService {
         // comme ces constante on en a besoin ici seulement
 
 
-        let randomInteger: number = 0;
+        let randomInteger = 0;
 
         while (true) {
             randomInteger = this.getRandomInt(3);
@@ -121,10 +122,9 @@ export class UserService {
         return counter;
     }
     skipTurnValidUser(): boolean {
-        if (this.time ===59) return true;
+        if (this.time === 59) return true;
         else this.time === 20;
         return false;
     }
-
 }
 

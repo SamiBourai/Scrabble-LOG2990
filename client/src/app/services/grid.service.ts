@@ -1,6 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { ADJUSTEMENT_TOPSPACE, AZUR_BOX, BLUE_BOX, BOX, CTX_PX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_END, HAND_POSITION_START, HEIGHT, LEFTSPACE, NB_LETTER_HAND, PINK_BOX, RED_BOX, TOPSPACE, WIDTH } from '@app/constants/constants';
+import {
+    ADJUSTEMENT_TOPSPACE,
+    AZUR_BOX,
+    BLUE_BOX,
+    BOX,
+    CTX_PX,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    HAND_POSITION_END,
+    HAND_POSITION_START,
+    HEIGHT,
+    LEFTSPACE,
+    NB_LETTER_HAND,
+    PINK_BOX,
+    RED_BOX,
+    TOPSPACE,
+    WIDTH
+} from '@app/constants/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -73,14 +90,16 @@ export class GridService {
                 DEFAULT_HEIGHT / BOX,
             );
             this.gridContext.fillStyle = 'black';
-            const str = "MOT  X3";
-            const array = str.split(" ");
+            const str = 'MOT  X3';
+            const array = str.split(' ');
             for (let i = 0; i < array.length; i++) {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4, TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10, DEFAULT_WIDTH / BOX);
-
+                this.gridContext.fillText(
+                    array[i],
+                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
+                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
+                    DEFAULT_WIDTH / BOX,
+                );
             }
-
-
         }
         // triple letter score
 
@@ -93,11 +112,15 @@ export class GridService {
                 DEFAULT_HEIGHT / BOX,
             );
             this.gridContext.fillStyle = 'black';
-            const str = "MOT  X2";
-            const array = str.split(" ");
+            const str = 'MOT  X2';
+            const array = str.split(' ');
             for (let i = 0; i < array.length; i++) {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4, TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10, DEFAULT_WIDTH / BOX);
-
+                this.gridContext.fillText(
+                    array[i],
+                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
+                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
+                    DEFAULT_WIDTH / BOX,
+                );
             }
         }
         // triple letter score
@@ -111,16 +134,19 @@ export class GridService {
                 DEFAULT_HEIGHT / BOX,
             );
             this.gridContext.fillStyle = 'white';
-            const str = "L.  X3";
-            const array = str.split(" ");
+            const str = 'L.  X3';
+            const array = str.split(' ');
             for (let i = 0; i < array.length; i++) {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4, TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10, DEFAULT_WIDTH / BOX);
-
+                this.gridContext.fillText(
+                    array[i],
+                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
+                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
+                    DEFAULT_WIDTH / BOX,
+                );
             }
         }
 
         // triple letter score
-
 
         for (const v of AZUR_BOX) {
             this.gridContext.fillStyle = 'cyan';
@@ -131,11 +157,15 @@ export class GridService {
                 DEFAULT_HEIGHT / BOX,
             );
             this.gridContext.fillStyle = 'black';
-            const str = "L.  X2";
-            const array = str.split(" ");
+            const str = 'L.  X2';
+            const array = str.split(' ');
             for (let i = 0; i < array.length; i++) {
-                this.gridContext.fillText(array[i], LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4, TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10, DEFAULT_WIDTH / BOX);
-
+                this.gridContext.fillText(
+                    array[i],
+                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
+                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
+                    DEFAULT_WIDTH / BOX,
+                );
             }
         }
         this.gridContext.fillStyle = 'black';
@@ -143,15 +173,14 @@ export class GridService {
 
     drawPlayerName(s: string) {
         this.gridContext.font = 'bold 30px system-ui';
-        this.gridContext.textAlign = "center";
-        this.gridContext.fillText(s, LEFTSPACE, (HEIGHT - TOPSPACE * 2) - HAND_POSITION_START, 2 * LEFTSPACE);
-
+        this.gridContext.textAlign = 'center';
+        this.gridContext.fillText(s, LEFTSPACE, HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
     }
 
     drawOpponentName(s: string) {
         this.gridContext.font = 'bold 30px system-ui';
-        this.gridContext.textAlign = "center";
-        this.gridContext.fillText(s, WIDTH - LEFTSPACE, (HEIGHT - TOPSPACE * 2) - HAND_POSITION_START, 2 * LEFTSPACE);
+        this.gridContext.textAlign = 'center';
+        this.gridContext.fillText(s, WIDTH - LEFTSPACE, HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
     }
 
     get width(): number {

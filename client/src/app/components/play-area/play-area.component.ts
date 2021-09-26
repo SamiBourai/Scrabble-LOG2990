@@ -1,15 +1,13 @@
-
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, BOX, D, DEFAULT_HEIGHT, DEFAULT_WIDTH, HEIGHT, LEFTSPACE, TOPSPACE, WIDTH } from '@app/constants/constants';
+import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, E, HEIGHT, I, LEFTSPACE, M, R, TOPSPACE, WIDTH } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 // import { skip } from 'rxjs/operators';
-
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
@@ -29,53 +27,36 @@ export enum MouseButton {
 })
 export class PlayAreaComponent implements AfterViewInit, OnInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
-    //@ViewChild('skipTurn') private btnSkipTurn: HTMLButtonElement;
+    // @ViewChild('skipTurn') private btnSkipTurn: HTMLButtonElement;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
-    let: Letter[] = [D, A, B, A];
+    let: Letter[] = [A, I, E, E, M, R];
 
     private canvasSize = { x: WIDTH, y: HEIGHT };
-    remainingLetters:number;
+    remainingLetters: number;
 
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
         private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
-        public userService:UserService,
+        public userService: UserService,
         private readonly virtualPlayerService: VirtualPlayerService,
-        private readonly validWordService: ValidWordService
-    ) {}
-
-
-
-    @HostListener('keydown', ['$event'])
-    buttonDetect(event: KeyboardEvent) {
-        this.buttonPressed = event.key;
+        pvs: ValidWordService,
+    ) {
+        pvs.load_dictionary().then(() => {
+            this.virtualPlayerService.manageVrPlayerActions();
+        });
     }
-    detectSkipTurnBtn(){
-        console.log(this.userService.userSkipingTurn);
-
-        console.log("!passer");
-
-        this.userService.userSkipingTurn=true;
-
-        console.log(this.userService.userSkipingTurn);
-    }
-
-    ngOnInit(){
-        //this.userService.waitTwenySecond(true);
-
+    ngOnInit() {
         this.userService.startTimer();
-
+        // this.onClick();
     }
     ngAfterViewInit(): void {
-
-
-        this.reserveService.size.subscribe((res: number)=>{
-            this.remainingLetters=res;
+        this.reserveService.size.subscribe((res) => {
+            this.remainingLetters = res;
         });
 
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -86,10 +67,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
-        this.virtualPlayerService.generateVrPlayerEasel();
-        this.validWordService.generateAllWordsPossible(this.let);
     }
-
     get width(): number {
         return this.canvasSize.x;
     }
@@ -97,10 +75,34 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     get height(): number {
         return this.canvasSize.y;
     }
+    @HostListener('keydown', ['$event'])
+    buttonDetect(event: KeyboardEvent) {
+        this.buttonPressed = event.key;
+    }
+    // @HostListener('click', ['$skipTurn'])
+    // onClick(){
+    //     console.log(this.userService.userSkipingTurn);
 
+    //     console.log("!passer");
+
+    //     this.userService.userSkipingTurn=true;
+    //     console.log(this.userService.userSkipingTurn);
+    // }
+    detectSkipTurnBtn() {
+        console.log(this.userService.userSkipingTurn);
+
+        console.log('!passer');
+
+        this.userService.userSkipingTurn = true;
+        console.log(this.userService.userSkipingTurn);
+    }
     placeFromEasel(): void {
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
-        this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 7, y: 8 });
+        if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
+            this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
+        }
+        if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
+            this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(4), { x: 2, y: 2 });
+        }
     }
 
     getLetters(): void {
@@ -114,7 +116,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             }
         }
         this.easelLogisticsService.placeEaselLetters();
-        console.log(this.reserveService);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
@@ -131,6 +132,4 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             };
         }
     }
-
-
 }
