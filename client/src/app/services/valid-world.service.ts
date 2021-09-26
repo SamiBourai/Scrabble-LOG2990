@@ -19,7 +19,35 @@ export class ValidWordService {
     concatWord: string = '';
 
     constructor(private http: HttpClient, private wps: WordPointsService) {}
+    generateAllWordsPossible(word: Letter[]) {
+        for (const letters of word) {
+            this.concatWord += letters.charac;
+        }
+        console.log(this.concatWord);
 
+        // const regexp = new RegExp(
+        //     '^(?=['+ this.concatWord+']{' +
+        //         this.concatWord.length+
+        //         '}$)(?!.*(.).*\e).*$', 'g');
+        for (let i = this.concatWord.length; i >= 1; i--) {
+            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
+            // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})(?=(?!((?<1>.)\k<1>.)))
+            // (?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))
+            // (?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
+            for (const words of this.dictionary!) {
+                for (const dictionaryWord of words) {
+                    if (i === dictionaryWord.length) {
+                        const match = regex.test(dictionaryWord);
+                        if (match) {
+                            this.matchWords.push(dictionaryWord);
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log(this.matchWords, 'match');
+    }
     private get_compressed_words(): Observable<ArrayBuffer> {
         // return this.http.get<string[]>('/assets/dictionary.json');
         return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
@@ -70,34 +98,6 @@ export class ValidWordService {
         }
         const letter_index_input = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
         return this.dictionary[letter_index_input].has(concatWord);
-    }
-    async generateAllWordsPossible(word: Letter[]) {
-        for (let i = 0; i < word.length; i++) {
-            const letter = word[i].charac;
-            this.concatWord += letter;
-        }
-        console.log(this.concatWord);
-
-        // const regexp = new RegExp(
-        //     '^(?=['+ this.concatWord+']{' +
-        //         this.concatWord.length+
-        //         '}$)(?!.*(.).*\e).*$', 'g');
-        for (let i = this.concatWord.length; i >= 1; i--) {
-            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
-            // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})(?=(?!((?<1>.)\k<1>.)))(?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))(?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
-            for (const words of this.dictionary!) {
-                for (const dictionaryWord of words) {
-                    if (i === dictionaryWord.length) {
-                        const match = regex.test(dictionaryWord);
-                        if (match) {
-                            this.matchWords.push(dictionaryWord);
-                        }
-                    }
-                }
-            }
-        }
-
-        console.log(this.matchWords, 'match');
     }
 
     private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letter_index: number, usedPosition: (Letter | undefined)[][]) {
