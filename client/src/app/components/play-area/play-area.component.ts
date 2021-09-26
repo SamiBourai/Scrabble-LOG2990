@@ -97,7 +97,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
-
+        this.getLetters();
         this.reserveService.size.subscribe((res) => {
             this.remainingLetters = res;
         });
