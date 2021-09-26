@@ -1,3 +1,4 @@
+import { UserService } from '@app/services/user.service';
 import { MessageService } from '@app/services/message.service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
@@ -5,6 +6,7 @@ import SpyObj = jasmine.SpyObj;
 
 fdescribe('SidebarComponent', () => {
     let messageServiceSpy: SpyObj<MessageService>;
+    let userServiceSpy: SpyObj<UserService>;
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
 
@@ -12,6 +14,9 @@ fdescribe('SidebarComponent', () => {
         
         messageServiceSpy = jasmine.createSpyObj('MessageServiceSpy', ['isCommand', 'containsSwapCommand', 'isValid', 
          'isSubstring','debugCommand','containsPlaceCommand']);
+
+         userServiceSpy = jasmine.createSpyObj('UserServiceSpy',['skipTurnValidUser'])
+        
       });
 
     beforeEach(async () => {
@@ -37,7 +42,6 @@ fdescribe('SidebarComponent', () => {
         expect(messageServiceSpy.isCommand).toHaveBeenCalled();
         expect(messageServiceSpy.isValid).toHaveBeenCalled();
         expect(messageServiceSpy.containsPlaceCommand).toHaveBeenCalled();
-        // expect(messageServiceSpy.swapCommand).toHaveBeenCalled();
         expect(messageServiceSpy.isSubstring).toHaveBeenCalled();
 
     });

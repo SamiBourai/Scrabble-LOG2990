@@ -25,6 +25,7 @@ export class SidebarComponent {
     containsAllChars: boolean = true;
     firstTurn: boolean = true;
     skipTurn: boolean = false;
+    active:boolean = false;
     // chatWord: string = '' ;
 
     form = new FormGroup({
@@ -62,6 +63,13 @@ export class SidebarComponent {
             }
             if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
                 this.getLettersFromChat();
+                this.messageService.skipTurnIsPressed = true;
+                //this.userService.skipTurnValidUser();
+                //disable the btn 
+                
+                
+                
+                
             }
             if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
@@ -84,6 +92,7 @@ export class SidebarComponent {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.arrayOfMessages.push('!passer');
+            this.active = true;
 
             return true;
         }

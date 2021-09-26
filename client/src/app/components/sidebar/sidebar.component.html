@@ -11,17 +11,20 @@
                   <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div>
                   <div *ngIf = "logDebug()">affichage de debogage active</div>
                   <div  id = "turn" *ngIf = "isImpossible && isValid && isCommand" class = "alert alert-danger" >commande impossible a realiser</div>
-                  <ng-container *ngIf = "!isCommand || ( isCommand && isValid )   " >
+                  <ng-container   *ngIf = "!isCommand || ( isCommand && isValid )   " >
       
-                    <div  *ngFor="let message of arrayOfMessages "> 
+                    <div   *ngFor="let message of arrayOfMessages "> 
                       {{ message }}
                       
                     </div>
                   </ng-container>
                   
-
-                  <ng-container *ngIf = "isSkipButtonClicked()"  >
-                  </ng-container>
+                  <div [style.Color] = "active ? 'red':'black'"  >
+                    <ng-container   id = "skip" *ngIf = "isSkipButtonClicked()"  >
+                    
+                    </ng-container>
+                  </div>
+                  
 
                   
                   
