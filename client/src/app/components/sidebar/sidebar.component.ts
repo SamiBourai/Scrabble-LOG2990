@@ -1,4 +1,4 @@
-import { UserService } from '@app/services/user.service';
+
 
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -6,6 +6,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
+import { UserService } from '@app/services/user.service';
+
 
 // import { Parameter } from '@app/classes/parameter';
 
@@ -26,6 +28,7 @@ export class SidebarComponent {
     firstTurn: boolean = true;
     skipTurn: boolean = false;
     active:boolean = false;
+    name:string
     // chatWord: string = '' ;
 
     form = new FormGroup({
@@ -49,6 +52,10 @@ export class SidebarComponent {
         return this.userService.skipTurnValidUser();
     }
 
+    getNameCurrentPlayer(){
+        return this.userService.getUserName();
+    }
+
     logMessage() {
         this.isCommand = this.messageService.isCommand(this.typeArea);
         if (!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) this.isImpossible = true;
@@ -63,12 +70,10 @@ export class SidebarComponent {
             }
             if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
                 this.getLettersFromChat();
-                this.messageService.skipTurnIsPressed = true;
-                //this.userService.skipTurnValidUser();
+                this.messageService.skipTurnIsPressed = false;
+                this.userService.detectSkipTurnBtn();
+                this.arrayOfMessages.pop();
                 //disable the btn 
-                
-                
-                
                 
             }
             if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
@@ -85,6 +90,8 @@ export class SidebarComponent {
         }
 
         console.log(this.arrayOfMessages);
+        this.name = this.getNameCurrentPlayer();
+        
         this.typeArea = '';
     }
 
@@ -93,7 +100,9 @@ export class SidebarComponent {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.arrayOfMessages.push('!passer');
             this.active = true;
-
+            let elem = document.getElementById('passer');
+            console.log(elem)
+            elem?.setAttribute("style", "color:red")
             return true;
         }
         return false;

@@ -14,23 +14,18 @@
                   <ng-container   *ngIf = "!isCommand || ( isCommand && isValid )   " >
       
                     <div   *ngFor="let message of arrayOfMessages "> 
-                      {{ message }}
+                      <p  >{{ '[' + name + ']' + " " + message }}</p>
                       
                     </div>
                   </ng-container>
                   
-                  <div [style.Color] = "active ? 'red':'black'"  >
-                    <ng-container   id = "skip" *ngIf = "isSkipButtonClicked()"  >
                     
-                    </ng-container>
-                  </div>
-                  
-
-                  
-                  
-                  
-                 
-                 
+                  <ng-container  *ngIf = "isSkipButtonClicked()"  >
+                      <div id = "passer" >true</div>
+                  </ng-container>
+                    
+                    
+                
               </div>
               <hr>
   

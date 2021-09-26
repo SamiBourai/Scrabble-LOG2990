@@ -68,11 +68,17 @@ export class UserService {
                 continue;
             } else break;
         }
+        localStorage.setItem('vrUserName',vrPlayerNames[randomInteger]);
         return vrPlayerNames[randomInteger];
     }
 
     getUserName(): string {
         this.userNameLocalStorage = localStorage.getItem('userName');
+        return this.userNameLocalStorage;
+    }
+
+    getVrUserName(): string {
+        this.userNameLocalStorage = localStorage.getItem('vrUserName');
         return this.userNameLocalStorage;
     }
 
