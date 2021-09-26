@@ -56,7 +56,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly virtualPlayerService: VirtualPlayerService,
         pvs: ValidWordService,
     ) {
-        pvs.load_dictionary().then(() => {
+        pvs.loadDictionary().then(() => {
             this.virtualPlayerService.manageVrPlayerActions();
         });
     }

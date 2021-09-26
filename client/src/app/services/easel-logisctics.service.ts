@@ -10,6 +10,7 @@ import {
     HAND_POSITION_START,
     LEFTSPACE,
     NB_TILES,
+    NOT_A_LETTER,
     TOPSPACE,
 } from '@app/constants/constants';
 import { ReserveService } from './reserve.service';
@@ -25,6 +26,7 @@ export class EaselLogiscticsService {
     temp: Easel = { index: 0, letters: A };
     occupiedPos: boolean[] = [false, false, false, false, false, false, false];
     first: boolean = true;
+    easelSize: number = EASEL_LENGTH;
 
     constructor(private reserveService: ReserveService) {}
 
@@ -58,7 +60,7 @@ export class EaselLogiscticsService {
             this.occupiedPos[index] = false;
             return this.easelLetters[index].letters;
         }
-        return A;
+        return NOT_A_LETTER;
     }
 
     wordInEasel(word: string): boolean {
@@ -98,6 +100,8 @@ export class EaselLogiscticsService {
                     };
                 } else {
                     window.alert('*LA RESERVE DE LETTRE EST MAINTENANT VIDE*');
+                    this.easelSize = i;
+                    return;
                 }
             }
         }

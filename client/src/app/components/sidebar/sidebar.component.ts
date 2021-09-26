@@ -77,6 +77,7 @@ export class SidebarComponent {
             } else if (this.lettersService.wordIsAttached(this.messageService.command)) {
                 if (this.lettersService.wordIsPlacable(this.messageService.command))
                     this.lettersService.placeLettersInScrable(this.messageService.command);
+                else window.alert('*ERREUR*: votre mot dois contenir les lettres dans le chevalet et sur la grille!');
             } else {
                 window.alert('*MOT DETTACHÉ*: votre mot dois etre attaché à ceux déjà présent dans la grille!');
                 return;

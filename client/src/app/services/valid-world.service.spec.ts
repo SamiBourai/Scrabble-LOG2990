@@ -46,31 +46,31 @@ describe('ValidWorldService', () => {
         const words = ['pomme', 'punaise', 'banane'];
         spyOn<unknown>(service, 'get_words').and.returnValue(of(words));
 
-        await service.load_dictionary();
+        await service.loadDictionary();
         const dict = service.dictionary;
         expect(dict?.length).toEqual(2);
     });
 
     it('test_getDictionary', () => {
-        expect(service.verify_word([B, O, N, J, O, U, R])).toBeUndefined();
+        expect(service.verifyWord([B, O, N, J, O, U, R])).toBeUndefined();
     });
 
     it('test_verifyWord', () => {
-        expect(service.verify_word([B, O, N, J, O, U, R])).toBeUndefined();
+        expect(service.verifyWord([B, O, N, J, O, U, R])).toBeUndefined();
     });
 
     it('test_verifyWord EMPTY WORD', () => {
         service.dictionary = [new Set(['amende'])];
-        expect(service.verify_word([])).toBeUndefined();
+        expect(service.verifyWord([])).toBeUndefined();
     });
 
     it('test_verifyWord 2 WORDS THAT MATCH', () => {
         service.dictionary = [new Set(['arbre'])];
-        expect(service.verify_word([A, R, B, R, E])).toBeTrue();
+        expect(service.verifyWord([A, R, B, R, E])).toBeTrue();
     });
 
     it('test_verifyWord 2 WORDS THAT DOESNT MATCH', () => {
         service.dictionary = [new Set(['bonjour'])];
-        expect(service.verify_word([A, R, G, I, L, E])).toBeFalse();
+        expect(service.verifyWord([A, R, G, I, L, E])).toBeFalse();
     });
 });

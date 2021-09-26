@@ -22,6 +22,7 @@ import {
     M,
     N,
     NB_TILES,
+    NOT_A_LETTER,
     O,
     P,
     Q,
@@ -186,6 +187,7 @@ export class LettersService {
             return true;
         }
 
+        this.resetVariables();
         return false;
     }
     fromWordToLetters(word: string): Letter[] {
@@ -276,7 +278,7 @@ export class LettersService {
                 return Z;
             }
         }
-        return A;
+        return NOT_A_LETTER;
     }
 
     wordIsAttached(command: ChatCommand): boolean {
@@ -288,8 +290,8 @@ export class LettersService {
     }
     wordInBoardLimits(command: ChatCommand): boolean {
         if (
-            (command.direction === 'h' && command.position.x + command.word.length > NB_TILES) ||
-            (command.direction === 'v' && command.position.y + command.word.length > NB_TILES)
+            (command.direction === 'h' && command.position.x + command.word.length - 1 > NB_TILES) ||
+            (command.direction === 'v' && command.position.y + command.word.length - 1 > NB_TILES)
         ) {
             return false;
         }
