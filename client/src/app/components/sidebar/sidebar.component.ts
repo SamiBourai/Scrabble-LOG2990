@@ -18,6 +18,7 @@ export class SidebarComponent {
     arrayOfMessages: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
+    isImpossible: boolean;
     isCommand: boolean = false;
     inEasel: boolean = true;
     parameters: ChatCommand[] = [];
@@ -43,35 +44,34 @@ export class SidebarComponent {
         this.changeDetectorRef.detectChanges();
     }
 
-    isYourTurn(){
+    isYourTurn() {
         return this.userService.skipTurnValidUser();
     }
 
     logMessage() {
-
         this.isCommand = this.messageService.isCommand(this.typeArea);
+        if (!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) this.isImpossible = true;
         this.isValid = this.messageService.isValid(this.typeArea);
 
         if (
             (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
             !this.messageService.isCommand(this.typeArea)
         ) {
-            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() ) {
+            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn()) {
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
             }
-            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() ) {
+            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
                 this.getLettersFromChat();
             }
-            if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea,['!passer', '!placer','!echanger'])) {
+            if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
-                this.isValid = false;
+                this.isImpossible = true;
             } else {
                 this.arrayOfMessages.push(this.typeArea);
             }
             if (this.typeArea === '!passer' && this.isYourTurn()) {
-
                 this.userService.detectSkipTurnBtn();
-                const index = this.arrayOfMessages.indexOf('!passer',0);
+                const index = this.arrayOfMessages.indexOf('!passer', 0);
                 if (index > -1) this.arrayOfMessages.splice(index, 1);
             }
         }
