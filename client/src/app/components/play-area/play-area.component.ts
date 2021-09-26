@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import {
@@ -9,9 +10,16 @@ import {
     CANEVAS_HEIGHT,
     CANEVAS_WIDTH,
     D,
+    E,
     EASEL_LENGTH,
+    L,
     LEFTSPACE,
+    M,
     NB_TILES,
+    O,
+    P,
+    S,
+    T,
     TOPSPACE,
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
@@ -20,8 +28,6 @@ import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
-// import { skip } from 'rxjs/operators';
-import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -53,11 +59,41 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
         private readonly reserveService: ReserveService,
-        private readonly virtualPlayerService: VirtualPlayerService,
         private readonly pvs: ValidWordService,
     ) {
+        const usedPosition = new Array<Letter[]>(15);
+        for (let i = 0; i < usedPosition.length; ++i) {
+            usedPosition[i] = new Array<Letter>(15);
+        }
+        usedPosition[0][0] = P;
+        usedPosition[1][0] = O;
+        usedPosition[2][0] = M;
+        usedPosition[3][0] = M;
+        usedPosition[4][0] = E;
+        usedPosition[5][0] = S;
+        usedPosition[0][1] = T;
+        usedPosition[1][1] = A;
+        usedPosition[2][1] = B;
+        usedPosition[3][1] = L;
+        usedPosition[4][1] = E;
+        usedPosition[5][1] = E;
+
+        const command: ChatCommand = {
+            word: 'se',
+            direction: 'v',
+            position: { x: 6, y: 1 },
+        };
+        // let usedPosition: Letter[][] = [
+        //     [A, R, B, R, E, S],
+        //     [T, A, B, L, E, E],
+        // ];
+
+        // let position: Vec2[] = [
+        //     { x: 5, y: 0 },
+        //     { x: 5, y: 1 },
+        // ];
         this.pvs.loadDictionary().then(() => {
-            this.virtualPlayerService.manageVrPlayerActions();
+            this.pvs.readWordsAndGivePointsIfValid(usedPosition, command);
         });
     }
     @HostListener('keydown', ['$event'])

@@ -1,12 +1,14 @@
 /* eslint-disable no-console */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { MAX_LINES, MIN_LINES } from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { LettersService } from './letters.service';
 import { WordPointsService } from './word-points.service';
 
 @Injectable({
@@ -20,7 +22,7 @@ export class ValidWordService {
 
     private dictionary?: Set<string>[];
 
-    constructor(private http: HttpClient, private wps: WordPointsService) {}
+    constructor(private http: HttpClient, private wps: WordPointsService, private letterService: LettersService) {}
 
     async loadDictionary() {
         const wordsObs = this.getWords();
@@ -42,22 +44,49 @@ export class ValidWordService {
         this.dictionary = letterIndexes.map(([t, h]) => new Set(words.slice(t, h)));
     }
 
-    readWordsAndGivePointsIfValid(word: Letter[], positions: Vec2[], usedPosition: Letter[][], wordDirection: string) {
-        const readPositions: Vec2[] = [];
-        for (const i of positions) {
-            readPositions.push({ x: i.x, y: i.y });
+    async generateAllWordsPossible(word: Letter[]) {
+        for (const letter of word) {
+            this.concatWord += letter;
         }
+        console.log(this.concatWord);
+
+        // const regexp = new RegExp(
+        //     '^(?=['+ this.concatWord+']{' +
+        //         this.concatWord.length+
+        //         '}$)(?!.(.).\e).*$', 'g');
+        for (let i = this.concatWord.length; i >= 1; i--) {
+            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
+            // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})
+            // (?=(?!((?<1>.)\k<1>.)))(?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))(?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
+            for (const words of this.dictionary!) {
+                for (const dictionaryWord of words) {
+                    if (i === dictionaryWord.length) {
+                        const match = regex.test(dictionaryWord);
+                        if (match) {
+                            this.matchWords.push(dictionaryWord);
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log(this.matchWords, 'match');
+    }
+
+    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand) {
+        const positions = this.convertIntoPositionArray(command);
+
         let totalPointsSum = 0;
-        for (let letterIndex = 0; letterIndex < word.length; letterIndex++) {
+        for (let letterIndex = 0; letterIndex < command.word.length; letterIndex++) {
             const array: Letter[] = [];
             const arrayPosition: Vec2[] = [];
 
             // Check side if word entered is vertical
-            if (wordDirection === 'v') {
+            if (command.direction === 'v') {
                 this.checkSides(positions, array, arrayPosition, letterIndex, usedPosition);
             }
 
-            if (wordDirection === 'h') {
+            if (command.direction === 'h') {
                 this.checkBottomTopSide(positions, array, arrayPosition, letterIndex, usedPosition);
             }
             //
@@ -76,22 +105,7 @@ export class ValidWordService {
             }
         }
 
-        const wordArray = word;
-        const currentPosition = { x: readPositions[0].x, y: readPositions[0].y };
-        const wordArrayPosition = readPositions;
-
-        if (wordDirection === 'h') {
-            this.checkWordifH(word, readPositions, currentPosition, wordArray, usedPosition, wordArrayPosition);
-        }
-
-        if (wordDirection === 'v') {
-            this.checkWordifV(word, readPositions, currentPosition, wordArray, usedPosition, wordArrayPosition);
-        }
-
-        console.log(wordArray);
-        console.log(wordArrayPosition);
-
-        const wordItselfPoints = this.wps.pointsWord(wordArray, wordArrayPosition);
+        const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positions);
         console.log(wordItselfPoints);
         console.log(totalPointsSum);
 
@@ -116,35 +130,18 @@ export class ValidWordService {
         return this.dictionary[letterIndexInput].has(concatWord);
     }
 
-    async generateAllWordsPossible(word: Letter[]) {
-        await this.loadDictionary();
-        for (const i of word) {
-            const letter = i.charac;
-            this.concatWord += letter;
-        }
-        const regexp = new RegExp(
-            '[' +
-                word.pop()!.charac +
-                '|' +
-                word.pop()!.charac +
-                '|' +
-                word.pop()!.charac +
-                '|' +
-                word.pop()!.charac +
-                ']{' +
-                this.concatWord.length +
-                '}',
-            'g',
-        );
-        // console.log(this.verifyWord(word), 'verify');
-        for (const words of this.dictionary!)
-            for (const dictionaryWord of words) {
-                if (this.concatWord.length === dictionaryWord.length) {
-                    const match = regexp.test(dictionaryWord);
-                    if (match) this.matchWords.push(dictionaryWord);
-                    break;
-                }
+    private convertIntoPositionArray(command: ChatCommand): Vec2[] {
+        const position: Vec2[] = [];
+
+        for (let i = 0; i < command.word.length; i++) {
+            if (command.direction === 'h') {
+                position.push({ x: command.position.x - 1 + i, y: command.position.y - 1 });
+            } else if (command.direction === 'v') {
+                position.push({ x: command.position.x - 1, y: command.position.y - 1 + i });
             }
+        }
+
+        return position;
     }
 
     private getCompressedWords(): Observable<ArrayBuffer> {
@@ -234,67 +231,5 @@ export class ValidWordService {
 
         if (currentPosition !== undefined) currentPosition.y = positions[letterIndex].y + counter;
         counter = 0;
-    }
-
-    private checkWordifH(
-        word: Letter[],
-        readPositions: Vec2[],
-        currentPosition: Vec2,
-        wordArray: Letter[],
-        usedPosition: Letter[][],
-        wordArrayPosition: Vec2[],
-    ) {
-        while (currentPosition !== undefined && currentPosition.x >= 0) {
-            currentPosition.x--;
-            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
-            if (currentLetter !== undefined) {
-                wordArray.unshift(currentLetter);
-                wordArrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
-            } else {
-                break;
-            }
-        }
-        currentPosition = { x: readPositions[word.length - 1].x, y: readPositions[word.length - 1].y };
-        while (currentPosition !== undefined && currentPosition.x < MAX_LINES) {
-            currentPosition.x++;
-            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
-            if (currentLetter !== undefined) {
-                wordArray.push(currentLetter);
-                wordArrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
-            } else {
-                break;
-            }
-        }
-    }
-
-    private checkWordifV(
-        word: Letter[],
-        readPositions: Vec2[],
-        currentPosition: Vec2,
-        wordArray: Letter[],
-        usedPosition: Letter[][],
-        wordArrayPosition: Vec2[],
-    ) {
-        while (currentPosition !== undefined && currentPosition.y >= MIN_LINES) {
-            currentPosition.y--;
-            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
-            if (currentLetter !== undefined) {
-                wordArray.unshift(currentLetter);
-                wordArrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
-            } else {
-                break;
-            }
-        }
-        currentPosition = { x: readPositions[word.length - 1].x, y: readPositions[word.length - 1].y };
-        while (currentPosition !== undefined && currentPosition.y < MAX_LINES) {
-            currentPosition.y++;
-            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
-            if (currentLetter !== undefined) {
-                wordArray.push(currentLetter);
-                wordArrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
-            } else {
-                break;
-            }
-        }
     }
 }
