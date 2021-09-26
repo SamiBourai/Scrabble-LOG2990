@@ -19,8 +19,8 @@ import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
-// import { skip } from 'rxjs/operators';
 import { ValidWordService } from '@app/services/valid-world.service';
+// import { skip } from 'rxjs/operators';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -50,13 +50,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
-        private readonly reserveService: ReserveService,
         private readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
+        private readonly reserveService: ReserveService,
         private readonly virtualPlayerService: VirtualPlayerService,
-        pvs: ValidWordService,
+        private readonly pvs: ValidWordService,
     ) {
-        pvs.load_dictionary().then(() => {
+        this.pvs.loadDictionary().then(() => {
             this.virtualPlayerService.manageVrPlayerActions();
         });
     }
