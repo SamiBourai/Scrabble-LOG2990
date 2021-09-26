@@ -1,13 +1,23 @@
+import { MessageService } from '@app/services/message.service';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import SpyObj = jasmine.SpyObj;
 
-describe('SidebarComponent', () => {
+fdescribe('SidebarComponent', () => {
+    let messageServiceSpy: SpyObj<MessageService>;
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
+
+    beforeEach(() => {
+        
+        messageServiceSpy = jasmine.createSpyObj('MessageServiceSpy', ['isCommand', 'containsSwapCommand', 'isValid', 
+         'isSubstring','debugCommand','containsPlaceCommand']);
+      });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SidebarComponent],
+            providers: [{ provide: MessageService, useValue: messageServiceSpy }]
         }).compileComponents();
     });
 
@@ -20,4 +30,19 @@ describe('SidebarComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should call the methods of messageService', () => {
+
+        component.logMessage();
+        expect(messageServiceSpy.isCommand).toHaveBeenCalled();
+        expect(messageServiceSpy.isValid).toHaveBeenCalled();
+        expect(messageServiceSpy.containsPlaceCommand).toHaveBeenCalled();
+        // expect(messageServiceSpy.swapCommand).toHaveBeenCalled();
+        expect(messageServiceSpy.isSubstring).toHaveBeenCalled();
+
+    });
+
+    
+
+
 });
