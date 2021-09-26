@@ -4,6 +4,8 @@ import { Vec2 } from '@app/classes/vec2';
 // word-point-service
 export const BONUS_WORD_LENGTH = 7;
 export const BONUS_POINTS_50 = 50;
+export const MAX_LINES = 15;
+export const MIN_LINES = 0;
 
 // grid-service
 export const BOARD_WIDTH = 800;
@@ -55,6 +57,8 @@ export const EASEL_LENGTH = 7;
 export const CLEAR_RECT_FIX = 5;
 
 // play-area
+export const usedBonus: Vec2[] = [];
+
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },
     { x: 7, y: 0 },
