@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
+import { UserService } from '@app/services/user.service';
 
 // import { Parameter } from '@app/classes/parameter';
 
@@ -31,9 +32,11 @@ export class SidebarComponent {
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
-
+        private userService: UserService,
         private lettersService: LettersService,
-    ) {}
+    ) {
+        this.firstTurn = this.userService.realUser.firstToPlay;
+    }
 
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();

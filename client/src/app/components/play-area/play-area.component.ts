@@ -57,7 +57,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly pvs: ValidWordService,
     ) {
         this.pvs.loadDictionary().then(() => {
-            this.virtualPlayerService.manageVrPlayerActions();
+            //this.virtualPlayerService.manageVrPlayerActions();
         });
     }
     @HostListener('keydown', ['$event'])
@@ -120,6 +120,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         if (this.reserveService.reserveSize > 0) {
             this.easelLogisticsService.placeEaselLetters();
         }
+        this.virtualPlayerService.getLetterForEachColumn(); 
+        this.virtualPlayerService.getLetterForEachLine(); 
     }
     get width(): number {
         return this.canvasSize.x;

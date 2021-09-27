@@ -232,6 +232,7 @@
                 "prefer-arrow/prefer-arrow-functions": "error",
                 "prefer-const": "error",
                 "quote-props": ["error", "consistent-as-needed"],
+                "endOfLine" :"auto",
                 // "quotes": "error",
                 "radix": "error",
                 "space-before-function-paren": "off",
