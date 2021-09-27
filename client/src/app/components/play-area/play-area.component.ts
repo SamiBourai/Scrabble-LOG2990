@@ -1,3 +1,4 @@
+import { MessageService } from '@app/services/message.service';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -10,6 +11,7 @@ import { UserService } from '@app/services/user.service';
 // import { skip } from 'rxjs/operators';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
+
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -45,11 +47,32 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly virtualPlayerService: VirtualPlayerService,
         pvs: ValidWordService,
+        private messageService:MessageService
     ) {
         pvs.load_dictionary().then(() => {
             this.virtualPlayerService.manageVrPlayerActions();
         });
     }
+    @HostListener('keydown', ['$event'])
+    buttonDetect(event: KeyboardEvent) {
+        this.buttonPressed = event.key;
+    }
+    // @HostListener('click', ['$skipTurn'])
+    // onClick(){
+    //     console.log(this.userService.userSkipingTurn);
+
+    //     console.log("!passer");
+
+    //     this.userService.userSkipingTurn=true;
+    //     console.log(this.userService.userSkipingTurn);
+    // }
+    detectSkipTurnBtn() {
+
+        this.messageService.skipTurnIsPressed = true;
+        this.userService.userSkipingTurn = true;
+       
+    }
+
     ngOnInit() {
         this.userService.startTimer();
         // this.onClick();
@@ -75,10 +98,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     get height(): number {
         return this.canvasSize.y;
     }
-    @HostListener('keydown', ['$event'])
-    buttonDetect(event: KeyboardEvent) {
-        this.buttonPressed = event.key;
-    }
+ 
     // @HostListener('click', ['$skipTurn'])
     // onClick(){
     //     console.log(this.userService.userSkipingTurn);
@@ -88,14 +108,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     //     this.userService.userSkipingTurn=true;
     //     console.log(this.userService.userSkipingTurn);
     // }
-    detectSkipTurnBtn() {
-        console.log(this.userService.userSkipingTurn);
-
-        console.log('!passer');
-
-        this.userService.userSkipingTurn = true;
-        console.log(this.userService.userSkipingTurn);
-    }
+    
     placeFromEasel(): void {
         if (this.lettersService.boxIsEmpty({ x: 2, y: 2 })) {
             this.lettersService.placeLetter(this.easelLogisticsService.getLetterFromEasel(2), { x: 2, y: 2 });
