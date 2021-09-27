@@ -91,14 +91,16 @@ export class ValidWordService {
             if (command.direction === 'h') {
                 this.checkBottomTopSide(positions, array, arrayPosition, letterIndex, usedPositionLocal);
             }
-            //
-
-            console.log(array);
-            console.log(arrayPosition);
+            // a enlever apres
+            if (array.length !== 1) {
+                console.log(array);
+                console.log(arrayPosition);
+            }
 
             if (array.length === 1) {
                 totalPointsSum += 0;
             } else if (this.verifyWord(array)) {
+                console.log('adding additional word points');
                 totalPointsSum += this.wps.pointsWord(array, arrayPosition);
             } else {
                 totalPointsSum = 0;
@@ -108,13 +110,25 @@ export class ValidWordService {
             }
         }
 
-        const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positions);
-        console.log(wordItselfPoints);
-        console.log(totalPointsSum);
+        console.log(this.letterService.fromWordToLetters(command.word));
 
-        totalPointsSum += wordItselfPoints;
-        console.log(totalPointsSum);
-        return totalPointsSum;
+        if (this.verifyWord(this.letterService.fromWordToLetters(command.word))) {
+            console.log('adding word itself');
+            console.log(positions);
+            const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positions);
+            console.log(wordItselfPoints);
+            console.log(totalPointsSum);
+
+            totalPointsSum += wordItselfPoints;
+            console.log(totalPointsSum);
+
+            return totalPointsSum;
+        } else {
+            totalPointsSum = 0;
+            console.log(totalPointsSum);
+
+            return totalPointsSum;
+        }
     }
 
     verifyWord(word: Letter[]) {
@@ -134,8 +148,8 @@ export class ValidWordService {
     }
 
     private convertIntoPositionArray(command: ChatCommand, usedPosition: Letter[][]): Vec2[] {
+        // console.log(command.position); //{ x: 8, y: 8} !placer h8h le 7 7  {x: 7 y: 6}
         const position: Vec2[] = [];
-
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
                 position.push({ x: command.position.x - 1 + i, y: command.position.y - 1 });
@@ -166,6 +180,7 @@ export class ValidWordService {
 
     private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
         let counter = 1;
+        positions = JSON.parse(JSON.stringify(positions));
         const currentPosition = positions[letterIndex];
         while (currentPosition !== undefined && currentPosition.x < MAX_LINES) {
             const currentLetter: Letter = usedPosition[currentPosition.y][currentPosition.x];
@@ -200,6 +215,7 @@ export class ValidWordService {
 
     private checkBottomTopSide(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
         // check bottom side
+        positions = JSON.parse(JSON.stringify(positions));
         let counter = 1;
         const currentPosition = positions[letterIndex];
         while (currentPosition !== undefined && currentPosition.y < MAX_LINES) {
@@ -225,6 +241,7 @@ export class ValidWordService {
             } else {
                 break;
             }
+
             currentPosition.y--;
         }
 

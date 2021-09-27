@@ -79,14 +79,11 @@ export class ReserveService {
         this.letters.splice(this.random, 1);
         this.reserveSize--;
 
-        console.log('reserve : ' + this.reserveSize);
         this.sizeObs.next(this.reserveSize);
         return this.save;
     }
 
     get size(): BehaviorSubject<number> {
-        console.log('size ' + this.reserveSize);
-
         return this.sizeObs;
     }
 
