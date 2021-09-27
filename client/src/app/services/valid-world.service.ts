@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { MAX_LINES, MIN_LINES, NB_TILES } from '@app/constants/constants';
+import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES } from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,6 +17,7 @@ import { WordPointsService } from './word-points.service';
 export class ValidWordService {
     matchWords: string[] = [];
     concatWord: string = '';
+    private usedWords = new Map<string, Vec2[]>();
 
     private readonly utf8Decoder = new TextDecoder('UTF-8');
 
@@ -48,7 +49,6 @@ export class ValidWordService {
         for (const letter of word) {
             this.concatWord += letter;
         }
-        console.log(this.concatWord);
 
         // const regexp = new RegExp(
         //     '^(?=['+ this.concatWord+']{' +
@@ -71,26 +71,28 @@ export class ValidWordService {
         }
     }
 
-    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand) {
+    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand): number {
+        // create copy of board
         const usedPositionLocal = new Array<Letter[]>(NB_TILES);
         for (let i = 0; i < usedPositionLocal.length; i++) {
             usedPositionLocal[i] = usedPosition[i].slice();
         }
-        const positions = this.convertIntoPositionArray(command, usedPositionLocal);
+
+        // positions of the word provided by the command
+        const positionsWordCommand = this.convertIntoPositionArray(command, usedPositionLocal);
 
         let totalPointsSum = 0;
         for (let letterIndex = 0; letterIndex < command.word.length; letterIndex++) {
             const array: Letter[] = [];
             const arrayPosition: Vec2[] = [];
 
-            // Check side if word entered is vertical
+            // get a merged word
             if (command.direction === 'v') {
-                this.checkSides(positions, array, arrayPosition, letterIndex, usedPositionLocal);
+                this.checkSides(positionsWordCommand, array, arrayPosition, letterIndex, usedPositionLocal);
+            } else if (command.direction === 'h') {
+                this.checkBottomTopSide(positionsWordCommand, array, arrayPosition, letterIndex, usedPositionLocal);
             }
 
-            if (command.direction === 'h') {
-                this.checkBottomTopSide(positions, array, arrayPosition, letterIndex, usedPositionLocal);
-            }
             // a enlever apres
             if (array.length !== 1) {
                 console.log(array);
@@ -98,34 +100,37 @@ export class ValidWordService {
             }
 
             if (array.length === 1) {
+                // only one letter
                 totalPointsSum += 0;
             } else if (this.verifyWord(array)) {
-                console.log('adding additional word points');
-                totalPointsSum += this.wps.pointsWord(array, arrayPosition);
+                // word exists in the dictionnary
+
+                // check if this exact word was used before
+
+                const exists = this.checkIfWordIsUsed(array, arrayPosition);
+                if (exists) {
+                    totalPointsSum += 0;
+                } else {
+                    this.usedWords.set(this.fromLettersToString(array), arrayPosition);
+                    totalPointsSum += this.wps.pointsWord(array, arrayPosition);
+                    console.log('Points du mots lateral : ' + totalPointsSum);
+                }
             } else {
                 totalPointsSum = 0;
-                console.log(totalPointsSum);
 
                 return totalPointsSum;
             }
         }
 
-        console.log(this.letterService.fromWordToLetters(command.word));
-
         if (this.verifyWord(this.letterService.fromWordToLetters(command.word))) {
-            console.log('adding word itself');
-            console.log(positions);
-            const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positions);
-            console.log(wordItselfPoints);
-            console.log(totalPointsSum);
-
+            this.usedWords.set(command.word, positionsWordCommand);
+            const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand);
+            console.log('Point du  mot lui meme : ' + wordItselfPoints);
             totalPointsSum += wordItselfPoints;
-            console.log(totalPointsSum);
-
+            console.log('Point total : ' + totalPointsSum);
             return totalPointsSum;
         } else {
             totalPointsSum = 0;
-            console.log(totalPointsSum);
 
             return totalPointsSum;
         }
@@ -143,12 +148,29 @@ export class ValidWordService {
             const letter = i.charac;
             concatWord += letter;
         }
+
         const letterIndexInput = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
         return this.dictionary[letterIndexInput].has(concatWord);
     }
 
+    private fromLettersToString(word: Letter[]) {
+        return word.map(({ charac }) => charac).reduce((a, b) => a + b);
+    }
+
+    private checkIfWordIsUsed(word: Letter[], positions: Vec2[]): boolean {
+        const lettersPositions = this.usedWords.get(this.fromLettersToString(word));
+        if (lettersPositions === undefined) {
+            return false;
+        }
+        for (let i = 0; i < lettersPositions.length; ++i) {
+            if (!comparePositions(lettersPositions[i], positions[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private convertIntoPositionArray(command: ChatCommand, usedPosition: Letter[][]): Vec2[] {
-        // console.log(command.position); //{ x: 8, y: 8} !placer h8h le 7 7  {x: 7 y: 6}
         const position: Vec2[] = [];
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {

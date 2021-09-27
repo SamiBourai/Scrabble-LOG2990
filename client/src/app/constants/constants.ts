@@ -1,6 +1,8 @@
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 
+export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
+
 // word-point-service
 export const BONUS_WORD_LENGTH = 7;
 export const BONUS_POINTS_50 = 50;

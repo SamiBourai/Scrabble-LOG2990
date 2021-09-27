@@ -8,47 +8,34 @@ import { AZUR_BOX, BLUE_BOX, BONUS_POINTS_50, BONUS_WORD_LENGTH, PINK_BOX, RED_B
 })
 export class WordPointsService {
     pointsWord(word: Letter[], position: Vec2[]): number {
-        console.log(position);
         let sum = 0;
         let wordMultiplier = 1;
         for (let letterIndex = 0; letterIndex < word.length; ++letterIndex) {
             let score = word[letterIndex].score;
 
             for (const i of RED_BOX) {
-                console.log('ntm1');
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
-                    console.log(position[letterIndex]);
-                    console.log(i);
                     wordMultiplier *= 3;
                     usedBonus.push(i);
                 }
             }
 
             for (const i of PINK_BOX) {
-                console.log('ntm2');
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
-                    console.log(position[letterIndex]);
-                    console.log(i);
                     wordMultiplier *= 2;
                     usedBonus.push(i);
                 }
             }
 
             for (const i of BLUE_BOX) {
-                console.log('ntm3');
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
-                    console.log(position[letterIndex]);
-                    console.log(i);
                     score = word[letterIndex].score * 3;
                     usedBonus.push(i);
                 }
             }
 
             for (const i of AZUR_BOX) {
-                console.log('ntm4');
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
-                    console.log(position[letterIndex]);
-                    console.log(i);
                     score = word[letterIndex].score * 2;
                     usedBonus.push(i);
                 }
