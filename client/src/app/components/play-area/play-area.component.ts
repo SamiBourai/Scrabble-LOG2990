@@ -84,6 +84,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     ngOnInit() {
         this.userService.startTimer();
+        this.reserveService.size.subscribe((res) => {
+            this.remainingLetters = res;
+        });
         // this.onClick();
     }
     ngAfterViewInit(): void {
@@ -97,9 +100,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
         this.getLetters();
-        this.reserveService.size.subscribe((res) => {
-            this.remainingLetters = res;
-        });
     }
 
     // @HostListener('click', ['$skipTurn'])

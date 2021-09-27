@@ -49,6 +49,8 @@ export class WordPointsService {
         return sum;
     }
     private compareVec2(a: Vec2, b: Vec2) {
+        console.log(a);
+        console.log(b);
         return a.x === b.x && a.y === b.y;
     }
 

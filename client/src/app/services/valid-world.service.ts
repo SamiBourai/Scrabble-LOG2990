@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { MAX_LINES, MIN_LINES } from '@app/constants/constants';
+import { MAX_LINES, MIN_LINES, NB_TILES } from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -72,7 +72,11 @@ export class ValidWordService {
     }
 
     readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand) {
-        const positions = this.convertIntoPositionArray(command);
+        const usedPositionLocal = new Array<Letter[]>(NB_TILES);
+        for (let i = 0; i < usedPositionLocal.length; i++) {
+            usedPositionLocal[i] = usedPosition[i].slice();
+        }
+        const positions = this.convertIntoPositionArray(command, usedPositionLocal);
 
         let totalPointsSum = 0;
         for (let letterIndex = 0; letterIndex < command.word.length; letterIndex++) {
@@ -81,11 +85,11 @@ export class ValidWordService {
 
             // Check side if word entered is vertical
             if (command.direction === 'v') {
-                this.checkSides(positions, array, arrayPosition, letterIndex, usedPosition);
+                this.checkSides(positions, array, arrayPosition, letterIndex, usedPositionLocal);
             }
 
             if (command.direction === 'h') {
-                this.checkBottomTopSide(positions, array, arrayPosition, letterIndex, usedPosition);
+                this.checkBottomTopSide(positions, array, arrayPosition, letterIndex, usedPositionLocal);
             }
             //
 
@@ -99,6 +103,7 @@ export class ValidWordService {
             } else {
                 totalPointsSum = 0;
                 console.log(totalPointsSum);
+
                 return totalPointsSum;
             }
         }
@@ -128,14 +133,16 @@ export class ValidWordService {
         return this.dictionary[letterIndexInput].has(concatWord);
     }
 
-    private convertIntoPositionArray(command: ChatCommand): Vec2[] {
+    private convertIntoPositionArray(command: ChatCommand, usedPosition: Letter[][]): Vec2[] {
         const position: Vec2[] = [];
 
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
                 position.push({ x: command.position.x - 1 + i, y: command.position.y - 1 });
+                usedPosition[command.position.y - 1][command.position.x - 1 + i] = this.letterService.getTheLetter(command.word.charAt(i));
             } else if (command.direction === 'v') {
                 position.push({ x: command.position.x - 1, y: command.position.y - 1 + i });
+                usedPosition[command.position.y - 1 + i][command.position.x - 1] = this.letterService.getTheLetter(command.word.charAt(i));
             }
         }
 
@@ -161,7 +168,7 @@ export class ValidWordService {
         let counter = 1;
         const currentPosition = positions[letterIndex];
         while (currentPosition !== undefined && currentPosition.x < MAX_LINES) {
-            const currentLetter: Letter = usedPosition[currentPosition.x][currentPosition.y];
+            const currentLetter: Letter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== undefined) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
@@ -177,7 +184,7 @@ export class ValidWordService {
         // check left side
 
         while (currentPosition !== undefined && currentPosition.x >= MIN_LINES) {
-            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
+            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== undefined) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
@@ -191,18 +198,12 @@ export class ValidWordService {
         counter = 0;
     }
 
-    private checkBottomTopSide(
-        positions: Vec2[],
-        array: Letter[],
-        arrayPosition: Vec2[],
-        letterIndex: number,
-        usedPosition: (Letter | undefined)[][],
-    ) {
+    private checkBottomTopSide(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
         // check bottom side
         let counter = 1;
         const currentPosition = positions[letterIndex];
         while (currentPosition !== undefined && currentPosition.y < MAX_LINES) {
-            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
+            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== undefined) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
@@ -217,7 +218,7 @@ export class ValidWordService {
 
         // check top side
         while (currentPosition !== undefined && currentPosition.y >= MIN_LINES) {
-            const currentLetter = usedPosition[currentPosition.x][currentPosition.y];
+            const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== undefined) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
