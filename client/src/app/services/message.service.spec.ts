@@ -224,5 +224,21 @@ fdescribe('MessageService', () => {
         const char = 'a';
         expect(service.getLineNumber(char)).toBe(1);
     });
+
+    it('confirm that a certain command is a part of a array of string', ()=>{
+        const command = '!placer h12h mot'
+        const arrayOfCommand = ['!passer', '!placer', '!echanger'];
+        expect(service.isSubstring(command,arrayOfCommand)).toBeTrue()
+    });
+
+    it('confirm that a certain command is not a part of a array of string', ()=>{
+        const command = 'gth'
+        const arrayOfCommand = ['!passer', '!placer', '!echanger'];
+        expect(service.isSubstring(command,arrayOfCommand)).toBeFalse()
+    });
+
+    //revoi isSubstring ta oublie cm ca fonctionne
+
+
 });
 

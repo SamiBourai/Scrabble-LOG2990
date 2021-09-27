@@ -100,9 +100,9 @@ export class SidebarComponent {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.arrayOfMessages.push('!passer');
             this.active = true;
-            let elem = document.getElementById('passer');
-            console.log(elem)
-            elem?.setAttribute("style", "color:red")
+            // let elem = document.getElementById('passer');
+            // console.log(elem)
+            // elem?.setAttribute("style", "color:red")
             return true;
         }
         return false;

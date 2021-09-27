@@ -21,7 +21,7 @@ fdescribe('SidebarComponent', () => {
          'isSubstring','debugCommand','containsPlaceCommand','swapCommand']);
 
          userServiceSpy = jasmine.createSpyObj('UserServiceSpy',['detectSkipTurnBtn', 'getNameCurrentPlayer','getUserName','skipTurnValidUser'])
-          letterServiceSpy = jasmine.createSpyObj('letterServiceSpy',['changeLetterFromReserve'])
+          letterServiceSpy = jasmine.createSpyObj('letterServiceSpy',['changeLetterFromReserve','wordInEasel','laceLettersInScrable','wordIsPlacable'])
         
       });
 
@@ -123,6 +123,22 @@ fdescribe('SidebarComponent', () => {
 
     });
 
+    it('verify that arrayOfMessages is pushing', () => {
+
+        component.arrayOfMessages = [];
+        
+        spyOn(component,'isYourTurn').and.callFake(() => {
+            return true;
+        });
+        messageServiceSpy.isSubstring.and.callFake(() => {
+            return false;
+        });
+        component.logMessage()
+        
+        expect(component.arrayOfMessages).toHaveSize(1);
+
+    });
+
     it('verify that detectSkipTurnBtn has been called when typeArea = !passer', () => {
         
         spyOn(component,'isYourTurn').and.callFake(() => {
@@ -136,15 +152,75 @@ fdescribe('SidebarComponent', () => {
 
     //test isSkipButtonClicked
     
-    // it('', () => {
-        
-    //     spyOn(component,'isYourTurn').and.callFake(() => {
-    //         return true
-    //     });
-    //     component.typeArea = '!passer'
-    //     component.logMessage();
-    //     expect(userServiceSpy.detectSkipTurnBtn).toHaveBeenCalled();
-    // });
+    it('verify that isSkipButtonClicked return true when the bouton is pressed', () => {
+        messageServiceSpy.skipTurnIsPressed = true;
+        expect(component.isSkipButtonClicked()).toBeTrue();
+    });
+
+    it('verify that isSkipButtonClicked return false when the bouton is not pressed', () => {
+        messageServiceSpy.skipTurnIsPressed = false;
+        expect(component.isSkipButtonClicked()).toBeFalse();
+    });
+
+    //test logDebug
+
+    it('verify that if the debugCommand method return true logDebug do the same', () => {
+
+        messageServiceSpy.debugCommand.and.callFake(() => {
+            return true;
+        })
+        expect(component.logDebug()).toBeTrue()
+    });
+
+    it('verify that if the debugCommand method return false logDebug do the same', () => {
+
+        messageServiceSpy.debugCommand.and.callFake(() => {
+            return false;
+        });
+        expect(component.logDebug()).toBeFalse()
+    });
+
+
+    //test for isYourTurn
+    it('verify that if the skipTurnValidUser return true isYourTurn do the same', () => {
+
+       userServiceSpy.skipTurnValidUser.and.callFake(() => {
+           return true;
+       });
+
+       expect(component.isYourTurn()).toBeTrue();
+
+    });
+
+    it('verify that if the skipTurnValidUser return false isYourTurn do the same', () => {
+
+        userServiceSpy.skipTurnValidUser.and.callFake(() => {
+            return false;
+        });
+ 
+        expect(component.isYourTurn()).toBeFalse();
+ 
+     });
+
+     // test getLettersFromChat
+
+    //  it('test qui va sauter', () => {
+
+    //     component.firstTurn = true;
+    //     messageServiceSpy.command.column = 8;
+    //     messageServiceSpy.command.column = parseInt(messageServiceSpy.command.line);
+    //     component.getLettersFromChat()
+    //     expect(component.firstTurn).toBeTrue()
+ 
+    //  });
+
+
+
+
+
+
+
+
 
 
 
