@@ -56,21 +56,21 @@ export class LettersService {
     }
 
     placeLetter(lett: Letter, pos: Vec2): void {
-        // if (this.tileIsEmpty(pos)) {
-        this.tiles[pos.y - 1][pos.x - 1] = lett;
-        console.log(this.tiles);
-        const imgLetter = new Image();
-        imgLetter.src = lett.img;
-        imgLetter.onload = () => {
-            this.gridContext.drawImage(
-                imgLetter,
-                LEFTSPACE + ((pos.x - 1) * BOARD_WIDTH) / NB_TILES,
-                TOPSPACE + ((pos.y - 1) * BOARD_WIDTH) / NB_TILES,
-                BOARD_WIDTH / NB_TILES,
-                BOARD_HEIGHT / NB_TILES,
-            );
-        };
-        // }
+        if (this.tiles[pos.y - 1][pos.x - 1] == NOT_A_LETTER) {
+            this.tiles[pos.y - 1][pos.x - 1] = lett;
+            console.log(this.tiles);
+            const imgLetter = new Image();
+            imgLetter.src = lett.img;
+            imgLetter.onload = () => {
+                this.gridContext.drawImage(
+                    imgLetter,
+                    LEFTSPACE + ((pos.x - 1) * BOARD_WIDTH) / NB_TILES,
+                    TOPSPACE + ((pos.y - 1) * BOARD_WIDTH) / NB_TILES,
+                    BOARD_WIDTH / NB_TILES,
+                    BOARD_HEIGHT / NB_TILES,
+                );
+            };
+        }
     }
 
     tileIsEmpty(pos: Vec2): boolean {

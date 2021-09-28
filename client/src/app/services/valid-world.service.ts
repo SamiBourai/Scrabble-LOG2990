@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES } from '@app/constants/constants';
+import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES, NOT_A_LETTER } from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -246,7 +246,7 @@ export class ValidWordService {
         const currentPosition = positions[letterIndex];
         while (currentPosition !== undefined && currentPosition.x < MAX_LINES) {
             const currentLetter: Letter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== undefined) {
+            if (currentLetter !== NOT_A_LETTER) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
             } else {
@@ -262,7 +262,7 @@ export class ValidWordService {
 
         while (currentPosition !== undefined && currentPosition.x >= MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== undefined) {
+            if (currentLetter !== NOT_A_LETTER) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
             } else {
@@ -282,7 +282,7 @@ export class ValidWordService {
         const currentPosition = positions[letterIndex];
         while (currentPosition !== undefined && currentPosition.y < MAX_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== undefined) {
+            if (currentLetter !== NOT_A_LETTER) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
             } else {
@@ -297,7 +297,7 @@ export class ValidWordService {
         // check top side
         while (currentPosition !== undefined && currentPosition.y >= MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== undefined) {
+            if (currentLetter !== NOT_A_LETTER) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
             } else {

@@ -84,7 +84,7 @@ export class SidebarComponent {
                         window.alert('*PREMIER TOUR*: votre mot dois etre placer à la position central(h8)!');
                         return;
                     }
-                } else if (this.lettersService.wordIsAttached(this.messageService.command)) {
+                } else if (this.lettersService.wordIsAttached(this.messageService.command) || points != 0) {
                     if (this.lettersService.wordIsPlacable(this.messageService.command)) {
                         this.lettersService.placeLettersInScrable(this.messageService.command);
                         // this.userService.realUser.score += points;
