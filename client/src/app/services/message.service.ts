@@ -147,4 +147,10 @@ export class MessageService {
         const ligne = asciiCode - CHAR_OFFSET;
         return ligne;
     }
+
+    NumberOfLettersToSwap(lettersToSwap:string){
+
+        return lettersToSwap.length;
+
+    }
 }

@@ -8,7 +8,7 @@
   
                 
                   <div *ngIf = "  isCommand && !isValid" class = "alert alert-danger" > commande invalide </div>
-                  <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div>
+                  <!-- <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div> -->
                   <div *ngIf = "logDebug()">affichage de debogage active</div>
                   <div  id = "turn" *ngIf = "isImpossible && isValid && isCommand" class = "alert alert-danger" >commande impossible a realiser</div>
                   <ng-container   *ngIf = "!isCommand || ( isCommand && isValid )   " >

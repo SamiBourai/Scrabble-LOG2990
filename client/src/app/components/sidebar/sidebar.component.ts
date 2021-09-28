@@ -7,8 +7,10 @@ import { ChatCommand } from '@app/classes/chat-command';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { UserService } from '@app/services/user.service';
-
 import { ValidWordService } from '@app/services/valid-world.service';
+
+
+
 
 // import { Parameter } from '@app/classes/parameter';
 
@@ -24,7 +26,7 @@ export class SidebarComponent {
     isImpossible: boolean;
     isCommand: boolean = false;
     inEasel: boolean = true;
-    parameters: ChatCommand[] = [];
+    command: ChatCommand[] = [];
     containsAllChars: boolean = true;
     firstTurn: boolean = true;
     skipTurn: boolean = false;
@@ -61,25 +63,37 @@ export class SidebarComponent {
     }
 
     logMessage() {
-        this.isCommand = this.messageService.isCommand(this.typeArea);
-        if (!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) this.isImpossible = true;
-        this.isValid = this.messageService.isValid(this.typeArea);
 
+        this.impossibleAndValid();
+        //console.log(this.isLettersInEasel())
+        
+        
         if (
-            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
-            !this.messageService.isCommand(this.typeArea)
+            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea))  ||
+            !this.messageService.isCommand(this.typeArea) 
         ) {
-            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn()) {
+            console.log(this.messageService.containsSwapCommand(this.typeArea))
+            console.log(this.isYourTurn())
+            console.log(this.isLettersInEasel())
+            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() && (this.isLettersInEasel())) {
+                console.log("Supreme ntm");
+                
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
+                this.userService.detectSkipTurnBtn();
+                
             }
-            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
+            
+            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() &&  this.isLettersInEasel()) {
                 this.getLettersFromChat();
                 this.messageService.skipTurnIsPressed = false;
+                this.isImpossible = false;
                 this.userService.detectSkipTurnBtn();
                 this.arrayOfMessages.pop();
                 //disable the btn
 
             }
+                
+            
             if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
                 this.isImpossible = true;
@@ -151,5 +165,24 @@ export class SidebarComponent {
             window.alert('*LE MOT DEPASSE LA GRILLE*: votre mot dois etre contenue dans la grille!');
             return;
         }
+    }
+
+    impossibleAndValid(){
+        this.isCommand = this.messageService.isCommand(this.typeArea);
+        if (((!this.isYourTurn() && this.messageService.isCommand(this.typeArea))) || !this.isLettersInEasel() ){
+            this.isImpossible = true;
+            //console.log(this.isLettersInEasel());
+        } 
+        
+         this.isValid = this.messageService.isValid(this.typeArea);
+        
+
+    }
+
+    isLettersInEasel(){
+        //console.log(this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea)))
+          return this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea));
+          
+        
     }
 }

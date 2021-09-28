@@ -99,6 +99,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
+        this.getLetters()
     }
     get width(): number {
         return this.canvasSize.x;
