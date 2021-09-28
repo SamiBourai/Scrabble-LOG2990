@@ -65,7 +65,7 @@ export class SidebarComponent {
             (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea))  ||
             !this.messageService.isCommand(this.typeArea)
         ) {
-            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() || this.isLettersInEasel()) {
+            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() && (!this.isLettersInEasel())) {
                 console.log(this.isLettersInEasel())
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
                 this.userService.detectSkipTurnBtn();
@@ -132,7 +132,7 @@ export class SidebarComponent {
             console.log(this.isLettersInEasel)
         } 
         
-         else this.isValid = this.messageService.isValid(this.typeArea);
+         this.isValid = this.messageService.isValid(this.typeArea);
         
 
     }
