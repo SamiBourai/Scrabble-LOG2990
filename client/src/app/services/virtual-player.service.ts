@@ -8,6 +8,7 @@ import {
     MAX_INDEX_NUMBER_EASEL,
     MAX_INDEX_NUMBER_PROBABILITY_ARRAY,
     NB_TILES,
+    NOT_A_LETTER,
     SEVEN_POINTS,
     SIX_POINTS,
     THIRTEEN_POINTS,
@@ -31,6 +32,12 @@ export class VirtualPlayerService {
     private vrPlayerEaselLetters: Easel[] = [];
     private verticalLetters: Map<number, ScrableLetters[]>= new Map<number, ScrableLetters[]>();
     private horizontalLetters: Map<number, ScrableLetters[]> = new Map<number, ScrableLetters[]>();
+    // private lowScore : boolean = false; 
+    // private averageScore : boolean= false ; 
+    // private highScore : boolean= false; 
+    private foundLetter: boolean[] = [false, false, false, false, false, false, false];
+    private probWordScore: string; 
+    private letterInscrable: ScrableLetters[] = [];
 
     constructor(
         private readonly reserveService: ReserveService,
@@ -81,8 +88,11 @@ export class VirtualPlayerService {
         }
     }
 
-    private generateVrPlayerEasel(): void {
-        for (let i = 0; i < EASEL_LENGTH; i++) this.vrPlayerEaselLetters.push({ index: i, letters: this.reserveService.getRandomLetter() });
+    generateVrPlayerEasel(): void {
+        for (let i = 0; i < EASEL_LENGTH; i++) {
+            console.log(i);
+            this.vrPlayerEaselLetters.push({ index: i, letters: this.reserveService.getRandomLetter() });}
+        console.log(this.vrPlayerEaselLetters);
     }
 
     private easelToLetters(): Letter[] {
@@ -92,18 +102,99 @@ export class VirtualPlayerService {
         }
         return letters;
     }
-    private caclculateGeneratedWordPoints(word: string): number {
+    caclculateGeneratedWordPoints(word: string): number {
         let points = 0;
         for (const point of this.lettersService.fromWordToLetters(word)) points += point.score;
         return points;
     }
-    private organiseWordsByScore(): void {
-        for (const word of this.validWordService.matchWords) {
-            const points = this.caclculateGeneratedWordPoints(word);
-            if (points > ZERO_POINTS && points < SIX_POINTS) this.lowPointsWords.push(word);
-            else if (points > SEVEN_POINTS && points < TWELVE_POINTS) this.averagePointsWords.push(word);
-            else if (points > THIRTEEN_POINTS && points < EIGHTEEN_POINTS) this.highPointsWords.push(word);
+    organiseWordsByScore(word : string): void {
+            const points = this.caclculateGeneratedWordPoints(word);  
+            switch(this.probWordScore){
+                case'{0,6}':
+                    if (points > ZERO_POINTS && points <= SIX_POINTS && this.isWordPlacable(word,this.letterInscrable.slice()) && this.validateWord(word)) {
+                        if()
+                        this.lowPointsWords.push(word);}
+                        break; 
+                
+                case'{7,12}':
+                    if (points > SEVEN_POINTS && points <=TWELVE_POINTS) this.averagePointsWords.push(word);
+                    break; 
+                
+                case '{13,18}':
+                    if (points > THIRTEEN_POINTS && points <= EIGHTEEN_POINTS) this.highPointsWords.push(word); 
+                    break;              
+            }  
+
+    }
+    validateWord(word : string): boolean{
+        let concat : string = ''; 
+        let counter=0;
+        
+        for(let i = 0 ; i< NB_TILES; i++){       
+                if(this.letterInscrable[i+1]){ 
+                    let space =this.letterInscrable[i+1].position.y - this.letterInscrable[i].position.y;
+                    if(space > 1)
+                    for(let i = 0 ; i< space; i++){
+                        if(i!==(space-1)) 
+                    concat+= '.'; 
+                   
+                    let regEx = new RegExp(concat)
+                    let match =regEx.test(word); 
+                    if(match)
+                    return true; 
+                }
+                }
+        }return false; 
+    }
+
+    private isWordPlacable(word:string,alreadyInBoard:ScrableLetters[]):boolean{
+        let letterFromEasel:string='';
+        let counterBoard=0;
+       
+        let validWord:boolean=false;
+            for(let i=0;i<word.length;i++){
+                if(word.charAt(i)!==alreadyInBoard[counterBoard].letter.charac)
+                    letterFromEasel=letterFromEasel+alreadyInBoard[counterBoard].letter.charac;
+                    else{
+                        counterBoard++;
+                    }
         }
+        
+           validWord= this.wordInEasel(letterFromEasel);
+            this.foundLetter.fill(false);
+           return validWord;
+                
+        
+    }
+    wordInEasel(word: string): boolean {
+        // console.log(word);
+        let found = false;
+        let first = true;
+
+        for (let i = 0; i < word.length; i++) {
+            if (found || first) {
+                first = false;
+                found = false;
+
+                for (let j = 0; j < EASEL_LENGTH; j++) {
+                    //  console.log(word.charAt(i) + ' : ' + this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j]);
+                    if (word.charAt(i) === this.vrPlayerEaselLetters[j].letters.charac && this.foundLetter[j] === false) {
+                        this.foundLetter[j] = true;
+
+                      
+                        // console.log('indexFind ' + j);
+                        found = true;
+                        break;
+                    }
+                }
+            } else {
+                
+                break;
+            }
+        }
+        // console.log(this.foundLetter);
+
+        return found;
     }
     private exchangeLettersInEasel(): void {
         const numberOfLettersToExchange = Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL) + 1;
@@ -112,63 +203,62 @@ export class VirtualPlayerService {
         }
     }
 
-    private chooseWordToplace(firstToplay: boolean): Letter[] {
+    private chooseWordToplace() {
         const probability: string[] = ['{0,6}', '{0,6}', '{0,6}', '{0,6}', '{7,12}', '{7,12}', '{7,12}', '{13,18}', '{13,18}', '{13,18}'];
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
-        this.organiseWordsByScore();
-        // ajouter verif qu'il peut jouer d'autre s'il y a pas de mots dans un des tableau
-        // first to place vrai, donc pas besoin de vérifier si les letters sont présentes
-        switch (probability[randomIndex]) {
-            case '{0,6}': {
-                if (firstToplay && this.lowPointsWords) return this.lettersService.fromWordToLetters(this.lowPointsWords?.pop() ?? '');
-                break;
-            }
-            case '{7,12}': {
-                if (firstToplay && this.averagePointsWords) return this.lettersService.fromWordToLetters(this.averagePointsWords?.pop() ?? '');
-                break;
-            }
-            case '{13,18}': {
-                if (firstToplay && this.highPointsWords) return this.lettersService.fromWordToLetters(this.highPointsWords?.pop() ?? '');
-                break;
-            }
-        }
-        return [];
+        this.probWordScore= probability[randomIndex]; 
     }
-     getLetterForEachColumn(): void {
-        const letter: ScrableLetters[] = [];
+    getLetterForEachColumn(): void {
+        let letter: ScrableLetters[] = [];
         console.log(this.lettersService.tiles); 
-        for (let i = 0; i < NB_TILES; i++)
+        for (let i = 0; i < NB_TILES; i++){
             for (let j = 0; j < NB_TILES; j++) {
-                console.log('madafak', this.lettersService.tiles[j][i]);
-                let tamere: Letter= this.lettersService.tiles[j][i]!; 
-                if (tamere) {
-                    letter.push({ letter: this.lettersService.tiles[j][i], position: { x: i, y: j } });
-                    if (j == 14) {
-                        this.verticalLetters.set(i, letter);
-                        console.log(letter, 'luwqhe'); 
-                        letter.splice(0, letter.length - 1);
-                    }
-                }
-            }
+                if( this.lettersService.tiles[j][i]?.charac !== NOT_A_LETTER.charac){
+                      console.log('madafak', this.lettersService.tiles[j][i]);
+                    letter.push({letter :{score:this.lettersService.tiles[j][i]?.score,
+                        charac:this.lettersService.tiles[j][i]?.charac,
+                        img:this.lettersService.tiles[j][i]?.img,
+                    }, position: { x: i, y: j } });
+                    console.log(letter, 'luwqhe');                    
+            } }
+                        this.verticalLetters.set(i, letter.slice());                      
+                        letter.splice(0, letter.length );}
             console.log(this.verticalLetters, 'vertical'); 
     }
 
     getLetterForEachLine(): void {
-        const letter: ScrableLetters[] = [];
-        for (let i = 0; i < NB_TILES; i++)
+        let lett : Letter[] =[];  
+        for (let i = 0; i < NB_TILES; i++){
             for (let j = 0; j < NB_TILES; j++) {
-                if (this.lettersService.tiles[i][j]) {
-                    letter.push({ letter: this.lettersService.tiles[i][j], position: { x: i, y: j } });
-
-                    if (j === 14) {
-                        console.log(letter, 'luwqhe'); 
-                        this.horizontalLetters.set(i, letter);
-                        letter.splice(0, letter.length - 1);
+                if( this.lettersService.tiles[i][j]?.charac !== NOT_A_LETTER.charac){
+                    this.letterInscrable.push({letter :{score:this.lettersService.tiles[i][j]?.score,
+                        charac:this.lettersService.tiles[i][j]?.charac,
+                        img:this.lettersService.tiles[i][j]?.img,
+                    }, position: { x: i, y: j } });
+                    lett.push({score:this.lettersService.tiles[i][j]?.score,
+                        charac:this.lettersService.tiles[i][j]?.charac,
+                        img:this.lettersService.tiles[i][j]?.img,
+                    })                   
+            } }
+                        this.horizontalLetters.set(i, this.letterInscrable.slice()); 
+                        this.generateWords(lett);                      
+                        this.letterInscrable.splice(0, this.letterInscrable.length );
+                        
+                        lett.splice(0, lett.length); 
                     }
-                }
-            }
-            console.log(this.horizontalLetters, 'horenzital'); 
     }
+
+    generateWords(letter:Letter[]){
+        console.log('generate word: '+this.vrPlayerEaselLetters);
+        if(letter.length>0){
+        for(let lett of this.vrPlayerEaselLetters){  letter.push(lett.letters);
+            
+        } 
+        this.validWordService.generateAllWordsPossible(letter); 
+
+    }
+    }
+        
 
     // private generateMatchedWords(): void {
     //     let lettersFromColumn: Letter[] = [];

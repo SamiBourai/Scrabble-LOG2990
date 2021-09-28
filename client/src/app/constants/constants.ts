@@ -24,6 +24,7 @@ export const TOPSPACE = 25;
 export const LEFTSPACE = 50;
 
 // LETTERS
+export const NOT_A_LETTER: Letter = { score: 0, charac: '1', img: 'no-image' };
 export const A: Letter = { score: 1, charac: 'a', img: '../../assets/letter-A.png' };
 export const B: Letter = { score: 3, charac: 'b', img: '../../assets/letter-b.png' };
 export const C: Letter = { score: 3, charac: 'c', img: '../../assets/letter-c.png' };

@@ -7,6 +7,7 @@ import { MAX_LINES, MIN_LINES } from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { VirtualPlayerService } from './virtual-player.service';
 import { WordPointsService } from './word-points.service';
 
 @Injectable({
@@ -18,12 +19,12 @@ export class ValidWordService {
 
     private readonly utf8Decoder = new TextDecoder('UTF-8');
     private dictionary?: Set<string>[];
-    constructor(private http: HttpClient, private wps: WordPointsService) {}
-    generateAllWordsPossible(word: Letter[]) {
+    constructor(private http: HttpClient, private wps: WordPointsService, private vrPlayerService: VirtualPlayerService ) {}
+    generateAllWordsPossible(word: Letter[]): string[] {
         for (const letters of word) {
             this.concatWord += letters.charac;
         }
-        console.log(this.concatWord);
+        console.log(this.concatWord, 'concatWord');
 
         // const regexp = new RegExp(
         //     '^(?=['+ this.concatWord+']{' +
@@ -39,14 +40,14 @@ export class ValidWordService {
                     if (i === dictionaryWord.length) {
                         const match = regex.test(dictionaryWord);
                         if (match) {
-                            this.matchWords.push(dictionaryWord);
+                            this.vrPlayerService.organiseWordsByScore(dictionaryWord); 
                         }
                     }
                 }
             }
         }
-
-        console.log(this.matchWords, 'match');
+        this.concatWord='';
+        return this.matchWords; 
     }
 
     async loadDictionary() {
