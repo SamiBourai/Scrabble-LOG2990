@@ -35,7 +35,7 @@ import {
     W,
     X,
     Y,
-    Z
+    Z,
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
@@ -47,7 +47,7 @@ export class LettersService {
     foundLetter: boolean[] = [false, false, false, false, false, false, false];
     indexOfEaselLetters: number[] = [];
     indexLettersAlreadyInBoard: number[] = [];
-    tiles = new Array<(Letter)[]>(NB_TILES);
+    tiles = new Array<Letter[]>(NB_TILES);
 
     constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {
         for (let i = 0; i < this.tiles.length; ++i) {
@@ -57,19 +57,19 @@ export class LettersService {
 
     placeLetter(lett: Letter, pos: Vec2): void {
         // if (this.tileIsEmpty(pos)) {
-            this.tiles[pos.y - 1][pos.x - 1] = lett;
-            console.log(this.tiles);
-            const imgLetter = new Image();
-            imgLetter.src = lett.img;
-            imgLetter.onload = () => {
-                this.gridContext.drawImage(
-                    imgLetter,
-                    LEFTSPACE + ((pos.x - 1) * BOARD_WIDTH) / NB_TILES,
-                    TOPSPACE + ((pos.y - 1) * BOARD_WIDTH) / NB_TILES,
-                    BOARD_WIDTH / NB_TILES,
-                    BOARD_HEIGHT / NB_TILES,
-                );
-            };
+        this.tiles[pos.y - 1][pos.x - 1] = lett;
+        console.log(this.tiles);
+        const imgLetter = new Image();
+        imgLetter.src = lett.img;
+        imgLetter.onload = () => {
+            this.gridContext.drawImage(
+                imgLetter,
+                LEFTSPACE + ((pos.x - 1) * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + ((pos.y - 1) * BOARD_WIDTH) / NB_TILES,
+                BOARD_WIDTH / NB_TILES,
+                BOARD_HEIGHT / NB_TILES,
+            );
+        };
         // }
     }
 
@@ -104,8 +104,7 @@ export class LettersService {
                 break;
             }
         }
-        // console.log(this.foundLetter);
-
+        console.log(found + ': found');
         return found;
     }
     changeLetterFromReserve(letterToChange: string): void {
@@ -135,9 +134,6 @@ export class LettersService {
         for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;
         this.indexOfEaselLetters.splice(0, this.indexOfEaselLetters.length);
         this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
-
-        // console.log(this.indexOfEaselLetters);
-        // console.log(this.indexLettersAlreadyInBoard);
     }
     placeLettersInScrable(command: ChatCommand): void {
         let boardLetterCounter = 0;
