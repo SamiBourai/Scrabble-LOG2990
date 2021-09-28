@@ -18,6 +18,7 @@ export class LettersService {
     foundLetter: Boolean[] = [false, false, false, false, false, false, false];
     indexOfEaselLetters: number[] = [];
     indexLettersAlreadyInBoard: number[] = [];
+    insideEasel:boolean = true
 
     tiles = new Array<Letter[]>(15);
 
@@ -71,7 +72,9 @@ export class LettersService {
                     }
                 }
             } else {
-                window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                //window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                console.log('votre mot ne contient pas les lettres dans le chavlet')
+                //this.insideEasel = false;
                 break;
             }
         }
@@ -80,7 +83,7 @@ export class LettersService {
         return found;
     }
     changeLetterFromReserve(letterToChange: string): void {
-        if (this.wordInEasel(letterToChange)) {
+        
             for (let i = 0; i < letterToChange.length; i++) {
                 const temp: Letter = {
                     score: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.score,
@@ -96,7 +99,8 @@ export class LettersService {
                 this.reserveService.reFillReserve(temp);
             }
             this.easelLogisticsService.placeEaselLetters();
-        }
+        
+        this.insideEasel = false;
         this.resetVariables();
         this.refillEasel();
     }

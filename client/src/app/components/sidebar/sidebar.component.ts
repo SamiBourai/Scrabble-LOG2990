@@ -57,24 +57,25 @@ export class SidebarComponent {
     }
 
     logMessage() {
-        this.isCommand = this.messageService.isCommand(this.typeArea);
-        if (!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) this.isImpossible = true;
-        this.isValid = this.messageService.isValid(this.typeArea);
 
+        this.impossibleAndValid();
+        
+        
         if (
-            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
+            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea))  ||
             !this.messageService.isCommand(this.typeArea)
         ) {
-            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn()) {
+            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() || this.isLettersInEasel()) {
+                console.log(this.isLettersInEasel())
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
+                this.userService.detectSkipTurnBtn();
+                
             }
-            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
+            
+            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() ||  this.isLettersInEasel()) {
                 this.getLettersFromChat();
                 this.messageService.skipTurnIsPressed = false;
                 this.userService.detectSkipTurnBtn();
-                this.arrayOfMessages.pop();
-                //disable the btn 
-                
             }
             if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
@@ -122,5 +123,24 @@ export class SidebarComponent {
         } else if (this.lettersService.wordIsPlacable(this.messageService.command)) {
             this.lettersService.placeLettersInScrable(this.messageService.command);
         } else this.inEasel = false;
+    }
+
+    impossibleAndValid(){
+        this.isCommand = this.messageService.isCommand(this.typeArea);
+        if (((!this.isYourTurn() && this.messageService.isCommand(this.typeArea))) || !this.isLettersInEasel()){
+            this.isImpossible = true;
+            console.log(this.isLettersInEasel)
+        } 
+        
+         else this.isValid = this.messageService.isValid(this.typeArea);
+        
+
+    }
+
+    isLettersInEasel(){
+        //console.log(this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea)))
+          return this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea));
+          
+        
     }
 }
