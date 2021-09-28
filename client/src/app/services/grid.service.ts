@@ -4,19 +4,19 @@ import {
     ADJUSTEMENT_TOPSPACE,
     AZUR_BOX,
     BLUE_BOX,
-    BOX,
+    BOARD_HEIGHT,
+    BOARD_WIDTH,
+    CANEVAS_HEIGHT,
+    CANEVAS_WIDTH,
     CTX_PX,
-    DEFAULT_HEIGHT,
-    DEFAULT_WIDTH,
     HAND_POSITION_END,
     HAND_POSITION_START,
-    HEIGHT,
     LEFTSPACE,
     NB_LETTER_HAND,
+    NB_TILES,
     PINK_BOX,
     RED_BOX,
     TOPSPACE,
-    WIDTH
 } from '@app/constants/constants';
 
 @Injectable({
@@ -26,19 +26,19 @@ export class GridService {
     gridContext: CanvasRenderingContext2D;
     playerImage: ImageData;
     private alpha: string = 'abcdefghijklmno';
-    private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+    private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
 
     // TODO : pas de valeurs magiques!! Faudrait avoir une meilleure manière de le faire
     drawGrid() {
         this.gridContext.beginPath();
         this.gridContext.strokeStyle = 'black';
         this.gridContext.lineWidth = 3;
-        for (let i = 0; i <= BOX; i++) {
-            this.gridContext.moveTo(LEFTSPACE, TOPSPACE + (i * DEFAULT_HEIGHT) / BOX);
-            this.gridContext.lineTo(LEFTSPACE + DEFAULT_WIDTH, TOPSPACE + (i * DEFAULT_HEIGHT) / BOX);
+        for (let i = 0; i <= NB_TILES; i++) {
+            this.gridContext.moveTo(LEFTSPACE, TOPSPACE + (i * BOARD_HEIGHT) / NB_TILES);
+            this.gridContext.lineTo(LEFTSPACE + BOARD_WIDTH, TOPSPACE + (i * BOARD_HEIGHT) / NB_TILES);
 
-            this.gridContext.moveTo(LEFTSPACE + (i * DEFAULT_WIDTH) / BOX, TOPSPACE);
-            this.gridContext.lineTo(LEFTSPACE + (i * DEFAULT_WIDTH) / BOX, TOPSPACE + DEFAULT_HEIGHT);
+            this.gridContext.moveTo(LEFTSPACE + (i * BOARD_WIDTH) / NB_TILES, TOPSPACE);
+            this.gridContext.lineTo(LEFTSPACE + (i * BOARD_WIDTH) / NB_TILES, TOPSPACE + BOARD_HEIGHT);
         }
 
         this.gridContext.stroke();
@@ -48,21 +48,21 @@ export class GridService {
         this.gridContext.strokeStyle = 'black';
         this.gridContext.lineWidth = 3;
         for (let i = 0; i <= NB_LETTER_HAND; i++) {
-            this.gridContext.moveTo(LEFTSPACE + ((HAND_POSITION_START + i) * DEFAULT_WIDTH) / BOX, TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2);
+            this.gridContext.moveTo(LEFTSPACE + ((HAND_POSITION_START + i) * BOARD_WIDTH) / NB_TILES, TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2);
             this.gridContext.lineTo(
-                LEFTSPACE + ((HAND_POSITION_START + i) * DEFAULT_WIDTH) / BOX,
-                TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2 + DEFAULT_WIDTH / BOX,
+                LEFTSPACE + ((HAND_POSITION_START + i) * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + BOARD_WIDTH / NB_TILES,
             );
         }
-        this.gridContext.moveTo(LEFTSPACE + (HAND_POSITION_START * DEFAULT_WIDTH) / BOX, TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2);
-        this.gridContext.lineTo(LEFTSPACE + (HAND_POSITION_END * DEFAULT_WIDTH) / BOX, TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2);
+        this.gridContext.moveTo(LEFTSPACE + (HAND_POSITION_START * BOARD_WIDTH) / NB_TILES, TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2);
+        this.gridContext.lineTo(LEFTSPACE + (HAND_POSITION_END * BOARD_WIDTH) / NB_TILES, TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2);
         this.gridContext.moveTo(
-            LEFTSPACE + (HAND_POSITION_START * DEFAULT_WIDTH) / BOX,
-            TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2 + DEFAULT_WIDTH / BOX,
+            LEFTSPACE + (HAND_POSITION_START * BOARD_WIDTH) / NB_TILES,
+            TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + BOARD_WIDTH / NB_TILES,
         );
         this.gridContext.lineTo(
-            LEFTSPACE + (HAND_POSITION_END * DEFAULT_WIDTH) / BOX,
-            TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2 + DEFAULT_WIDTH / BOX,
+            LEFTSPACE + (HAND_POSITION_END * BOARD_WIDTH) / NB_TILES,
+            TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + BOARD_WIDTH / NB_TILES,
         );
         this.gridContext.stroke();
     }
@@ -71,9 +71,13 @@ export class GridService {
         this.gridContext.font = 'bold 15px system-ui';
         this.gridContext.strokeStyle = 'black';
 
-        for (let i = 1; i <= BOX; i++) {
-            this.gridContext.fillText(String(i), LEFTSPACE + (i * DEFAULT_WIDTH) / BOX - DEFAULT_WIDTH / (2 * BOX), TOPSPACE - ADJUSTEMENT_TOPSPACE);
-            this.gridContext.fillText(this.alpha[i - 1], LEFTSPACE - CTX_PX, TOPSPACE + (i * DEFAULT_WIDTH) / BOX - DEFAULT_WIDTH / (2 * BOX));
+        for (let i = 1; i <= NB_TILES; i++) {
+            this.gridContext.fillText(
+                String(i),
+                LEFTSPACE + (i * BOARD_WIDTH) / NB_TILES - BOARD_WIDTH / (2 * NB_TILES),
+                TOPSPACE - ADJUSTEMENT_TOPSPACE,
+            );
+            this.gridContext.fillText(this.alpha[i - 1], LEFTSPACE - CTX_PX, TOPSPACE + (i * BOARD_WIDTH) / NB_TILES - BOARD_WIDTH / (2 * NB_TILES));
         }
     }
 
@@ -84,10 +88,10 @@ export class GridService {
         for (const v of RED_BOX) {
             this.gridContext.fillStyle = 'red';
             this.gridContext.fillRect(
-                LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX,
-                TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX,
-                DEFAULT_WIDTH / BOX,
-                DEFAULT_HEIGHT / BOX,
+                LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES,
+                BOARD_WIDTH / NB_TILES,
+                BOARD_HEIGHT / NB_TILES,
             );
             this.gridContext.fillStyle = 'black';
             const str = 'MOT  X3';
@@ -95,21 +99,21 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
-                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
-                    DEFAULT_WIDTH / BOX,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + BOARD_HEIGHT / 40 + i * 10,
+                    BOARD_WIDTH / NB_TILES,
                 );
             }
         }
-        // triple letter score
 
+        // triple letter score
         for (const v of PINK_BOX) {
             this.gridContext.fillStyle = 'pink';
             this.gridContext.fillRect(
-                LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX,
-                TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX,
-                DEFAULT_WIDTH / BOX,
-                DEFAULT_HEIGHT / BOX,
+                LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES,
+                BOARD_WIDTH / NB_TILES,
+                BOARD_HEIGHT / NB_TILES,
             );
             this.gridContext.fillStyle = 'black';
             const str = 'MOT  X2';
@@ -117,21 +121,21 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
-                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
-                    DEFAULT_WIDTH / BOX,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + BOARD_HEIGHT / 40 + i * 10,
+                    BOARD_WIDTH / NB_TILES,
                 );
             }
         }
-        // triple letter score
 
+        // triple letter score
         for (const v of BLUE_BOX) {
             this.gridContext.fillStyle = 'blue';
             this.gridContext.fillRect(
-                LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX,
-                TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX,
-                DEFAULT_WIDTH / BOX,
-                DEFAULT_HEIGHT / BOX,
+                LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES,
+                BOARD_WIDTH / NB_TILES,
+                BOARD_HEIGHT / NB_TILES,
             );
             this.gridContext.fillStyle = 'white';
             const str = 'L.  X3';
@@ -139,22 +143,21 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
-                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
-                    DEFAULT_WIDTH / BOX,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + this.height / 40 + i * 10,
+                    BOARD_WIDTH / NB_TILES,
                 );
             }
         }
 
         // triple letter score
-
         for (const v of AZUR_BOX) {
             this.gridContext.fillStyle = 'cyan';
             this.gridContext.fillRect(
-                LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX,
-                TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX,
-                DEFAULT_WIDTH / BOX,
-                DEFAULT_HEIGHT / BOX,
+                LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES,
+                BOARD_WIDTH / NB_TILES,
+                BOARD_HEIGHT / NB_TILES,
             );
             this.gridContext.fillStyle = 'black';
             const str = 'L.  X2';
@@ -162,25 +165,39 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * DEFAULT_WIDTH) / BOX + DEFAULT_WIDTH / BOX / 4,
-                    TOPSPACE + (v.y * DEFAULT_HEIGHT) / BOX + this.height / 40 + i * 10,
-                    DEFAULT_WIDTH / BOX,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + this.height / 40 + i * 10,
+                    BOARD_WIDTH / NB_TILES,
                 );
             }
         }
         this.gridContext.fillStyle = 'black';
     }
+    drawCentralTile() {
+        const img = new Image();
+        img.src = '../../../assets/black-star.png';
+
+        img.onload = () => {
+            this.gridContext.drawImage(
+                img,
+                LEFTSPACE + (7 * BOARD_WIDTH) / NB_TILES + 2,
+                TOPSPACE + (7 * BOARD_WIDTH) / NB_TILES + 2,
+                BOARD_WIDTH / NB_TILES - 5,
+                BOARD_HEIGHT / NB_TILES - 5,
+            );
+        };
+    }
 
     drawPlayerName(s: string) {
         this.gridContext.font = 'bold 30px system-ui';
         this.gridContext.textAlign = 'center';
-        this.gridContext.fillText(s, LEFTSPACE, HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
+        this.gridContext.fillText(s, LEFTSPACE, CANEVAS_HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
     }
 
     drawOpponentName(s: string) {
         this.gridContext.font = 'bold 30px system-ui';
         this.gridContext.textAlign = 'center';
-        this.gridContext.fillText(s, WIDTH - LEFTSPACE, HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
+        this.gridContext.fillText(s, CANEVAS_WIDTH - LEFTSPACE, CANEVAS_HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
     }
 
     get width(): number {

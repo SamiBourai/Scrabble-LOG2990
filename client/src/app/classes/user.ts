@@ -7,4 +7,5 @@ export interface VrUser {
 
 export interface RealUser extends VrUser {
     firstToPlay: boolean;
+    turnToPlay: boolean;
 }

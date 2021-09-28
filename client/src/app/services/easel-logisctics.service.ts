@@ -1,29 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
-import { A, BOX, DEFAULT_HEIGHT, DEFAULT_WIDTH, HAND_POSITION_START, LEFTSPACE, TOPSPACE } from '@app/constants/constants';
-
+import {
+    A,
+    BOARD_HEIGHT,
+    BOARD_WIDTH,
+    CLEAR_RECT_FIX,
+    EASEL_LENGTH,
+    HAND_POSITION_START,
+    LEFTSPACE,
+    NB_TILES,
+    NOT_A_LETTER,
+    TOPSPACE,
+} from '@app/constants/constants';
+import { ReserveService } from './reserve.service';
 @Injectable({
     providedIn: 'root',
 })
 export class EaselLogiscticsService {
     gridContext: CanvasRenderingContext2D;
-    foundLetter: Boolean[] = [false, false, false, false, false, false, false];
+    foundLetter: boolean[] = [false, false, false, false, false, false, false];
     index: number[] = [];
-
-    easelLetters: Easel[] = [
-        { index: 0, letters: A },
-        { index: 0, letters: A },
-        { index: 0, letters: A },
-        { index: 0, letters: A },
-        { index: 0, letters: A },
-        { index: 0, letters: A },
-        { index: 0, letters: A },
-    ];
+    easelLetters: Easel[] = [];
     size: number = 0;
     temp: Easel = { index: 0, letters: A };
-    occupiedPos: Boolean[] = [false, false, false, false, false, false, false];
+    occupiedPos: boolean[] = [false, false, false, false, false, false, false];
     first: boolean = true;
+    easelSize: number = EASEL_LENGTH;
+
+    constructor(private reserveService: ReserveService) {}
 
     placeEaselLetters(): void {
         for (const lett of this.easelLetters) {
@@ -35,53 +40,41 @@ export class EaselLogiscticsService {
 
                 this.gridContext.drawImage(
                     img,
-                    LEFTSPACE + ((HAND_POSITION_START + lett.index) * DEFAULT_WIDTH) / BOX,
-                    TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2,
-                    DEFAULT_WIDTH / BOX,
-                    DEFAULT_HEIGHT / BOX,
+                    LEFTSPACE + ((HAND_POSITION_START + lett.index) * BOARD_WIDTH) / NB_TILES,
+                    TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2,
+                    BOARD_WIDTH / NB_TILES,
+                    BOARD_HEIGHT / NB_TILES,
                 );
             };
         }
     }
 
-    deleteletterFromEasel(easel: Easel): void {
-        delete this.easelLetters[easel.index];
-        this.occupiedPos[easel.index] = false;
-    }
-
     getLetterFromEasel(index: number): Letter {
-        if (this.occupiedPos[index] == true) {
+        if (this.occupiedPos[index] === true) {
             this.gridContext.clearRect(
-                LEFTSPACE + ((HAND_POSITION_START + index) * DEFAULT_WIDTH) / BOX + 2,
-                TOPSPACE + DEFAULT_HEIGHT + TOPSPACE / 2 + 2,
-                DEFAULT_WIDTH / BOX - 5,
-                DEFAULT_HEIGHT / BOX - 5,
+                LEFTSPACE + ((HAND_POSITION_START + index) * BOARD_WIDTH) / NB_TILES + 2,
+                TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + 2,
+                BOARD_WIDTH / NB_TILES - CLEAR_RECT_FIX,
+                BOARD_HEIGHT / NB_TILES - CLEAR_RECT_FIX,
             );
             this.occupiedPos[index] = false;
             return this.easelLetters[index].letters;
         }
-        return A;
-    }
-
-    isFull(): boolean {
-        for (let i = 0; i <= 6; i++) {
-            if (!this.occupiedPos[i]) return false;
-        }
-        return true;
+        return NOT_A_LETTER;
     }
 
     wordInEasel(word: string): boolean {
         let found = false;
         let first = true;
         for (let i = 0; i < word.length; i++) {
-            console.log(word.charAt(i));
+            // console.log(word.charAt(i));
             if (found || first) {
                 first = false;
                 found = false;
 
-                for (let j = 0; j < 7; j++) {
-                    console.log(this.easelLetters[j]);
-                    if (word.charAt(i) == this.easelLetters[j].letters.charac && this.foundLetter[j] == false) {
+                for (let j = 0; j < EASEL_LENGTH; j++) {
+                    // console.log(this.easelLetters[j]);
+                    if (word.charAt(i) === this.easelLetters[j].letters.charac && this.foundLetter[j] === false) {
                         this.foundLetter[j] = true;
                         this.index.push(j);
                         found = true;
@@ -94,5 +87,24 @@ export class EaselLogiscticsService {
             }
         }
         return found;
+    }
+
+    refillEasel(): void {
+        for (let i = 0; i < EASEL_LENGTH; i++) {
+            if (this.occupiedPos[i] === false) {
+                if (this.reserveService.reserveSize > 0) {
+                    const temp: Letter = this.reserveService.getRandomLetter();
+                    this.easelLetters[i] = {
+                        index: i,
+                        letters: temp,
+                    };
+                } else {
+                    window.alert('*LA RESERVE DE LETTRE EST MAINTENANT VIDE*');
+                    this.easelSize = i;
+                    return;
+                }
+            }
+        }
+        this.placeEaselLetters();
     }
 }

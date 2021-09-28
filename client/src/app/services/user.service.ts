@@ -21,14 +21,19 @@ export class UserService {
     vrSkipingTurn:boolean;
     userSkipingTurn:boolean;
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
+    realUserTurn: boolean;
+
+
 
     constructor(private messageService:MessageService) {
+        const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
             level: 'Joueur en ligne',
             round: '1 min',
             score: 0,
-            firstToPlay: this.chooseFirstToPlay(), // if true le realuser va commencer sinon c'est vrUser va commencer
+            firstToPlay: first, // if true le realuser va commencer sinon c'est vrUser va commencer
+            turnToPlay: first,
         };
 
         this.vrUser = {
@@ -39,7 +44,7 @@ export class UserService {
         };
         this.vrSkipingTurn = false;
         this.userSkipingTurn = false;
-        
+
     }
 
     chooseFirstToPlay(): boolean {
@@ -59,11 +64,11 @@ export class UserService {
         // comme ces constante on en a besoin ici seulement
         let randomInteger = 0;
 
-        while (true) {
+        for (;;) {
             randomInteger = this.getRandomInt(3);
             console.log('nom pige : ' + randomInteger);
 
-            if (this.vrPlayerNames[randomInteger] == localStorage.getItem('userName')) {
+            if (this.vrPlayerNames[randomInteger] === localStorage.getItem('userName')) {
                 continue;
             } else break;
         }
@@ -83,15 +88,15 @@ export class UserService {
 
     // timer
 
-    startTimer() { //command:string
-        if (this.realUser.firstToPlay) {
-            this.counter = this.setCounter(0,59);
-            this.realUser.firstToPlay = false;
+    startTimer() {
+        if (this.realUser.turnToPlay) {
+            this.counter = { min: 0, sec: 59 };
+            this.realUser.turnToPlay = false;
             this.time = this.counter.sec;
            // console.log('le vrai utilisateur qui joue');
         } else {
             this.counter = this.setCounter(0,20);
-            this.realUser.firstToPlay = true;
+            this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
             //console.log('le Vr qui joue');
         }

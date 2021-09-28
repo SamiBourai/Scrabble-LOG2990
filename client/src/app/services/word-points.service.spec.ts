@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
 import { A, B, S } from '@app/constants/constants';
 import { WordPointsService } from './word-points.service';
@@ -15,7 +16,7 @@ describe('WordPointsService', () => {
     });
 
     it('it should give 21 points for BASS in position from top left edge of board', () => {
-        const test = service.points_word(
+        const test = service.pointsWord(
             [B, A, S, S],
             [
                 { x: 0, y: 0 },

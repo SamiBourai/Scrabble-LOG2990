@@ -1,52 +1,65 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { AZUR_BOX, BLUE_BOX, BONUS_POINTS_50, BONUS_WORD_LENGTH, PINK_BOX, RED_BOX } from '@app/constants/constants';
+import { AZUR_BOX, BLUE_BOX, BONUS_POINTS_50, BONUS_WORD_LENGTH, PINK_BOX, RED_BOX, usedBonus } from '@app/constants/constants';
 
 @Injectable({
     providedIn: 'root',
 })
 export class WordPointsService {
-
-    private compare_vec2(a: Vec2, b: Vec2) {
-        return a.x === b.x && a.y === b.y;
-    }
-
-    points_word(word: Letter[], position: Vec2[]): number {
+    pointsWord(word: Letter[], position: Vec2[]): number {
         let sum = 0;
-        let word_multiplier = 1;
-        for (let letter_index = 0; letter_index < word.length; ++letter_index) {
-            let score = word[letter_index].score;
+        let wordMultiplier = 1;
+        for (let letterIndex = 0; letterIndex < word.length; ++letterIndex) {
+            let score = word[letterIndex].score;
+
             for (const i of RED_BOX) {
-                if (this.compare_vec2(position[letter_index], i)) {
-                    word_multiplier *= 3;
+                if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
+                    wordMultiplier *= 3;
+                    usedBonus.push(i);
                 }
             }
 
             for (const i of PINK_BOX) {
-                if (this.compare_vec2(position[letter_index], i)) {
-                    word_multiplier *= 2;
+                if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
+                    wordMultiplier *= 2;
+                    usedBonus.push(i);
                 }
             }
 
             for (const i of BLUE_BOX) {
-                if (this.compare_vec2(position[letter_index], i)) {
-                    score = word[letter_index].score * 3;
+                if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
+                    score = word[letterIndex].score * 3;
+                    usedBonus.push(i);
                 }
             }
 
             for (const i of AZUR_BOX) {
-                if (this.compare_vec2(position[letter_index], i)) {
-                    score = word[letter_index].score * 2;
+                if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
+                    score = word[letterIndex].score * 2;
+                    usedBonus.push(i);
                 }
             }
             sum += score;
         }
-        sum *= word_multiplier;
+        sum *= wordMultiplier;
         if (word.length === BONUS_WORD_LENGTH) {
             sum += BONUS_POINTS_50;
         }
 
         return sum;
+    }
+    private compareVec2(a: Vec2, b: Vec2) {
+        return a.x === b.x && a.y === b.y;
+    }
+
+    private isUsedBonus(position: Vec2) {
+        let isUsed = false;
+        for (const i of usedBonus) {
+            if (i === position) {
+                isUsed = true;
+            }
+        }
+        return isUsed;
     }
 }
