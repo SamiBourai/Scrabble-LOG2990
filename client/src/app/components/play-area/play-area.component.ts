@@ -12,7 +12,7 @@ import {
     EASEL_LENGTH,
     LEFTSPACE,
     NB_TILES,
-    TOPSPACE,
+    TOPSPACE
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -56,7 +56,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly virtualPlayerService: VirtualPlayerService,
     ) {
         this.pvs.loadDictionary().then(() => {
-            this.virtualPlayerService.manageVrPlayerActions();
+            //this.virtualPlayerService.manageVrPlayerActions();
         });
     }
     @HostListener('keydown', ['$event'])
@@ -119,6 +119,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         if (this.reserveService.reserveSize > 0) {
             this.easelLogisticsService.placeEaselLetters();
         }
+      
     }
     get width(): number {
         return this.canvasSize.x;
@@ -126,6 +127,11 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+    testVr(){
+       //  this.virtualPlayerService.getLetterForEachColumn(); 
+       this.virtualPlayerService.generateVrPlayerEasel(); 
+        this.virtualPlayerService.getLetterForEachLine(); 
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {

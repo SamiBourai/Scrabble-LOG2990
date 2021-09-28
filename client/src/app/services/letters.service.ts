@@ -35,7 +35,7 @@ import {
     W,
     X,
     Y,
-    Z,
+    Z
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
@@ -47,17 +47,18 @@ export class LettersService {
     foundLetter: boolean[] = [false, false, false, false, false, false, false];
     indexOfEaselLetters: number[] = [];
     indexLettersAlreadyInBoard: number[] = [];
-    tiles = new Array<Letter[]>(NB_TILES);
+    tiles = new Array<(Letter)[]>(NB_TILES);
 
     constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {
         for (let i = 0; i < this.tiles.length; ++i) {
-            this.tiles[i] = new Array<Letter>(NB_TILES);
+            this.tiles[i] = new Array<Letter>(NB_TILES).fill(NOT_A_LETTER);
         }
     }
 
     placeLetter(lett: Letter, pos: Vec2): void {
-        if (this.tileIsEmpty(pos)) {
+        // if (this.tileIsEmpty(pos)) {
             this.tiles[pos.y - 1][pos.x - 1] = lett;
+            console.log(this.tiles);
             const imgLetter = new Image();
             imgLetter.src = lett.img;
             imgLetter.onload = () => {
@@ -69,7 +70,7 @@ export class LettersService {
                     BOARD_HEIGHT / NB_TILES,
                 );
             };
-        }
+        // }
     }
 
     tileIsEmpty(pos: Vec2): boolean {
@@ -169,9 +170,9 @@ export class LettersService {
         // console.log('direction : ' + command.direction);
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
-                saveLetter = this.tiles[command.position.y - 1][command.position.x - 1 + i]?.charac;
+                saveLetter = this.tiles[command.position.y - 1][command.position.x - 1 + i]!.charac;
             } else if (command.direction === 'v') {
-                saveLetter = this.tiles[command.position.y - 1 + i][command.position.x - 1]?.charac;
+                saveLetter = this.tiles[command.position.y - 1 + i][command.position.x - 1]!.charac;
             }
 
             if (saveLetter === command.word.charAt(i)) {

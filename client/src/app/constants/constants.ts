@@ -58,6 +58,15 @@ export const CLEAR_RECT_FIX = 5;
 
 // play-area
 export const usedBonus: Vec2[] = [];
+// virtual-player- service
+export const MAX_INDEX_NUMBER_EASEL = 6;
+export const MAX_INDEX_NUMBER_PROBABILITY_ARRAY = 9;
+export const ZERO_POINTS = 0;
+export const SIX_POINTS = 6;
+export const SEVEN_POINTS = 7;
+export const TWELVE_POINTS = 12;
+export const THIRTEEN_POINTS = 13;
+export const EIGHTEEN_POINTS = 18;
 
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },

@@ -19,14 +19,17 @@ export class UserService {
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
+    realUserTurn: boolean;
 
     constructor() {
+        const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
             level: 'Joueur en ligne',
             round: '1 min',
             score: 0,
-            firstToPlay: this.chooseFirstToPlay(), // if true le realuser va commencer sinon c'est vrUser va commencer
+            firstToPlay: first, // if true le realuser va commencer sinon c'est vrUser va commencer
+            turnToPlay: first,
         };
 
         this.vrUser = {
@@ -58,11 +61,11 @@ export class UserService {
 
         let randomInteger = 0;
 
-        while (true) {
+        for (;;) {
             randomInteger = this.getRandomInt(3);
             console.log('nom pige : ' + randomInteger);
 
-            if (vrPlayerNames[randomInteger] == localStorage.getItem('userName')) {
+            if (vrPlayerNames[randomInteger] === localStorage.getItem('userName')) {
                 continue;
             } else break;
         }
@@ -77,14 +80,14 @@ export class UserService {
     // timer
 
     startTimer() {
-        if (this.realUser.firstToPlay) {
+        if (this.realUser.turnToPlay) {
             this.counter = { min: 0, sec: 59 };
-            this.realUser.firstToPlay = false;
+            this.realUser.turnToPlay = false;
             this.time = this.counter.sec;
             console.log('le vrai utilisateur qui joue');
         } else {
             this.counter = { min: 0, sec: 20 };
-            this.realUser.firstToPlay = true;
+            this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
             console.log('le Vr qui joue');
         }
@@ -101,7 +104,7 @@ export class UserService {
                 clearInterval(intervalId);
                 this.startTimer();
             }
-            if (this.counter.sec - 1 == -1) {
+            if (this.counter.sec - 1 === -1) {
                 this.counter.min -= 1;
                 this.counter.sec = 59;
             } else this.counter.sec -= 1;

@@ -36,7 +36,9 @@ export class SidebarComponent {
         private valideWordService: ValidWordService,
         private lettersService: LettersService,
         private userService: UserService,
-    ) {}
+    ) {
+        this.firstTurn = this.userService.realUser.firstToPlay;
+    }
 
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
