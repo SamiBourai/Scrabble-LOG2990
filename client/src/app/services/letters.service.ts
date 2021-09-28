@@ -100,7 +100,7 @@ export class LettersService {
                     }
                 }
             } else {
-                window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                //window.alert('votre mot ne contient pas les lettres dans le chavlet');
                 break;
             }
         }

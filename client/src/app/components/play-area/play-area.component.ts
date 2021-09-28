@@ -21,7 +21,7 @@ import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
-import { VirtualPlayerService } from '@app/services/virtual-player.service';
+//import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -55,7 +55,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-        private readonly virtualPlayerService: VirtualPlayerService,
+       // private readonly virtualPlayerService: VirtualPlayerService,
 
         private messageService:MessageService
     ) {
@@ -128,8 +128,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     testVr(){
        //  this.virtualPlayerService.getLetterForEachColumn();
-       this.virtualPlayerService.generateVrPlayerEasel();
-        this.virtualPlayerService.getLetterForEachLine();
+       //this.virtualPlayerService.generateVrPlayerEasel();
+        //this.virtualPlayerService.getLetterForEachLine();
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
