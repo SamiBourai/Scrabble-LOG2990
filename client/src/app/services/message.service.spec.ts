@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MessageService } from './message.service';
 
-fdescribe('MessageService', () => {
+describe('MessageService', () => {
     let service: MessageService;
 
     beforeEach(() => {

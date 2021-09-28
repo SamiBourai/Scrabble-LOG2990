@@ -12,6 +12,7 @@ export class WordPointsService {
         let wordMultiplier = 1;
         for (let letterIndex = 0; letterIndex < word.length; ++letterIndex) {
             let score = word[letterIndex].score;
+
             for (const i of RED_BOX) {
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
                     wordMultiplier *= 3;
@@ -49,8 +50,6 @@ export class WordPointsService {
         return sum;
     }
     private compareVec2(a: Vec2, b: Vec2) {
-        console.log(a);
-        console.log(b);
         return a.x === b.x && a.y === b.y;
     }
 
