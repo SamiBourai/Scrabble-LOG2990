@@ -83,13 +83,13 @@ describe('MessageService', () => {
         expect(service.placeCommand(command)).toEqual([{ word: 'mot', position: { x: 2, y: 1 }, direction: 'v' }]);
     });
 
-    it('confirm that if the parameters of the place command are out of the grid(here the line not between a and o), the return array is empty', () => {
+    it('confirm that if the parameters of the place command are out of the grid( line not between a and o), the return array is empty', () => {
         const command = '!placer q1h mot';
 
         expect(service.placeCommand(command)).toEqual([]);
     });
 
-    it('confirm that if the parameters of the place command are out of the grid(here the column not between 1 and 15), the return array is empty', () => {
+    it('confirm that if the parameters of the place command are out of the grid( column not between 1 and 15), the return array is empty', () => {
         const command = '!placer a18h mot';
 
         expect(service.placeCommand(command)).toEqual([]);
@@ -176,4 +176,69 @@ describe('MessageService', () => {
     });
 
     // test for debugCommand
+    it('confirm that the input is equal to !debug', () => {
+        const command = '!debug'
+        expect(service.debugCommand(command)).toBeTrue();
+    });
+
+    it('confirm that the input is not equal to !', () => {
+        const command = '!jhd'
+        expect(service.debugCommand(command)).toBeFalse();
+    });
+
+    // test containsSpecialChar
+    it('confirm that the input contains a special char', () => {
+        const command1 = 'çava';
+        const command2 = 'élève';
+        expect(service.containsSpecialChar(command1)).toBeTrue();
+        expect(service.containsSpecialChar(command2)).toBeTrue();
+    });
+
+    it('confirm that the input do not contains a special char', () => {
+        const command = 'cava';
+        expect(service.containsSpecialChar(command)).toBeFalse();
+    });
+
+    // test for remplaceSpecialChar
+
+    it('confirm that the special char has been changed to a normal char', () => {
+        const command1 = 'çava';
+        const command2 = 'élève';
+        expect(service.remplaceSpecialChar(command1)).toBe('cava');
+        expect(service.remplaceSpecialChar(command2)).toBe('eleve');
+    })
+
+// test for swapCommand
+    it('confirm that returns the letters to swap', ()=>{
+        const command = '!echanger es';
+        expect(service.swapCommand(command)).toBe('es');
+    });
+
+    it('confirm that returns the letters to swap', ()=>{
+        const command = '!echange';
+        expect(service.swapCommand(command)).toBe('');
+    });
+
+    //test for getLineNumber
+    it('confirm that transform char to number', ()=>{
+        const char = 'a';
+        expect(service.getLineNumber(char)).toBe(1);
+    });
+
+    it('confirm that a certain command is a part of a array of string', ()=>{
+        const command = '!placer h12h mot'
+        const arrayOfCommand = ['!passer', '!placer', '!echanger'];
+        expect(service.isSubstring(command,arrayOfCommand)).toBeTrue()
+    });
+
+    it('confirm that a certain command is not a part of a array of string', ()=>{
+        const command = 'gth'
+        const arrayOfCommand = ['!passer', '!placer', '!echanger'];
+        expect(service.isSubstring(command,arrayOfCommand)).toBeFalse()
+    });
+
+    //revoi isSubstring ta oublie cm ca fonctionne
+
+
 });
+

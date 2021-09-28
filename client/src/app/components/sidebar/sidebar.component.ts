@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
@@ -17,11 +17,15 @@ export class SidebarComponent {
     arrayOfMessages: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
+    isImpossible: boolean;
     isCommand: boolean = false;
     inEasel: boolean = true;
-    parameters: ChatCommand[] = [];
+    command: ChatCommand[] = [];
     containsAllChars: boolean = true;
     firstTurn: boolean = true;
+    skipTurn: boolean = false;
+    active: boolean = false;
+    name: string;
     // chatWord: string = '' ;
 
     form = new FormGroup({
@@ -44,23 +48,71 @@ export class SidebarComponent {
         this.changeDetectorRef.detectChanges();
     }
 
-    get Message() {
-        return this.form.get('message') as AbstractControl;
+    isYourTurn() {
+        return this.userService.skipTurnValidUser();
     }
+
+    getNameCurrentPlayer() {
+        return this.userService.getUserName();
+    }
+
     logMessage() {
-        if (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) {
-            if (this.messageService.containsSwapCommand(this.typeArea)) {
+        this.impossibleAndValid();
+        let insideEaselSwap = this.isLettersInEaselToSwap();
+        let insideEaselPlace = this.isLettersInEaselToPlace();
+
+        //console.log(this.isLettersInEasel())
+
+        if (
+            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
+            !this.messageService.isCommand(this.typeArea)
+        ) {
+            // console.log(this.messageService.containsSwapCommand(this.typeArea))
+            // console.log(this.isYourTurn())
+            // console.log(this.isLettersInEasel())
+
+            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() && insideEaselSwap) {
+                console.log('Supreme ntm');
+
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
-            }
-            if (this.messageService.containsPlaceCommand(this.typeArea)) {
+                this.userService.detectSkipTurnBtn();
+            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && insideEaselPlace) {
                 this.getLettersFromChat();
+                this.messageService.skipTurnIsPressed = false;
+                this.isImpossible = false;
+                this.userService.detectSkipTurnBtn();
+                this.arrayOfMessages.pop();
+                //disable the btn
+            } else if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+                this.skipTurn = true;
+                this.isImpossible = true;
+            } else {
+                this.arrayOfMessages.push(this.typeArea);
             }
-            this.arrayOfMessages.push(this.typeArea);
+            if (this.typeArea === '!passer' && this.isYourTurn()) {
+                this.userService.detectSkipTurnBtn();
+                const index = this.arrayOfMessages.indexOf('!passer', 0);
+                if (index > -1) this.arrayOfMessages.splice(index, 1);
+            }
         }
-        this.isCommand = this.messageService.isCommand(this.typeArea);
-        this.isValid = this.messageService.isValid(this.typeArea);
+
+        console.log(this.arrayOfMessages);
+        this.name = this.getNameCurrentPlayer();
 
         this.typeArea = '';
+    }
+
+    isSkipButtonClicked() {
+        if (this.messageService.skipTurnIsPressed) {
+            this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
+            this.arrayOfMessages.push('!passer');
+            this.active = true;
+            // let elem = document.getElementById('passer');
+            // console.log(elem)
+            // elem?.setAttribute("style", "color:red")
+            return true;
+        }
+        return false;
     }
 
     logDebug() {
@@ -102,5 +154,33 @@ export class SidebarComponent {
             window.alert('*LE MOT DEPASSE LA GRILLE*: votre mot dois etre contenue dans la grille!');
             return;
         }
+    }
+
+    impossibleAndValid() {
+        this.isCommand = this.messageService.isCommand(this.typeArea);
+        let lettersInsideSwap = this.isLettersInEaselToSwap();
+        //let lettersInsidePlace = this.isLettersInEaselToPlace();
+        if ((!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) || !lettersInsideSwap) {
+            this.isImpossible = true;
+            //console.log(this.isLettersInEasel());
+        }
+
+        this.isValid = this.messageService.isValid(this.typeArea);
+    }
+
+    isLettersInEaselToSwap() {
+        //console.log(this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea)))
+        let letters = this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea));
+        this.lettersService.resetVariables();
+        return letters;
+    }
+
+    isLettersInEaselToPlace() {
+        //console.log(this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea)))
+        let word = this.messageService.command.word;
+
+        let letters = this.lettersService.wordInEasel(word);
+        this.lettersService.resetVariables();
+        return letters;
     }
 }

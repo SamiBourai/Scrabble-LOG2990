@@ -6,13 +6,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
-import { A, B, E, G, I, J, L, N, O, R, U, Z } from '@app/constants/constants';
+import { A, B, E, G, I, J, L, N, O, R, U, usedBonus, Z } from '@app/constants/constants';
 import { decode as b64_decode } from 'base64-arraybuffer';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ValidWordService } from './valid-world.service';
 
-describe('ValidWorldService', () => {
+fdescribe('ValidWorldService', () => {
     let service: ValidWordService;
 
     const jsonZstB64Str =
@@ -117,9 +117,9 @@ describe('ValidWorldService', () => {
         expect(exists).toBeFalse();
     });
 
-    fit('adding word points of AIE should give 3 and doesnt recount an existing word', () => {
+    it('adding word points of AIE should give 3 and doesnt recount an existing word', () => {
         service['dictionary'] = [new Set(['azzz', 'aie'])];
-
+        usedBonus.push({ x: 0, y: 0 });
         const usedPositions = new Array<Letter[]>(15);
         for (let i = 0; i < usedPositions.length; ++i) {
             usedPositions[i] = new Array<Letter>(15);

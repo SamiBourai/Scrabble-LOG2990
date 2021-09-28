@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
+import { MessageService } from './message.service';
 
 @Injectable({
     providedIn: 'root',
@@ -21,7 +22,9 @@ export class UserService {
     userSkipingTurn: boolean;
     realUserTurn: boolean;
 
-    constructor() {
+    vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
+
+    constructor(private messageService: MessageService) {
         const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
@@ -44,7 +47,7 @@ export class UserService {
 
     chooseFirstToPlay(): boolean {
         // si le chiffre retournee est 0, alors c'est le real player qui commence
-        if (this.getRandomInt(20) < 10) {
+        if (this.getRandomInt(20) <= 10) {
             return false;
         } else {
             // sinon si ce qui est retourne est 1 alors c'est vr-player qui commence
@@ -57,7 +60,6 @@ export class UserService {
     }
     chooseRandomName(): string {
         // comme ces constante on en a besoin ici seulement
-        const vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
         let randomInteger = 0;
 
@@ -65,15 +67,21 @@ export class UserService {
             randomInteger = this.getRandomInt(3);
             console.log('nom pige : ' + randomInteger);
 
-            if (vrPlayerNames[randomInteger] === localStorage.getItem('userName')) {
+            if (this.vrPlayerNames[randomInteger] == localStorage.getItem('userName')) {
                 continue;
             } else break;
         }
-        return vrPlayerNames[randomInteger];
+        localStorage.setItem('vrUserName', this.vrPlayerNames[randomInteger]);
+        return this.vrPlayerNames[randomInteger];
     }
 
     getUserName(): string {
         this.userNameLocalStorage = localStorage.getItem('userName');
+        return this.userNameLocalStorage;
+    }
+
+    getVrUserName(): string {
+        this.userNameLocalStorage = localStorage.getItem('vrUserName');
         return this.userNameLocalStorage;
     }
 
@@ -84,25 +92,29 @@ export class UserService {
             this.counter = { min: 0, sec: 59 };
             this.realUser.turnToPlay = false;
             this.time = this.counter.sec;
-            console.log('le vrai utilisateur qui joue');
+            // console.log('le vrai utilisateur qui joue');
         } else {
             this.counter = { min: 0, sec: 20 };
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
-            console.log('le Vr qui joue');
+            //console.log('le Vr qui joue');
         }
-        const intervalId = setInterval(() => {
+        let intervalId = setInterval(() => {
             if (this.vrSkipingTurn) {
-                this.counter = { min: 0, sec: 59 };
+                this.counter = this.setCounter(0, 59);
                 this.vrSkipingTurn = false;
+
+                // this.time = this.counter.sec;
                 clearInterval(intervalId);
-                this.startTimer();
+                this.startTimer(); //command
             }
             if (this.userSkipingTurn) {
-                this.counter = { min: 0, sec: 20 };
+                //|| this.manageSkipTurnChat(command)
+                this.counter = this.setCounter(0, 20);
                 this.userSkipingTurn = false;
+                //this.time = this.counter.sec;
                 clearInterval(intervalId);
-                this.startTimer();
+                this.startTimer(); //command
             }
             if (this.counter.sec - 1 === -1) {
                 this.counter.min -= 1;
@@ -111,14 +123,23 @@ export class UserService {
 
             if (this.counter.min === 0 && this.counter.sec === 0) {
                 clearInterval(intervalId);
-                this.startTimer();
+                this.startTimer(); //command
             }
         }, 1000);
     }
 
+    setCounter(min: number, sec: number): { min: number; sec: number } {
+        const counter = { min: min, sec: sec };
+        return counter;
+    }
     skipTurnValidUser(): boolean {
         if (this.time === 59) return true;
         else this.time === 20;
         return false;
+    }
+    detectSkipTurnBtn(): boolean {
+        this.messageService.skipTurnIsPressed = true;
+        this.userSkipingTurn = true;
+        return true;
     }
 }

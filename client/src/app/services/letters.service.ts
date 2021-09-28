@@ -100,7 +100,9 @@ export class LettersService {
                     }
                 }
             } else {
-                window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                //window.alert('votre mot ne contient pas les lettres dans le chavlet');
+                console.log('votre mot ne contient pas les lettres dans le chavlet');
+                //this.insideEasel = false;
                 break;
             }
         }
@@ -126,9 +128,10 @@ export class LettersService {
                 this.reserveService.reFillReserve(lett);
             }
             this.easelLogisticsService.placeEaselLetters();
+
+            this.resetVariables();
+            this.easelLogisticsService.refillEasel();
         }
-        this.resetVariables();
-        this.easelLogisticsService.refillEasel();
     }
     resetVariables(): void {
         for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;

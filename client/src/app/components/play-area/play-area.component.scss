@@ -1,30 +1,21 @@
 #canvas {
     border: 1px solid black;
+    border-radius: 10px;
     background-color: #ffe4c4;
-    margin-left: 5px;
+
 }
 // #getRandomReserve{
 //     //margin-bottom: -1000px;
 // }
 #grid-container {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    top: 0%;
-    bottom: 0%;
-    margin: auto;
-    right: 0px;
-    left: 20%;
+
     display: flex;
     flex-direction: row;
 }
 #getRandomReserve{
     display: inline-flex;
-    margin-top: 400PX;
+
 }
-// .user-component{
-//     gap: 200px;
-// }
 
 .chronometer-title{
   text-align: center;
@@ -33,26 +24,16 @@
   display: inline-block;
   text-align: center;
   border-radius: 15%;
-  margin-top: 15%;
+  margin-top: 10%;
   margin-bottom: 5%;
   margin-left: 4%;
   margin-right: 4%;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 14px;
   font-weight: 500;
-  padding: 10px;
+  padding: 5px;
 }
 
-
-.mat-card{
-    width:30%;
-    height: auto;
-
-
-}
-.mat-card-header{
-    font-size: 10px;
-}
 #getRandomReserve, #Pl{
     width: 430px;
     height: 50px;
@@ -63,9 +44,9 @@
     align-content: center;
     color: blanchedalmond;
 }
-.buttom-button{
-    margin-top: -400px;
-}
-.p-div{
-    margin-left: 200px;
-}
+// .buttom-button{
+//     margin-top: -400px;
+// }
+// .p-div{
+//     margin-left: 200px;
+// }

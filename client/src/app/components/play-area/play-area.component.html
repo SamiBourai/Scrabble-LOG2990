@@ -10,6 +10,7 @@
                 <div class="button-game-page">
                     <button
                         #skipTurn
+                        id="btn"
                         mat-raised-button
                         color="primary"
                         [disabled]="userService.skipTurnValidUser() === false"
@@ -21,7 +22,6 @@
                 <div class="button-game-page">
                     <span class="chronometer-title"> 0{{ userService.counter.min }}:{{ userService.counter.sec }} </span>
                 </div>
-
                 <div class="button-game-page">
                     <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
                 </div>
@@ -36,7 +36,6 @@
         <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
         <button id="getRandomReserve" (click)="getLetters()" mat-raised-button color="accent" class="button">Get Letters</button>
         <button id="testVr" (click)="testVr()" mat-raised-button color="accent" class="button">VR</button>
-        
     </div>
 
     <div>
