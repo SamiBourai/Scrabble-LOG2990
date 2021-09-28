@@ -48,7 +48,7 @@ export class ValidWordService {
         for (const letter of word) {
             this.concatWord += letter;
         }
-        console.log(this.concatWord);
+        // console.log(this.concatWord);
 
         // const regexp = new RegExp(
         //     '^(?=['+ this.concatWord+']{' +
@@ -93,8 +93,8 @@ export class ValidWordService {
             }
             //
 
-            console.log(array);
-            console.log(arrayPosition);
+            // console.log(array);
+            // console.log(arrayPosition);
 
             if (array.length === 1) {
                 totalPointsSum += 0;
@@ -102,18 +102,18 @@ export class ValidWordService {
                 totalPointsSum += this.wps.pointsWord(array, arrayPosition);
             } else {
                 totalPointsSum = 0;
-                console.log(totalPointsSum);
+                // console.log(totalPointsSum);
 
                 return totalPointsSum;
             }
         }
 
         const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positions);
-        console.log(wordItselfPoints);
-        console.log(totalPointsSum);
+        // console.log(wordItselfPoints);
+        // console.log(totalPointsSum);
 
         totalPointsSum += wordItselfPoints;
-        console.log(totalPointsSum);
+        // console.log(totalPointsSum);
         return totalPointsSum;
     }
 

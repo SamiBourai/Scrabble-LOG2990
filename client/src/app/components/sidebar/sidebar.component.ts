@@ -67,8 +67,9 @@ export class SidebarComponent {
 
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, this.messageService.command);
+        // console.log('nb point: ' + points);
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
-            if (points !== 0) {
+            if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
                 if (this.firstTurn) {
                     if (this.messageService.command.position.x === 8 && this.messageService.command.position.y === 8) {
                         this.firstTurn = false;
@@ -84,7 +85,7 @@ export class SidebarComponent {
                 } else if (this.lettersService.wordIsAttached(this.messageService.command)) {
                     if (this.lettersService.wordIsPlacable(this.messageService.command)) {
                         this.lettersService.placeLettersInScrable(this.messageService.command);
-                        this.userService.realUser.score += points;
+                        // this.userService.realUser.score += points;
                         console.log(this.userService.realUser.score);
                     } else window.alert('*ERREUR*: votre mot dois contenir les lettres dans le chevalet et sur la grille!');
                 } else {
