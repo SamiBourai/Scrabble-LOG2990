@@ -55,8 +55,6 @@ export class UserService {
     }
     chooseRandomName(): string {
         // comme ces constante on en a besoin ici seulement
-
-
         let randomInteger = 0;
 
         while (true) {

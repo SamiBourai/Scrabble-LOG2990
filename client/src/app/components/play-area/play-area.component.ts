@@ -53,11 +53,17 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     ngOnInit() {
         this.userService.startTimer();
         // this.onClick();
+        this.reserveService.size.subscribe((res: number) => {
+
+            setTimeout(() =>{
+                this.remainingLetters = res;
+                console.log("taille de la reserve : "+this.remainingLetters);
+            },0);
+
+        });
     }
     ngAfterViewInit(): void {
-        this.reserveService.size.subscribe((res) => {
-            this.remainingLetters = res;
-        });
+
 
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
