@@ -82,22 +82,26 @@ export class ValidWordService {
         for (const letter of word) {
             this.concatWord += letter.charac;
         }
+        console.log(this.concatWord); 
         // console.log(this.concatWord);
 
         // const regexp = new RegExp(
         //     '^(?=['+ this.concatWord+']{' +
         //         this.concatWord.length+
         //         '}$)(?!.(.).\e).*$', 'g');
+        if(!this.dictionary) console.log('unlsiuhkj');
+        
         for (let i = this.concatWord.length; i >= 1; i--) {
-            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g'); 
+            let regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g'); 
             
             // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})
             // (?=(?!((?<1>.)\k<1>.)))(?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))(?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
             for (const words of this.dictionary!) {
                 for (const dictionaryWord of words) {
                     if (i === dictionaryWord.length) {
-                        const match = regex.test(dictionaryWord);
-                        if (match) {                               
+                        const match = regex.test(dictionaryWord);                        
+                        if (match) {    
+                            console.log(dictionaryWord);                           
                             this.matchWords.push(dictionaryWord);
                         }
                     }

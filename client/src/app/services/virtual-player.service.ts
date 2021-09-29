@@ -68,7 +68,7 @@ export class VirtualPlayerService {
                         const words = this.validWordService.generateAllWordsPossible(this.firstTurnLetters);
                         let matchwordLetters: Letter[] = [];
                         for (const word of words) {
-                            if (this.fitsTheProb(word)) {
+                            if (this.fitsTheProb(word) && this.wordInEasel(word)) {
                                 matchwordLetters = this.lettersService.fromWordToLetters(word);
                                 break;
                             }
@@ -77,7 +77,7 @@ export class VirtualPlayerService {
                         let i = 8;
                         for (const lett of matchwordLetters) {
                             this.lettersService.placeLetter(lett, { x: i++, y: j });
-                            this.updateVrEasel(lett);
+                            //this.updateVrEasel(lett);
                         }
                     }
 
@@ -114,13 +114,14 @@ export class VirtualPlayerService {
                 this.vrPlayerEaselLetters[i] = this.reserveService.getRandomLetter();
             }
         }
+        console.log(this.vrPlayerEaselLetters,'updateEasel');
     }
     generateVrPlayerEasel(): void {
         for (let i = 0; i < EASEL_LENGTH; i++) {
             this.vrPlayerEaselLetters.push(this.reserveService.getRandomLetter());
             this.firstTurnLetters.push(this.vrPlayerEaselLetters[i]);
         }
-        console.log(this.vrPlayerEaselLetters);
+        console.log(this.vrPlayerEaselLetters,'generated');
     }
 
     // private easelToLetters(): Letter[] {
@@ -350,7 +351,7 @@ export class VirtualPlayerService {
                 console.log(boarLetters[j], word.charAt(i));
                 if (word.charAt(i) == boarLetters[j].letter.charac) {
                     console.log('shuilaaaa');
-                    this.lettersService.placeLetter(boarLetters[j].letter, { x: boarLetters[j].position.x, y: boarLetters[j].position.y });
+                    this.lettersService.placeLetter(boarLetters[j].letter, { x: boarLetters[j].position.x+1, y: boarLetters[j].position.y +1});
                 }
             }
         }

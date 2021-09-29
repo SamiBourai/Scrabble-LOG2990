@@ -20,7 +20,7 @@ import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
-import { VirtualPlayerService } from '@app/services/virtual-player.service';
+///import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -53,11 +53,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-        private readonly virtualPlayerService: VirtualPlayerService,
-    ) {
-        this.pvs.loadDictionary().then(() => {
-            this.virtualPlayerService.manageVrPlayerActions(this.userService.realUser.firstToPlay);
-        });
+        //private readonly virtualPlayerService: VirtualPlayerService,
+    ) {this.pvs.loadDictionary().then(() => {
+    });
     }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -82,7 +80,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-
         this.userService.startTimer();
         this.reserveService.size.subscribe((res) => {
 
@@ -119,6 +116,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
         this.getLetters();
+        
     }
 
     // @HostListener('click', ['$skipTurn'])
