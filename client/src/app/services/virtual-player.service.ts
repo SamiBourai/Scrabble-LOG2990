@@ -66,8 +66,7 @@ export class VirtualPlayerService {
                     if(this.first){    
                     this.generateVrPlayerEasel();
                     this.first = false;
-                    console.log(this.userService.realUser.firstToPlay,'first to play');
-                    
+                    console.log(this.userService.realUser.firstToPlay,'first to play');                
                         if(!this.userService.realUser.firstToPlay)   { 
                         //console.log(this.userService.realUser.firstToPlay,'first')
                         this.generateProb();
@@ -85,10 +84,13 @@ export class VirtualPlayerService {
                             }}                        
                         }
                         //this.generateWords()
-                    }}
-                    else console.log('lirwkja,fbdnlehbdfam');
-                    
+                    }
+                    else if (!this.userService.realUser.turnToPlay){  console.log('lirwkja,fbdnlehbdfam'); 
                     this.getLetterForEachLine();
+                }
+                    
+                    
+                   }
                 }, 3000);
 
                 break;
