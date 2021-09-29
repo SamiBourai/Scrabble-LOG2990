@@ -56,7 +56,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly virtualPlayerService: VirtualPlayerService,
     ) {
         this.pvs.loadDictionary().then(() => {
-            this.virtualPlayerService.manageVrPlayerActions();
+            this.virtualPlayerService.manageVrPlayerActions(this.userService.realUser.firstToPlay);
         });
     }
     @HostListener('keydown', ['$event'])
@@ -74,26 +74,44 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     // }
     playVr(){
         if(this.userService.realUser.turnToPlay=false){
-            this.virtualPlayerService.manageVrPlayerActions();
+            this.virtualPlayerService.manageVrPlayerActions(this.userService.realUser.firstToPlay);
         }
     }
     detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
 
-        console.log('!passer');
+
 
         this.userService.userSkipingTurn = true;
         console.log(this.userService.userSkipingTurn);
     }
 
     ngOnInit() {
-      
+
         this.userService.startTimer();
-        this.playVr();
+
         this.reserveService.size.subscribe((res) => {
-            this.remainingLetters = res;
+
+            setTimeout(() =>{
+
+                this.remainingLetters = res
+
+            },0);
         });
-       
+
+        this.userService.turnOfVrPlayer.subscribe((response) => {
+            setTimeout(() =>{
+                console.log("reponse de l'observable : " +response);
+
+                if(response===false){
+                    this.playVr();
+                }
+            },0);
+
+
+
+        });
+
         // this.onClick();
     }
     ngAfterViewInit(): void {
