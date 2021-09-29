@@ -12,10 +12,9 @@ import {
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
-    ZERO_POINTS
+    ZERO_POINTS,
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
-import { UserService } from '@app/services/user.service';
 import { LettersService } from './letters.service';
 import { ValidWordService } from './valid-world.service';
 // import { LettersService } from './letters.service';
@@ -35,17 +34,16 @@ export class VirtualPlayerService {
     private foundLetter: boolean[] = [false, false, false, false, false, false, false];
     private probWordScore: string;
     private first: boolean = true;
-    // private letterInscrable: ScrableLetters[] = [];
+    //private letterInscrable: ScrableLetters[] = [];
 
     constructor(
         private readonly reserveService: ReserveService,
         private validWordService: ValidWordService,
         private lettersService: LettersService,
-        private userService: UserService,
     ) {}
 
     // private letters : Array<Letter> =[];
-    manageVrPlayerActions(): void {
+    manageVrPlayerActions(firstToplay: boolean): void {
         const probability: string[] = [
             'placeWord',
             'placeWord',
@@ -65,7 +63,7 @@ export class VirtualPlayerService {
                 if (this.first) {
                     this.generateVrPlayerEasel();
                     this.first = false;
-                    if (!this.userService.realUser.firstToPlay) {
+                    if (firstToplay) {
                         this.generateProb();
                         const words = this.validWordService.generateAllWordsPossible(this.firstTurnLetters);
                         let matchwordLetters: Letter[] = [];
@@ -100,7 +98,7 @@ export class VirtualPlayerService {
 
             case 'passTurn':
                 setTimeout(() => {
-                    this.userService.vrSkipingTurn = true;
+                    // this.userService.vrSkipingTurn = true;
                 }, 20000);
                 break;
 

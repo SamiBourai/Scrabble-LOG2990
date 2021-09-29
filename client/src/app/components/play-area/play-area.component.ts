@@ -56,7 +56,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly virtualPlayerService: VirtualPlayerService,
     ) {
         this.pvs.loadDictionary().then(() => {
-            this.virtualPlayerService.manageVrPlayerActions();
+            this.virtualPlayerService.manageVrPlayerActions(this.userService.realUser.firstToPlay);
         });
     }
     @HostListener('keydown', ['$event'])
@@ -72,26 +72,42 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     //     this.userService.userSkipingTurn=true;
     //     console.log(this.userService.userSkipingTurn);
     // }
-
     detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
 
-        console.log('!passer');
+
 
         this.userService.userSkipingTurn = true;
         console.log(this.userService.userSkipingTurn);
     }
 
     ngOnInit() {
-      
+
         this.userService.startTimer();
-        //this.virtualPlayerService.manageVrPlayerActions(); 
         this.reserveService.size.subscribe((res) => {
-            this.remainingLetters = res;
+
+            setTimeout(() =>{
+
+                this.remainingLetters = res
+
+            },0);
         });
-       
-        // this.onClick();
-    }
+
+    //     this.userService.turnOfVrPlayer.subscribe((response) => {
+    //         setTimeout(() =>{
+    //             console.log("reponse de l'observable : " +response);
+
+    //             if(response===false){
+    //                 this.playVr();
+    //             }
+    //         },0);
+
+
+
+    //     });
+
+    //     // this.onClick();
+     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -130,14 +146,14 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     get height(): number {
         return this.canvasSize.y;
     }
-    testVr() {
-        //  this.virtualPlayerService.getLetterForEachColumn();
-        // this.virtualPlayerService.generateVrPlayerEasel();
-        // this.virtualPlayerService.getLetterForEachLine();
-        this.virtualPlayerService.manageVrPlayerActions();
+    // testVr() {
+    //     //  this.virtualPlayerService.getLetterForEachColumn();
+    //     // this.virtualPlayerService.generateVrPlayerEasel();
+    //     // this.virtualPlayerService.getLetterForEachLine();
+    //     this.virtualPlayerService.manageVrPlayerActions();
         
         
-    }
+    // }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (
