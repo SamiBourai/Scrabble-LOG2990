@@ -79,8 +79,9 @@ export class ValidWordService {
     }
 
     generateAllWordsPossible(word: Letter[]): string[] {
+        console.log(word ,'word concat');
         for (const letter of word) {
-            this.concatWord += letter;
+            this.concatWord += letter.charac;
         }
         // console.log(this.concatWord);
 
@@ -89,20 +90,21 @@ export class ValidWordService {
         //         this.concatWord.length+
         //         '}$)(?!.(.).\e).*$', 'g');
         for (let i = this.concatWord.length; i >= 1; i--) {
-            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
+            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g'); 
+            
             // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})
             // (?=(?!((?<1>.)\k<1>.)))(?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))(?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
             for (const words of this.dictionary!) {
                 for (const dictionaryWord of words) {
                     if (i === dictionaryWord.length) {
                         const match = regex.test(dictionaryWord);
-                        if (match) {
+                        if (match) {                               
                             this.matchWords.push(dictionaryWord);
                         }
                     }
                 }
-            }
-        }
+            }}
+       
         return this.matchWords;
     }
 

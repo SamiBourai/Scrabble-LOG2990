@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Easel } from '@app/classes/easel';
 import { Letter } from '@app/classes/letter';
 import { ScrableLetters } from '@app/classes/scrable-letters';
 import {
@@ -13,7 +12,7 @@ import {
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
@@ -26,14 +25,16 @@ import { ValidWordService } from './valid-world.service';
     providedIn: 'root',
 })
 export class VirtualPlayerService {
-    private vrPlayerEaselLetters: Easel[] = [];
+    private vrPlayerEaselLetters: Letter[] = [];
     private verticalLetters: Map<number, ScrableLetters[]> = new Map<number, ScrableLetters[]>();
 
     // private lowScore : boolean = false;
     // private averageScore : boolean= false ;
     // private highScore : boolean= false;
+    private firstTurnLetters : Letter[] = [];
     private foundLetter: boolean[] = [false, false, false, false, false, false, false];
     private probWordScore: string;
+    private first : boolean = true; 
     //private letterInscrable: ScrableLetters[] = [];
 
     constructor(
@@ -62,8 +63,31 @@ export class VirtualPlayerService {
         switch (probability[randomIndex]) {
             case 'placeWord': {
                 setTimeout(() => {
+                    if(this.first){    
                     this.generateVrPlayerEasel();
-
+                    this.first = false;
+                    console.log(this.userService.realUser.firstToPlay,'first to play');
+                    
+                        if(!this.userService.realUser.firstToPlay)   { 
+                        //console.log(this.userService.realUser.firstToPlay,'first')
+                        this.generateProb();
+                        console.log(this.firstTurnLetters, ';oiwlk');
+                        let words =this.validWordService.generateAllWordsPossible(this.firstTurnLetters);
+                        
+                        for(let word of words ){
+                            if(this.fitsTheProb(word)) { 
+                            let matchwordLetters =this.lettersService.fromWordToLetters(word);
+                            let i = 8;
+                            let j =8; 
+                            for(let lett of matchwordLetters){
+                                this.lettersService.placeLetter(lett,{x: i++, y: j}); 
+                                this.updateVrEasel(lett);
+                            }}                        
+                        }
+                        //this.generateWords()
+                    }}
+                    else console.log('lirwkja,fbdnlehbdfam');
+                    
                     this.getLetterForEachLine();
                 }, 3000);
 
@@ -82,13 +106,18 @@ export class VirtualPlayerService {
             }
         }
     }
-
+    updateVrEasel(letter : Letter):void {
+        for(let vrletters of this.vrPlayerEaselLetters){
+            if(vrletters.charac === letter.charac){
+                vrletters = this.reserveService.getRandomLetter(); 
+            }
+        }
+    }
     generateVrPlayerEasel(): void {
         for (let i = 0; i < EASEL_LENGTH; i++) {
-            console.log(i);
-            this.vrPlayerEaselLetters.push({ index: i, letters: this.reserveService.getRandomLetter() });
+            this.vrPlayerEaselLetters.push(this.reserveService.getRandomLetter());
+            this.firstTurnLetters.push(this.vrPlayerEaselLetters[i]); 
         }
-        console.log(this.vrPlayerEaselLetters);
     }
 
     // private easelToLetters(): Letter[] {
@@ -203,7 +232,7 @@ export class VirtualPlayerService {
 
                 for (let j = 0; j < EASEL_LENGTH; j++) {
                     //  console.log(word.charAt(i) + ' : ' + this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j]);
-                    if (word.charAt(i) === this.vrPlayerEaselLetters[j].letters.charac && this.foundLetter[j] === false) {
+                    if (word.charAt(i) === this.vrPlayerEaselLetters[j].charac && this.foundLetter[j] === false) {
                         this.foundLetter[j] = true;
 
                         // console.log('indexFind ' + j);
@@ -233,7 +262,6 @@ export class VirtualPlayerService {
     }
     getLetterForEachColumn(): void {
         let letter: ScrableLetters[] = [];
-        console.log(this.lettersService.tiles);
         for (let i = 0; i < NB_TILES; i++) {
             for (let j = 0; j < NB_TILES; j++) {
                 if (this.lettersService.tiles[j][i]?.charac !== NOT_A_LETTER.charac) {
@@ -252,7 +280,6 @@ export class VirtualPlayerService {
             this.verticalLetters.set(i, letter.slice());
             letter.splice(0, letter.length);
         }
-        console.log(this.verticalLetters, 'vertical');
     }
 
     getLetterForEachLine(): void {
@@ -282,7 +309,8 @@ export class VirtualPlayerService {
                 words = this.generateWords(lett);
                 for (let k = 0; k < words.length; k++) {
                     if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k]))
-                        this.placeVrLettersInScrable(words[k], lett, i);
+                        //this.placeVrLettersInScrable(words[k], lett, i);
+                        break; 
                 }
             }
             lett.splice(0, lett.length);
@@ -291,21 +319,22 @@ export class VirtualPlayerService {
 
     generateWords(letter: Letter[]): string[] {
         // console.log('generate word: ' + this.vrPlayerEaselLetters);
-
+  
         for (let lett of this.vrPlayerEaselLetters) {
-            letter.push(lett.letters);
+            letter.push(lett);
         }
         return this.validWordService.generateAllWordsPossible(letter);
     }
 
-    private placeVrLettersInScrable(word: string, boarLetters: Letter[], y: number): void {
-        console.log('yoooo', this.userService.realUser.firstToPlay);
+    // private placeVrLettersInScrable(word: string, boarLetters: Letter[], y: number): void {
+    //     console.log('yoooo', this.userService.realUser.firstToPlay);
 
-        for (let i = 0; i < word.length; i++) {
-            for (let j = 0; j < boarLetters.length; j++) {
-                if (word.charAt(i) == boarLetters[j].charac) {
-                }
-            }
-        }
-    }
+    //     for (let i = 0; i < word.length; i++) {
+    //         for (let j = 0; j < boarLetters.length; j++) {
+    //             if (word.charAt(i) == boarLetters[j].charac) {
+
+    //             }
+    //         }
+    //     }
+    // }
 }

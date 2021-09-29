@@ -26,6 +26,7 @@ export class SidebarComponent {
     skipTurn: boolean = false;
     active: boolean = false;
     name: string;
+    word:string = "mot"
     // chatWord: string = '' ;
 
     form = new FormGroup({
@@ -41,7 +42,7 @@ export class SidebarComponent {
         private lettersService: LettersService,
         private userService: UserService,
     ) {
-        this.firstTurn = this.userService.realUser.firstToPlay;
+        //this.firstTurn = this.userService.realUser.firstToPlay;
     }
 
     ngAfterViewChecked(): void {
@@ -72,18 +73,18 @@ export class SidebarComponent {
             // console.log(this.isLettersInEasel())
 
             if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() && insideEaselSwap) {
-                console.log('Supreme ntm');
-
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
                 this.userService.detectSkipTurnBtn();
-            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && insideEaselPlace) {
+                this.isImpossible = false;
+
+            }  if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && insideEaselPlace ) {
                 this.getLettersFromChat();
                 this.messageService.skipTurnIsPressed = false;
                 this.isImpossible = false;
                 this.userService.detectSkipTurnBtn();
                 this.arrayOfMessages.pop();
-                //disable the btn
-            } else if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+                
+            }  if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
                 this.isImpossible = true;
             } else {
@@ -159,8 +160,8 @@ export class SidebarComponent {
     impossibleAndValid() {
         this.isCommand = this.messageService.isCommand(this.typeArea);
         let lettersInsideSwap = this.isLettersInEaselToSwap();
-        //let lettersInsidePlace = this.isLettersInEaselToPlace();
-        if ((!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) || !lettersInsideSwap) {
+        let lettersInsidePlace = this.isLettersInEaselToPlace();
+        if ((!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) || !lettersInsideSwap || !lettersInsidePlace ) {
             this.isImpossible = true;
             //console.log(this.isLettersInEasel());
         }
@@ -177,9 +178,10 @@ export class SidebarComponent {
 
     isLettersInEaselToPlace() {
         //console.log(this.lettersService.wordInEasel(this.messageService.swapCommand(this.typeArea)))
-        let word = this.messageService.command.word;
+        this.word = this.messageService.command.word;
+        console.log(this.word)
 
-        let letters = this.lettersService.wordInEasel(word);
+        let letters = this.lettersService.wordInEasel(this.word);
         this.lettersService.resetVariables();
         return letters;
     }

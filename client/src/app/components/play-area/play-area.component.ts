@@ -12,7 +12,7 @@ import {
     EASEL_LENGTH,
     LEFTSPACE,
     NB_TILES,
-    TOPSPACE,
+    TOPSPACE
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -56,7 +56,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly virtualPlayerService: VirtualPlayerService,
     ) {
         this.pvs.loadDictionary().then(() => {
-            //this.virtualPlayerService.manageVrPlayerActions();
+            this.virtualPlayerService.manageVrPlayerActions();
         });
     }
     @HostListener('keydown', ['$event'])
@@ -72,6 +72,11 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     //     this.userService.userSkipingTurn=true;
     //     console.log(this.userService.userSkipingTurn);
     // }
+    playVr(){
+        if(this.userService.realUser.turnToPlay=false){
+            this.virtualPlayerService.manageVrPlayerActions();
+        }
+    }
     detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
 
@@ -82,10 +87,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
+      
         this.userService.startTimer();
+        this.playVr();
         this.reserveService.size.subscribe((res) => {
             this.remainingLetters = res;
         });
+       
         // this.onClick();
     }
     ngAfterViewInit(): void {
