@@ -72,11 +72,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     //     this.userService.userSkipingTurn=true;
     //     console.log(this.userService.userSkipingTurn);
     // }
-    playVr(){
-        if(this.userService.realUser.turnToPlay=false){
-            this.virtualPlayerService.manageVrPlayerActions();
-        }
-    }
+
     detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
 
@@ -89,7 +85,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     ngOnInit() {
       
         this.userService.startTimer();
-        this.playVr();
+        //this.virtualPlayerService.manageVrPlayerActions(); 
         this.reserveService.size.subscribe((res) => {
             this.remainingLetters = res;
         });
@@ -136,8 +132,11 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
     testVr() {
         //  this.virtualPlayerService.getLetterForEachColumn();
-        this.virtualPlayerService.generateVrPlayerEasel();
-        this.virtualPlayerService.getLetterForEachLine();
+        // this.virtualPlayerService.generateVrPlayerEasel();
+        // this.virtualPlayerService.getLetterForEachLine();
+        this.virtualPlayerService.manageVrPlayerActions();
+        
+        
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {

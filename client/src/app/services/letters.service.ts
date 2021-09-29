@@ -58,7 +58,6 @@ export class LettersService {
     placeLetter(lett: Letter, pos: Vec2): void {
         if (this.tiles[pos.y - 1][pos.x - 1] == NOT_A_LETTER) {
             this.tiles[pos.y - 1][pos.x - 1] = lett;
-            console.log(this.tiles);
             const imgLetter = new Image();
             imgLetter.src = lett.img;
             imgLetter.onload = () => {

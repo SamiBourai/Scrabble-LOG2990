@@ -79,7 +79,6 @@ export class ValidWordService {
     }
 
     generateAllWordsPossible(word: Letter[]): string[] {
-        console.log(word ,'word concat');
         for (const letter of word) {
             this.concatWord += letter.charac;
         }
