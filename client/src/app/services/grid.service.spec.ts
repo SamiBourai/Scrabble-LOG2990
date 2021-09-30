@@ -1,6 +1,10 @@
 // import { TestBed } from '@angular/core/testing';
 // import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 // import { GridService } from '@app/services/grid.service';
+import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { CANEVAS_HEIGHT, CANEVAS_WIDTH } from '@app/constants/constants';
+import { GridService } from '@app/services/grid.service';
 
 // describe('GridService', () => {
 //     let service: GridService;
@@ -8,6 +12,12 @@
 
 //     const CANVAS_WIDTH = 600;
 //     const CANVAS_HEIGHT = 600;
+beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(GridService);
+    ctxStub = CanvasTestHelper.createCanvas(CANEVAS_WIDTH, CANEVAS_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
+    service.gridContext = ctxStub;
+});
 
 //     beforeEach(() => {
 //         TestBed.configureTestingModule({});
@@ -29,6 +39,15 @@
 //     });
 
 /* it(' drawWord should call fillText on the canvas', () => {
+    it(' width should return the width of the grid canvas', () => {
+        expect(service.width).toEqual(CANEVAS_WIDTH);
+    });
+
+    it(' height should return the height of the grid canvas', () => {
+        expect(service.width).toEqual(CANEVAS_HEIGHT);
+    });
+
+    /* it(' drawWord should call fillText on the canvas', () => {
         const fillTextSpy = spyOn(service.gridContext, 'fillText').and.callThrough();
         service.drawWord('test');
         expect(fillTextSpy).toHaveBeenCalled();

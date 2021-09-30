@@ -74,15 +74,15 @@ export class SidebarComponent {
             if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn() && insideEaselSwap) {
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
                 this.userService.detectSkipTurnBtn();
-
-            }  if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && insideEaselPlace) {
+            }
+            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && insideEaselPlace) {
                 this.getLettersFromChat();
                 this.messageService.skipTurnIsPressed = false;
                 this.isImpossible = false;
                 this.userService.detectSkipTurnBtn();
                 this.arrayOfMessages.pop();
-                
-            }  if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+            }
+            if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
                 this.isImpossible = true;
             } else {
@@ -147,6 +147,7 @@ export class SidebarComponent {
                 }
             } else {
                 window.alert('*LE MOT DOIT ETRE DANS LE DIC.*: votre mot dois etre contenue dans le dictionnaire!');
+                console.log('lake');
                 return;
             }
         } else {

@@ -1,4 +1,3 @@
-import { MessageService } from '@app/services/message.service';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -13,16 +12,16 @@ import {
     EASEL_LENGTH,
     LEFTSPACE,
     NB_TILES,
-    TOPSPACE
+    TOPSPACE,
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
+import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 //import { VirtualPlayerService } from '@app/services/virtual-player.service';
-
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -55,9 +54,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-       // private readonly virtualPlayerService: VirtualPlayerService,
+        // private readonly virtualPlayerService: VirtualPlayerService,
 
-        private messageService:MessageService
+        private messageService: MessageService,
     ) {
         this.pvs.loadDictionary().then(() => {
             //this.virtualPlayerService.manageVrPlayerActions();
@@ -68,29 +67,27 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.buttonPressed = event.key;
     }
 
-
     detectSkipTurnBtn() {
+        this.userService.skipTurn();
+        console.log(this.userService.userSkipingTurn);
+
+        console.log('!passer');
 
         this.messageService.skipTurnIsPressed = true;
         this.userService.userSkipingTurn = true;
-
     }
 
     ngOnInit() {
         this.userService.startTimer();
         // this.onClick();
         this.reserveService.size.subscribe((res: number) => {
-
-            setTimeout(() =>{
+            setTimeout(() => {
                 this.remainingLetters = res;
-                console.log("taille de la reserve : "+this.remainingLetters);
-            },0);
-
+                console.log('taille de la reserve : ' + this.remainingLetters);
+            }, 0);
         });
     }
     ngAfterViewInit(): void {
-
-
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.easelLogisticsService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -99,7 +96,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
-        this.getLetters()
+        this.getLetters();
     }
     get width(): number {
         return this.canvasSize.x;
@@ -108,7 +105,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     get height(): number {
         return this.canvasSize.y;
     }
-
 
     getLetters(): void {
         for (let i = 0; i < EASEL_LENGTH; i++) {
@@ -123,12 +119,11 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         if (this.reserveService.reserveSize > 0) {
             this.easelLogisticsService.placeEaselLetters();
         }
-
     }
 
-    testVr(){
-       //  this.virtualPlayerService.getLetterForEachColumn();
-       //this.virtualPlayerService.generateVrPlayerEasel();
+    testVr() {
+        //  this.virtualPlayerService.getLetterForEachColumn();
+        //this.virtualPlayerService.generateVrPlayerEasel();
         //this.virtualPlayerService.getLetterForEachLine();
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!

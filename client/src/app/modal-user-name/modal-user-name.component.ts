@@ -12,12 +12,8 @@ export class ModalUserNameComponent implements OnInit {
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
 
-    constructor(private dialogRef: MatDialog) {
-
-    }
-    ngOnInit() {
-
-    }
+    constructor(private dialogRef: MatDialog) {}
+    ngOnInit() {}
     openDialogOfVrUser() {
         this.dialogRef.open(ModalUserVsPlayerComponent);
     }

@@ -1,3 +1,4 @@
+// import { HttpClientModule } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -18,7 +19,7 @@ import { VrUserComponent } from './components/users/vr-user/vr-user.component';
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
-import { CommandService } from './services/command.service';
+// import { CommandService } from './services/command.service';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-world.service';
 import { WordPointsService } from './services/word-points.service';
@@ -56,7 +57,7 @@ import { WordPointsService } from './services/word-points.service';
         AvatarModule,
     ],
 
-    providers: [CommandService, MessageService, ValidWordService, WordPointsService],
+    providers: [MessageService, ValidWordService, WordPointsService],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
