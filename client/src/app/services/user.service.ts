@@ -3,7 +3,6 @@ import { RealUser, VrUser } from '@app/classes/user';
 //import { C } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { MessageService } from './message.service';
-import { VirtualPlayerService } from './virtual-player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,18 +15,19 @@ export class UserService {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
-    counter: { min: number; sec: number };
+    counter: { min: number; sec: number } = { min: 0, sec: 0 };
     realUser: RealUser;
     vrUser: VrUser;
     intervalId = 0;
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
-    realUserTurn:BehaviorSubject<boolean>;
+    realUserTurn: BehaviorSubject<boolean>;
 
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-    constructor(private messageService: MessageService, private vrPlayerService :VirtualPlayerService) {
+    constructor(private messageService: MessageService) // private vrPlayerService: VirtualPlayerService
+    {
         const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
@@ -37,7 +37,7 @@ export class UserService {
             firstToPlay: first, // if true le realuser va commencer sinon c'est vrUser va commencer
             turnToPlay: first,
         };
-        this.realUserTurn= new BehaviorSubject(this.realUser.turnToPlay);
+        this.realUserTurn = new BehaviorSubject(this.realUser.turnToPlay);
 
         this.vrUser = {
             name: this.chooseRandomName(),
@@ -96,16 +96,16 @@ export class UserService {
 
     startTimer() {
         if (this.realUser.turnToPlay) {
-            console.log("tour du user de jouer" + this.realUser.turnToPlay);
+            console.log('tour du user de jouer' + this.realUser.turnToPlay);
             this.counter = { min: 0, sec: 59 };
             this.realUser.turnToPlay = false;
             this.time = this.counter.sec;
 
             // console.log('le vrai utilisateur qui joue');
         } else {
-            console.log("tour du VR de jouer" + this.realUser.turnToPlay);
+            console.log('tour du VR de jouer' + this.realUser.turnToPlay);
             this.counter = { min: 0, sec: 20 };
-            this.vrPlayerService.manageVrPlayerActions(!this.realUser.firstToPlay);
+            //this.vrPlayerService.manageVrPlayerActions(!this.realUser.firstToPlay);
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
 
@@ -113,7 +113,6 @@ export class UserService {
         }
         this.realUserTurn.next(this.realUser.turnToPlay);
         let intervalId = setInterval(() => {
-
             if (this.vrSkipingTurn) {
                 this.counter = this.setCounter(0, 59);
                 this.vrSkipingTurn = false;

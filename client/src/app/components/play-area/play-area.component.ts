@@ -12,7 +12,7 @@ import {
     EASEL_LENGTH,
     LEFTSPACE,
     NB_TILES,
-    TOPSPACE
+    TOPSPACE,
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -22,7 +22,6 @@ import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -38,7 +37,7 @@ export enum MouseButton {
 })
 export class PlayAreaComponent implements AfterViewInit, OnInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
-    // @ViewChild('skipTurn') private btnSkipTurn: HTMLButtonElement;
+
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
     containsAllChars: boolean = true;
@@ -53,61 +52,30 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-        private readonly virtualPlayerService: VirtualPlayerService,
-    ) {
-        this.pvs.loadDictionary().then(() => {
-            this.virtualPlayerService.manageVrPlayerActions(this.userService.realUser.firstToPlay);
-        });
-    }
+        private readonly virtualPlayer: VirtualPlayerService,
+    ) {}
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
     }
-    // @HostListener('click', ['$skipTurn'])
-    // onClick(){
-    //     console.log(this.userService.userSkipingTurn);
 
-    //     console.log("!passer");
-
-    //     this.userService.userSkipingTurn=true;
-    //     console.log(this.userService.userSkipingTurn);
-    // }
     detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
-
-
 
         this.userService.userSkipingTurn = true;
         console.log(this.userService.userSkipingTurn);
     }
 
     ngOnInit() {
-
-        this.userService.startTimer();
-        this.reserveService.size.subscribe((res) => {
-
-            setTimeout(() =>{
-
-                this.remainingLetters = res
-
-            },0);
+        this.pvs.loadDictionary().then(() => {
+            this.userService.startTimer();
+            this.reserveService.size.subscribe((res) => {
+                setTimeout(() => {
+                    this.remainingLetters = res;
+                }, 0);
+            });
         });
-
-    //     this.userService.turnOfVrPlayer.subscribe((response) => {
-    //         setTimeout(() =>{
-    //             console.log("reponse de l'observable : " +response);
-
-    //             if(response===false){
-    //                 this.playVr();
-    //             }
-    //         },0);
-
-
-
-    //     });
-
-    //     // this.onClick();
-     }
+    }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -146,14 +114,12 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     get height(): number {
         return this.canvasSize.y;
     }
-    // testVr() {
-    //     //  this.virtualPlayerService.getLetterForEachColumn();
-    //     // this.virtualPlayerService.generateVrPlayerEasel();
-    //     // this.virtualPlayerService.getLetterForEachLine();
-    //     this.virtualPlayerService.manageVrPlayerActions();
-        
-        
-    // }
+    testVr() {
+        //  this.virtualPlayerService.getLetterForEachColumn();
+        // this.virtualPlayerService.generateVrPlayerEasel();
+
+        this.virtualPlayer.manageVrPlayerActions(!this.userService.realUser.firstToPlay);
+    }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (

@@ -97,8 +97,6 @@ export class MessageService {
             this.word = input.substring(INDEX_WORD, input.length);
         }
 
-        // console.log(n.length)
-        // console.log(this.word)
         if (
             this.possibleLigne.includes(this.line) &&
             this.possibleColonne.includes(this.column) &&

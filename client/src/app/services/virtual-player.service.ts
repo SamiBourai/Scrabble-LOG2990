@@ -25,7 +25,6 @@ import { ValidWordService } from './valid-world.service';
 })
 export class VirtualPlayerService {
     private vrPlayerEaselLetters: Letter[] = [];
-    private verticalLetters: Map<number, ScrableLetters[]> = new Map<number, ScrableLetters[]>();
 
     // private lowScore : boolean = false;
     // private averageScore : boolean= false ;
@@ -34,6 +33,7 @@ export class VirtualPlayerService {
     private foundLetter: boolean[] = [false, false, false, false, false, false, false];
     private probWordScore: string;
     private first: boolean = true;
+    private letterFromEasel: string = '';
     //private letterInscrable: ScrableLetters[] = [];
 
     constructor(
@@ -77,7 +77,7 @@ export class VirtualPlayerService {
                         let i = 8;
                         for (const lett of matchwordLetters) {
                             this.lettersService.placeLetter(lett, { x: i++, y: j });
-                            this.updateVrEasel(lett);
+                            //this.updateVrEasel(lett);
                         }
                     }
 
@@ -122,14 +122,6 @@ export class VirtualPlayerService {
         }
         console.log(this.vrPlayerEaselLetters);
     }
-
-    // private easelToLetters(): Letter[] {
-    //     const letters: Letter[] = [];
-    //     for (const playerLetters of this.vrPlayerEaselLetters) {
-    //         letters.push(playerLetters.letters);
-    //     }
-    //     return letters;
-    // }
 
     caclculateGeneratedWordPoints(word: string): number {
         let points = 0;
@@ -203,22 +195,21 @@ export class VirtualPlayerService {
         return concat;
     }
     private isWordPlacable(word: string, alreadyInBoard: Letter[]): boolean {
-        let letterFromEasel = '';
-
         const copy: Letter[] = alreadyInBoard.slice();
 
         let validWord = false;
         for (let i = 0; i < word.length; i++) {
             for (let j = 0; j < copy.length; j++) {
                 if (word.charAt(i) !== copy[j].charac) {
-                    letterFromEasel = letterFromEasel + word.charAt(i);
-                    copy.splice(j, 1);
+                    this.letterFromEasel = this.letterFromEasel + word.charAt(i);
                     break;
+                } else {
+                    copy.splice(j, 1);
                 }
             }
         }
 
-        validWord = this.wordInEasel(letterFromEasel);
+        validWord = this.wordInEasel(this.letterFromEasel);
         this.foundLetter.fill(false);
         return validWord;
     }
@@ -262,27 +253,7 @@ export class VirtualPlayerService {
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         this.probWordScore = probability[randomIndex];
     }
-    getLetterForEachColumn(): void {
-        const letter: ScrableLetters[] = [];
-        for (let i = 0; i < NB_TILES; i++) {
-            for (let j = 0; j < NB_TILES; j++) {
-                if (this.lettersService.tiles[j][i]?.charac !== NOT_A_LETTER.charac) {
-                    console.log('madafak', this.lettersService.tiles[j][i]);
-                    letter.push({
-                        letter: {
-                            score: this.lettersService.tiles[j][i]?.score,
-                            charac: this.lettersService.tiles[j][i]?.charac,
-                            img: this.lettersService.tiles[j][i]?.img,
-                        },
-                        position: { x: i, y: j },
-                    });
-                    console.log(letter, 'luwqhe');
-                }
-            }
-            this.verticalLetters.set(i, letter.slice());
-            letter.splice(0, letter.length);
-        }
-    }
+    getLetterForEachColumn(): void {}
 
     getLetterForEachLine(): void {
         const lett: Letter[] = [];
@@ -317,12 +288,14 @@ export class VirtualPlayerService {
                 });
             }
             if (notEmpty) {
+                console.log(i);
                 regEx = new RegExp(this.generateRegEx(lett));
                 words = this.generateWords(lett);
+                console.log(words);
                 for (let k = 0; k < words.length; k++) {
                     if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
-                        console.log(words[k]);
-                        this.placeVrLettersInScrable(words[k], scrableLett);
+                        console.log(words[k] + ' *essais avec ce mot*');
+                        this.placeVrLettersInScrable(words[k], lett);
                         found = true;
                         break;
                     }
@@ -344,15 +317,28 @@ export class VirtualPlayerService {
         return this.validWordService.generateAllWordsPossible(letter);
     }
 
-    private placeVrLettersInScrable(word: string, boarLetters: ScrableLetters[]): void {
-        for (let i = 0; i < word.length; i++) {
-            for (let j = 0; j < boarLetters.length; j++) {
+    private placeVrLettersInScrable(word: string, boarLetters: Letter[]): void {
+        let posInit = -1;
+        let inEaselCounter = 0;
+        console.log(word + ' est le mot a plasser');
+        for (let i = 0; i < NB_TILES - word.length; i++) {
+            for (let j = 0; j < word.length; j++) {
                 console.log(boarLetters[j], word.charAt(i));
-                if (word.charAt(i) == boarLetters[j].letter.charac) {
-                    console.log('shuilaaaa');
-                    this.lettersService.placeLetter(boarLetters[j].letter, { x: boarLetters[j].position.x, y: boarLetters[j].position.y });
+                if (word.charAt(j) == boarLetters[i + j].charac || boarLetters[i + j].charac == NOT_A_LETTER.charac) {
+                    console.log('LETTRE VALID');
+
+                    if (word.charAt(j) == boarLetters[i + j].charac) {
+                        inEaselCounter++;
+                    }
+                    if (j == word.length - 1 && inEaselCounter == this.letterFromEasel.length) {
+                        posInit = i;
+                        console.log('POSITION MOT :' + posInit);
+                    } else inEaselCounter = 0;
+                } else {
+                    break;
                 }
             }
+            if (posInit != -1) break;
         }
     }
 }
