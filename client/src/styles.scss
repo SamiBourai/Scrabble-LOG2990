@@ -1,13 +1,10 @@
-
-
 // Custom Theming for Angular Material
-
 
 // For more information: https://material.angular.io/guide/theming
 @use '~@angular/material' as mat;
 @use './app/pages/material-page/material-page.component.theme' as material-page;
 
-@import "~bootstrap/dist/css/bootstrap.css";
+@import '~bootstrap/dist/css/bootstrap.css';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -78,18 +75,25 @@ $indigo-pink-theme: mat.define-light-theme(
 
 html,
 body {
-    height: 100%;
-    width: 100%;
+    //     height: 100%;
+    //     width: 100%;
+    // }
+    // body {
+    margin: 0;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+    background-color: #e5e5f7;
+    opacity: 1;
+    background-image: radial-gradient(#0d0f31 0.7000000000000001px, transparent 0.7000000000000001px),
+        radial-gradient(#0d0f31 0.7000000000000001px, #e5e5f7 0.7000000000000001px);
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px;
+}
+
+html,
+body {
+    // height: 100%;
 }
 body {
     margin: 0;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
-    background-color: #e5e5f7;
-    opacity: 1.0;
-    background-image:  radial-gradient(#0d0f31 0.7000000000000001px, transparent 0.7000000000000001px), radial-gradient(#0d0f31 0.7000000000000001px, #e5e5f7 0.7000000000000001px);
-    background-size: 28px 28px;
-    background-position: 0 0,14px 14px;
 }
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

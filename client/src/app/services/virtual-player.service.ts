@@ -32,7 +32,7 @@ export class VirtualPlayerService {
     private firstTurnLetters: Letter[] = [];
     private foundLetter: boolean[] = [false, false, false, false, false, false, false];
     private probWordScore: string;
-    //    private first: boolean = true;
+    private first: boolean = true;
     private letterFromEasel: string = '';
     //private letterInscrable: ScrableLetters[] = [];
 
@@ -43,7 +43,7 @@ export class VirtualPlayerService {
     ) {}
 
     // private letters : Array<Letter> =[];
-    manageVrPlayerActions(firstToplay: boolean): void {
+    manageVrPlayerActions(): void {
         const probability: string[] = [
             'placeWord',
             'placeWord',
@@ -61,33 +61,26 @@ export class VirtualPlayerService {
         switch (probability[randomIndex]) {
             case 'placeWord':
                 setTimeout(() => {
-                    // if (this.first) {
-                    //     console.log();
-                    // this.generateVrPlayerEasel();
-                    //     this.first = false;
-                    //     if (firstToplay) {
-                    //         this.generateProb();
-                    //         const words = this.validWordService.generateAllWordsPossible(this.firstTurnLetters);
-                    //         let matchwordLetters: Letter[] = [];
-                    //         for (const word of words) {
-                    //             if (this.fitsTheProb(word)) {
-                    //                 console.log('wordddddddddddddd', word);
-                    //                 matchwordLetters = this.lettersService.fromWordToLetters(word);
-                    //                 break;
-                    //             }
-                    //         }
-                    //         const j = 8;
-                    //         let i = 8;
-                    //         for (const lett of matchwordLetters) {
-                    //             this.lettersService.placeLetter(lett, { x: i++, y: j });
-                    //             //this.updateVrEasel(lett);
-                    //         }
-                    //     } else this.getLetterForEachLine();
+                    if (this.first) {
+                        this.first = false;
+                        this.generateVrPlayerEasel();
+                        let words = this.validWordService.generateAllWordsPossible(this.vrPlayerEaselLetters);
 
-                    //     // this.generateWords()
-                    //} else
-                    this.generateVrPlayerEasel();
-                    this.getLetterForEachLine();
+                        for (let word of words) {
+                            console.log(word);
+                            if (this.wordInEasel(word)) {
+                                for (let i = 0; i < word.length; i++) {
+                                    this.lettersService.placeLetter(this.lettersService.getTheLetter(word.charAt(i)), { x: 8 + i, y: 8 });
+                                }
+                                this.updateVrEasel();
+                                break;
+                            }
+
+                            this.foundLetter.fill(false);
+                        }
+                    } else {
+                        this.getLetterForEachLine();
+                    }
                 }, 3000);
                 break;
 
@@ -103,9 +96,9 @@ export class VirtualPlayerService {
                 break;
         }
     }
-    updateVrEasel(letter: Letter): void {
+    updateVrEasel(): void {
         for (let i = 0; i < this.vrPlayerEaselLetters.length; i++) {
-            if (this.vrPlayerEaselLetters[i].charac === letter.charac) {
+            if (this.foundLetter[i] == true) {
                 this.vrPlayerEaselLetters[i] = this.reserveService.getRandomLetter();
             }
         }
@@ -116,7 +109,7 @@ export class VirtualPlayerService {
             this.vrPlayerEaselLetters.push(this.reserveService.getRandomLetter());
             this.firstTurnLetters.push(this.vrPlayerEaselLetters[i]);
         }
-        console.log(this.vrPlayerEaselLetters, 'generated');
+        console.log(this.vrPlayerEaselLetters.slice(), 'generated');
     }
 
     caclculateGeneratedWordPoints(word: string): number {
@@ -203,6 +196,7 @@ export class VirtualPlayerService {
         let validWord = false;
         alreadyInBoard.splice(1, 7);
         console.log(alreadyInBoard);
+
         for (let j = 0; j < alreadyInBoard.length; j++) {
             for (let i = 0; i < word.length; i++) {
                 if (word.charAt(i) === alreadyInBoard[j].charac && !pos[i]) {
@@ -235,7 +229,6 @@ export class VirtualPlayerService {
                     //  console.log(word.charAt(i) + ' : ' + this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j]);
                     if (word.charAt(i) === this.vrPlayerEaselLetters[j].charac && this.foundLetter[j] === false) {
                         this.foundLetter[j] = true;
-
                         // console.log('indexFind ' + j);
                         found = true;
                         break;
@@ -245,7 +238,6 @@ export class VirtualPlayerService {
                 break;
             }
         }
-        this.foundLetter.fill(false);
 
         return found;
     }
@@ -302,13 +294,22 @@ export class VirtualPlayerService {
                 // console.log(words);
                 for (let k = 0; k < words.length; k++) {
                     console.log('regexBOOL: ', regEx.test(words[k]));
-                    if (this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
+                    if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
                         console.log(words[k] + ' *essais avec ce mot*');
-                        this.placeVrLettersInScrable(words[k], lett);
+                        let x = this.placeVrLettersInScrable(words[k], lett);
+                        if (x != -1)
+                            for (let j = 0; j < words[k].length; j++) {
+                                this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
+                                    x: x + j + 1,
+                                    y: i + 1,
+                                });
+                            }
+                        this.updateVrEasel();
                         found = true;
                         break;
                     }
                     this.letterFromEasel = '';
+                    this.foundLetter.fill(false);
                 }
             }
             notEmpty = false;
@@ -329,7 +330,7 @@ export class VirtualPlayerService {
         return this.validWordService.generateAllWordsPossible(letter);
     }
 
-    private placeVrLettersInScrable(word: string, boarLetters: Letter[]): void {
+    private placeVrLettersInScrable(word: string, boarLetters: Letter[]): number {
         let posInit = -1;
         let equal = false;
         console.log(word + ' est le mot a plasser');
@@ -348,7 +349,11 @@ export class VirtualPlayerService {
                     console.log('POSITION MOT :' + posInit);
                 }
             }
-            if (posInit != -1) break;
+            if (posInit != -1) {
+                break;
+            }
         }
+
+        return posInit;
     }
 }

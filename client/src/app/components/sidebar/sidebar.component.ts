@@ -114,7 +114,7 @@ export class SidebarComponent {
 
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
             if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
-                if (this.firstTurn || !this.userService.realUser.firstToPlay) {
+                if (this.firstTurn && this.userService.realUser.firstToPlay) {
                     if (this.messageService.command.position.x === 8 && this.messageService.command.position.y === 8) {
                         this.firstTurn = false;
                         if (this.lettersService.wordInEasel(this.messageService.command.word)) {

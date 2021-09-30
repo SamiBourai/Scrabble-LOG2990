@@ -38,7 +38,7 @@ export enum MouseButton {
 })
 export class PlayAreaComponent implements AfterViewInit, OnInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
-
+    first = true;
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
     containsAllChars: boolean = true;
@@ -115,8 +115,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         return this.canvasSize.y;
     }
     testVr() {
-        this.virtualPlayerService.generateVrPlayerEasel();
-        this.virtualPlayerService.getLetterForEachLine();
+        this.virtualPlayerService.manageVrPlayerActions();
 
         //this.virtualPlayer.manageVrPlayerActions(!this.userService.realUser.firstToPlay);
     }
