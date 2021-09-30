@@ -12,7 +12,7 @@ import {
     EASEL_LENGTH,
     LEFTSPACE,
     NB_TILES,
-    TOPSPACE,
+    TOPSPACE
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -20,7 +20,6 @@ import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
-import { VirtualPlayerService } from '@app/services/virtual-player.service';
 ///import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 export enum MouseButton {
@@ -53,7 +52,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-        private readonly virtualPlayerService: VirtualPlayerService,
     ) {}
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -115,7 +113,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         return this.canvasSize.y;
     }
     testVr() {
-        this.virtualPlayerService.manageVrPlayerActions();
+        
 
         //this.virtualPlayer.manageVrPlayerActions(!this.userService.realUser.firstToPlay);
     }

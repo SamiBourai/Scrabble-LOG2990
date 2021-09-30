@@ -12,7 +12,7 @@ import {
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { LettersService } from './letters.service';
@@ -79,7 +79,9 @@ export class VirtualPlayerService {
                             this.foundLetter.fill(false);
                         }
                     } else {
+                        
                         this.getLetterForEachLine();
+                        
                     }
                 }, 3000);
                 break;

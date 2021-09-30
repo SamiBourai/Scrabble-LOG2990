@@ -3,6 +3,7 @@ import { RealUser, VrUser } from '@app/classes/user';
 //import { C } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { MessageService } from './message.service';
+import { VirtualPlayerService } from './virtual-player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -26,7 +27,7 @@ export class UserService {
 
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-    constructor(private messageService: MessageService) {
+    constructor(private messageService: MessageService, private virtualPlayerService: VirtualPlayerService ) {
         // private vrPlayerService: VirtualPlayerService
         const first = this.chooseFirstToPlay();
         this.realUser = {
@@ -108,6 +109,7 @@ export class UserService {
             // this.vrPlayerService.manageVrPlayerActions(!this.realUser.turnToPlay);
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
+            this.virtualPlayerService.manageVrPlayerActions();
 
             //console.log('le Vr qui joue');
         }
