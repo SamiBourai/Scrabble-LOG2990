@@ -141,4 +141,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             };
         }
     }
+
+    isGameOver() {
+        return this.userService.isGameOver();
+    }
 }

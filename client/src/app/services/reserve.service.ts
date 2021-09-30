@@ -92,4 +92,8 @@ export class ReserveService {
         this.reserveSize++;
         this.sizeObs.next(this.reserveSize);
     }
+
+    isEmpty() {
+        return this.reserveSize == 0;
+    }
 }

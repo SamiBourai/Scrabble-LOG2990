@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
+import { EaselLogiscticsService } from './easel-logisctics.service';
 import { MessageService } from './message.service';
+import { ReserveService } from './reserve.service';
 
+const USER_TURN_TIME = 5;
+const VR_USER_TURN_TIME = 5;
 @Injectable({
     providedIn: 'root',
 })
@@ -24,7 +28,11 @@ export class UserService {
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
     realUserTurn: boolean;
 
-    constructor(private messageService: MessageService) {
+    constructor(
+        private messageService: MessageService,
+        private reserveService: ReserveService,
+        private easelLogiscticsService: EaselLogiscticsService,
+    ) {
         const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
@@ -88,41 +96,42 @@ export class UserService {
 
     startTimer() {
         if (this.realUser.turnToPlay) {
-            this.counter = { min: 0, sec: 59 };
+            this.counter = { min: 0, sec: USER_TURN_TIME };
             this.realUser.turnToPlay = false;
             this.time = this.counter.sec;
             this.skipTurn();
-            // console.log('le vrai utilisateur qui joue');
+            console.log('le vrai utilisateur qui joue');
         } else {
-            this.counter = this.setCounter(0, 2);
+            this.counter = this.setCounter(0, VR_USER_TURN_TIME);
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
-            //console.log('le Vr qui joue');
+            console.log('le Vr qui joue');
+            this.skipTurn();
         }
-        let intervalId = setInterval(() => {
+        this.intervalId = setInterval(() => {
             if (this.vrSkipingTurn) {
-                this.counter = this.setCounter(0, 59);
+                this.counter = this.setCounter(0, USER_TURN_TIME);
                 this.vrSkipingTurn = false;
 
                 // this.time = this.counter.sec;
-                clearInterval(intervalId);
+                clearInterval(this.intervalId);
                 this.startTimer(); //command
             }
             if (this.userSkipingTurn) {
                 //|| this.manageSkipTurnChat(command)
-                this.counter = this.setCounter(0, 2);
+                this.counter = this.setCounter(0, VR_USER_TURN_TIME);
                 this.userSkipingTurn = false;
                 //this.time = this.counter.sec;
-                clearInterval(intervalId);
+                clearInterval(this.intervalId);
                 this.startTimer(); //command
             }
             if (this.counter.sec - 1 == -1) {
                 this.counter.min -= 1;
-                this.counter.sec = 59;
+                this.counter.sec = USER_TURN_TIME;
             } else this.counter.sec -= 1;
 
             if (this.counter.min === 0 && this.counter.sec === 0) {
-                clearInterval(intervalId);
+                clearInterval(this.intervalId);
                 this.startTimer(); //command
             }
         }, 1000);
@@ -133,7 +142,7 @@ export class UserService {
         return counter;
     }
     skipTurnValidUser(): boolean {
-        if (this.time === 59) return true;
+        if (this.time === USER_TURN_TIME) return true;
 
         return false;
     }
@@ -146,6 +155,24 @@ export class UserService {
     skipTurn() {
         this.passesCounter++;
         console.log('asdfasdfa', this.passesCounter);
-        if (this.passesCounter === 6) console.log('la partie est fini');
+    }
+
+    resetPassesCounter() {
+        this.passesCounter = 0;
+        console.log('reset worked');
+    }
+
+    isGameOver() {
+        if (this.passesCounter === 6 || (this.reserveService.isEmpty() && this.easelLogiscticsService.isEmpty())) {
+            console.log('la partie est fini');
+            this.endGame();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    endGame() {
+        clearInterval(this.intervalId);
     }
 }

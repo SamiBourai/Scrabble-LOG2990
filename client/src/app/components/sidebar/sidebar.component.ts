@@ -122,6 +122,8 @@ export class SidebarComponent {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, this.messageService.command);
         // console.log('nb point: ' + points);
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
+            this.userService.resetPassesCounter();
+
             if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
                 if (this.firstTurn) {
                     if (this.messageService.command.position.x === 8 && this.messageService.command.position.y === 8) {
