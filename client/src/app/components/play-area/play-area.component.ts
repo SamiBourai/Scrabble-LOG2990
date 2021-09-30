@@ -54,8 +54,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
         //private readonly virtualPlayerService: VirtualPlayerService,
-    ) {this.pvs.loadDictionary().then(() => {
-    });
+    ) {
     }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -72,23 +71,23 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     // }
     detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
-
-
-
         this.userService.userSkipingTurn = true;
         console.log(this.userService.userSkipingTurn);
     }
 
     ngOnInit() {
-        this.userService.startTimer();
-        this.reserveService.size.subscribe((res) => {
+        this.pvs.loadDictionary().then(() => {
+            this.userService.startTimer();
+            this.reserveService.size.subscribe((res) => {
 
-            setTimeout(() =>{
+                setTimeout(() =>{
 
-                this.remainingLetters = res
+                    this.remainingLetters = res
 
-            },0);
+                },0);
+            });
         });
+        
 
     //     this.userService.turnOfVrPlayer.subscribe((response) => {
     //         setTimeout(() =>{

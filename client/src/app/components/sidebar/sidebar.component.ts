@@ -13,7 +13,7 @@ import { ValidWordService } from '@app/services/valid-world.service';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent {
+export class SidebarComponent{
     arrayOfMessages: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
@@ -38,13 +38,13 @@ export class SidebarComponent {
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
-        private valideWordService: ValidWordService,
+        private readonly valideWordService: ValidWordService,
         private lettersService: LettersService,
         private userService: UserService,
     ) {
         //this.firstTurn = this.userService.realUser.firstToPlay;
     }
-
+   
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }

@@ -16,7 +16,7 @@ export class UserService {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
-    counter: { min: number; sec: number };
+    counter: { min: number ; sec: number }= {min : 0, sec:0};
     realUser: RealUser;
     vrUser: VrUser;
     intervalId = 0;
@@ -95,7 +95,7 @@ export class UserService {
     // timer
 
     startTimer() {
-        if (this.realUser.turnToPlay) {
+        if (this.realUser.turnToPlay ) {
             console.log("tour du user de jouer" + this.realUser.turnToPlay);
             this.counter = { min: 0, sec: 59 };
             this.realUser.turnToPlay = false;
@@ -105,7 +105,7 @@ export class UserService {
         } else {
             console.log("tour du VR de jouer" + this.realUser.turnToPlay);
             this.counter = { min: 0, sec: 20 };
-            this.vrPlayerService.manageVrPlayerActions(!this.realUser.firstToPlay);
+            this.vrPlayerService.manageVrPlayerActions(!this.realUser.turnToPlay);
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
 
@@ -124,9 +124,9 @@ export class UserService {
             }
             if (this.userSkipingTurn) {
                 //|| this.manageSkipTurnChat(command)
-                this.counter = this.setCounter(0, 20);
-                this.userSkipingTurn = false;
-
+                this.counter = this.setCounter(0, 5);
+                this.realUser.turnToPlay = false; 
+                this.userSkipingTurn = false;    
                 //this.time = this.counter.sec;
                 clearInterval(intervalId);
                 this.startTimer(); //command
