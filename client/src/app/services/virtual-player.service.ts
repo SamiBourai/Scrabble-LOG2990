@@ -12,7 +12,7 @@ import {
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { LettersService } from './letters.service';
@@ -60,7 +60,9 @@ export class VirtualPlayerService {
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         switch (probability[randomIndex]) {
             case 'placeWord':
+                setTimeout(() => {
                 if (this.first) {
+                    console.log()
                     this.generateVrPlayerEasel();
                     this.first = false;
                     if (firstToplay) {
@@ -68,7 +70,8 @@ export class VirtualPlayerService {
                         const words = this.validWordService.generateAllWordsPossible(this.firstTurnLetters);
                         let matchwordLetters: Letter[] = [];
                         for (const word of words) {
-                            if (this.fitsTheProb(word)) {
+                            if (this.fitsTheProb(word) ) {
+                                console.log('wordddddddddddddd', word)
                                 matchwordLetters = this.lettersService.fromWordToLetters(word);
                                 break;
                             }
@@ -79,21 +82,11 @@ export class VirtualPlayerService {
                             this.lettersService.placeLetter(lett, { x: i++, y: j });
                             //this.updateVrEasel(lett);
                         }
-                    }
+                    }else this.getLetterForEachLine();
 
                     // this.generateWords()
-                }
-                // else if (!this.userService.realUser.turnToPlay){
-                // this.getLetterForEachLine();
-                // console.log(this.vrPlayerEaselLetters);
-                // }
-                // else{
-                //     this.getLetterForEachLine(); }
-                else {
-                    console.log('je passe parla ');
-                    this.getLetterForEachLine();
-                }
-
+                } else this.getLetterForEachLine();
+            }, 3000);
                 break;
 
             case 'passTurn':
@@ -114,13 +107,14 @@ export class VirtualPlayerService {
                 this.vrPlayerEaselLetters[i] = this.reserveService.getRandomLetter();
             }
         }
+        console.log(this.vrPlayerEaselLetters,'updateEasel');
     }
     generateVrPlayerEasel(): void {
         for (let i = 0; i < EASEL_LENGTH; i++) {
             this.vrPlayerEaselLetters.push(this.reserveService.getRandomLetter());
             this.firstTurnLetters.push(this.vrPlayerEaselLetters[i]);
         }
-        console.log(this.vrPlayerEaselLetters);
+        console.log(this.vrPlayerEaselLetters,'generated');
     }
 
     caclculateGeneratedWordPoints(word: string): number {

@@ -35,10 +35,12 @@ export class SidebarComponent {
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
-        private valideWordService: ValidWordService,
+        private readonly valideWordService: ValidWordService,
         private lettersService: LettersService,
         private userService: UserService,
-    ) {}
+    ) {
+        //this.firstTurn = this.userService.realUser.firstToPlay;
+    }
 
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();

@@ -20,7 +20,7 @@ import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
-import { VirtualPlayerService } from '@app/services/virtual-player.service';
+///import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 export enum MouseButton {
     Left = 0,
@@ -52,8 +52,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-        private readonly virtualPlayer: VirtualPlayerService,
-    ) {}
+    ) //private readonly virtualPlayerService: VirtualPlayerService,
+    {}
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
@@ -61,7 +61,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     detectSkipTurnBtn() {
         console.log(this.userService.userSkipingTurn);
-
         this.userService.userSkipingTurn = true;
         console.log(this.userService.userSkipingTurn);
     }
@@ -117,8 +116,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     testVr() {
         //  this.virtualPlayerService.getLetterForEachColumn();
         // this.virtualPlayerService.generateVrPlayerEasel();
-
-        this.virtualPlayer.manageVrPlayerActions(!this.userService.realUser.firstToPlay);
+        //this.virtualPlayer.manageVrPlayerActions(!this.userService.realUser.firstToPlay);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
