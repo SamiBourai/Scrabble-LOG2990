@@ -20,6 +20,7 @@ export class UserService {
     realUser: RealUser;
     vrUser: VrUser;
     intervalId = 0;
+
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
@@ -27,7 +28,7 @@ export class UserService {
 
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-    constructor(private messageService: MessageService, private virtualPlayerService: VirtualPlayerService ) {
+    constructor(private messageService: MessageService, private virtualPlayerService: VirtualPlayerService) {
         // private vrPlayerService: VirtualPlayerService
         const first = this.chooseFirstToPlay();
         this.realUser = {

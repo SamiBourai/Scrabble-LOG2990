@@ -56,8 +56,9 @@ export class LettersService {
     }
 
     placeLetter(lett: Letter, pos: Vec2): void {
-        if (this.tiles[pos.y - 1][pos.x - 1] == NOT_A_LETTER) {
+        if (this.tiles[pos.y - 1][pos.x - 1].charac == NOT_A_LETTER.charac) {
             this.tiles[pos.y - 1][pos.x - 1] = lett;
+            console.log('LETTRE DU MOT PLACER: ', this.tiles[pos.y - 1][pos.x - 1]);
             const imgLetter = new Image();
             imgLetter.src = lett.img;
             imgLetter.onload = () => {
@@ -73,8 +74,8 @@ export class LettersService {
     }
 
     tileIsEmpty(pos: Vec2): boolean {
-        if (this.tiles[pos.y - 1][pos.x - 1] !== undefined) return false;
-        else return true;
+        if (this.tiles[pos.y - 1][pos.x - 1].charac === NOT_A_LETTER.charac) return true;
+        else return false;
     }
 
     wordInEasel(word: string): boolean {
@@ -108,7 +109,7 @@ export class LettersService {
         console.log(found + ': found');
         return found;
     }
-    changeLetterFromReserve(letterToChange: string): void {
+    changeLetterFromReserve(letterToChange: string): boolean {
         const temp: Letter[] = [];
         if (this.wordInEasel(letterToChange)) {
             for (let i = 0; i < letterToChange.length; i++) {
@@ -130,7 +131,9 @@ export class LettersService {
 
             this.resetVariables();
             this.easelLogisticsService.refillEasel();
+            return true;
         }
+        return false;
     }
     resetVariables(): void {
         for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;

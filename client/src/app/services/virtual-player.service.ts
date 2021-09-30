@@ -12,7 +12,7 @@ import {
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
-    ZERO_POINTS
+    ZERO_POINTS,
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { LettersService } from './letters.service';
@@ -79,9 +79,7 @@ export class VirtualPlayerService {
                             this.foundLetter.fill(false);
                         }
                     } else {
-                        
                         this.getLetterForEachLine();
-                        
                     }
                 }, 3000);
                 break;
@@ -159,18 +157,16 @@ export class VirtualPlayerService {
                 }
             if (lett[i].charac === NOT_A_LETTER.charac) {
                 concat += '.';
-                if (i !== lett.length - 1)
-                    if (
-                        (lastWasEmpty && lett[i + 1].charac === NOT_A_LETTER.charac) ||
-                        (lett[i + 1].charac !== NOT_A_LETTER.charac && lastWasEmpty)
-                    ) {
-                        concat += '?';
-                        if (metLetter) {
-                            spotDefine = true;
-                            metLetter = false;
-                        }
-                    }
 
+                if (!metLetter) {
+                    concat += '?';
+                } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                    concat += '?';
+                    spotDefine = true;
+                } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
+                    let k = i;
+                    // while(lett[k--].charac!=)
+                }
                 lastWasEmpty = true;
             } else {
                 metLetter = true;
