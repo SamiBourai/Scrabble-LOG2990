@@ -20,6 +20,7 @@ import { LettersService } from '@app/services/letters.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
+import { VirtualPlayerService } from '@app/services/virtual-player.service';
 ///import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 export enum MouseButton {
@@ -52,8 +53,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-    ) //private readonly virtualPlayerService: VirtualPlayerService,
-    {}
+        private readonly virtualPlayerService: VirtualPlayerService,
+    ) {}
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
@@ -114,8 +115,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         return this.canvasSize.y;
     }
     testVr() {
-        //  this.virtualPlayerService.getLetterForEachColumn();
-        // this.virtualPlayerService.generateVrPlayerEasel();
+        this.virtualPlayerService.generateVrPlayerEasel();
+        this.virtualPlayerService.getLetterForEachLine();
+
         //this.virtualPlayer.manageVrPlayerActions(!this.userService.realUser.firstToPlay);
     }
     // TODO : déplacer ceci dans un service de gestion de la souris!
