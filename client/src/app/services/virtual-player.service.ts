@@ -146,7 +146,7 @@ export class VirtualPlayerService {
     generateRegEx(lett: Letter[]): string {
         let concat = '(^';
 
-        let lastWasEmpty = false;
+        let lastWasEmpty = true;
         let spotDefine = false;
         let metLetter = false;
         for (let i = 0; i < lett.length; i++) {
@@ -165,13 +165,17 @@ export class VirtualPlayerService {
             if (lett[i].charac === NOT_A_LETTER.charac) {
                 concat += '.';
                 if (i !== lett.length - 1)
-                    if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                    if (
+                        (lastWasEmpty && lett[i + 1].charac === NOT_A_LETTER.charac) ||
+                        (lett[i + 1].charac !== NOT_A_LETTER.charac && lastWasEmpty)
+                    ) {
                         concat += '?';
                         if (metLetter) {
                             spotDefine = true;
                             metLetter = false;
                         }
                     }
+
                 lastWasEmpty = true;
             } else {
                 metLetter = true;
@@ -193,14 +197,15 @@ export class VirtualPlayerService {
         return concat;
     }
     private isWordPlacable(word: string, alreadyInBoard: Letter[]): boolean {
-        const copy: Letter[] = alreadyInBoard.slice();
         console.log('le mot : ' + word);
         let pos = new Array<boolean>(word.length);
         pos.fill(false);
         let validWord = false;
-        for (let j = 0; j < copy.length; j++) {
+        alreadyInBoard.splice(1, 7);
+        console.log(alreadyInBoard);
+        for (let j = 0; j < alreadyInBoard.length; j++) {
             for (let i = 0; i < word.length; i++) {
-                if (word.charAt(i) === copy[j].charac && !pos[i]) {
+                if (word.charAt(i) === alreadyInBoard[j].charac && !pos[i]) {
                     pos[i] = true;
                     break;
                 }
@@ -213,7 +218,7 @@ export class VirtualPlayerService {
         }
         console.log('LETTRE EASEL: ' + this.letterFromEasel);
         validWord = this.wordInEasel(this.letterFromEasel);
-
+        console.log(validWord, ' : VALIDWORD');
         return validWord;
     }
     wordInEasel(word: string): boolean {
@@ -240,7 +245,7 @@ export class VirtualPlayerService {
                 break;
             }
         }
-        // console.log(this.foundLetter);
+        this.foundLetter.fill(false);
 
         return found;
     }
@@ -297,7 +302,7 @@ export class VirtualPlayerService {
                 // console.log(words);
                 for (let k = 0; k < words.length; k++) {
                     console.log('regexBOOL: ', regEx.test(words[k]));
-                    if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
+                    if (this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
                         console.log(words[k] + ' *essais avec ce mot*');
                         this.placeVrLettersInScrable(words[k], lett);
                         found = true;
@@ -317,32 +322,30 @@ export class VirtualPlayerService {
 
     generateWords(letter: Letter[]): string[] {
         // console.log('generate word: ' + this.vrPlayerEaselLetters);
-
         for (const lett of this.vrPlayerEaselLetters) {
             letter.push(lett);
         }
+        console.log(letter);
         return this.validWordService.generateAllWordsPossible(letter);
     }
 
     private placeVrLettersInScrable(word: string, boarLetters: Letter[]): void {
         let posInit = -1;
-        let inEaselCounter = 0;
+        let equal = false;
         console.log(word + ' est le mot a plasser');
         for (let i = 0; i < NB_TILES - word.length; i++) {
             for (let j = 0; j < word.length; j++) {
-                console.log(boarLetters[j], word.charAt(i));
-                if (word.charAt(j) == boarLetters[i + j].charac || boarLetters[i + j].charac == NOT_A_LETTER.charac) {
-                    console.log('LETTRE VALID');
+                console.log(boarLetters[j + i], word.charAt(j));
+                if (word.charAt(j) == boarLetters[i + j].charac) equal = true;
 
-                    if (word.charAt(j) == boarLetters[i + j].charac) {
-                        inEaselCounter++;
-                    }
-                    if (j == word.length - 1 && inEaselCounter == this.letterFromEasel.length) {
-                        posInit = i;
-                        console.log('POSITION MOT :' + posInit);
-                    } else inEaselCounter = 0;
-                } else {
+                if (word.charAt(j) != boarLetters[i + j].charac && boarLetters[i + j].charac != NOT_A_LETTER.charac) {
+                    equal = false;
                     break;
+                }
+
+                if (j == word.length - 1 && equal) {
+                    posInit = i;
+                    console.log('POSITION MOT :' + posInit);
                 }
             }
             if (posInit != -1) break;
