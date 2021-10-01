@@ -44,6 +44,7 @@ import { ReserveService } from './reserve.service';
     providedIn: 'root',
 })
 export class LettersService {
+    usedAllEaselLetters: boolean = false;
     gridContext: CanvasRenderingContext2D;
     foundLetter: boolean[] = [false, false, false, false, false, false, false];
     indexOfEaselLetters: number[] = [];
@@ -57,7 +58,7 @@ export class LettersService {
     }
 
     placeLetter(lett: Letter, pos: Vec2): void {
-        if (this.tiles[pos.y - 1][pos.x - 1].charac == NOT_A_LETTER.charac) {
+        if (this.tiles[pos.y - 1][pos.x - 1].charac === NOT_A_LETTER.charac) {
             this.tiles[pos.y - 1][pos.x - 1] = lett;
             console.log('LETTRE DU MOT PLACER: ', this.tiles[pos.y - 1][pos.x - 1]);
             const imgLetter = new Image();
@@ -142,12 +143,15 @@ export class LettersService {
         this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
     }
     placeLettersInScrable(command: ChatCommand): void {
+        this.usedAllEaselLetters = false;
+        let numberOfLettersUsed = 0;
         let boardLetterCounter = 0;
         let easelLetterCounter = 0;
         for (let i = 0; i < command.word.length; i++) {
             if (i === this.indexLettersAlreadyInBoard[boardLetterCounter]) {
                 boardLetterCounter++;
             } else {
+                numberOfLettersUsed++;
                 if (command.direction === 'h') {
                     this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[easelLetterCounter]), {
                         x: command.position.x + i,
@@ -162,10 +166,11 @@ export class LettersService {
                 easelLetterCounter++;
             }
         }
-
+        if (numberOfLettersUsed === EASEL_LENGTH) this.usedAllEaselLetters = true;
         this.resetVariables();
         this.easelLogisticsService.refillEasel();
     }
+
     wordIsPlacable(command: ChatCommand): boolean {
         let saveLetter = '';
         let letterFromEasel = '';
@@ -286,9 +291,22 @@ export class LettersService {
 
     wordIsAttached(command: ChatCommand): boolean {
         for (let i = 0; i < command.word.length; i++) {
-            if (command.direction === 'h' && !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y })) return true;
-            if (command.direction === 'v' && !this.tileIsEmpty({ x: command.position.x, y: command.position.y + i })) return true;
+            if (
+                command.direction === 'h' &&
+                (!this.tileIsEmpty({ x: command.position.x + i, y: command.position.y }) ||
+                    !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y + 1 }) ||
+                    !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y - 1 }))
+            )
+                return true;
+            if (
+                command.direction === 'v' &&
+                (!this.tileIsEmpty({ x: command.position.x, y: command.position.y + i }) ||
+                    !this.tileIsEmpty({ x: command.position.x - 1, y: command.position.y + i }) ||
+                    !this.tileIsEmpty({ x: command.position.x + 1, y: command.position.y + i }))
+            )
+                return true;
         }
+
         return false;
     }
     wordInBoardLimits(command: ChatCommand): boolean {

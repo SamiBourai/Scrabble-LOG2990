@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
-import { EASEL_LENGTH } from '@app/constants/constants';
+import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
@@ -174,6 +174,8 @@ export class SidebarComponent implements OnInit {
                             this.isImpossible = false;
                             this.virtualPlayerService.first = false;
                             this.userService.realUser.score += points;
+                            console.log('+50**********************************************');
+                            if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
                         } else {
                             this.isImpossible = true;
                             return;
@@ -184,12 +186,14 @@ export class SidebarComponent implements OnInit {
                         this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
                         return;
                     }
-                } else if (this.lettersService.wordIsAttached(this.messageService.command) || points != 0) {
+                } else if (this.lettersService.wordIsAttached(this.messageService.command) && points != 0) {
                     if (this.lettersService.wordIsPlacable(this.messageService.command)) {
                         this.lettersService.placeLettersInScrable(this.messageService.command);
                         this.isImpossible = false;
                         this.virtualPlayerService.first = false;
                         this.userService.realUser.score += points;
+                        console.log('+50');
+                        if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
                     } else {
                         //window.alert('*ERREUR*: votre mot dois contenir les lettres dans le chevalet et sur la grille!');
                         this.errorMessage = 'votre mot dois contenir les lettres dans le chevalet et sur la grille! ';
