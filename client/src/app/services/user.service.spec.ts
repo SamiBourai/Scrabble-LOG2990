@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { EaselLogiscticsService } from './easel-logisctics.service';
-import { ReserveService } from './reserve.service';
+// import { EaselLogiscticsService } from './easel-logisctics.service';
+// import { ReserveService } from './reserve.service';
 import { UserService } from './user.service';
 
-fdescribe('UserService', () => {
+describe('UserService', () => {
     let userService: UserService;
-    let reserveService: ReserveService;
-    let easelLogiscticsService: EaselLogiscticsService;
+    // let reserveService: ReserveService;
+    // let easelLogiscticsService: EaselLogiscticsService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -18,9 +18,9 @@ fdescribe('UserService', () => {
     });
     // test of getRandomInt() function
     it('getRandomInt should return a number >= to 0 and < max number ex :(0<=number<max number)', () => {
-        let randomInt_1: number = userService.getRandomInt(5);
+        const randomInt_1: number = userService.getRandomInt(5);
         expect(randomInt_1).toBeLessThan(5);
-        let randomInt_2: number = userService.getRandomInt(10);
+        const randomInt_2: number = userService.getRandomInt(10);
         expect(randomInt_2).toBeLessThan(10);
     });
 
@@ -108,7 +108,7 @@ fdescribe('UserService', () => {
     });
 
     it('test second get decreased, should get counter.sec=59', (done) => {
-        //userService.counter.sec=-1;
+        // userService.counter.sec=-1;
         userService.vrSkipingTurn = false;
         userService.userSkipingTurn = false;
         spyOn(userService, 'setCounter').and.callFake(() => {

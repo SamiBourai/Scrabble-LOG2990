@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 // import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { ReserveService } from './reserve.service';
 
-fdescribe('ReserveService', () => {
+describe('ReserveService', () => {
     let service: ReserveService;
 
     beforeEach(() => {

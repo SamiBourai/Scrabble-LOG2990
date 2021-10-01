@@ -4,7 +4,7 @@ import { Message } from '@app/classes/message';
 import { ModalScrableClassiqueComponent } from '@app/modal-scrable-classique/modal-scrable-classique.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { BehaviorSubject } from 'rxjs';
-//import { map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-main-page',
@@ -29,15 +29,15 @@ export class MainPageComponent {
         this.communicationService.basicPost(newTimeMessage).subscribe();
     }
 
-    // getMessagesFromServer(): void {
-    //     this.communicationService
-    //         .basicGet()
-    //         // Cette étape transforme l'objet Message en un seul string
-    //         .pipe(
-    //             map((message: Message) => {
-    //                 return `${message.title} ${message.body}`;
-    //             }),
-    //         )
-    //         .subscribe(this.message);
-    // }
+    getMessagesFromServer(): void {
+        this.communicationService
+            .basicGet()
+            // Cette étape transforme l'objet Message en un seul string
+            .pipe(
+                map((message: Message) => {
+                    return `${message.title} ${message.body}`;
+                }),
+            )
+            .subscribe(this.message);
+    }
 }
