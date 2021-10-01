@@ -58,7 +58,7 @@ export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.p
 export const EASEL_LENGTH = 7;
 export const CLEAR_RECT_FIX = 5;
 
-//userService
+// userService
 export const intervalId = 0;
 // play-area
 export const usedBonus: Vec2[] = [];
@@ -71,7 +71,14 @@ export const SEVEN_POINTS = 7;
 export const TWELVE_POINTS = 12;
 export const THIRTEEN_POINTS = 13;
 export const EIGHTEEN_POINTS = 18;
+export const INITIAL_BOX_X = 8;
+export const INITIAL_BOX_Y = 8;
+export const ASCI_CODE_A = 97;
+export const WAIT_TIME_3_SEC = 3000;
+export const DEFAULT_POS = -1;
+export const NUMBER__RANGE_BOXES = 14;
 
+// grid
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },
     { x: 7, y: 0 },

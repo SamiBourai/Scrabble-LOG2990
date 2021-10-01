@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
 import { NOT_A_LETTER } from '@app/constants/constants';
-//import { C } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { MessageService } from './message.service';
 import { ReserveService } from './reserve.service';
 import { VirtualPlayerService } from './virtual-player.service';
-
-//const USER_TURN_TIME = 5;
-//const VR_USER_TURN_TIME = 5;
 @Injectable({
     providedIn: 'root',
 })
@@ -113,35 +109,30 @@ export class UserService {
             this.realUser.turnToPlay = false;
             this.time = this.counter.sec;
             this.skipTurn();
-            // console.log('le vrai utilisateur qui joue');
         } else {
-            console.log('tour du VR de jouer' + this.realUser.turnToPlay);
             this.counter = { min: 0, sec: 20 };
             this.virtualPlayerService.manageVrPlayerActions();
-            // this.vrPlayerService.manageVrPlayerActions(!this.realUser.turnToPlay);
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
 
             this.skipTurn();
-
-            //console.log('le Vr qui joue');
         }
         this.realUserTurn.next(this.realUser.turnToPlay);
-        let intervalId = setInterval(() => {
+        const intervalId = setInterval(() => {
             if (this.vrSkipingTurn) {
                 this.counter = this.setCounter(0, 59);
                 this.vrSkipingTurn = false;
 
                 // this.time = this.counter.sec;
                 clearInterval(intervalId);
-                this.startTimer(); //command
+                this.startTimer(); // command
             }
             if (this.userSkipingTurn) {
                 this.counter = this.setCounter(0, 20);
                 this.realUser.turnToPlay = false;
                 this.userSkipingTurn = false;
                 clearInterval(intervalId);
-                this.startTimer(); //command
+                this.startTimer(); // command
             }
             if (this.counter.sec < 17 && this.virtualPlayerService.played) {
                 this.counter = this.setCounter(0, 59);
@@ -156,13 +147,13 @@ export class UserService {
 
             if (this.counter.min === 0 && this.counter.sec === 0) {
                 clearInterval(intervalId);
-                this.startTimer(); //command
+                this.startTimer(); // command
             }
         }, 1000);
     }
 
     setCounter(min: number, sec: number): { min: number; sec: number } {
-        const counter = { min: min, sec: sec };
+        const counter = { min, sec };
         return counter;
     }
     skipTurnValidUser(): boolean {
