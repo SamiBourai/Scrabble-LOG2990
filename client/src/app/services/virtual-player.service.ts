@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
-import { ScrableLetters } from '@app/classes/scrable-letters';
+import { Vec2 } from '@app/classes/vec2';
 import {
     EASEL_LENGTH,
-    EIGHTEEN_POINTS,
-    MAX_INDEX_NUMBER_EASEL,
+    EIGHTEEN_POINTS, MAX_INDEX_NUMBER_EASEL,
     MAX_INDEX_NUMBER_PROBABILITY_ARRAY,
     NB_TILES,
     NOT_A_LETTER,
@@ -12,7 +11,7 @@ import {
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { LettersService } from './letters.service';
@@ -34,6 +33,7 @@ export class VirtualPlayerService {
     private probWordScore: string;
     private first: boolean = true;
     private letterFromEasel: string = '';
+    private wordPlacedInScrable: boolean= false; 
     //private letterInscrable: ScrableLetters[] = [];
 
     constructor(
@@ -79,8 +79,11 @@ export class VirtualPlayerService {
                             this.foundLetter.fill(false);
                         }
                     } else {
-                        this.getLetterForEachLine();
+                        this.getLetterForEachLine('horizontal');
+                        if(!this.wordPlacedInScrable)
+                        this.getLetterForEachLine('vertical');
                     }
+                    this.wordPlacedInScrable = false;
                 }, 3000);
                 break;
 
@@ -149,23 +152,24 @@ export class VirtualPlayerService {
                 concat += save;
                 spotDefine = false;
             }
-            if (i !== lett.length - 1)
-                if (lastWasEmpty && metLetter && lett[i].charac === NOT_A_LETTER.charac && lett[i + 1].charac === NOT_A_LETTER.charac) {
-                    const save: string = concat.slice();
-                    concat += '?$)|';
-                    concat += save;
-                }
+
             if (lett[i].charac === NOT_A_LETTER.charac) {
                 concat += '.';
 
-                if (!metLetter) {
-                    concat += '?';
-                } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
-                    concat += '?';
-                    spotDefine = true;
-                } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
-                    let k = i;
-                    // while(lett[k--].charac!=)
+                if (i !== lett.length - 1) {
+                    if (!metLetter) {
+                        concat += '?';
+                    } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                        concat += '?';
+                        spotDefine = true;
+                    } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
+                        let spaceCounter = 0;
+                        while (concat.charAt(concat.length - 1) != '}') {
+                            if (concat.charAt(concat.length - 1) == '.') spaceCounter++;
+                            concat = concat.slice(0, -1);
+                        }
+                        for (let k = 0; k < spaceCounter; k++) concat += '.';
+                    }
                 }
                 lastWasEmpty = true;
             } else {
@@ -187,6 +191,7 @@ export class VirtualPlayerService {
         console.log(concat);
         return concat;
     }
+
     private isWordPlacable(word: string, alreadyInBoard: Letter[]): boolean {
         console.log('le mot : ' + word);
         let pos = new Array<boolean>(word.length);
@@ -242,7 +247,7 @@ export class VirtualPlayerService {
     private exchangeLettersInEasel(): void {
         const numberOfLettersToExchange = Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL) + 1;
         for (let i = 0; i <= numberOfLettersToExchange; i++) {
-            this.vrPlayerEaselLetters[Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL)];
+            this.vrPlayerEaselLetters[Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL)]= this.reserveService.getRandomLetter();
         }
     }
 
@@ -251,38 +256,35 @@ export class VirtualPlayerService {
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         this.probWordScore = probability[randomIndex];
     }
-    getLetterForEachColumn(): void {}
 
-    getLetterForEachLine(): void {
+    getLetterForEachLine(direction : string): void {
         const lett: Letter[] = [];
         const letterIngrid: Letter[] = [];
-        const scrableLett: ScrableLetters[] = [];
         let regEx;
         let words: string[] = [];
         let notEmpty = false;
         let found = false;
-
         this.generateProb();
+        let x : number = 0; 
+        let y : number = 0;
         for (let i = 0; i < NB_TILES; i++) {
             for (let j = 0; j < NB_TILES; j++) {
-                if (this.lettersService.tiles[i][j]?.charac !== NOT_A_LETTER.charac) {
+                if(direction ==='vertical'){
+                     y= j;
+                     x= i; 
+                }else {
+                    y = i ;
+                    x = j ; 
+                }
+                
+                if (this.lettersService.tiles[y][x]?.charac !== NOT_A_LETTER.charac) {
                     notEmpty = true;
-                    letterIngrid.push(this.lettersService.tiles[i][j]);
-
-                    scrableLett.push({
-                        letter: {
-                            score: this.lettersService.tiles[i][j]?.score,
-                            charac: this.lettersService.tiles[i][j]?.charac,
-                            img: this.lettersService.tiles[i][j]?.img,
-                        },
-                        position: { x: j, y: i },
-                    });
+                    letterIngrid.push(this.lettersService.tiles[y][x]);
                 }
 
-                lett.push({
-                    score: this.lettersService.tiles[i][j]?.score,
-                    charac: this.lettersService.tiles[i][j]?.charac,
-                    img: this.lettersService.tiles[i][j]?.img,
+                lett.push({score: this.lettersService.tiles[y][x]?.score,
+                    charac: this.lettersService.tiles[y][x]?.charac,
+                    img: this.lettersService.tiles[y][x]?.img,
                 });
             }
             if (notEmpty) {
@@ -294,15 +296,27 @@ export class VirtualPlayerService {
                     console.log('regexBOOL: ', regEx.test(words[k]));
                     if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
                         console.log(words[k] + ' *essais avec ce mot*');
-                        let x = this.placeVrLettersInScrable(words[k], lett);
-                        if (x != -1)
+                        let position: Vec2 = { x: 0, y:0 }; 
+                        let pos = this.placeVrLettersInScrable(words[k], lett);
+                        if (pos != -1){ 
                             for (let j = 0; j < words[k].length; j++) {
+                                if(direction === 'vertical'){  
+                                 position.x = x +1 ; 
+                                 position.y = pos + j + 1; }
+                                else {
+                                    position.x = pos + j + 1;;
+                                    position.y = y +1; 
+                                    this.wordPlacedInScrable = true; 
+                                }
                                 this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
-                                    x: x + j + 1,
-                                    y: i + 1,
+                                    x: position.x,
+                                    y: position.y
                                 });
                             }
-                        this.updateVrEasel();
+                        this.updateVrEasel(); 
+                        
+                    
+                    }
                         found = true;
                         break;
                     }
