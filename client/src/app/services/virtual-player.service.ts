@@ -75,9 +75,7 @@ export class VirtualPlayerService {
                     }
                     if (this.first) {
                         this.first = false;
-
                         const words = this.validWordService.generateAllWordsPossible(this.vrPlayerEaselLetters);
-
                         for (const word of words) {
                             if (this.wordInEasel(word)) {
                                 const tempCommand: ChatCommand = { word, position: { x: INITIAL_BOX_X, y: INITIAL_BOX_Y }, direction: 'h' };
@@ -195,9 +193,7 @@ export class VirtualPlayerService {
                         break;
                     }
                 }
-            } else {
-                break;
-            }
+            } else break;
         }
         return found;
     }
@@ -245,13 +241,10 @@ export class VirtualPlayerService {
             notEmpty = false;
             letterIngrid.splice(0, letterIngrid.length);
             lett.splice(0, lett.length);
-            if (found) {
-                break;
-            }
+            if (found) break;
         }
         this.vrScoreObs.next(this.vrPoints);
     }
-
     get commandToSendVr(): BehaviorSubject<string> {
         return this.commandObs;
     }
@@ -268,11 +261,9 @@ export class VirtualPlayerService {
 
                 if (pos != -1) {
                     let tempCommand: ChatCommand;
-                    if (direction === 'v') {
-                        tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction };
-                    } else {
-                        tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction };
-                    }
+                    if (direction === 'v') tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction };
+                    else tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction };
+
                     this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
                     if (this.vrPoints != 0) {
                         this.commandToSend =
@@ -332,7 +323,7 @@ export class VirtualPlayerService {
                     equal = false;
                     break;
                 }
-                if (j === word.length - 1 && equal) {
+                if (j === word.length - 1 && equal)
                     if (
                         i + j !== NUMBER__RANGE_BOXES &&
                         boarLetters[i + j + 1].charac === NOT_A_LETTER.charac &&
@@ -340,7 +331,6 @@ export class VirtualPlayerService {
                         boarLetters[i - 1].charac === NOT_A_LETTER.charac
                     )
                         posInit = i;
-                }
             }
             if (posInit !== DEFAULT_POS && reRightCounter !== word.length) {
                 break;
