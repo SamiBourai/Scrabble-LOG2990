@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { RealUser, VrUser } from '@app/classes/user';
+import { ModalEndGameComponent } from '@app/components/modal-end-game/modal-end-game.component';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { MessageService } from './message.service';
 import { ReserveService } from './reserve.service';
@@ -32,6 +34,7 @@ export class UserService {
         private messageService: MessageService,
         private reserveService: ReserveService,
         private easelLogiscticsService: EaselLogiscticsService,
+        private dialogRef: MatDialog,
     ) {
         const first = this.chooseFirstToPlay();
         this.realUser = {
@@ -165,7 +168,9 @@ export class UserService {
     isGameOver() {
         if (this.passesCounter === 6 || (this.reserveService.isReserveEmpty() && this.easelLogiscticsService.isEaselEmpty())) {
             //console.log('la partie est fini');
+
             this.endGame();
+            this.dialogRef.open(ModalEndGameComponent);
             return true;
         } else {
             return false;

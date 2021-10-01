@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 // import { FormBuilder } from '@angular/forms';
 // import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 // import { Component, OnInit } from '@angular/core';
@@ -13,7 +13,6 @@ import { ModalUserNameComponent } from '@app/modal-user-name/modal-user-name.com
 export class ModalScrableClassiqueComponent {
     // mainPageComponent: MainPageComponent;
     // @ViewChild('button', { static: false }) button: ElementRef<HTMLElement>;
-    @ViewChild('button') button: { nativeElement: { click: () => void } };
     // constructor(button: HTMLElement) {
     //     t
     // }
@@ -30,9 +29,5 @@ export class ModalScrableClassiqueComponent {
         // dialogConfig.autoFocus=true;
         this.dialogRef.open(ModalUserNameComponent);
         // this.dialogRef.open(ModalUserVsPlayerComponent);
-    }
-
-    closeWindow(): void {
-        if (this.button) this.button.nativeElement.click();
     }
 }

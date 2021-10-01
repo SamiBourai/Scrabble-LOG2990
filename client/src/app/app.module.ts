@@ -23,6 +23,7 @@ import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-world.service';
 import { WordPointsService } from './services/word-points.service';
+import { ModalEndGameComponent } from './components/modal-end-game/modal-end-game.component';
 
 /**
  * Main module that is used in main.ts.
@@ -45,6 +46,7 @@ import { WordPointsService } from './services/word-points.service';
         RealPlayerComponent,
         VrUserComponent,
         EaselComponent,
+        ModalEndGameComponent,
     ],
     imports: [
         AppMaterialModule,
