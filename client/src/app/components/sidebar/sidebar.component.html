@@ -19,6 +19,12 @@
                     <ng-container *ngIf="isSkipButtonClicked()">
                         <div id="passer"></div>
                     </ng-container>
+
+                    <div class="debugActive" *ngIf="isDebug">
+                        <div *ngFor="let cmd of arrayOfVrCommands">
+                            <p>{{ '[' + nameVr + ']' + ' ' + cmd }}</p>
+                        </div>
+                    </div>
                 </div>
                 <hr />
 

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import {
@@ -33,19 +34,24 @@ export class VirtualPlayerService {
     private firstTurnLetters: Letter[] = [];
     private foundLetter: boolean[] = [false, false, false, false, false, false, false];
     private probWordScore: string;
-    private first: boolean = true;
+    first: boolean = true;
     private letterFromEasel: string = '';
     private wordPlacedInScrable: boolean = false;
+    commandToSend: string = '';
+    commandObs = new BehaviorSubject<string>(this.commandToSend);
     playObs = new BehaviorSubject(false);
+    vrPoints: number = 0;
+    isDicFille: boolean = false;
+    vrScoreObs = new BehaviorSubject(this.vrPoints);
+    played: boolean = false;
 
     //private letterInscrable: ScrableLetters[] = [];
 
     constructor(
         private readonly reserveService: ReserveService,
         private validWordService: ValidWordService,
-        private lettersService: LettersService,
-    ) //private userService: UserService,
-    {}
+        private lettersService: LettersService, //private userService: UserService,
+    ) {}
 
     // private letters : Array<Letter> =[];
     manageVrPlayerActions(): void {
@@ -66,18 +72,30 @@ export class VirtualPlayerService {
         switch (probability[randomIndex]) {
             case 'placeWord':
                 setTimeout(() => {
+                    if (!this.isDicFille) {
+                        this.generateVrPlayerEasel();
+                        this.isDicFille = true;
+                    }
                     if (this.first) {
                         this.first = false;
-                        this.generateVrPlayerEasel();
+
                         let words = this.validWordService.generateAllWordsPossible(this.vrPlayerEaselLetters);
 
                         for (let word of words) {
                             console.log(word);
                             if (this.wordInEasel(word)) {
+                                let tempCommand: ChatCommand = { word: word, position: { x: 8, y: 8 }, direction: 'h' };
+                                this.commandToSend =
+                                    '!placer ' + String.fromCharCode(97 + (tempCommand.position.y - 1)) + tempCommand.position.x + 'h ' + word;
+                                this.commandObs.next(this.commandToSend);
+
+                                this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                                this.vrScoreObs.next(this.vrPoints);
                                 for (let i = 0; i < word.length; i++) {
                                     this.lettersService.placeLetter(this.lettersService.getTheLetter(word.charAt(i)), { x: 8 + i, y: 8 });
                                 }
                                 this.updateVrEasel();
+                                this.played = true;
                                 //this.userService.resetPassesCounter();
                                 // this.playObs.next(true);
                                 break;
@@ -97,10 +115,15 @@ export class VirtualPlayerService {
                 setTimeout(() => {
                     // this.userService.vrSkipingTurn = true;
                 }, 20000);
+                console.log('pass');
+
                 break;
 
             case 'exchangeLetters':
                 this.exchangeLettersInEasel();
+                this.played = true;
+                console.log('exchange');
+
                 // this.validWordService.generateAllWordsPossible();
                 break;
         }
@@ -300,38 +323,53 @@ export class VirtualPlayerService {
                 words = this.generateWords(letterIngrid);
                 // console.log(words);
                 for (let k = 0; k < words.length; k++) {
-                    console.log('regexBOOL: ', regEx.test(words[k]));
+                    // console.log('regexBOOL: ', regEx.test(words[k]));
                     if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
                         console.log(words[k] + ' *essais avec ce mot*');
                         let position: Vec2 = { x: 0, y: 0 };
                         let pos = this.placeVrLettersInScrable(words[k], lett);
 
                         if (pos != -1) {
-                            // let tempCommand: ChatCommand;
-                            // if (direction === 'v') tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction: direction };
-                            // else tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction: direction };
-                            // let points = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
-                            // if (points != 0) {
-                            for (let j = 0; j < words[k].length; j++) {
-                                if (direction === 'v') {
-                                    position.x = x + 1;
-                                    position.y = pos + j + 1;
-                                } else {
-                                    position.x = pos + j + 1;
-                                    position.y = y + 1;
-                                    this.wordPlacedInScrable = true;
-                                }
-                                this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
-                                    x: position.x,
-                                    y: position.y,
-                                });
+                            let tempCommand: ChatCommand;
+                            if (direction === 'v') {
+                                tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction: direction };
+                            } else {
+                                tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction: direction };
                             }
-                            this.updateVrEasel();
+
+                            this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                            console.log('les points que genere le mot', this.vrPoints);
+                            this.vrScoreObs.next(this.vrPoints);
+                            if (this.vrPoints != 0) {
+                                this.commandToSend =
+                                    '!placer ' +
+                                    String.fromCharCode(97 + (tempCommand.position.y - 1)) +
+                                    tempCommand.position.x +
+                                    tempCommand.direction +
+                                    ' ' +
+                                    words[k];
+                                this.commandObs.next(this.commandToSend);
+                                for (let j = 0; j < words[k].length; j++) {
+                                    if (direction === 'v') {
+                                        position.x = x + 1;
+                                        position.y = pos + j + 1;
+                                    } else {
+                                        position.x = pos + j + 1;
+                                        position.y = y + 1;
+                                        this.wordPlacedInScrable = true;
+                                    }
+                                    this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
+                                        x: position.x,
+                                        y: position.y,
+                                    });
+                                }
+                                this.updateVrEasel();
+
+                                found = true;
+                                //this.userService.resetPassesCounter();
+                                break;
+                            }
                         }
-                        found = true;
-                        //this.userService.resetPassesCounter();
-                        break;
-                        // }
                     }
                     this.letterFromEasel = '';
                     this.foundLetter.fill(false);
@@ -345,6 +383,9 @@ export class VirtualPlayerService {
             }
         }
     }
+    get commandToSendVr(): BehaviorSubject<string> {
+        return this.commandObs;
+    }
 
     generateWords(letter: Letter[]): string[] {
         // console.log('generate word: ' + this.vrPlayerEaselLetters);
@@ -354,11 +395,15 @@ export class VirtualPlayerService {
         console.log(letter);
         return this.validWordService.generateAllWordsPossible(letter);
     }
+    get scoreVr(): BehaviorSubject<number> {
+        return this.vrScoreObs;
+    }
 
     private placeVrLettersInScrable(word: string, boarLetters: Letter[]): number {
         let posInit = -1;
         let equal = false;
-        console.log(word + ' est le mot a plasser');
+        //console.log(word + ' est le mot a plasser');
+
         for (let i = 0; i < NB_TILES - word.length; i++) {
             for (let j = 0; j < word.length; j++) {
                 console.log(boarLetters[j + i], word.charAt(j));
@@ -378,7 +423,6 @@ export class VirtualPlayerService {
                 break;
             }
         }
-
         return posInit;
     }
 }

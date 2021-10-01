@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-// import { Letter } from '@app/classes/letter';
-// import { A } from '@app/constants/constants';
+// import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { ReserveService } from './reserve.service';
 
-describe('ReserveService', () => {
+fdescribe('ReserveService', () => {
     let service: ReserveService;
 
     beforeEach(() => {
@@ -19,6 +18,13 @@ describe('ReserveService', () => {
         spyOn(Math, 'random').and.returnValue(1);
         service.getRandomLetter();
         expect(service.reserveSize).toEqual(114);
-        //expect(letter.charac).toBe(A.charac);
+    });
+
+    it('response of the observable should return 100 (the size of the reserve)', () => {
+        service.sizeObs.next(100);
+        service.reserveSize = 100;
+        service.size.subscribe((number) => {
+            expect(service.reserveSize).toBe(number);
+        });
     });
 });

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EASEL_LENGTH } from '@app/constants/constants';
@@ -7,6 +7,7 @@ import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
+import { VirtualPlayerService } from '@app/services/virtual-player.service';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -14,8 +15,9 @@ import { BehaviorSubject } from 'rxjs';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
     arrayOfMessages: string[] = [];
+    arrayOfVrCommands: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
     isImpossible: boolean = false;
@@ -27,8 +29,10 @@ export class SidebarComponent {
     skipTurn: boolean = false;
     active: boolean = false;
     name: string;
+    nameVr: string;
     word: string = 'mot';
     errorMessage: string;
+
     score: number = 0;
     scoreObs = new BehaviorSubject(this.score);
 
@@ -36,6 +40,7 @@ export class SidebarComponent {
         message: new FormControl(''),
     });
     isDebug: boolean = false;
+
     // window: any;
     // parameter:Parameter;
 
@@ -46,8 +51,18 @@ export class SidebarComponent {
         private lettersService: LettersService,
         private userService: UserService,
         private reserveService: ReserveService,
+        private virtualPlayerService: VirtualPlayerService,
     ) {
         //this.firstTurn = this.userService.realUser.firstToPlay;
+    }
+    ngOnInit(): void {
+        this.virtualPlayerService.commandToSendVr.subscribe((res) => {
+            setTimeout(() => {
+                // this.vrScore += res;
+                this.arrayOfVrCommands.push(res);
+                console.log(this.arrayOfVrCommands);
+            }, 0);
+        });
     }
 
     ngAfterViewChecked(): void {
@@ -63,6 +78,10 @@ export class SidebarComponent {
 
     getNameCurrentPlayer() {
         return this.userService.getUserName();
+    }
+
+    getNameVrPlayer() {
+        return this.userService.getVrUserName();
     }
 
     logMessage() {
@@ -120,6 +139,7 @@ export class SidebarComponent {
         }
         console.log(this.arrayOfMessages);
         this.name = this.getNameCurrentPlayer();
+        this.nameVr = this.getNameVrPlayer();
         this.impossibleAndValid();
         this.typeArea = '';
     }
@@ -151,7 +171,8 @@ export class SidebarComponent {
                         this.firstTurn = false;
                         if (this.lettersService.wordInEasel(this.messageService.command.word)) {
                             this.lettersService.placeLettersInScrable(this.messageService.command);
-
+                            this.isImpossible = false;
+                            this.virtualPlayerService.first = false;
                             this.userService.realUser.score += points;
                         } else {
                             this.isImpossible = true;
@@ -163,9 +184,11 @@ export class SidebarComponent {
                         this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
                         return;
                     }
-                } else if (this.lettersService.wordIsAttached(this.messageService.command) && points != 0) {
+                } else if (this.lettersService.wordIsAttached(this.messageService.command) || points != 0) {
                     if (this.lettersService.wordIsPlacable(this.messageService.command)) {
                         this.lettersService.placeLettersInScrable(this.messageService.command);
+                        this.isImpossible = false;
+                        this.virtualPlayerService.first = false;
                         this.userService.realUser.score += points;
                     } else {
                         //window.alert('*ERREUR*: votre mot dois contenir les lettres dans le chevalet et sur la grille!');

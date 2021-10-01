@@ -116,10 +116,11 @@ export class UserService {
         } else {
             console.log('tour du VR de jouer' + this.realUser.turnToPlay);
             this.counter = { min: 0, sec: 20 };
+            this.virtualPlayerService.manageVrPlayerActions();
             // this.vrPlayerService.manageVrPlayerActions(!this.realUser.turnToPlay);
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
-            this.virtualPlayerService.manageVrPlayerActions();
+
             this.skipTurn();
 
             //console.log('le Vr qui joue');
@@ -138,9 +139,14 @@ export class UserService {
                 this.counter = this.setCounter(0, 20);
                 this.realUser.turnToPlay = false;
                 this.userSkipingTurn = false;
-
                 clearInterval(intervalId);
                 this.startTimer(); //command
+            }
+            if (this.counter.sec < 17 && this.virtualPlayerService.played) {
+                this.counter = this.setCounter(0, 59);
+                this.realUser.turnToPlay = true;
+                this.time = 59;
+                this.resetPassesCounter();
             }
             if (this.counter.sec - 1 === -1) {
                 this.counter.min -= 1;
