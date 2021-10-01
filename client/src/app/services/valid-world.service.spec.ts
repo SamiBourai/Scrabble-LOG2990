@@ -14,7 +14,7 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ValidWordService } from './valid-world.service';
 
-describe('ValidWorldService', () => {
+fdescribe('ValidWorldService', () => {
     let service: ValidWordService;
 
     const jsonZstB64Str =
@@ -155,6 +155,12 @@ describe('ValidWorldService', () => {
         usedPositions[0][3] = Z;
         usedPositions[1][0] = I;
         usedPositions[2][0] = E;
+        usedPositions[0][4] = NOT_A_LETTER;
+        usedPositions[2][1] = NOT_A_LETTER;
+        usedPositions[3][0] = NOT_A_LETTER;
+        usedPositions[1][1] = NOT_A_LETTER;
+        usedPositions[1][2] = NOT_A_LETTER;
+        usedPositions[1][3] = NOT_A_LETTER;
         const command: ChatCommand = {
             word: 'aie',
             direction: 'v',
@@ -185,6 +191,11 @@ describe('ValidWorldService', () => {
         usedPositions[0][2] = Z;
         usedPositions[0][3] = Z;
         usedPositions[0][4] = S;
+        usedPositions[1][0] = NOT_A_LETTER;
+        usedPositions[1][1] = NOT_A_LETTER;
+        usedPositions[1][2] = NOT_A_LETTER;
+        usedPositions[1][3] = NOT_A_LETTER;
+        usedPositions[1][4] = NOT_A_LETTER;
 
         const command: ChatCommand = {
             word: 'azzzs',
@@ -221,6 +232,12 @@ describe('ValidWorldService', () => {
         usedPositions[0][3] = Z;
         usedPositions[1][0] = I;
         usedPositions[2][0] = E;
+        usedPositions[0][4] = NOT_A_LETTER;
+        usedPositions[2][1] = NOT_A_LETTER;
+        usedPositions[3][0] = NOT_A_LETTER;
+        usedPositions[1][1] = NOT_A_LETTER;
+        usedPositions[1][2] = NOT_A_LETTER;
+        usedPositions[1][3] = NOT_A_LETTER;
         const command: ChatCommand = {
             word: 'aie',
             direction: 'v',
@@ -245,6 +262,10 @@ describe('ValidWorldService', () => {
         usedPositions[0][0] = A;
         usedPositions[1][0] = I;
         usedPositions[2][0] = E;
+        usedPositions[3][0] = NOT_A_LETTER;
+        usedPositions[0][1] = NOT_A_LETTER;
+        usedPositions[1][1] = NOT_A_LETTER;
+        usedPositions[2][1] = NOT_A_LETTER;
         const command: ChatCommand = {
             word: 'aie',
             direction: 'v',
