@@ -108,7 +108,7 @@ export class EaselLogiscticsService {
         this.placeEaselLetters();
     }
 
-    isEmpty(): boolean {
+    isEaselEmpty(): boolean {
         //check if this is the right condition
         for (let pos of this.occupiedPos) {
             if (pos === true) {

@@ -75,7 +75,7 @@ export class SidebarComponent {
                 this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea));
                 this.userService.detectSkipTurnBtn();
             }
-            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && insideEaselPlace) {
+            if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && insideEaselPlace && !this.userService.isGameOver()) {
                 this.getLettersFromChat();
                 this.messageService.skipTurnIsPressed = false;
                 this.isImpossible = false;
@@ -90,6 +90,7 @@ export class SidebarComponent {
             }
             if (this.typeArea === '!passer' && this.isYourTurn()) {
                 this.userService.detectSkipTurnBtn();
+                this.userService.skipTurn();
                 const index = this.arrayOfMessages.indexOf('!passer', 0);
                 if (index > -1) this.arrayOfMessages.splice(index, 1);
             }

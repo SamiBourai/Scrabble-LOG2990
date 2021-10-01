@@ -1,22 +1,18 @@
-
-import { UserService } from '@app/services/user.service';
-import { MessageService } from '@app/services/message.service';
+import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import SpyObj = jasmine.SpyObj;
 import { LettersService } from '@app/services/letters.service';
-import { ChangeDetectorRef } from '@angular/core';
+import { MessageService } from '@app/services/message.service';
+import { UserService } from '@app/services/user.service';
+import SpyObj = jasmine.SpyObj;
 
-
-fdescribe('SidebarComponent', () => {
+describe('SidebarComponent', () => {
     let messageServiceSpy: SpyObj<MessageService>;
     let letterServiceSpy: SpyObj<LettersService>;
     let userServiceSpy: SpyObj<UserService>;
-    let changeDetectorRefSpy: SpyObj<ChangeDetectorRef>
+    let changeDetectorRefSpy: SpyObj<ChangeDetectorRef>;
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
-    
-    
 
     beforeEach(() => {
         messageServiceSpy = jasmine.createSpyObj('MessageServiceSpy', [
@@ -47,8 +43,6 @@ fdescribe('SidebarComponent', () => {
                 { provide: MessageService, useValue: messageServiceSpy },
                 { provide: LettersService, useValue: letterServiceSpy },
                 { provide: UserService, useValue: userServiceSpy },
-                
-                
             ],
         }).compileComponents();
     });
@@ -98,7 +92,6 @@ fdescribe('SidebarComponent', () => {
     });
 
     it('should call the methods when the input is not a command', () => {
-
         component.arrayOfMessages = [];
         messageServiceSpy.isCommand.and.callFake(() => {
             return false;
@@ -119,17 +112,7 @@ fdescribe('SidebarComponent', () => {
             return false;
         });
         component.logMessage();
-        expect(component.arrayOfMessages.length).toBe(0)
-
-        
-
-        
-
-        
-       
-
-        
-        
+        expect(component.arrayOfMessages.length).toBe(0);
     });
 
     it('should call the method changeLetterFromReserve', () => {
@@ -233,14 +216,4 @@ fdescribe('SidebarComponent', () => {
 
         expect(component.isYourTurn()).toBeFalse();
     });
-
-    
-
-
-
-    
-
-    
-
-     
 });

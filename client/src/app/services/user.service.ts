@@ -21,7 +21,7 @@ export class UserService {
     passesCounter: number = 0;
     realUser: RealUser;
     vrUser: VrUser;
-    intervalId = 0;
+    intervalId: any;
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
@@ -163,8 +163,8 @@ export class UserService {
     }
 
     isGameOver() {
-        if (this.passesCounter === 6 || (this.reserveService.isEmpty() && this.easelLogiscticsService.isEmpty())) {
-            console.log('la partie est fini');
+        if (this.passesCounter === 6 || (this.reserveService.isReserveEmpty() && this.easelLogiscticsService.isEaselEmpty())) {
+            //console.log('la partie est fini');
             this.endGame();
             return true;
         } else {
@@ -174,5 +174,24 @@ export class UserService {
 
     endGame() {
         clearInterval(this.intervalId);
+        this.pointsCalculationUser();
+        console.log(this.realUser.score);
     }
+
+    pointsCalculationUser() {
+        for (let i = 0; i < this.easelLogiscticsService.occupiedPos.length; i++) {
+            if (this.easelLogiscticsService.occupiedPos[i] == true) {
+                this.realUser.score -= this.easelLogiscticsService.getLetterFromEasel(i).score;
+            }
+        }
+        if (this.realUser.score < 0) this.realUser.score = 0;
+    }
+
+    // pointsCalculationVr() {
+    //     for (let i = 0; i < this.easelLogiscticsService.occupiedPos.length; i++) {
+    //         if (this.easelLogiscticsService.occupiedPos[i] == true) {
+    //             this.realUser.score -= this.easelLogiscticsService.getLetterFromEasel(i).score;
+    //         }
+    //     }
+    // }
 }

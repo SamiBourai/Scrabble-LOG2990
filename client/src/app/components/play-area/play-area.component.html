@@ -1,4 +1,4 @@
-<div [hidden]="!isGameOver()">
+<div [hidden]="!isGameOver()" *ngIf="isGameOver()">
     <h1>la partie est finie</h1>
     score sdfasdfasd :Asdf asd asdf asd: a sdf
 </div>
@@ -18,7 +18,7 @@
                         id="btn"
                         mat-raised-button
                         color="primary"
-                        [disabled]="userService.skipTurnValidUser() === false"
+                        [disabled]="userService.skipTurnValidUser() === false || userService.isGameOver() === true"
                         (click)="detectSkipTurnBtn()"
                     >
                         Passer son tour

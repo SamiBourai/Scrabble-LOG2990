@@ -47,6 +47,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     let: Letter[] = [D, A, B, A];
     remainingLetters: number = 0;
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
+    dialogRef: any;
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
@@ -140,6 +141,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                 y: Math.ceil((event.offsetY - TOPSPACE) / (BOARD_HEIGHT / NB_TILES)),
             };
         }
+    }
+    openDialogOfVrUser() {
+        this.dialogRef.open(PlayAreaComponent);
     }
 
     isGameOver() {
