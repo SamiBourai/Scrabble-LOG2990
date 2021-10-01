@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { AZUR_BOX, BLUE_BOX, BONUS_POINTS_50, BONUS_WORD_LENGTH, comparePositions, PINK_BOX, RED_BOX, usedBonus } from '@app/constants/constants';
+import { AZUR_BOX, BLUE_BOX, comparePositions, PINK_BOX, RED_BOX, usedBonus } from '@app/constants/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -43,9 +43,6 @@ export class WordPointsService {
             sum += score;
         }
         sum *= wordMultiplier;
-        if (word.length === BONUS_WORD_LENGTH) {
-            sum += BONUS_POINTS_50;
-        }
 
         return sum;
     }

@@ -19,7 +19,7 @@ import {
     THIRTEEN_POINTS,
     TWELVE_POINTS,
     WAIT_TIME_3_SEC,
-    ZERO_POINTS
+    ZERO_POINTS,
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';
@@ -164,8 +164,6 @@ export class VirtualPlayerService {
         pos.fill(false);
         let validWord = false;
         alreadyInBoard.splice(1, EASEL_LENGTH);
-        // here we disable the lint, because we need the i for the pos array;
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let j = 0; j < alreadyInBoard.length; j++) {
             for (let i = 0; i < word.length; i++) {
                 if (word.charAt(i) === alreadyInBoard[j].charac && !pos[i]) {
@@ -222,8 +220,6 @@ export class VirtualPlayerService {
     private getLetterForEachLine(direction: string): void {
         const lett: Letter[] = [];
         const letterIngrid: Letter[] = [];
-        let regEx;
-        let words: string[] = [];
         let notEmpty = false;
         let found = false;
         this.generateProb();
@@ -244,57 +240,8 @@ export class VirtualPlayerService {
                 }
                 lett.push(this.lettersService.tiles[y][x]);
             }
-            if (notEmpty) {
-                regEx = new RegExp(this.validWordService.generateRegEx(lett), 'g');
-                words = this.generateWords(letterIngrid);
-                for (let k = 0; k < words.length; k++) {
-                    if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
-                        const position: Vec2 = { x: 0, y: 0 };
-                        const pos = this.placeVrLettersInScrable(words[k], lett);
+            if (notEmpty) found = this.findPlacement(lett, letterIngrid, direction, x, y);
 
-                        if (pos != -1) {
-                            let tempCommand: ChatCommand;
-                            if (direction === 'v') {
-                                tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction };
-                            } else {
-                                tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction };
-                            }
-                            this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
-                            this.vrScoreObs.next(this.vrPoints);
-                            if (this.vrPoints != 0) {
-                                this.commandToSend =
-                                    '!placer ' +
-                                    String.fromCharCode(97 + (tempCommand.position.y - 1)) +
-                                    tempCommand.position.x +
-                                    tempCommand.direction +
-                                    ' ' +
-                                    words[k];
-                                this.commandObs.next(this.commandToSend);
-                                this.commandToSend = '';
-                                for (let j = 0; j < words[k].length; j++) {
-                                    if (direction === 'v') {
-                                        position.x = x + 1;
-                                        position.y = pos + j + 1;
-                                    } else {
-                                        position.x = pos + j + 1;
-                                        position.y = y + 1;
-                                        this.wordPlacedInScrable = true;
-                                    }
-                                    this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
-                                        x: position.x,
-                                        y: position.y,
-                                    });
-                                }
-                                this.updateVrEasel();
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    this.letterFromEasel = '';
-                    this.foundLetter.fill(false);
-                }
-            }
             notEmpty = false;
             letterIngrid.splice(0, letterIngrid.length);
             lett.splice(0, lett.length);
@@ -302,11 +249,66 @@ export class VirtualPlayerService {
                 break;
             }
         }
+        this.vrScoreObs.next(this.vrPoints);
     }
+
     get commandToSendVr(): BehaviorSubject<string> {
         return this.commandObs;
     }
+    private findPlacement(lett: Letter[], letterIngrid: Letter[], direction: string, x: number, y: number): boolean {
+        let found = false;
+        let regEx;
+        let words: string[] = [];
+        regEx = new RegExp(this.validWordService.generateRegEx(lett), 'g');
+        words = this.generateWords(letterIngrid);
+        for (let k = 0; k < words.length; k++) {
+            if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
+                const position: Vec2 = { x: 0, y: 0 };
+                const pos = this.placeVrLettersInScrable(words[k], lett);
 
+                if (pos != -1) {
+                    let tempCommand: ChatCommand;
+                    if (direction === 'v') {
+                        tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction };
+                    } else {
+                        tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction };
+                    }
+                    this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                    if (this.vrPoints != 0) {
+                        this.commandToSend =
+                            '!placer ' +
+                            String.fromCharCode(97 + (tempCommand.position.y - 1)) +
+                            tempCommand.position.x +
+                            tempCommand.direction +
+                            ' ' +
+                            words[k];
+                        this.commandObs.next(this.commandToSend);
+                        this.commandToSend = '';
+                        for (let j = 0; j < words[k].length; j++) {
+                            if (direction === 'v') {
+                                position.x = x + 1;
+                                position.y = pos + j + 1;
+                            } else {
+                                position.x = pos + j + 1;
+                                position.y = y + 1;
+                                this.wordPlacedInScrable = true;
+                            }
+                            this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
+                                x: position.x,
+                                y: position.y,
+                            });
+                        }
+                        this.updateVrEasel();
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            this.letterFromEasel = '';
+            this.foundLetter.fill(false);
+        }
+        return found;
+    }
     private generateWords(letter: Letter[]): string[] {
         for (const lett of this.vrPlayerEaselLetters) {
             letter.push(lett);
