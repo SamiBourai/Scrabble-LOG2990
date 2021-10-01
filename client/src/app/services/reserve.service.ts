@@ -34,18 +34,12 @@ export class ReserveService {
             this.letters.push(M);
             this.reserveSize += 2;
         }
-        for (let i = 0; i < 15; i++) {
-            this.letters.push(E);
-            this.reserveSize++;
-        }
+
         for (let i = 0; i < 8; i++) {
             this.letters.push(I);
             this.reserveSize++;
         }
-        for (let i = 0; i < 5; i++) {
-            this.letters.push(L);
-            this.reserveSize++;
-        }
+
         for (let i = 0; i < 6; i++) {
             this.letters.push(N);
             this.letters.push(O);
@@ -67,6 +61,15 @@ export class ReserveService {
         this.letters.push(Y);
         this.letters.push(Z);
         this.reserveSize += 7;
+        for (let i = 0; i < 15; i++) {
+            this.letters.push(E);
+            this.reserveSize++;
+        }
+
+        for (let i = 0; i < 5; i++) {
+            this.letters.push(L);
+            this.reserveSize++;
+        }
     }
 
     getRandomLetter(): Letter {

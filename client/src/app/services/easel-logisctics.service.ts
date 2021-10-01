@@ -26,7 +26,7 @@ export class EaselLogiscticsService {
     temp: Easel = { index: 0, letters: A };
     occupiedPos: boolean[] = [false, false, false, false, false, false, false];
     first: boolean = true;
-    easelSize: number = EASEL_LENGTH;
+    easelSize: number = 0;
 
     constructor(private reserveService: ReserveService) {}
 
@@ -34,23 +34,26 @@ export class EaselLogiscticsService {
         for (const lett of this.easelLetters) {
             const img = new Image();
             img.src = lett.letters.img;
+            if (this.occupiedPos[lett.index] == false && !this.reserveService.isReserveEmpty()) {
+                img.onload = () => {
+                    this.occupiedPos[lett.index] = true;
 
-            img.onload = () => {
-                this.occupiedPos[lett.index] = true;
-
-                this.gridContext.drawImage(
-                    img,
-                    LEFTSPACE + ((HAND_POSITION_START + lett.index) * BOARD_WIDTH) / NB_TILES,
-                    TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2,
-                    BOARD_WIDTH / NB_TILES,
-                    BOARD_HEIGHT / NB_TILES,
-                );
-            };
+                    this.easelSize++;
+                    this.gridContext.drawImage(
+                        img,
+                        LEFTSPACE + ((HAND_POSITION_START + lett.index) * BOARD_WIDTH) / NB_TILES,
+                        TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2,
+                        BOARD_WIDTH / NB_TILES,
+                        BOARD_HEIGHT / NB_TILES,
+                    );
+                };
+            }
         }
     }
 
     getLetterFromEasel(index: number): Letter {
         if (this.occupiedPos[index] === true) {
+            this.easelSize--;
             this.gridContext.clearRect(
                 LEFTSPACE + ((HAND_POSITION_START + index) * BOARD_WIDTH) / NB_TILES + 2,
                 TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + 2,
@@ -98,12 +101,11 @@ export class EaselLogiscticsService {
                         index: i,
                         letters: temp,
                     };
-                } else {
-                    window.alert('*LA RESERVE DE LETTRE EST MAINTENANT VIDE*');
-                    this.easelSize = i;
-                    return;
                 }
             }
+        }
+        if (this.reserveService.isReserveEmpty()) {
+            window.alert('*LA RESERVE EST MAINTENANT VIDE*');
         }
         this.placeEaselLetters();
     }

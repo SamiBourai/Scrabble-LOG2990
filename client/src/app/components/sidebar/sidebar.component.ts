@@ -95,15 +95,11 @@ export class SidebarComponent implements OnInit {
             }
 
             if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn()) {
-                if (
-                    this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea)) &&
-                    this.reserveService.reserveSize >= 7
-                )
-                    this.isImpossible = false;
-                else if (this.reserveService.reserveSize < 7) {
+                if (this.reserveService.reserveSize < EASEL_LENGTH) {
                     this.isImpossible = true;
                     this.errorMessage = 'la reserve contient moins de 7 lettres';
-                } else {
+                } else if (this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea))) this.isImpossible = false;
+                else {
                     this.isImpossible = true;
                     this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
                 }
@@ -111,7 +107,7 @@ export class SidebarComponent implements OnInit {
                 if (!this.isImpossible) this.userService.detectSkipTurnBtn();
             } else if (!this.messageService.containsSwapCommand(this.typeArea) && !this.isYourTurn()) {
                 this.isImpossible = true;
-            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && !this.userService.isGameOver()) {
+            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
                 this.getLettersFromChat();
                 this.messageService.skipTurnIsPressed = false;
 
@@ -174,7 +170,7 @@ export class SidebarComponent implements OnInit {
                             this.isImpossible = false;
                             this.virtualPlayerService.first = false;
                             this.userService.realUser.score += points;
-                            console.log('+50**********************************************');
+
                             if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
                         } else {
                             this.isImpossible = true;
@@ -192,7 +188,7 @@ export class SidebarComponent implements OnInit {
                         this.isImpossible = false;
                         this.virtualPlayerService.first = false;
                         this.userService.realUser.score += points;
-                        console.log('+50');
+
                         if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
                     } else {
                         //window.alert('*ERREUR*: votre mot dois contenir les lettres dans le chevalet et sur la grille!');

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
+import { NOT_A_LETTER } from '@app/constants/constants';
 //import { C } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
@@ -186,10 +187,8 @@ export class UserService {
     }
 
     isGameOver() {
-        if (this.passesCounter === 6 || (this.reserveService.isReserveEmpty() && this.easelLogiscticsService.isEaselEmpty())) {
-            //console.log('la partie est fini');
+        if (this.passesCounter === 6 || this.reserveService.isReserveEmpty()) {
             this.endGame();
-            //this.dialogRef.open(ModalEndGameComponent);
             return true;
         } else {
             return false;
@@ -198,24 +197,22 @@ export class UserService {
 
     endGame() {
         clearInterval(this.intervalId);
-        this.pointsCalculationUser();
-        console.log(this.realUser.score);
+        this.lettersRemainingEasel();
     }
 
-    pointsCalculationUser() {
-        for (let i = 0; i < this.easelLogiscticsService.occupiedPos.length; i++) {
-            if (this.easelLogiscticsService.occupiedPos[i] == true) {
-                this.realUser.score -= this.easelLogiscticsService.getLetterFromEasel(i).score;
+    lettersRemainingEasel() {
+        for (let i = 0; i < this.easelLogiscticsService.easelLetters.length; i++) {
+            if (this.easelLogiscticsService.easelLetters[i].letters.charac != NOT_A_LETTER.charac) {
+                this.realUser.score -= this.easelLogiscticsService.easelLetters[i].letters.score;
             }
         }
         if (this.realUser.score < 0) this.realUser.score = 0;
-    }
 
-    // pointsCalculationVr() {
-    //     for (let i = 0; i < this.easelLogiscticsService.occupiedPos.length; i++) {
-    //         if (this.easelLogiscticsService.occupiedPos[i] == true) {
-    //             this.realUser.score -= this.easelLogiscticsService.getLetterFromEasel(i).score;
-    //         }
-    //     }
-    // }
+        for (let i = 0; i < this.virtualPlayerService.vrPlayerEaselLetters.length; i++) {
+            if (this.virtualPlayerService.vrPlayerEaselLetters[i].charac != NOT_A_LETTER.charac) {
+                this.vrUser.score -= this.virtualPlayerService.vrPlayerEaselLetters[i].score;
+            }
+        }
+        if (this.vrUser.score < 0) this.vrUser.score = 0;
+    }
 }

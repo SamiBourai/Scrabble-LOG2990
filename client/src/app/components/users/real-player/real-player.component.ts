@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { UserService } from '@app/services/user.service';
 export class RealPlayerComponent implements OnInit {
     score: number = 0;
 
-    constructor(public userService: UserService) {}
+    constructor(public userService: UserService, public readonly easelLogisticService: EaselLogiscticsService) {}
 
     ngOnInit(): void {
         // score+=this.validWordService.readWordsAndGivePointsIfValid();

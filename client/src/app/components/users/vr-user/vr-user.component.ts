@@ -8,7 +8,7 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 })
 export class VrUserComponent implements OnInit {
     // vrScore: number = 0;
-    constructor(public userService: UserService, private virtualPlayerService: VirtualPlayerService) {}
+    constructor(public userService: UserService, public virtualPlayerService: VirtualPlayerService) {}
 
     ngOnInit(): void {
         this.virtualPlayerService.scoreVr.subscribe((res) => {

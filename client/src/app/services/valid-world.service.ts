@@ -275,4 +275,56 @@ export class ValidWordService {
         if (currentPosition !== undefined) currentPosition.y = positions[letterIndex].y + counter;
         counter = 0;
     }
+    generateRegEx(lett: Letter[]): string {
+        let concat = '(^';
+
+        let lastWasEmpty = true;
+        let spotDefine = false;
+        let metLetter = false;
+        for (let i = 0; i < lett.length; i++) {
+            if (spotDefine) {
+                const save: string = concat.slice();
+                concat += '$)|';
+                concat += save;
+                spotDefine = false;
+            }
+
+            if (lett[i].charac === NOT_A_LETTER.charac) {
+                concat += '.';
+
+                if (i !== lett.length - 1) {
+                    if (!metLetter) {
+                        concat += '?';
+                    } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                        concat += '?';
+                        spotDefine = true;
+                    } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
+                        let spaceCounter = 0;
+                        while (concat.charAt(concat.length - 1) != '}') {
+                            if (concat.charAt(concat.length - 1) == '.') spaceCounter++;
+                            concat = concat.slice(0, -1);
+                        }
+                        for (let k = 0; k < spaceCounter; k++) concat += '.';
+                    }
+                }
+                lastWasEmpty = true;
+            } else {
+                metLetter = true;
+                concat += lett[i].charac;
+                if (i !== lett.length - 1)
+                    if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                        concat += '{1}';
+                        spotDefine = true;
+                    }
+                lastWasEmpty = false;
+            }
+        }
+        if (lastWasEmpty) {
+            concat += '?$)';
+        } else {
+            concat += '{1}$)';
+        }
+        console.log(concat);
+        return concat;
+    }
 }

@@ -113,7 +113,7 @@ export class LettersService {
     }
     changeLetterFromReserve(letterToChange: string): boolean {
         const temp: Letter[] = [];
-        if (this.wordInEasel(letterToChange)) {
+        if (this.wordInEasel(letterToChange) && !this.reserveService.isReserveEmpty()) {
             for (let i = 0; i < letterToChange.length; i++) {
                 temp.push({
                     score: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.score,
@@ -290,6 +290,20 @@ export class LettersService {
     }
 
     wordIsAttached(command: ChatCommand): boolean {
+        if (
+            command.direction === 'h' &&
+            (this.tiles[command.position.y - 1][command.position.x - 2].charac !== NOT_A_LETTER.charac ||
+                this.tiles[command.position.y - 1][command.position.x - 1 + command.word.length].charac !== NOT_A_LETTER.charac)
+        )
+            return false;
+
+        if (
+            command.direction === 'v' &&
+            (this.tiles[command.position.y - 2][command.position.x - 1].charac !== NOT_A_LETTER.charac ||
+                this.tiles[command.position.y - 1 + command.word.length][command.position.x - 1].charac !== NOT_A_LETTER.charac)
+        )
+            return false;
+
         for (let i = 0; i < command.word.length; i++) {
             if (
                 command.direction === 'h' &&
