@@ -1,60 +1,48 @@
-
-<div class="container" >
-    
-  <form [formGroup] = "form">
-          <div class = "form-group">
-  
-              <div class = "messageList">
-  
-                
-                  <div *ngIf = "  isCommand && !isValid" class = "alert alert-danger" > commande invalide </div>
-                  <!-- <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div> -->
-                  <div *ngIf = "logDebug()">affichage de debogage active</div>
-                  <div  id = "turn" *ngIf = "isImpossible && isValid && isCommand" class = "alert alert-danger" >commande impossible a realiser</div>
-                  <ng-container   *ngIf = "!isCommand || ( isCommand && isValid )   " >
-      
-                    <div   *ngFor="let message of arrayOfMessages "> 
-                      <p  >{{ '[' + name + ']' + " " + message }}</p>
-                      
+<div class="container">
+    <div class="frame" #scrollframe>
+        <form [formGroup]="form">
+            <div class="form-group">
+                <div class="messageList">
+                    <div *ngIf="isCommand && !isValid" class="alert alert-danger">commande invalide</div>
+                    <!-- <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div> -->
+                    <div class="debugActive" *ngIf="isDebug">affichage de debogage activé</div>
+                    <div class="debug" *ngIf="!isDebug">affichage de debogage desactivé</div>
+                    <div id="turn" *ngIf="isImpossible && isValid && isCommand" class="alert alert-danger">
+                        commande impossible a realiser {{ ' ' + 'car ' + errorMessage }}
                     </div>
-                  </ng-container>
-                  
-                    
-                  <ng-container  *ngIf = "isSkipButtonClicked()"  >
-                      <div id = "passer" >true</div>
-                  </ng-container>
-                    
-                    
-                
-              </div>
-              <hr>
-  
-                <div class = "chatBar">
-                    <div  class="input-group mb-3">
-                        <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
+                    <ng-container>
+                        <div *ngFor="let message of arrayOfMessages">
+                            <p>{{ message }}</p>
                         </div>
-                        
-                         <input formControlName ="message"   maxlength="512" [(ngModel)]="typeArea" #message  (keyup.enter) ="logMessage()"  type = "text"  class = "form-control" autofocus/>
-                        
-                         <mat-hint id = "hint" align="end">{{message.value.length}} / 512 </mat-hint>  
-                    </div>
-                    
+                    </ng-container>
+
+                    <ng-container *ngIf="isSkipButtonClicked()">
+                        <div id="passer"></div>
+                    </ng-container>
                 </div>
-  
-               
-                
-            
-              
-              
-  
-          </div>
-      </form>
-                  
-     
+                <hr />
 
-  </div>
+                <div class="chatBar">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
+                        </div>
 
- 
-  
-  
+                        <input
+                            formControlName="message"
+                            maxlength="512"
+                            [(ngModel)]="typeArea"
+                            #message
+                            (keyup.enter)="logMessage()"
+                            type="text"
+                            class="form-control"
+                            autofocus
+                        />
+
+                        <mat-hint id="hint" align="end">{{ message.value.length }} / 512 </mat-hint>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

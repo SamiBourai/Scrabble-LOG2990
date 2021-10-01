@@ -8,7 +8,7 @@ import { TestBed } from '@angular/core/testing';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, C, D, E, G, I, J, L, N, O, R, S, U, usedBonus, Z } from '@app/constants/constants';
+import { A, B, C, D, E, G, I, J, L, N, NOT_A_LETTER, O, R, S, U, usedBonus, Z } from '@app/constants/constants';
 import { decode as b64_decode } from 'base64-arraybuffer';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -258,46 +258,22 @@ describe('ValidWorldService', () => {
         expect(num).toEqual(0);
     });
 
-    it('expect unshift in the array to have been called when can iterate to the left letter', () => {
+    it('expect no push in the array to have been called when there is no letter in right side', () => {
         const usedPositions = new Array<Letter[]>(15);
         for (let i = 0; i < usedPositions.length; ++i) {
             usedPositions[i] = new Array<Letter>(15);
         }
-        const position: Vec2[] = [{ x: 1, y: 0 }];
-        usedPositions[0][0] = D;
-        usedPositions[0][1] = A;
-        usedPositions[0][2] = B;
-        usedPositions[0][3] = C;
-        const array: Letter[] = [];
-        const arrayPosition: Vec2[] = [];
-
-        service['checkSides'](position, array, arrayPosition, 0, usedPositions);
-        // const word: string = service['fromLettersToString'](array);
-
-        expect(array).toEqual([D, A, B, C]);
-        expect(arrayPosition).toEqual([
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 2, y: 0 },
-            { x: 3, y: 0 },
-        ]);
-    });
-
-    it('expect no unshift in the array to have been called when there is no letter in left side', () => {
-        const usedPositions = new Array<Letter[]>(15);
-        for (let i = 0; i < usedPositions.length; ++i) {
-            usedPositions[i] = new Array<Letter>(15);
-        }
-        const position: Vec2[] = [{ x: 1, y: 0 }];
+        const position: Vec2[] = [{ x: 4, y: 0 }];
+        usedPositions[0][0] = NOT_A_LETTER;
         usedPositions[0][1] = D;
         usedPositions[0][2] = A;
         usedPositions[0][3] = B;
         usedPositions[0][4] = C;
+        usedPositions[0][5] = NOT_A_LETTER;
         const array: Letter[] = [];
         const arrayPosition: Vec2[] = [];
 
         service['checkSides'](position, array, arrayPosition, 0, usedPositions);
-        // const word: string = service['fromLettersToString'](array);
 
         expect(array).toEqual([D, A, B, C]);
         expect(arrayPosition).toEqual([
@@ -308,46 +284,22 @@ describe('ValidWorldService', () => {
         ]);
     });
 
-    it('expect unshift in the array to have been called when can iterate to the top letter', () => {
+    it('expect no push in the array to have been called when there is no letter in bottom side', () => {
         const usedPositions = new Array<Letter[]>(15);
         for (let i = 0; i < usedPositions.length; ++i) {
             usedPositions[i] = new Array<Letter>(15);
         }
-        const position: Vec2[] = [{ x: 0, y: 1 }];
-        usedPositions[0][0] = D;
-        usedPositions[1][0] = A;
-        usedPositions[2][0] = B;
-        usedPositions[3][0] = C;
-        const array: Letter[] = [];
-        const arrayPosition: Vec2[] = [];
-
-        service['checkBottomTopSide'](position, array, arrayPosition, 0, usedPositions);
-        // const word: string = service['fromLettersToString'](array);
-
-        expect(array).toEqual([D, A, B, C]);
-        expect(arrayPosition).toEqual([
-            { x: 0, y: 0 },
-            { x: 0, y: 1 },
-            { x: 0, y: 2 },
-            { x: 0, y: 3 },
-        ]);
-    });
-
-    it('expect no unshift in the array to have been called when there is no letter in top side', () => {
-        const usedPositions = new Array<Letter[]>(15);
-        for (let i = 0; i < usedPositions.length; ++i) {
-            usedPositions[i] = new Array<Letter>(15);
-        }
-        const position: Vec2[] = [{ x: 0, y: 1 }];
+        const position: Vec2[] = [{ x: 0, y: 5 }];
+        usedPositions[0][0] = NOT_A_LETTER;
         usedPositions[1][0] = D;
         usedPositions[2][0] = A;
         usedPositions[3][0] = B;
         usedPositions[4][0] = C;
+        usedPositions[5][0] = NOT_A_LETTER;
         const array: Letter[] = [];
         const arrayPosition: Vec2[] = [];
 
         service['checkBottomTopSide'](position, array, arrayPosition, 0, usedPositions);
-        // const word: string = service['fromLettersToString'](array);
 
         expect(array).toEqual([D, A, B, C]);
         expect(arrayPosition).toEqual([

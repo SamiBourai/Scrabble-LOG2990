@@ -6,8 +6,6 @@ import {
     BLUE_BOX,
     BOARD_HEIGHT,
     BOARD_WIDTH,
-    CANEVAS_HEIGHT,
-    CANEVAS_WIDTH,
     CTX_PX,
     HAND_POSITION_END,
     HAND_POSITION_START,
@@ -186,18 +184,6 @@ export class GridService {
                 BOARD_HEIGHT / NB_TILES - 5,
             );
         };
-    }
-
-    drawPlayerName(s: string) {
-        this.gridContext.font = 'bold 30px system-ui';
-        this.gridContext.textAlign = 'center';
-        this.gridContext.fillText(s, LEFTSPACE, CANEVAS_HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
-    }
-
-    drawOpponentName(s: string) {
-        this.gridContext.font = 'bold 30px system-ui';
-        this.gridContext.textAlign = 'center';
-        this.gridContext.fillText(s, CANEVAS_WIDTH - LEFTSPACE, CANEVAS_HEIGHT - TOPSPACE * 2 - HAND_POSITION_START, 2 * LEFTSPACE);
     }
 
     get width(): number {

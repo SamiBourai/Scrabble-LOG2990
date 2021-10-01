@@ -1,25 +1,20 @@
-
-
-
-
 .container {
     position: absolute;
     border: 1px solid black;
     border-radius: 15px;
     overflow-y: auto;
     width: 18%;
-    right:81%;
-    height:75%;
+    right: 81%;
+    height: 75%;
     margin: 2% 0% 1% 3%;
     background-color: white;
 }
 
-
-#message{
+#message {
     color: red;
 }
 
-hr{
+hr {
     position: absolute;
     width: 95%;
     color: black;
@@ -31,39 +26,40 @@ hr{
 // bottom margin is 75px
 // left margin is 100px
 
-#errorMessage{
-    color:red
+#errorMessage {
+    color: red;
 }
 
-.chatBar{
-
+.chatBar {
     position: absolute;
-    margin:0% 1% 0% 1%;
-    top:3%;
+    margin: 0% 1% 0% 1%;
+    top: 3%;
     width: 90%;
-    ;
-
 }
 
-#hint{
+.vrCommand {
+    color: green;
+}
+
+#hint {
     width: 100%;
-    position:absolute;
-    top:95%;
-
-}
-
-#turn{
-    color:red;
-}
-
-
-.messageList{
     position: absolute;
-    top:14%;
+    top: 95%;
+}
+
+#turn {
+    color: red;
+}
+
+.debug {
+    color: red;
+}
+.debugActive {
+    color: green;
+}
+
+.messageList {
+    position: absolute;
+    top: 14%;
     width: 95%;
 }
-
-
-
-
-
