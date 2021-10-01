@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { VirtualPlayerService } from './virtual-player.service';
+//import { VirtualPlayerService } from './virtual-player.service';
 
 describe('VirtualPlayerService', () => {
     let service: VirtualPlayerService;

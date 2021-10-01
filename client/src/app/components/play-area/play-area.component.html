@@ -1,3 +1,8 @@
+<!-- <div [hidden]="!isGameOver()" *ngIf="isGameOver()">
+    <mat-card-title>La partie est fini</mat-card-title>
+    <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
+</div> -->
+
 <div id="grid-container">
     <div>
         <div class="user-component" fxLayout="row" fxLayoutAlign="space-between center">
@@ -39,7 +44,7 @@
     </div>
 
     <div>
-        <p class="chronometer-title">Lettre restante : {{ remainingLetters }}</p>
+        <p class="chronometer-title">Lettre restante : {{ this.remainingLetters }}</p>
     </div>
 </div>
 

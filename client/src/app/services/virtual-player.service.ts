@@ -3,7 +3,8 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import {
     EASEL_LENGTH,
-    EIGHTEEN_POINTS, MAX_INDEX_NUMBER_EASEL,
+    EIGHTEEN_POINTS,
+    MAX_INDEX_NUMBER_EASEL,
     MAX_INDEX_NUMBER_PROBABILITY_ARRAY,
     NB_TILES,
     NOT_A_LETTER,
@@ -11,9 +12,10 @@ import {
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
-    ZERO_POINTS
+    ZERO_POINTS,
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
+import { BehaviorSubject } from 'rxjs';
 import { LettersService } from './letters.service';
 import { ValidWordService } from './valid-world.service';
 // import { LettersService } from './letters.service';
@@ -33,14 +35,17 @@ export class VirtualPlayerService {
     private probWordScore: string;
     private first: boolean = true;
     private letterFromEasel: string = '';
-    private wordPlacedInScrable: boolean= false; 
+    private wordPlacedInScrable: boolean = false;
+    playObs = new BehaviorSubject(false);
+
     //private letterInscrable: ScrableLetters[] = [];
 
     constructor(
         private readonly reserveService: ReserveService,
         private validWordService: ValidWordService,
         private lettersService: LettersService,
-    ) {}
+    ) //private userService: UserService,
+    {}
 
     // private letters : Array<Letter> =[];
     manageVrPlayerActions(): void {
@@ -73,15 +78,16 @@ export class VirtualPlayerService {
                                     this.lettersService.placeLetter(this.lettersService.getTheLetter(word.charAt(i)), { x: 8 + i, y: 8 });
                                 }
                                 this.updateVrEasel();
+                                //this.userService.resetPassesCounter();
+                                // this.playObs.next(true);
                                 break;
                             }
 
                             this.foundLetter.fill(false);
                         }
                     } else {
-                        this.getLetterForEachLine('horizontal');
-                        if(!this.wordPlacedInScrable)
-                        this.getLetterForEachLine('vertical');
+                        this.getLetterForEachLine('h');
+                        if (!this.wordPlacedInScrable) this.getLetterForEachLine('v');
                     }
                     this.wordPlacedInScrable = false;
                 }, 3000);
@@ -247,7 +253,7 @@ export class VirtualPlayerService {
     private exchangeLettersInEasel(): void {
         const numberOfLettersToExchange = Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL) + 1;
         for (let i = 0; i <= numberOfLettersToExchange; i++) {
-            this.vrPlayerEaselLetters[Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL)]= this.reserveService.getRandomLetter();
+            this.vrPlayerEaselLetters[Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL)] = this.reserveService.getRandomLetter();
         }
     }
 
@@ -257,7 +263,7 @@ export class VirtualPlayerService {
         this.probWordScore = probability[randomIndex];
     }
 
-    getLetterForEachLine(direction : string): void {
+    getLetterForEachLine(direction: string): void {
         const lett: Letter[] = [];
         const letterIngrid: Letter[] = [];
         let regEx;
@@ -265,24 +271,25 @@ export class VirtualPlayerService {
         let notEmpty = false;
         let found = false;
         this.generateProb();
-        let x : number = 0; 
-        let y : number = 0;
+        let x: number = 0;
+        let y: number = 0;
         for (let i = 0; i < NB_TILES; i++) {
             for (let j = 0; j < NB_TILES; j++) {
-                if(direction ==='vertical'){
-                     y= j;
-                     x= i; 
-                }else {
-                    y = i ;
-                    x = j ; 
+                if (direction === 'v') {
+                    y = j;
+                    x = i;
+                } else {
+                    y = i;
+                    x = j;
                 }
-                
+
                 if (this.lettersService.tiles[y][x]?.charac !== NOT_A_LETTER.charac) {
                     notEmpty = true;
                     letterIngrid.push(this.lettersService.tiles[y][x]);
                 }
 
-                lett.push({score: this.lettersService.tiles[y][x]?.score,
+                lett.push({
+                    score: this.lettersService.tiles[y][x]?.score,
                     charac: this.lettersService.tiles[y][x]?.charac,
                     img: this.lettersService.tiles[y][x]?.img,
                 });
@@ -296,29 +303,35 @@ export class VirtualPlayerService {
                     console.log('regexBOOL: ', regEx.test(words[k]));
                     if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
                         console.log(words[k] + ' *essais avec ce mot*');
-                        let position: Vec2 = { x: 0, y:0 }; 
+                        let position: Vec2 = { x: 0, y: 0 };
                         let pos = this.placeVrLettersInScrable(words[k], lett);
-                        if (pos != -1){ 
+
+                        if (pos != -1) {
+                            // let tempCommand: ChatCommand;
+                            // if (direction === 'v') tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction: direction };
+                            // else tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction: direction };
+                            // let points = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                            // if (points != 0) {
                             for (let j = 0; j < words[k].length; j++) {
-                                if(direction === 'vertical'){  
-                                 position.x = x +1 ; 
-                                 position.y = pos + j + 1; }
-                                else {
-                                    position.x = pos + j + 1;;
-                                    position.y = y +1; 
-                                    this.wordPlacedInScrable = true; 
+                                if (direction === 'v') {
+                                    position.x = x + 1;
+                                    position.y = pos + j + 1;
+                                } else {
+                                    position.x = pos + j + 1;
+                                    position.y = y + 1;
+                                    this.wordPlacedInScrable = true;
                                 }
                                 this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
                                     x: position.x,
-                                    y: position.y
+                                    y: position.y,
                                 });
                             }
-                        this.updateVrEasel(); 
-                        
-                    
-                    }
+                            this.updateVrEasel();
+                        }
                         found = true;
+                        //this.userService.resetPassesCounter();
                         break;
+                        // }
                     }
                     this.letterFromEasel = '';
                     this.foundLetter.fill(false);

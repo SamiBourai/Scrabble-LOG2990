@@ -12,7 +12,6 @@ describe('EaselLogiscticsService', () => {
         TestBed.configureTestingModule({});
 
         service = TestBed.inject(EaselLogiscticsService);
-
         const width = 15;
         const height = 25;
         // eslint-disable-next-line -- createCanvas is private and we need access for the test

@@ -107,4 +107,14 @@ export class EaselLogiscticsService {
         }
         this.placeEaselLetters();
     }
+
+    isEaselEmpty(): boolean {
+        //check if this is the right condition
+        for (let pos of this.occupiedPos) {
+            if (pos === true) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

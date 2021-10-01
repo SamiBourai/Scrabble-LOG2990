@@ -67,7 +67,7 @@ export class ReserveService {
         this.letters.push(Y);
         this.letters.push(Z);
         this.reserveSize += 7;
-
+        this.reserveSize = 9;
         console.log(this.reserveSize);
     }
 
@@ -91,5 +91,9 @@ export class ReserveService {
         this.letters.push(lett);
         this.reserveSize++;
         this.sizeObs.next(this.reserveSize);
+    }
+
+    isReserveEmpty() {
+        return this.reserveSize == 0;
     }
 }

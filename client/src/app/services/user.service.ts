@@ -2,9 +2,13 @@ import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
 //import { C } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
+import { EaselLogiscticsService } from './easel-logisctics.service';
 import { MessageService } from './message.service';
+import { ReserveService } from './reserve.service';
 import { VirtualPlayerService } from './virtual-player.service';
 
+//const USER_TURN_TIME = 5;
+//const VR_USER_TURN_TIME = 5;
 @Injectable({
     providedIn: 'root',
 })
@@ -17,6 +21,7 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     counter: { min: number; sec: number } = { min: 0, sec: 0 };
+    passesCounter: number = 0;
     realUser: RealUser;
     vrUser: VrUser;
     intervalId = 0;
@@ -28,7 +33,12 @@ export class UserService {
 
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-    constructor(private messageService: MessageService, private virtualPlayerService: VirtualPlayerService) {
+    constructor(
+        private messageService: MessageService,
+        private virtualPlayerService: VirtualPlayerService,
+        private reserveService: ReserveService,
+        private easelLogiscticsService: EaselLogiscticsService,
+    ) {
         // private vrPlayerService: VirtualPlayerService
         const first = this.chooseFirstToPlay();
         this.realUser = {
@@ -69,7 +79,6 @@ export class UserService {
     }
     chooseRandomName(): string {
         // comme ces constante on en a besoin ici seulement
-
         let randomInteger = 0;
 
         for (;;) {
@@ -102,7 +111,7 @@ export class UserService {
             this.counter = { min: 0, sec: 59 };
             this.realUser.turnToPlay = false;
             this.time = this.counter.sec;
-
+            this.skipTurn();
             // console.log('le vrai utilisateur qui joue');
         } else {
             console.log('tour du VR de jouer' + this.realUser.turnToPlay);
@@ -111,6 +120,7 @@ export class UserService {
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
             this.virtualPlayerService.manageVrPlayerActions();
+            this.skipTurn();
 
             //console.log('le Vr qui joue');
         }
@@ -125,11 +135,10 @@ export class UserService {
                 this.startTimer(); //command
             }
             if (this.userSkipingTurn) {
-                //|| this.manageSkipTurnChat(command)
-                this.counter = this.setCounter(0, 5);
+                this.counter = this.setCounter(0, 20);
                 this.realUser.turnToPlay = false;
                 this.userSkipingTurn = false;
-                //this.time = this.counter.sec;
+
                 clearInterval(intervalId);
                 this.startTimer(); //command
             }
@@ -151,7 +160,7 @@ export class UserService {
     }
     skipTurnValidUser(): boolean {
         if (this.time === 59) return true;
-        else this.time === 20;
+
         return false;
     }
     detectSkipTurnBtn(): boolean {
@@ -159,4 +168,48 @@ export class UserService {
         this.userSkipingTurn = true;
         return true;
     }
+
+    skipTurn() {
+        this.passesCounter++;
+        console.log('asdfasdfa', this.passesCounter);
+    }
+
+    resetPassesCounter() {
+        this.passesCounter = 0;
+        console.log('reset worked');
+    }
+
+    isGameOver() {
+        if (this.passesCounter === 6 || (this.reserveService.isReserveEmpty() && this.easelLogiscticsService.isEaselEmpty())) {
+            //console.log('la partie est fini');
+            this.endGame();
+            //this.dialogRef.open(ModalEndGameComponent);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    endGame() {
+        clearInterval(this.intervalId);
+        this.pointsCalculationUser();
+        console.log(this.realUser.score);
+    }
+
+    pointsCalculationUser() {
+        for (let i = 0; i < this.easelLogiscticsService.occupiedPos.length; i++) {
+            if (this.easelLogiscticsService.occupiedPos[i] == true) {
+                this.realUser.score -= this.easelLogiscticsService.getLetterFromEasel(i).score;
+            }
+        }
+        if (this.realUser.score < 0) this.realUser.score = 0;
+    }
+
+    // pointsCalculationVr() {
+    //     for (let i = 0; i < this.easelLogiscticsService.occupiedPos.length; i++) {
+    //         if (this.easelLogiscticsService.occupiedPos[i] == true) {
+    //             this.realUser.score -= this.easelLogiscticsService.getLetterFromEasel(i).score;
+    //         }
+    //     }
+    // }
 }

@@ -1,8 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { EaselLogiscticsService } from './easel-logisctics.service';
+import { ReserveService } from './reserve.service';
 import { UserService } from './user.service';
 
-describe('UserService', () => {
+fdescribe('UserService', () => {
     let userService: UserService;
+    let reserveService: ReserveService;
+    let easelLogiscticsService: EaselLogiscticsService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});

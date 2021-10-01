@@ -58,6 +58,8 @@ export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.p
 export const EASEL_LENGTH = 7;
 export const CLEAR_RECT_FIX = 5;
 
+//userService
+export const intervalId = 0;
 // play-area
 export const usedBonus: Vec2[] = [];
 // virtual-player- service

@@ -20,6 +20,7 @@ export class ValidWordService {
     private usedWords = new Map<string, Vec2[]>();
 
     private readonly utf8Decoder = new TextDecoder('UTF-8');
+
     private dictionary?: Set<string>[];
     constructor(
         private http: HttpClient,
@@ -47,30 +48,29 @@ export class ValidWordService {
         this.dictionary = letterIndexes.map(([t, h]) => new Set(words.slice(t, h)));
     }
 
-     generateAllWordsPossible(word: Letter[]): string[] {
+    generateAllWordsPossible(word: Letter[]): string[] {
         for (const letter of word) {
             this.concatWord += letter.charac;
         }
-        console.log(this.concatWord, 'concat'); 
+        console.log(this.concatWord, 'concat');
 
-        
-        
         for (let i = this.concatWord.length; i >= 1; i--) {
-            let regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g'); 
-            
+            let regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
+
             // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})
             // (?=(?!((?<1>.)\k<1>.)))(?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))(?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
             for (const words of this.dictionary!) {
                 for (const dictionaryWord of words) {
                     if (i === dictionaryWord.length) {
-                        const match = regex.test(dictionaryWord);                        
-                        if (match) {                           
+                        const match = regex.test(dictionaryWord);
+                        if (match) {
                             this.matchWords.push(dictionaryWord);
                         }
                     }
                 }
-            }}
-       this.concatWord= ''; 
+            }
+        }
+        this.concatWord = '';
         return this.matchWords;
     }
 
@@ -101,10 +101,6 @@ export class ValidWordService {
                 console.log(array);
                 console.log(arrayPosition);
             }
-            //
-
-            // console.log(array);
-            // console.log(arrayPosition);
 
             if (array.length === 1) {
                 // only one letter
@@ -124,13 +120,14 @@ export class ValidWordService {
                 }
             } else {
                 totalPointsSum = 0;
-                // console.log(totalPointsSum);
 
                 return totalPointsSum;
             }
         }
 
         if (this.verifyWord(this.letterService.fromWordToLetters(command.word))) {
+            console.log(this.letterService.fromWordToLetters(command.word));
+            console.log(positionsWordCommand);
             this.usedWords.set(command.word, positionsWordCommand);
             const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand);
             console.log('Point du  mot lui meme : ' + wordItselfPoints);

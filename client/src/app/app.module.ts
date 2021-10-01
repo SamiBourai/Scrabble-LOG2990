@@ -1,3 +1,4 @@
+// import { HttpClientModule } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,11 +14,13 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { AvatarModule } from 'ngx-avatar';
 import { EaselComponent } from './components/easel/easel.component';
+import { ModalEndGameComponent } from './components/modal-end-game/modal-end-game.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
 import { ModalScrableClassiqueComponent } from './modal-scrable-classique/modal-scrable-classique.component';
 import { ModalUserNameComponent } from './modal-user-name/modal-user-name.component';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player/modal-user-vs-player.component';
+// import { CommandService } from './services/command.service';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-world.service';
 import { WordPointsService } from './services/word-points.service';
@@ -43,6 +46,7 @@ import { WordPointsService } from './services/word-points.service';
         RealPlayerComponent,
         VrUserComponent,
         EaselComponent,
+        ModalEndGameComponent,
     ],
     imports: [
         AppMaterialModule,

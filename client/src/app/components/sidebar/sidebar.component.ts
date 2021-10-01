@@ -92,7 +92,7 @@ export class SidebarComponent {
                 if (!this.isImpossible) this.userService.detectSkipTurnBtn();
             } else if (!this.messageService.containsSwapCommand(this.typeArea) && !this.isYourTurn()) {
                 this.isImpossible = true;
-            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
+            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn() && !this.userService.isGameOver()) {
                 this.getLettersFromChat();
                 this.messageService.skipTurnIsPressed = false;
 
@@ -113,6 +113,7 @@ export class SidebarComponent {
             if (this.typeArea === '!passer' && this.isYourTurn()) {
                 this.userService.detectSkipTurnBtn();
                 this.isImpossible = false;
+                this.userService.skipTurn();
                 const index = this.arrayOfMessages.indexOf('!passer', 0);
                 if (index > -1) this.arrayOfMessages.splice(index, 1);
             }
@@ -142,6 +143,8 @@ export class SidebarComponent {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, this.messageService.command);
 
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
+            this.userService.resetPassesCounter();
+
             if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
                 if (this.firstTurn && this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
                     if (this.messageService.command.position.x === 8 && this.messageService.command.position.y === 8) {
