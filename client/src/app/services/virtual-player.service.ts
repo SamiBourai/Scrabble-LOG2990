@@ -100,10 +100,8 @@ export class VirtualPlayerService {
                                     });
                                 }
                                 this.updateVrEasel();
-                                this.played = true;
                                 break;
                             }
-
                             this.foundLetter.fill(false);
                         }
                     } else {
@@ -111,6 +109,7 @@ export class VirtualPlayerService {
                         if (!this.wordPlacedInScrable) this.getLetterForRange('v', this.lettersService.tiles);
                     }
                     this.wordPlacedInScrable = false;
+                    this.played = true;
                 }, WAIT_TIME_3_SEC);
                 break;
 
