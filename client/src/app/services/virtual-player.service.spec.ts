@@ -12,7 +12,7 @@ import { ReserveService } from './reserve.service';
 import { VirtualPlayerService } from './virtual-player.service';
 import SpyObj = jasmine.SpyObj;
 
-fdescribe('VirtualPlayerService', () => {
+describe('VirtualPlayerService', () => {
     let service: VirtualPlayerService;
     let validWordServiceSpy: SpyObj<ValidWordService>;
     let letterServiceSpy: SpyObj<LettersService>;
@@ -82,24 +82,6 @@ fdescribe('VirtualPlayerService', () => {
         setTimeout(() => {
             expect(getLettersForRangeSpy).toHaveBeenCalled();
             expect(service.played).toBeTruthy();
-            done();
-        }, 3000);
-    });
-    it('should exchange letters', (done) => {
-        spyOn<any>(service, 'getIndex').and.returnValue(10);
-        const exchangeLettersInEaselSpy = spyOn<any>(service, 'exchangeLettersInEasel').and.stub();
-        service.manageVrPlayerActions();
-        setTimeout(() => {
-            expect(exchangeLettersInEaselSpy).toHaveBeenCalled();
-            expect(service.played).toBeTruthy();
-            done();
-        }, 3000);
-    });
-    it('should pass his turn', (done) => {
-        spyOn<any>(service, 'getIndex').and.returnValue(9);
-        service.manageVrPlayerActions();
-        setTimeout(() => {
-            expect(service.played).toBeFalsy();
             done();
         }, 3000);
     });

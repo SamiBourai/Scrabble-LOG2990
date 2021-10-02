@@ -79,20 +79,6 @@ describe('EaselLogiscticsService', () => {
 
     // test wordOnEasel()
 
-    it('test word (Bruttale) in Easel, all (Brutale) letter are thr easel, wordInEasel expected to return True', () => {
-        service.foundLetter = [false, false, false, false, false, false, false];
-        service.easelLetters = [
-            { index: 0, letters: B },
-            { index: 1, letters: R },
-            { index: 2, letters: U },
-            { index: 3, letters: T },
-            { index: 4, letters: A },
-            { index: 5, letters: L },
-            { index: 6, letters: E },
-        ];
-        expect(service.wordInEasel('brutale')).toEqual(true);
-    });
-
     it('test word (Abattre) in Easel, those letters are not in the Easel, wordInEasel expected to return false', () => {
         service.foundLetter = [false, false, false, false, false, false, false];
         service.easelLetters = [

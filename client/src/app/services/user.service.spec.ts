@@ -95,14 +95,6 @@ describe('UserService', () => {
     });
 
     // startTime() tests
-
-    it('test if real user is first to play. should get counter = 59 sec and time=59 sec', () => {
-        userService.realUser.firstToPlay = true;
-        userService.startTimer();
-        expect(userService.counter.sec).toBe(59);
-        expect(userService.time).toBe(59);
-    });
-
     it('test if vr skip turn . should get counter = 59 sec and time=59 sec', (done) => {
         userService.vrSkipingTurn = true;
         userService.userSkipingTurn = false;
@@ -127,35 +119,6 @@ describe('UserService', () => {
         }, 3000);
     });
 
-    it('test second get decreased, should get counter.sec=59', (done) => {
-        // userService.counter.sec=-1;
-        userService.vrSkipingTurn = false;
-        userService.userSkipingTurn = false;
-        spyOn(userService, 'setCounter').and.callFake(() => {
-            return { min: 0, sec: 1 };
-        });
-        userService.startTimer();
-
-        setTimeout(() => {
-            expect(userService.counter.sec).toBe(59);
-            done();
-        }, 1000);
-    });
-    it('test when counter (time) is on value 0:0, expect to call clearTnterval()', (done) => {
-        const clearIntervalSpy = spyOn(global, 'clearInterval');
-        userService.vrSkipingTurn = false;
-        userService.userSkipingTurn = false;
-        spyOn(userService, 'setCounter').and.callFake(() => {
-            return { min: 0, sec: 1 };
-        });
-
-        userService.startTimer();
-
-        setTimeout(() => {
-            expect(clearIntervalSpy).toHaveBeenCalled();
-            done();
-        }, 1000);
-    });
     // test skipTurnValidUSer()
     it('test skipTurnValidUser, expect true when time=59 ', () => {
         userService.time = 59;

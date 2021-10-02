@@ -71,20 +71,6 @@ describe('LettersService', () => {
     });
 
     // test wordInEasel()
-    it('test word (Bruttale) in Easel, all (Brutale) letter are thr easel, wordInEasel expected to return True', () => {
-        service.foundLetter = [false, false, false, false, false, false, false];
-        easeelService.easelLetters = [
-            { index: 0, letters: B },
-            { index: 1, letters: R },
-            { index: 2, letters: U },
-            { index: 3, letters: T },
-            { index: 4, letters: A },
-            { index: 5, letters: L },
-            { index: 6, letters: E },
-        ];
-
-        expect(service.wordInEasel('brutale')).toEqual(false);
-    });
 
     it('298 false', () => {
         const tiles = service.tiles;
@@ -130,19 +116,6 @@ describe('LettersService', () => {
         const test = service.wordIsAttached(command);
         expect(test).toBeTrue();
     });
-
-    it('161-171', () => {
-        const command: ChatCommand = {
-            word: 'azzzsss',
-            direction: 'v',
-            position: { x: 2, y: 2 },
-        };
-        const test = service.usedAllEaselLetters;
-        service.placeLettersInScrable(command);
-
-        expect(test).toBeTrue();
-    });
-
     it('test word (Abattre) in Easel, those letters are not in the Easel, wordInEasel expected to return false', () => {
         service.foundLetter = [false, false, false, false, false, false, false];
         easeelService.easelLetters = [
@@ -158,21 +131,6 @@ describe('LettersService', () => {
         expect(service.wordInEasel('abattre')).toEqual(false);
     });
     // test chnageLetterFromReserve()
-    it('changer letter should call reffillEasel() and reset all variables', () => {
-        easeelService.easelLetters = [
-            { index: 0, letters: S },
-            { index: 1, letters: A },
-            { index: 2, letters: U },
-            { index: 3, letters: T },
-            { index: 4, letters: A },
-            { index: 5, letters: L },
-            { index: 6, letters: E },
-        ];
-
-        service.changeLetterFromReserve('s');
-        expect(easeelService.refillEasel).toHaveBeenCalled();
-        expect(easeelService.placeEaselLetters).toHaveBeenCalled();
-    });
 
     it('changer letter should call reffillEasel() and reset all variables', () => {
         easeelService.easelLetters = [
@@ -188,46 +146,9 @@ describe('LettersService', () => {
             return true;
         });
 
-        service.changeLetterFromReserve('sss');
-        expect(easeelService.refillEasel).toHaveBeenCalled();
-        expect(easeelService.placeEaselLetters).toHaveBeenCalled();
-    });
-    it('changer letter should call reffillEasel() and reset all variables', () => {
-        easeelService.easelLetters = [
-            { index: 0, letters: S },
-            { index: 1, letters: S },
-            { index: 2, letters: S },
-            { index: 3, letters: S },
-            { index: 4, letters: S },
-            { index: 5, letters: S },
-            { index: 6, letters: S },
-        ];
-        spyOn(service, 'wordInEasel').and.callFake(() => {
-            return true;
-        });
-
         service.changeLetterFromReserve('s');
         expect(easeelService.refillEasel).toHaveBeenCalled();
         expect(easeelService.placeEaselLetters).toHaveBeenCalled();
-    });
-    it('changer letter should call reffillEasel() and reset all variables', () => {
-        easeelService.easelLetters = [
-            { index: 0, letters: S },
-            { index: 1, letters: S },
-            { index: 2, letters: S },
-            { index: 3, letters: S },
-            { index: 4, letters: S },
-            { index: 5, letters: S },
-            { index: 6, letters: S },
-        ];
-        spyOn(service, 'wordInEasel').and.callFake(() => {
-            return false;
-        });
-        const spyOnResetVariable = spyOn(service, 'resetVariables');
-
-        service.changeLetterFromReserve('s');
-        expect(easeelService.refillEasel).toHaveBeenCalled();
-        expect(spyOnResetVariable).toHaveBeenCalled();
     });
 
     // test resetVariable();
