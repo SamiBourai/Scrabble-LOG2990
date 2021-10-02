@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
-import { NOT_A_LETTER } from '@app/constants/constants';
-import { BehaviorSubject } from 'rxjs';
-import { EaselLogiscticsService } from './easel-logisctics.service';
+import { MINUTE_TURN, NUMBER_COMPARED, NUMBER_TO_COMPARE, ONE_MINUTE, ONE_SECOND, TIME_OF_VR, VR_TIME_PASS_TURN } from '@app/constants/constants';
 import { MessageService } from './message.service';
-import { ReserveService } from './reserve.service';
 import { VirtualPlayerService } from './virtual-player.service';
 @Injectable({
     providedIn: 'root',
 })
 export class UserService {
-    // ici nous avons pas le choix que de declarer name as any, car local storage retourne string | null
+    // ici nous avons pas le choix que de declarer userNameLocalStorage as any, car local storage retourne string | null
     // alors ici on deux option : c'est soit on
     // Set strictNullChecks=false in tsconfig.json.
-    // Declare your variable type as any
+    //  ou Declare your variable type as any
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
@@ -26,17 +23,11 @@ export class UserService {
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
-    realUserTurn: BehaviorSubject<boolean>;
+    // realUserTurn: BehaviorSubject<boolean>;
 
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-    constructor(
-        private messageService: MessageService,
-        private virtualPlayerService: VirtualPlayerService,
-        private reserveService: ReserveService,
-        private easelLogiscticsService: EaselLogiscticsService,
-    ) {
-        // private vrPlayerService: VirtualPlayerService
+    constructor(private messageService: MessageService, private virtualPlayerService: VirtualPlayerService) {
         const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
@@ -46,7 +37,6 @@ export class UserService {
             firstToPlay: first, // if true le realuser va commencer sinon c'est vrUser va commencer
             turnToPlay: first,
         };
-        this.realUserTurn = new BehaviorSubject(this.realUser.turnToPlay);
 
         this.vrUser = {
             name: this.chooseRandomName(),
@@ -59,18 +49,13 @@ export class UserService {
     }
 
     chooseFirstToPlay(): boolean {
-        // si le chiffre retournee est 0, alors c'est le real player qui commence
-        if (this.getRandomInt(20) <= 10) {
+        if (this.getRandomInt(NUMBER_TO_COMPARE) <= NUMBER_COMPARED) {
             return false;
         } else {
-            // sinon si ce qui est retourne est 1 alors c'est vr-player qui commence
             return true;
         }
     }
 
-    get turnOfVrPlayer(): BehaviorSubject<boolean> {
-        return this.realUserTurn;
-    }
     getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
     }
@@ -80,9 +65,8 @@ export class UserService {
 
         for (;;) {
             randomInteger = this.getRandomInt(3);
-            console.log('nom pige : ' + randomInteger);
 
-            if (this.vrPlayerNames[randomInteger] == localStorage.getItem('userName')) {
+            if (this.vrPlayerNames[randomInteger] === localStorage.getItem('userName')) {
                 continue;
             } else break;
         }
@@ -104,52 +88,48 @@ export class UserService {
 
     startTimer() {
         if (this.realUser.turnToPlay) {
-            console.log('tour du user de jouer' + this.realUser.turnToPlay);
-            this.counter = { min: 0, sec: 59 };
             this.realUser.turnToPlay = false;
+            this.counter = { min: 0, sec: MINUTE_TURN };
             this.time = this.counter.sec;
-            this.skipTurn();
         } else {
-            this.counter = { min: 0, sec: 20 };
+            this.counter = { min: 0, sec: VR_TIME_PASS_TURN };
             this.virtualPlayerService.manageVrPlayerActions();
             this.realUser.turnToPlay = true;
             this.time = this.counter.sec;
-
-            this.skipTurn();
         }
-        this.realUserTurn.next(this.realUser.turnToPlay);
+
         const intervalId = setInterval(() => {
             if (this.vrSkipingTurn) {
-                this.counter = this.setCounter(0, 59);
+                this.counter = this.setCounter(0, MINUTE_TURN);
                 this.vrSkipingTurn = false;
 
-                // this.time = this.counter.sec;
+                this.time = this.counter.sec;
                 clearInterval(intervalId);
-                this.startTimer(); // command
+                this.startTimer();
             }
             if (this.userSkipingTurn) {
-                this.counter = this.setCounter(0, 20);
+                this.counter = this.setCounter(0, VR_TIME_PASS_TURN);
+                this.time = this.counter.sec;
                 this.realUser.turnToPlay = false;
                 this.userSkipingTurn = false;
                 clearInterval(intervalId);
-                this.startTimer(); // command
+                this.startTimer();
             }
-            if (this.counter.sec < 17 && this.virtualPlayerService.played) {
-                this.counter = this.setCounter(0, 59);
+            if (this.counter.sec < TIME_OF_VR && this.virtualPlayerService.played) {
+                this.counter = this.setCounter(0, MINUTE_TURN);
                 this.realUser.turnToPlay = true;
-                this.time = 59;
-                this.resetPassesCounter();
+                this.time = MINUTE_TURN;
             }
-            if (this.counter.sec - 1 === -1) {
-                this.counter.min -= 1;
-                this.counter.sec = 59;
-            } else this.counter.sec -= 1;
+            if (this.counter.sec - ONE_MINUTE === -ONE_MINUTE) {
+                this.counter.min -= ONE_MINUTE;
+                this.counter.sec = MINUTE_TURN;
+            } else this.counter.sec -= ONE_MINUTE;
 
             if (this.counter.min === 0 && this.counter.sec === 0) {
                 clearInterval(intervalId);
-                this.startTimer(); // command
+                this.startTimer();
             }
-        }, 1000);
+        }, ONE_SECOND);
     }
 
     setCounter(min: number, sec: number): { min: number; sec: number } {
@@ -157,53 +137,12 @@ export class UserService {
         return counter;
     }
     skipTurnValidUser(): boolean {
-        if (this.time === 59) return true;
-
+        if (this.time === MINUTE_TURN) return true;
         return false;
     }
     detectSkipTurnBtn(): boolean {
         this.messageService.skipTurnIsPressed = true;
         this.userSkipingTurn = true;
         return true;
-    }
-
-    skipTurn() {
-        this.passesCounter++;
-        console.log('asdfasdfa', this.passesCounter);
-    }
-
-    resetPassesCounter() {
-        this.passesCounter = 0;
-        console.log('reset worked');
-    }
-
-    isGameOver() {
-        if (this.passesCounter === 6 || this.reserveService.isReserveEmpty()) {
-            this.endGame();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    endGame() {
-        clearInterval(this.intervalId);
-        this.lettersRemainingEasel();
-    }
-
-    lettersRemainingEasel() {
-        for (let i = 0; i < this.easelLogiscticsService.easelLetters.length; i++) {
-            if (this.easelLogiscticsService.easelLetters[i].letters.charac != NOT_A_LETTER.charac) {
-                this.realUser.score -= this.easelLogiscticsService.easelLetters[i].letters.score;
-            }
-        }
-        if (this.realUser.score < 0) this.realUser.score = 0;
-
-        for (let i = 0; i < this.virtualPlayerService.vrPlayerEaselLetters.length; i++) {
-            if (this.virtualPlayerService.vrPlayerEaselLetters[i].charac != NOT_A_LETTER.charac) {
-                this.vrUser.score -= this.virtualPlayerService.vrPlayerEaselLetters[i].score;
-            }
-        }
-        if (this.vrUser.score < 0) this.vrUser.score = 0;
     }
 }

@@ -6,12 +6,17 @@ import {
     BLUE_BOX,
     BOARD_HEIGHT,
     BOARD_WIDTH,
+    CLEAR_RECT_FIX,
     CTX_PX,
+    EASEL_LENGTH,
+    FOURTY,
     HAND_POSITION_END,
     HAND_POSITION_START,
+    INDEX_WORD,
     LEFTSPACE,
     NB_LETTER_HAND,
     NB_TILES,
+    PARAMETERS_OF_SWAP,
     PINK_BOX,
     RED_BOX,
     TOPSPACE,
@@ -26,7 +31,6 @@ export class GridService {
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
 
-    // TODO : pas de valeurs magiques!! Faudrait avoir une meilleure manière de le faire
     drawGrid() {
         this.gridContext.beginPath();
         this.gridContext.strokeStyle = 'black';
@@ -97,8 +101,8 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
-                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + BOARD_HEIGHT / 40 + i * 10,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / INDEX_WORD,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + BOARD_HEIGHT / FOURTY + i * PARAMETERS_OF_SWAP,
                     BOARD_WIDTH / NB_TILES,
                 );
             }
@@ -119,8 +123,8 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
-                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + BOARD_HEIGHT / 40 + i * 10,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / INDEX_WORD,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + BOARD_HEIGHT / FOURTY + i * PARAMETERS_OF_SWAP,
                     BOARD_WIDTH / NB_TILES,
                 );
             }
@@ -141,8 +145,8 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
-                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + this.height / 40 + i * 10,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / INDEX_WORD,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + this.height / FOURTY + i * PARAMETERS_OF_SWAP,
                     BOARD_WIDTH / NB_TILES,
                 );
             }
@@ -163,8 +167,8 @@ export class GridService {
             for (let i = 0; i < array.length; i++) {
                 this.gridContext.fillText(
                     array[i],
-                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / 4,
-                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + this.height / 40 + i * 10,
+                    LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES + BOARD_WIDTH / NB_TILES / INDEX_WORD,
+                    TOPSPACE + (v.y * BOARD_HEIGHT) / NB_TILES + this.height / FOURTY + i * PARAMETERS_OF_SWAP,
                     BOARD_WIDTH / NB_TILES,
                 );
             }
@@ -178,12 +182,13 @@ export class GridService {
         img.onload = () => {
             this.gridContext.drawImage(
                 img,
-                LEFTSPACE + (7 * BOARD_WIDTH) / NB_TILES + 2,
-                TOPSPACE + (7 * BOARD_WIDTH) / NB_TILES + 2,
-                BOARD_WIDTH / NB_TILES - 5,
-                BOARD_HEIGHT / NB_TILES - 5,
+                LEFTSPACE + (EASEL_LENGTH * BOARD_WIDTH) / NB_TILES + 2,
+                TOPSPACE + (EASEL_LENGTH * BOARD_WIDTH) / NB_TILES + 2,
+                BOARD_WIDTH / NB_TILES - CLEAR_RECT_FIX,
+                BOARD_HEIGHT / NB_TILES - CLEAR_RECT_FIX,
             );
         };
+        return img;
     }
 
     get width(): number {

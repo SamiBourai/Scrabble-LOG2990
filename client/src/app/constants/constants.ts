@@ -3,12 +3,20 @@ import { Vec2 } from '@app/classes/vec2';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
 
+// user-service
+export const NUMBER_COMPARED = 20;
+export const NUMBER_TO_COMPARE = 10;
+export const MINUTE_TURN = 59;
+export const VR_TIME_PASS_TURN = 20;
+export const ONE_SECOND = 1000;
+export const TIME_OF_VR = 17;
+export const ONE_MINUTE = 1;
 // word-point-service
 export const BONUS_WORD_LENGTH = 7;
 export const BONUS_POINTS_50 = 25;
 export const MAX_LINES = 15;
 export const MIN_LINES = 0;
-
+export const UNDEFINED_INDEX = -1;
 // grid-service
 export const BOARD_WIDTH = 800;
 export const BOARD_HEIGHT = 800;
@@ -61,7 +69,7 @@ export const CLEAR_RECT_FIX = 5;
 // userService
 export const intervalId = 0;
 // play-area
-export const usedBonus: Vec2[] = [];
+
 // virtual-player- service
 export const MAX_INDEX_NUMBER_EASEL = 6;
 export const MAX_INDEX_NUMBER_PROBABILITY_ARRAY = 9;
@@ -76,7 +84,7 @@ export const INITIAL_BOX_Y = 8;
 export const ASCI_CODE_A = 97;
 export const WAIT_TIME_3_SEC = 3000;
 export const DEFAULT_POS = -1;
-export const NUMBER__RANGE_BOXES = 14;
+export const NUMBER_RANGE_BOXES = 14;
 
 // grid
 export const RED_BOX: Vec2[] = [
@@ -153,6 +161,7 @@ export const PINK_BOX: Vec2[] = [
 // the length of the command !placer and !echanger
 export const PLACE_LENGTH = 7;
 export const SWAP_LENGTH = 9;
+export const SIX = 6;
 
 // the index for cut the (!placer) and only keep the parameters
 export const INDEX_OF_PLACE_PARAMETERS = 8;
@@ -189,3 +198,4 @@ export const LAST_INDEX_ORIENTATION = 3;
 export const MIN_SWAP_LENGTH = 8;
 // for get the parametre of the command !echanger. ex: !echanger as => as
 export const PARAMETERS_OF_SWAP = 10;
+export const FOURTY = 40;

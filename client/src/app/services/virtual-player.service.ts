@@ -13,11 +13,12 @@ import {
     MAX_INDEX_NUMBER_PROBABILITY_ARRAY,
     NB_TILES,
     NOT_A_LETTER,
-    NUMBER__RANGE_BOXES,
+    NUMBER_RANGE_BOXES,
     SEVEN_POINTS,
     SIX_POINTS,
     THIRTEEN_POINTS,
     TWELVE_POINTS,
+    UNDEFINED_INDEX,
     WAIT_TIME_3_SEC,
     ZERO_POINTS,
 } from '@app/constants/constants';
@@ -33,10 +34,12 @@ export class VirtualPlayerService {
     vrPlayerEaselLetters: Letter[] = [];
     first: boolean = true;
     commandToSend: string = '';
+    // eslint-disable-next-line no-invalid-this
     commandObs = new BehaviorSubject<string>(this.commandToSend);
     playObs = new BehaviorSubject(false);
     vrPoints: number = 0;
     isDicFille: boolean = false;
+    // eslint-disable-next-line no-invalid-this
     vrScoreObs = new BehaviorSubject(this.vrPoints);
     played: boolean = false;
     vrEaselSize: number = EASEL_LENGTH;
@@ -104,8 +107,8 @@ export class VirtualPlayerService {
                             this.foundLetter.fill(false);
                         }
                     } else {
-                        this.getLetterForEachLine('h');
-                        if (!this.wordPlacedInScrable) this.getLetterForEachLine('v');
+                        this.getLetterForRange('h', this.lettersService.tiles);
+                        if (!this.wordPlacedInScrable) this.getLetterForRange('v', this.lettersService.tiles);
                     }
                     this.wordPlacedInScrable = false;
                 }, WAIT_TIME_3_SEC);
@@ -162,6 +165,8 @@ export class VirtualPlayerService {
         pos.fill(false);
         let validWord = false;
         alreadyInBoard.splice(1, EASEL_LENGTH);
+        // need index for pos i
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let j = 0; j < alreadyInBoard.length; j++) {
             for (let i = 0; i < word.length; i++) {
                 if (word.charAt(i) === alreadyInBoard[j].charac && !pos[i]) {
@@ -213,7 +218,7 @@ export class VirtualPlayerService {
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         this.probWordScore = probability[randomIndex];
     }
-    private getLetterForEachLine(direction: string): void {
+    private getLetterForRange(direction: string, tiles: Letter[][]): void {
         const lett: Letter[] = [];
         const letterIngrid: Letter[] = [];
         let notEmpty = false;
@@ -230,11 +235,11 @@ export class VirtualPlayerService {
                     y = i;
                     x = j;
                 }
-                if (this.lettersService.tiles[y][x]?.charac !== NOT_A_LETTER.charac) {
+                if (tiles[y][x]?.charac !== NOT_A_LETTER.charac) {
                     notEmpty = true;
-                    letterIngrid.push(this.lettersService.tiles[y][x]);
+                    letterIngrid.push(tiles[y][x]);
                 }
-                lett.push(this.lettersService.tiles[y][x]);
+                lett.push(tiles[y][x]);
             }
             if (notEmpty) found = this.findPlacement(lett, letterIngrid, direction, x, y);
 
@@ -250,25 +255,25 @@ export class VirtualPlayerService {
     }
     private findPlacement(lett: Letter[], letterIngrid: Letter[], direction: string, x: number, y: number): boolean {
         let found = false;
-        let regEx;
-        let words: string[] = [];
-        regEx = new RegExp(this.validWordService.generateRegEx(lett), 'g');
-        words = this.generateWords(letterIngrid);
+        const regEx = new RegExp(this.validWordService.generateRegEx(lett), 'g');
+        const words: string[] = this.generateWords(letterIngrid);
+        // we need index
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let k = 0; k < words.length; k++) {
             if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
                 const position: Vec2 = { x: 0, y: 0 };
                 const pos = this.placeVrLettersInScrable(words[k], lett);
 
-                if (pos != -1) {
+                if (pos !== UNDEFINED_INDEX) {
                     let tempCommand: ChatCommand;
                     if (direction === 'v') tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction };
                     else tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction };
 
                     this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
-                    if (this.vrPoints != 0) {
+                    if (this.vrPoints !== 0) {
                         this.commandToSend =
                             '!placer ' +
-                            String.fromCharCode(97 + (tempCommand.position.y - 1)) +
+                            String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
                             tempCommand.position.x +
                             tempCommand.direction +
                             ' ' +
@@ -325,7 +330,7 @@ export class VirtualPlayerService {
                 }
                 if (j === word.length - 1 && equal)
                     if (
-                        i + j !== NUMBER__RANGE_BOXES &&
+                        i + j !== NUMBER_RANGE_BOXES &&
                         boarLetters[i + j + 1].charac === NOT_A_LETTER.charac &&
                         i !== 0 &&
                         boarLetters[i - 1].charac === NOT_A_LETTER.charac

@@ -34,7 +34,7 @@ export class EaselLogiscticsService {
         for (const lett of this.easelLetters) {
             const img = new Image();
             img.src = lett.letters.img;
-            if (this.occupiedPos[lett.index] == false && !this.reserveService.isReserveEmpty()) {
+            if (this.occupiedPos[lett.index] === false && !this.reserveService.isReserveEmpty()) {
                 img.onload = () => {
                     this.occupiedPos[lett.index] = true;
 
@@ -76,7 +76,6 @@ export class EaselLogiscticsService {
                 found = false;
 
                 for (let j = 0; j < EASEL_LENGTH; j++) {
-                    // console.log(this.easelLetters[j]);
                     if (word.charAt(i) === this.easelLetters[j].letters.charac && this.foundLetter[j] === false) {
                         this.foundLetter[j] = true;
                         this.index.push(j);
@@ -111,8 +110,7 @@ export class EaselLogiscticsService {
     }
 
     isEaselEmpty(): boolean {
-        //check if this is the right condition
-        for (let pos of this.occupiedPos) {
+        for (const pos of this.occupiedPos) {
             if (pos === true) {
                 return false;
             }

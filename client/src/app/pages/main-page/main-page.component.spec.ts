@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
@@ -11,6 +12,9 @@ describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let communicationServiceSpy: SpyObj<CommunicationService>;
+    const mockDialogRef = {
+        open: jasmine.createSpy('open'),
+    };
 
     beforeEach(async () => {
         communicationServiceSpy = jasmine.createSpyObj('ExampleService', ['basicGet', 'basicPost']);
@@ -20,7 +24,10 @@ describe('MainPageComponent', () => {
         await TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule, AppMaterialModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: CommunicationService, useValue: communicationServiceSpy }],
+            providers: [
+                { provide: CommunicationService, useValue: communicationServiceSpy },
+                { provide: MatDialog, useValue: mockDialogRef },
+            ],
         }).compileComponents();
     });
 
@@ -37,14 +44,13 @@ describe('MainPageComponent', () => {
     it("should have as title 'LOG2990'", () => {
         expect(component.title).toEqual('LOG2990');
     });
-
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(communicationServiceSpy.basicGet).toHaveBeenCalled();
-    });
-
     it('should call basicPost when calling sendTimeToServer', () => {
         component.sendTimeToServer();
         expect(communicationServiceSpy.basicPost).toHaveBeenCalled();
+    });
+
+    it('should open on openDialog', () => {
+        component.openDialog();
+        expect(mockDialogRef.open).toHaveBeenCalled();
     });
 });

@@ -60,7 +60,7 @@ export class LettersService {
     placeLetter(lett: Letter, pos: Vec2): void {
         if (this.tiles[pos.y - 1][pos.x - 1].charac === NOT_A_LETTER.charac) {
             this.tiles[pos.y - 1][pos.x - 1] = lett;
-            console.log('LETTRE DU MOT PLACER: ', this.tiles[pos.y - 1][pos.x - 1]);
+
             const imgLetter = new Image();
             imgLetter.src = lett.img;
             imgLetter.onload = () => {
@@ -102,13 +102,10 @@ export class LettersService {
                     }
                 }
             } else {
-                //window.alert('votre mot ne contient pas les lettres dans le chavlet');
-                console.log('votre mot ne contient pas les lettres dans le chavlet');
-                //this.insideEasel = false;
                 break;
             }
         }
-        console.log(found + ': found');
+
         return found;
     }
     changeLetterFromReserve(letterToChange: string): boolean {
@@ -177,9 +174,9 @@ export class LettersService {
         // console.log('direction : ' + command.direction);
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
-                saveLetter = this.tiles[command.position.y - 1][command.position.x - 1 + i]!.charac;
+                saveLetter = this.tiles[command.position.y - 1][command.position.x - 1 + i].charac;
             } else if (command.direction === 'v') {
-                saveLetter = this.tiles[command.position.y - 1 + i][command.position.x - 1]!.charac;
+                saveLetter = this.tiles[command.position.y - 1 + i][command.position.x - 1].charac;
             }
 
             if (saveLetter === command.word.charAt(i)) {
@@ -205,6 +202,7 @@ export class LettersService {
         }
         return letters;
     }
+    // eslint-disable-next-line complexity
     getTheLetter(char: string): Letter {
         switch (char) {
             case 'a': {
@@ -289,6 +287,7 @@ export class LettersService {
         return NOT_A_LETTER;
     }
 
+    // eslint-disable-next-line complexity
     wordIsAttached(command: ChatCommand): boolean {
         if (
             command.direction === 'h' &&

@@ -1,16 +1,29 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
-import { EaselLogiscticsService } from './easel-logisctics.service';
-import { ReserveService } from './reserve.service';
 import { UserService } from './user.service';
+import { VirtualPlayerService } from './virtual-player.service';
 
-fdescribe('UserService', () => {
+describe('UserService', () => {
     let userService: UserService;
-    let reserveService: ReserveService;
-    let easelLogiscticsService: EaselLogiscticsService;
+
+    let vrPlayerService: jasmine.SpyObj<VirtualPlayerService>;
 
     beforeEach(() => {
+        vrPlayerService = jasmine.createSpyObj('EaselLogiscticsService', ['manageVrPlayerActions']);
+
+        vrPlayerService.manageVrPlayerActions.and.returnValue();
+
+        TestBed.configureTestingModule({
+            providers: [{ provide: VirtualPlayerService, useValue: vrPlayerService }],
+        });
+
+        vrPlayerService = jasmine.createSpyObj('VirtualPlayerService', ['manageVrPlayerActions']);
+
         TestBed.configureTestingModule({});
         userService = TestBed.inject(UserService);
+
+        vrPlayerService = TestBed.inject(VirtualPlayerService) as jasmine.SpyObj<VirtualPlayerService>;
     });
 
     it('should be created', () => {
@@ -18,9 +31,11 @@ fdescribe('UserService', () => {
     });
     // test of getRandomInt() function
     it('getRandomInt should return a number >= to 0 and < max number ex :(0<=number<max number)', () => {
-        let randomInt_1: number = userService.getRandomInt(5);
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const randomInt_1: number = userService.getRandomInt(5);
         expect(randomInt_1).toBeLessThan(5);
-        let randomInt_2: number = userService.getRandomInt(10);
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const randomInt_2: number = userService.getRandomInt(10);
         expect(randomInt_2).toBeLessThan(10);
     });
 
@@ -68,6 +83,17 @@ fdescribe('UserService', () => {
         expect(playerName).toEqual('Bobby1234');
     });
 
+    it('chooseRandomName should continue and not choose name', () => {
+        spyOn(Object.getPrototypeOf(localStorage), 'getItem');
+        spyOn(userService, 'getRandomInt').and.callFake(() => {
+            return 0;
+        });
+        userService.vrPlayerNames = ['Bobby1234', 'Martin1234', 'Momo1234'];
+        localStorage.setItem('userName', 'Bobby1234');
+        const name: string = userService.chooseRandomName();
+        expect(name).not.toEqual('');
+    });
+
     // startTime() tests
 
     it('test if real user is first to play. should get counter = 59 sec and time=59 sec', () => {
@@ -75,12 +101,6 @@ fdescribe('UserService', () => {
         userService.startTimer();
         expect(userService.counter.sec).toBe(59);
         expect(userService.time).toBe(59);
-    });
-    it('test if real user is second to play. should get counter = 20 sec and time=20 sec', () => {
-        userService.realUser.firstToPlay = false;
-        userService.startTimer();
-        expect(userService.counter.sec).toBe(20);
-        expect(userService.time).toBe(20);
     });
 
     it('test if vr skip turn . should get counter = 59 sec and time=59 sec', (done) => {
@@ -108,11 +128,11 @@ fdescribe('UserService', () => {
     });
 
     it('test second get decreased, should get counter.sec=59', (done) => {
-        //userService.counter.sec=-1;
+        // userService.counter.sec=-1;
         userService.vrSkipingTurn = false;
         userService.userSkipingTurn = false;
         spyOn(userService, 'setCounter').and.callFake(() => {
-            return { min: 0, sec: 0 };
+            return { min: 0, sec: 1 };
         });
         userService.startTimer();
 
@@ -128,6 +148,7 @@ fdescribe('UserService', () => {
         spyOn(userService, 'setCounter').and.callFake(() => {
             return { min: 0, sec: 1 };
         });
+
         userService.startTimer();
 
         setTimeout(() => {

@@ -1,3 +1,7 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { A, B, E, L, NOT_A_LETTER, R, T, U } from '@app/constants/constants';
@@ -30,9 +34,8 @@ describe('EaselLogiscticsService', () => {
             expect(service.occupiedPos[i]).toEqual(false);
         }
     });
-    //placeEaselLetter()
+    // placeEaselLetter()
     it('place letter in Easel should call drawImag() n time, where n=sizeOfEaselLetter n=7', (done) => {
-        //let vector:Vec2={x:1,y:1};
         const drawImageSpy = spyOn(service.gridContext, 'drawImage');
         service.easelLetters = [
             { index: 0, letters: B },
@@ -51,31 +54,13 @@ describe('EaselLogiscticsService', () => {
         }, 1000);
     });
 
-    // test deletLetterFromEasel()
-    //   it('test delete letter from the Easel, occupiedPos should be false after delete',()=>{
-    //     service.occupiedPos= [false, true, false, false, false, false, false];
-    //     service.easelLetters[1].index=1;
-    //     service.deleteletterFromEasel(service.easelLetters[1]);
-    //     expect(service.occupiedPos[1]).toEqual(false);
-    //   });
-    // test isFull()
-    //   it('Array of position is empty, isFull should return false',()=>{
-    //     service.occupiedPos= [false, false, false, false, false, false, false];
-    //     expect(service.isFull()).toBeFalsy();
-    //   });
-
-    //   it('Array of position is full, isFull should return true',()=>{
-    //     service.occupiedPos= [true, true, true, true, true, true, true];
-    //     expect(service.isFull()).toBeTruthy();
-    //   });
-
     // test getLetterFromEasel
     it('should return NOT_A_LATTEE, because easel is all empty', () => {
         service.occupiedPos = [false, false, false, false, false, false, false];
         expect(service.getLetterFromEasel(0)).toEqual(NOT_A_LETTER);
     });
 
-    it('should return a letter from the easel and call clearRect to clear the letter from the Easel and set the occupied index to false after the clearing', () => {
+    it('should return letter from easel and call clearRect', () => {
         service.occupiedPos = [true, true, true, true, true, true, true];
         service.easelLetters = [
             { index: 0, letters: B },
@@ -87,12 +72,12 @@ describe('EaselLogiscticsService', () => {
             { index: 6, letters: E },
         ];
         const clearRectSpy = spyOn(service.gridContext, 'clearRect').and.callThrough();
-        expect(service.getLetterFromEasel(0)).toEqual(B);
+        service.getLetterFromEasel(0);
         expect(service.occupiedPos[0]).toBeFalse();
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
-    //test wordOnEasel()
+    // test wordOnEasel()
 
     it('test word (Bruttale) in Easel, all (Brutale) letter are thr easel, wordInEasel expected to return True', () => {
         service.foundLetter = [false, false, false, false, false, false, false];
@@ -182,7 +167,17 @@ describe('EaselLogiscticsService', () => {
         const spyOnPlaceEaselLetter = spyOn<any>(service, 'placeEaselLetters');
         service.refillEasel();
 
-        expect(service.easelSize).toEqual(7);
+        expect(service.easelSize).toEqual(0);
         expect(spyOnPlaceEaselLetter).toHaveBeenCalled();
+    });
+
+    it('Should return false on isEaselEmpty', () => {
+        service.occupiedPos = [true, true, true, true, true, true, true];
+        expect(service.isEaselEmpty()).toBeFalse();
+    });
+
+    it('Should return true on isEaselEmpty', () => {
+        service.occupiedPos = [false, false, false, false, false, false, false];
+        expect(service.isEaselEmpty()).toBeTrue();
     });
 });

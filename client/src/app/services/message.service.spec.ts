@@ -1,3 +1,7 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { MessageService } from './message.service';
 
@@ -117,9 +121,6 @@ describe('MessageService', () => {
             return true;
         });
         expect(service.isValid(command)).toBeTrue();
-        // expect(spy).toHaveBeenCalled();
-        // expect(service.containsPlaceCommand(command)).toBeTrue()
-        // expect(command.length != PLACE_LENGTH).toBeTrue();
     });
 
     it('confirm if the command is valid when it contains the swap command with the valid parameters', () => {
@@ -177,12 +178,12 @@ describe('MessageService', () => {
 
     // test for debugCommand
     it('confirm that the input is equal to !debug', () => {
-        const command = '!debug'
+        const command = '!debug';
         expect(service.debugCommand(command)).toBeTrue();
     });
 
     it('confirm that the input is not equal to !', () => {
-        const command = '!jhd'
+        const command = '!jhd';
         expect(service.debugCommand(command)).toBeFalse();
     });
 
@@ -206,39 +207,34 @@ describe('MessageService', () => {
         const command2 = 'élève';
         expect(service.remplaceSpecialChar(command1)).toBe('cava');
         expect(service.remplaceSpecialChar(command2)).toBe('eleve');
-    })
+    });
 
-// test for swapCommand
-    it('confirm that returns the letters to swap', ()=>{
+    // test for swapCommand
+    it('confirm that returns the letters to swap', () => {
         const command = '!echanger es';
         expect(service.swapCommand(command)).toBe('es');
     });
 
-    it('confirm that returns the letters to swap', ()=>{
+    it('confirm that returns the letters to swap', () => {
         const command = '!echange';
         expect(service.swapCommand(command)).toBe('');
     });
 
-    //test for getLineNumber
-    it('confirm that transform char to number', ()=>{
+    // test for getLineNumber
+    it('confirm that transform char to number', () => {
         const char = 'a';
         expect(service.getLineNumber(char)).toBe(1);
     });
 
-    it('confirm that a certain command is a part of a array of string', ()=>{
-        const command = '!placer h12h mot'
+    it('confirm that a certain command is a part of a array of string', () => {
+        const command = '!placer h12h mot';
         const arrayOfCommand = ['!passer', '!placer', '!echanger'];
-        expect(service.isSubstring(command,arrayOfCommand)).toBeTrue()
+        expect(service.isSubstring(command, arrayOfCommand)).toBeTrue();
     });
 
-    it('confirm that a certain command is not a part of a array of string', ()=>{
-        const command = 'gth'
+    it('confirm that a certain command is not a part of a array of string', () => {
+        const command = 'gth';
         const arrayOfCommand = ['!passer', '!placer', '!echanger'];
-        expect(service.isSubstring(command,arrayOfCommand)).toBeFalse()
+        expect(service.isSubstring(command, arrayOfCommand)).toBeFalse();
     });
-
-    //revoi isSubstring ta oublie cm ca fonctionne
-
-
 });
-

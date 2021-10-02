@@ -1,7 +1,7 @@
-/* eslint-disable dot-notation /
-/ eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
-import { A, B, S, usedBonus } from '@app/constants/constants';
+import { A, B, S } from '@app/constants/constants';
 import { WordPointsService } from './word-points.service';
 
 describe('WordPointsService', () => {
@@ -10,6 +10,7 @@ describe('WordPointsService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(WordPointsService);
+        service.usedBonus = [];
     });
 
     it('should be created', () => {
@@ -68,7 +69,7 @@ describe('WordPointsService', () => {
     });
 
     it('a bonus is used', () => {
-        usedBonus.push({ x: 0, y: 0 });
+        service.usedBonus.push({ x: 0, y: 0 });
         const test = { x: 0, y: 0 };
 
         const isUsed = service['isUsedBonus'](test);

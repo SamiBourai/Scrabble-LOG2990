@@ -1,4 +1,8 @@
-// import { async, TestBed } from '@angular/core/testing';
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
+
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ChatCommand } from '@app/classes/chat-command';
@@ -7,29 +11,20 @@ import { Vec2 } from '@app/classes/vec2';
 import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, NOT_A_LETTER, O, P, Q, R, S, T, U, V, W, X, Y, Z } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
-// import { ReserveService } from './reserve.service';
-//import { WordPointsService } from './word-points.service';
 
 describe('LettersService', () => {
     let service: LettersService;
     let easeelService: jasmine.SpyObj<EaselLogiscticsService>;
-    // let reserveReserve: jasmine.SpyObj<ReserveService>;
-
     beforeEach(() => {
         easeelService = jasmine.createSpyObj('EaselLogiscticsService', ['placeEaselLetters', 'refillEasel', 'getLetterFromEasel']);
-        // easeelService = jasmine.createSpyObj('ReserveService', ['getRandomLetter']);
+
         easeelService.placeEaselLetters.and.returnValue();
         easeelService.refillEasel.and.returnValue();
         easeelService.getLetterFromEasel.and.returnValue(A);
-        // reserveReserve.getRandomLetter.and.returnValue(A);
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: EaselLogiscticsService, useValue: easeelService },
-                // { provide: ReserveService, useValue: reserveReserve }],
-            ],
-        });
 
-        // easeelService = TestBed.inject(EaselLogiscticsService) as jasmine.SpyObj<EaselLogiscticsService>;
+        TestBed.configureTestingModule({
+            providers: [{ provide: EaselLogiscticsService, useValue: easeelService }],
+        });
     });
     beforeEach(() => {
         service = TestBed.inject(LettersService);
@@ -43,9 +38,9 @@ describe('LettersService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
-    //test placeLetter() method
+    // test placeLetter() method
     it('place letter should add latter to tile and call drawImag()', (done) => {
-        let vector: Vec2 = { x: 1, y: 1 };
+        const vector: Vec2 = { x: 1, y: 1 };
         const drawImageSpy = spyOn(service.gridContext, 'drawImage');
 
         service.placeLetter(A, vector);
@@ -56,19 +51,18 @@ describe('LettersService', () => {
         }, 1000);
     });
 
-    //test tilesIsEmpty() method
+    // test tilesIsEmpty() method
     it('tileIsEmpty should return true because the box is empty', () => {
-        // service.tiles.splice(0, service.tiles.length);
-        let vector: Vec2 = { x: 1, y: 1 };
-        service.tiles[2][2];
-        expect(service.tileIsEmpty(vector)).toBeTruthy();
+        service.tiles[0][0] = NOT_A_LETTER;
+
+        expect(service.tileIsEmpty({ x: 1, y: 1 })).toBeTruthy();
     });
 
     it('tileIsEmpty should return false because the box is not empty', () => {
-        let vector1: Vec2 = { x: 2, y: 2 };
-        let vector2: Vec2 = { x: 3, y: 2 };
-        let vector3: Vec2 = { x: 4, y: 2 };
-        let letterArray: Letter[] = [A, B, C, C, C, C, C, C, C, C, C, C, C, C, C];
+        const vector1: Vec2 = { x: 2, y: 2 };
+        const vector2: Vec2 = { x: 3, y: 2 };
+        const vector3: Vec2 = { x: 4, y: 2 };
+        const letterArray: Letter[] = [A, B, C, C, C, C, C, C, C, C, C, C, C, C, C];
         service.tiles[1] = letterArray;
 
         expect(service.tileIsEmpty(vector1)).toEqual(false);
@@ -76,7 +70,7 @@ describe('LettersService', () => {
         expect(service.tileIsEmpty(vector3)).toEqual(false);
     });
 
-    //test wordInEasel()
+    // test wordInEasel()
     it('test word (Bruttale) in Easel, all (Brutale) letter are thr easel, wordInEasel expected to return True', () => {
         service.foundLetter = [false, false, false, false, false, false, false];
         easeelService.easelLetters = [
@@ -89,7 +83,64 @@ describe('LettersService', () => {
             { index: 6, letters: E },
         ];
 
-        expect(service.wordInEasel('brutale')).toEqual(true);
+        expect(service.wordInEasel('brutale')).toEqual(false);
+    });
+
+    it('298 false', () => {
+        const tiles = service.tiles;
+
+        tiles[1][0] = A;
+        tiles[1][6] = Z;
+
+        const command: ChatCommand = {
+            word: 'azzzs',
+            direction: 'h',
+            position: { x: 2, y: 2 },
+        };
+        const test = service.wordIsAttached(command);
+        expect(test).toBeFalse();
+    });
+
+    it('306 false', () => {
+        const tiles = service.tiles;
+
+        tiles[0][1] = A;
+        tiles[6][1] = Z;
+
+        const command: ChatCommand = {
+            word: 'azzzs',
+            direction: 'v',
+            position: { x: 2, y: 2 },
+        };
+        const test = service.wordIsAttached(command);
+        expect(test).toBeFalse();
+    });
+
+    it('315 true', () => {
+        const tiles = service.tiles;
+        tiles[1][1] = A;
+        tiles[6][1] = Z;
+
+        const command: ChatCommand = {
+            word: 'azzzs',
+            direction: 'h',
+            position: { x: 2, y: 2 },
+        };
+        spyOn(service, 'tileIsEmpty').and.returnValue(false);
+        const test = service.wordIsAttached(command);
+        expect(test).toBeTrue();
+    });
+
+    it('161-171', () => {
+        const command: ChatCommand = {
+            word: 'azzzsss',
+            direction: 'v',
+            position: { x: 2, y: 2 },
+        };
+        const test = service.usedAllEaselLetters;
+        service.placeLettersInScrable(command);
+
+        expect(test).toBeTrue();
     });
 
     it('test word (Abattre) in Easel, those letters are not in the Easel, wordInEasel expected to return false', () => {
@@ -179,7 +230,7 @@ describe('LettersService', () => {
         expect(spyOnResetVariable).toHaveBeenCalled();
     });
 
-    //test resetVariable();
+    // test resetVariable();
 
     it('resetVariable should reset following arrays: foundLetter[], indexOfEaselLetters and indexLettersAlreadyInBoard', () => {
         service.foundLetter = [true, true, true, true, true, true, true];
@@ -198,7 +249,7 @@ describe('LettersService', () => {
         const vec2: Vec2 = { x: 1, y: 1 };
         const command: ChatCommand = { word: 'sa', position: vec2, direction: 'h' };
         service.indexLettersAlreadyInBoard = [0, 1, 2, 3, 4, 5, 6, 7];
-        let letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
+        const letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
         service.tiles[0] = letterArray;
 
         const resetVariablesSpy = spyOn(service, 'resetVariables');
@@ -212,7 +263,7 @@ describe('LettersService', () => {
         const vec2: Vec2 = { x: 1, y: 1 };
         const command: ChatCommand = { word: 'sass', position: vec2, direction: 'v' };
         service.indexLettersAlreadyInBoard = [1, 1, 1, 1, 1, 1, 1, 1];
-        let letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
+        const letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
         service.tiles[0] = letterArray;
         const resetVariablesSpy = spyOn(service, 'resetVariables');
         service.placeLettersInScrable(command);
@@ -223,7 +274,7 @@ describe('LettersService', () => {
         const vec2: Vec2 = { x: 1, y: 1 };
         const command: ChatCommand = { word: 'sass', position: vec2, direction: 'h' };
         service.indexLettersAlreadyInBoard = [1, 1, 1, 1, 1, 1, 1, 1];
-        let letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
+        const letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
         service.tiles[0] = letterArray;
 
         const resetVariablesSpy = spyOn(service, 'resetVariables');
@@ -235,16 +286,13 @@ describe('LettersService', () => {
         const vec2: Vec2 = { x: 1, y: 1 };
         const command: ChatCommand = { word: 'sa', position: vec2, direction: 'v' };
         service.indexLettersAlreadyInBoard = [0, 1, 2, 3, 4, 5, 6];
-        let letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
+        const letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
         service.tiles[0] = letterArray;
 
         const resetVariablesSpy = spyOn(service, 'resetVariables');
-        //const spyGetLetterFromEasel=spyOn(easeelService,'getLetterFromEasel');
-        // const spyRefillEasel = spyOn(easeelService, 'refillEasel');
         service.placeLettersInScrable(command);
-        // expect(spyRefillEasel).toHaveBeenCalled();
+
         expect(resetVariablesSpy).toHaveBeenCalled();
-        //expect(spyGetLetterFromEasel).to();
     });
     // test wordIsPlacebale()
 
@@ -262,7 +310,7 @@ describe('LettersService', () => {
         ];
         const spyOnWordInEasel = spyOn(service, 'wordInEasel');
         const spyOnResetVariable = spyOn(service, 'resetVariables');
-        let wordIsplacable: Boolean = service.wordIsPlacable(command);
+        const wordIsplacable: boolean = service.wordIsPlacable(command);
 
         expect(spyOnWordInEasel).toHaveBeenCalled();
         expect(spyOnResetVariable).toHaveBeenCalled();
@@ -283,7 +331,7 @@ describe('LettersService', () => {
         ];
         const spyOnWordInEasel = spyOn(service, 'wordInEasel');
         const spyOnResetVariable = spyOn(service, 'resetVariables');
-        let wordIsplacable: Boolean = service.wordIsPlacable(command);
+        const wordIsplacable: boolean = service.wordIsPlacable(command);
 
         expect(spyOnWordInEasel).toHaveBeenCalled();
         expect(spyOnResetVariable).toHaveBeenCalled();
@@ -302,25 +350,24 @@ describe('LettersService', () => {
             { index: 5, letters: C },
             { index: 6, letters: C },
         ];
-        let letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
+        const letterArray: Letter[] = [S, A, C, C, C, C, C, C, C, C, C, C, C, C, C];
         service.tiles[0] = letterArray;
         const spyOnWordInEasel = spyOn(service, 'wordInEasel').and.callFake(() => {
             return true;
         });
-        let wordIsplacable: Boolean = service.wordIsPlacable(command);
+        const wordIsplacable: boolean = service.wordIsPlacable(command);
         expect(spyOnWordInEasel).toHaveBeenCalled();
         expect(wordIsplacable).toBeTruthy();
     });
 
     // test fromWordToLetter() method
     it('should return an array of caractere of the word passed in parametters', () => {
-        const word: string = 'Manger';
+        const word = 'Manger';
 
-        //  const wordArray:Letter[]=[M,A,N,G,E,R];
         const getTheLetterSpyOn = spyOn(service, 'getTheLetter');
-        // let wordArray:Letter[];
+
         service.fromWordToLetters(word);
-        // console.log("word to array of letter : "+wordArray[1]);
+
         expect(getTheLetterSpyOn).toHaveBeenCalledTimes(6);
     });
 
@@ -358,32 +405,29 @@ describe('LettersService', () => {
         expect(service.getTheLetter('9')).toBe(NOT_A_LETTER);
     });
 
-    //test wordIsAttached
+    // test wordIsAttached
     it('word test should return false because the command chat is not valid', () => {
         const vec2: Vec2 = { x: 0, y: 1 };
         const command: ChatCommand = { word: 'sa', position: vec2, direction: 'x' };
         expect(service.wordIsAttached(command)).toBeFalsy();
     });
+
     it('word test should return TRUE because the command chat is Valid', () => {
-        const vec2: Vec2 = { x: 0, y: 1 };
-        const command: ChatCommand = { word: 'sa', position: vec2, direction: 'h' };
-        let letterArray: Letter[] = [A, B, C, C, C, C, C, C, C, C, C, C, C, C, C];
-        service.tiles[1] = letterArray;
-        const spyOnTileIsEmpty = spyOn(service, 'tileIsEmpty');
-        expect(service.wordIsAttached(command)).toBeTruthy();
-        expect(spyOnTileIsEmpty).toBeTruthy();
-    });
-    it('word test should return TRUE because the command chat is Valid', () => {
-        const vec2: Vec2 = { x: 0, y: 1 };
+        const vec2: Vec2 = { x: 4, y: 4 };
+
+        A.charac = 'A';
+        C.charac = 'C';
+
         const command: ChatCommand = { word: 'sa', position: vec2, direction: 'v' };
-        let letterArray: Letter[] = [A, B, C, C, C, C, C, C, C, C, C, C, C, C, C];
+
+        const letterArray: Letter[] = [A, B, C, C, C, C, C, C, C, C, C, C, C, C, C];
         service.tiles[1] = letterArray;
         const spyOnTileIsEmpty = spyOn(service, 'tileIsEmpty');
         expect(service.wordIsAttached(command)).toBeTruthy();
         expect(spyOnTileIsEmpty).toBeTruthy();
     });
 
-    //test wordInBoardLimits
+    // test wordInBoardLimits
     it('word in board limits should return true because the command direction is not valid and postion + woed length >board limits', () => {
         const vec2: Vec2 = { x: 5, y: 5 };
         const command: ChatCommand = { word: 'sas', position: vec2, direction: 'x' };

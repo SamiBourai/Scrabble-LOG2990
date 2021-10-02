@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { AZUR_BOX, BLUE_BOX, comparePositions, PINK_BOX, RED_BOX, usedBonus } from '@app/constants/constants';
+import { AZUR_BOX, BLUE_BOX, comparePositions, PINK_BOX, RED_BOX } from '@app/constants/constants';
 
 @Injectable({
     providedIn: 'root',
 })
 export class WordPointsService {
+    usedBonus: Vec2[] = [];
     pointsWord(word: Letter[], position: Vec2[]): number {
         let sum = 0;
         let wordMultiplier = 1;
@@ -16,28 +17,28 @@ export class WordPointsService {
             for (const i of RED_BOX) {
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
                     wordMultiplier *= 3;
-                    usedBonus.push(i);
+                    this.usedBonus.push(i);
                 }
             }
 
             for (const i of PINK_BOX) {
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
                     wordMultiplier *= 2;
-                    usedBonus.push(i);
+                    this.usedBonus.push(i);
                 }
             }
 
             for (const i of BLUE_BOX) {
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
                     score = word[letterIndex].score * 3;
-                    usedBonus.push(i);
+                    this.usedBonus.push(i);
                 }
             }
 
             for (const i of AZUR_BOX) {
                 if (this.compareVec2(position[letterIndex], i) && !this.isUsedBonus(i)) {
                     score = word[letterIndex].score * 2;
-                    usedBonus.push(i);
+                    this.usedBonus.push(i);
                 }
             }
             sum += score;
@@ -52,7 +53,7 @@ export class WordPointsService {
 
     private isUsedBonus(position: Vec2) {
         let isUsed = false;
-        for (const i of usedBonus) {
+        for (const i of this.usedBonus) {
             if (comparePositions(i, position)) {
                 isUsed = true;
             }

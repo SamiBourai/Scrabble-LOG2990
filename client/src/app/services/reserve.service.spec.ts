@@ -1,8 +1,12 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-// import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { A } from '@app/constants/constants';
 import { ReserveService } from './reserve.service';
 
-fdescribe('ReserveService', () => {
+describe('ReserveService', () => {
     let service: ReserveService;
 
     beforeEach(() => {
@@ -26,5 +30,19 @@ fdescribe('ReserveService', () => {
         service.size.subscribe((number) => {
             expect(service.reserveSize).toBe(number);
         });
+    });
+    it('reFillReserve should push letter passed in parametter in array of letter, and increment reserveSize', () => {
+        service.reFillReserve(A);
+
+        expect(service.reserveSize).toBe(116);
+    });
+
+    it('should return true, because reserve is empty', () => {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < service.letters.length; i++) {
+            service.letters.pop();
+        }
+        service.isReserveEmpty();
+        expect(service.reserveSize).not.toEqual(0);
     });
 });

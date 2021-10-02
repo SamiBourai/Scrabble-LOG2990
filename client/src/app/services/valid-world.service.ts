@@ -1,10 +1,9 @@
-/* eslint-disable no-console */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES, NOT_A_LETTER } from '@app/constants/constants';
+import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -48,17 +47,69 @@ export class ValidWordService {
         this.dictionary = letterIndexes.map(([t, h]) => new Set(words.slice(t, h)));
     }
 
+    generateRegEx(lett: Letter[]): string {
+        let concat = '(^';
+
+        let lastWasEmpty = true;
+        let spotDefine = false;
+        let metLetter = false;
+        for (let i = 0; i < lett.length; i++) {
+            if (spotDefine) {
+                const save: string = concat.slice();
+                concat += '$)|';
+                concat += save;
+                spotDefine = false;
+            }
+
+            if (lett[i].charac === NOT_A_LETTER.charac) {
+                concat += '.';
+
+                if (i !== lett.length - 1) {
+                    if (!metLetter) {
+                        concat += '?';
+                    } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                        concat += '?';
+                        spotDefine = true;
+                    } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
+                        let spaceCounter = 0;
+                        while (concat.charAt(concat.length - 1) !== '}') {
+                            if (concat.charAt(concat.length - 1) === '.') {
+                                spaceCounter++;
+                            }
+                            concat = concat.slice(0, UNDEFINED_INDEX);
+                        }
+                        for (let k = 0; k < spaceCounter; k++) concat += '.';
+                    }
+                }
+                lastWasEmpty = true;
+            } else {
+                metLetter = true;
+                concat += lett[i].charac;
+                if (i !== lett.length - 1)
+                    if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                        concat += '{1}';
+                        spotDefine = true;
+                    }
+                lastWasEmpty = false;
+            }
+        }
+        if (lastWasEmpty) {
+            concat += '?$)';
+        } else {
+            concat += '{1}$)';
+        }
+        return concat;
+    }
+
     generateAllWordsPossible(word: Letter[]): string[] {
         for (const letter of word) {
             this.concatWord += letter.charac;
         }
-        console.log(this.concatWord, 'concat');
 
         for (let i = this.concatWord.length; i >= 1; i--) {
-            let regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
+            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
 
-            // let  regexp = new RegExp('(?=['+this.concatWord+']{'+i+'})
-            // (?=(?!((?<1>.)\k<1>.)))(?=(?!((?<2>.).\k<2>)))(?=(?!(.(?<3>.)\k<3>)))(?=(?!((?<4>.)\k<4>\k<4>)))['+this.concatWord+']{'+i+'}')
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             for (const words of this.dictionary!) {
                 for (const dictionaryWord of words) {
                     if (i === dictionaryWord.length) {
@@ -96,12 +147,6 @@ export class ValidWordService {
                 this.checkBottomTopSide(positionsWordCommand, array, arrayPosition, letterIndex, usedPositionLocal);
             }
 
-            // a enlever apres
-            if (array.length !== 1) {
-                console.log(array);
-                console.log(arrayPosition);
-            }
-
             if (array.length === 1) {
                 // only one letter
                 totalPointsSum += 0;
@@ -116,7 +161,6 @@ export class ValidWordService {
                 } else {
                     this.usedWords.set(this.fromLettersToString(array), arrayPosition);
                     totalPointsSum += this.wps.pointsWord(array, arrayPosition);
-                    console.log('Points du mots lateral : ' + totalPointsSum);
                 }
             } else {
                 totalPointsSum = 0;
@@ -126,13 +170,9 @@ export class ValidWordService {
         }
 
         if (this.verifyWord(this.letterService.fromWordToLetters(command.word))) {
-            console.log(this.letterService.fromWordToLetters(command.word));
-            console.log(positionsWordCommand);
             this.usedWords.set(command.word, positionsWordCommand);
             const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand);
-            console.log('Point du  mot lui meme : ' + wordItselfPoints);
             totalPointsSum += wordItselfPoints;
-            console.log('Point total : ' + totalPointsSum);
             return totalPointsSum;
         } else {
             totalPointsSum = 0;
@@ -191,7 +231,6 @@ export class ValidWordService {
     }
 
     private getCompressedWords(): Observable<ArrayBuffer> {
-        // return this.http.get<string[]>('/assets/dictionary.json');
         return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
     }
 
@@ -215,12 +254,12 @@ export class ValidWordService {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
             } else {
+                currentPosition.x = positions[letterIndex].x - counter;
                 break;
             }
             currentPosition.x++;
             counter++;
         }
-        if (currentPosition !== undefined) currentPosition.x = positions[letterIndex].x - counter;
         counter = 0;
 
         // check left side
@@ -231,12 +270,11 @@ export class ValidWordService {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
             } else {
+                currentPosition.x = positions[letterIndex].x + counter;
                 break;
             }
             currentPosition.x--;
         }
-
-        if (currentPosition !== undefined) currentPosition.x = positions[letterIndex].x + counter;
         counter = 0;
     }
 
@@ -251,12 +289,12 @@ export class ValidWordService {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
             } else {
+                currentPosition.y = positions[letterIndex].y - counter;
                 break;
             }
             currentPosition.y++;
             counter++;
         }
-        if (currentPosition !== undefined) currentPosition.y = positions[letterIndex].y - counter;
         counter = 0;
 
         // check top side
@@ -266,65 +304,12 @@ export class ValidWordService {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
             } else {
+                currentPosition.y = positions[letterIndex].y + counter;
                 break;
             }
 
             currentPosition.y--;
         }
-
-        if (currentPosition !== undefined) currentPosition.y = positions[letterIndex].y + counter;
         counter = 0;
-    }
-    generateRegEx(lett: Letter[]): string {
-        let concat = '(^';
-
-        let lastWasEmpty = true;
-        let spotDefine = false;
-        let metLetter = false;
-        for (let i = 0; i < lett.length; i++) {
-            if (spotDefine) {
-                const save: string = concat.slice();
-                concat += '$)|';
-                concat += save;
-                spotDefine = false;
-            }
-
-            if (lett[i].charac === NOT_A_LETTER.charac) {
-                concat += '.';
-
-                if (i !== lett.length - 1) {
-                    if (!metLetter) {
-                        concat += '?';
-                    } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
-                        concat += '?';
-                        spotDefine = true;
-                    } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
-                        let spaceCounter = 0;
-                        while (concat.charAt(concat.length - 1) != '}') {
-                            if (concat.charAt(concat.length - 1) == '.') spaceCounter++;
-                            concat = concat.slice(0, -1);
-                        }
-                        for (let k = 0; k < spaceCounter; k++) concat += '.';
-                    }
-                }
-                lastWasEmpty = true;
-            } else {
-                metLetter = true;
-                concat += lett[i].charac;
-                if (i !== lett.length - 1)
-                    if (lett[i + 1].charac === NOT_A_LETTER.charac) {
-                        concat += '{1}';
-                        spotDefine = true;
-                    }
-                lastWasEmpty = false;
-            }
-        }
-        if (lastWasEmpty) {
-            concat += '?$)';
-        } else {
-            concat += '{1}$)';
-        }
-        console.log(concat);
-        return concat;
     }
 }
