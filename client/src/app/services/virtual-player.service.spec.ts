@@ -12,7 +12,7 @@ import { ReserveService } from './reserve.service';
 import { VirtualPlayerService } from './virtual-player.service';
 import SpyObj = jasmine.SpyObj;
 
-fdescribe('VirtualPlayerService', () => {
+describe('VirtualPlayerService', () => {
     let service: VirtualPlayerService;
     let validWordServiceSpy: SpyObj<ValidWordService>;
     let letterServiceSpy: SpyObj<LettersService>;
