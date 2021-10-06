@@ -34,7 +34,7 @@ export class EaselLogiscticsService {
         for (const lett of this.easelLetters) {
             const img = new Image();
             img.src = lett.letters.img;
-            if (this.occupiedPos[lett.index] === false && !this.reserveService.isReserveEmpty()) {
+            if (this.occupiedPos[lett.index] === false) {
                 img.onload = () => {
                     this.occupiedPos[lett.index] = true;
 
@@ -105,6 +105,7 @@ export class EaselLogiscticsService {
         }
         if (this.reserveService.isReserveEmpty()) {
             window.alert('*LA RESERVE EST MAINTENANT VIDE*');
+            return;
         }
         this.placeEaselLetters();
     }

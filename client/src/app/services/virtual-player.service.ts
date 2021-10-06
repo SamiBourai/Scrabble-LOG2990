@@ -13,7 +13,6 @@ import {
     MAX_INDEX_NUMBER_PROBABILITY_ARRAY,
     NB_TILES,
     NOT_A_LETTER,
-    NUMBER_RANGE_BOXES,
     SEVEN_POINTS,
     SIX_POINTS,
     THIRTEEN_POINTS,
@@ -64,7 +63,6 @@ export class VirtualPlayerService {
             'placeWord',
             'placeWord',
             'placeWord',
-            'placeWord',
             'passTurn',
             'exchangeLetters',
         ];
@@ -92,7 +90,7 @@ export class VirtualPlayerService {
                                 this.commandToSend = '';
 
                                 this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
-                                this.vrScoreObs.next(this.vrPoints);
+
                                 for (let i = 0; i < word.length; i++) {
                                     this.lettersService.placeLetter(this.lettersService.getTheLetter(word.charAt(i)), {
                                         x: INITIAL_BOX_X + i,
@@ -108,16 +106,28 @@ export class VirtualPlayerService {
                         this.getLetterForRange('h', this.lettersService.tiles);
                         if (!this.wordPlacedInScrable) this.getLetterForRange('v', this.lettersService.tiles);
                     }
+                    this.vrScoreObs.next(this.vrPoints);
                     this.wordPlacedInScrable = false;
                     this.played = true;
                 }, WAIT_TIME_3_SEC);
                 break;
 
             case 'passTurn':
+                setTimeout(() => {
+                    this.commandToSend = '!passer ';
+                    this.commandObs.next(this.commandToSend);
+                    this.commandToSend = '';
+                }, WAIT_TIME_3_SEC);
+                this.played = true;
                 break;
             case 'exchangeLetters':
-                this.exchangeLettersInEasel();
-                this.played = true;
+                setTimeout(() => {
+                    this.exchangeLettersInEasel();
+                    this.played = true;
+                }, WAIT_TIME_3_SEC);
+                this.commandToSend = '!echanger ' + this.commandToSend;
+                this.commandObs.next(this.commandToSend);
+                this.commandToSend = '';
                 break;
         }
     }
@@ -208,9 +218,6 @@ export class VirtualPlayerService {
             this.commandToSend += this.vrPlayerEaselLetters[randomIndex].charac;
             this.vrPlayerEaselLetters[randomIndex] = this.reserveService.getRandomLetter();
         }
-        this.commandToSend = '!echanger ' + this.commandToSend;
-        this.commandObs.next(this.commandToSend);
-        this.commandToSend = '';
     }
     private generateProb(): void {
         const probability: string[] = ['{0,6}', '{0,6}', '{0,6}', '{0,6}', '{7,12}', '{7,12}', '{7,12}', '{13,18}', '{13,18}', '{13,18}'];
@@ -247,7 +254,6 @@ export class VirtualPlayerService {
             lett.splice(0, lett.length);
             if (found) break;
         }
-        this.vrScoreObs.next(this.vrPoints);
     }
     get commandToSendVr(): BehaviorSubject<string> {
         return this.commandObs;
@@ -328,18 +334,15 @@ export class VirtualPlayerService {
                     break;
                 }
                 if (j === word.length - 1 && equal)
-                    if (
-                        i + j !== NUMBER_RANGE_BOXES &&
-                        boarLetters[i + j + 1].charac === NOT_A_LETTER.charac &&
-                        i !== 0 &&
-                        boarLetters[i - 1].charac === NOT_A_LETTER.charac
-                    )
+                    if (boarLetters[i + j + 1].charac === NOT_A_LETTER.charac && i !== 0 && boarLetters[i - 1].charac === NOT_A_LETTER.charac)
                         posInit = i;
             }
             if (posInit !== DEFAULT_POS && reRightCounter !== word.length) {
                 break;
+            } else {
+                reRightCounter = 0;
+                posInit = -1;
             }
-            reRightCounter = 0;
         }
         return posInit;
     }

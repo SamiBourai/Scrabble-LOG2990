@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RealUser, VrUser } from '@app/classes/user';
-import { MINUTE_TURN, NUMBER_COMPARED, NUMBER_TO_COMPARE, ONE_MINUTE, ONE_SECOND, TIME_OF_VR, VR_TIME_PASS_TURN } from '@app/constants/constants';
+import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, PARAMETERS_OF_SWAP, TIME_OF_VR, VR_TIME_PASS_TURN } from '@app/constants/constants';
 import { MessageService } from './message.service';
 import { VirtualPlayerService } from './virtual-player.service';
 @Injectable({
@@ -49,7 +49,8 @@ export class UserService {
     }
 
     chooseFirstToPlay(): boolean {
-        if (this.getRandomInt(NUMBER_TO_COMPARE) <= NUMBER_COMPARED) {
+        const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);
+        if (randomIndex <= PARAMETERS_OF_SWAP / 2) {
             return false;
         } else {
             return true;
@@ -115,15 +116,12 @@ export class UserService {
                 clearInterval(intervalId);
                 this.startTimer();
             }
-            if (this.counter.sec < TIME_OF_VR && this.virtualPlayerService.played) {
+            if (this.virtualPlayerService.played && this.counter.sec < TIME_OF_VR) {
                 this.counter = this.setCounter(0, MINUTE_TURN);
                 this.realUser.turnToPlay = true;
                 this.time = MINUTE_TURN;
             }
-            if (this.counter.sec - ONE_MINUTE === -ONE_MINUTE) {
-                this.counter.min -= ONE_MINUTE;
-                this.counter.sec = MINUTE_TURN;
-            } else this.counter.sec -= ONE_MINUTE;
+            this.counter.sec -= ONE_MINUTE;
 
             if (this.counter.min === 0 && this.counter.sec === 0) {
                 clearInterval(intervalId);

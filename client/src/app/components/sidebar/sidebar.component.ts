@@ -132,7 +132,6 @@ export class SidebarComponent implements OnInit {
     isSkipButtonClicked() {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
-            this.arrayOfMessages.push('!passer');
             this.active = true;
 
             return true;

@@ -128,7 +128,7 @@ export class ReserveService {
         this.sizeObs.next(this.reserveSize);
     }
 
-    isReserveEmpty() {
+    isReserveEmpty(): boolean {
         return this.reserveSize === 0;
     }
 }

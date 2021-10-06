@@ -6,7 +6,7 @@ export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y
 // user-service
 export const NUMBER_COMPARED = 20;
 export const NUMBER_TO_COMPARE = 10;
-export const MINUTE_TURN = 59;
+export const MINUTE_TURN = 10;
 export const VR_TIME_PASS_TURN = 20;
 export const ONE_SECOND = 1000;
 export const TIME_OF_VR = 17;

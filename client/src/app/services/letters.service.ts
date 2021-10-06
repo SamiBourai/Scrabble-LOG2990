@@ -118,18 +118,15 @@ export class LettersService {
                     img: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.img,
                 });
 
-                this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]] = {
-                    index: this.indexOfEaselLetters[i],
-                    letters: this.reserveService.getRandomLetter(),
-                };
+                this.easelLogisticsService.occupiedPos[this.indexOfEaselLetters[i]] = false;
             }
+            this.easelLogisticsService.refillEasel();
             for (const lett of temp) {
                 this.reserveService.reFillReserve(lett);
             }
             this.easelLogisticsService.placeEaselLetters();
 
             this.resetVariables();
-            this.easelLogisticsService.refillEasel();
             return true;
         }
         return false;
