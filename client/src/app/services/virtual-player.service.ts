@@ -114,6 +114,12 @@ export class VirtualPlayerService {
                 break;
 
             case 'passTurn':
+                setTimeout(()=>{
+                    this.played = true;
+                }, WAIT_TIME_3_SEC);
+
+
+
                 break;
             case 'exchangeLetters':
                 this.exchangeLettersInEasel();

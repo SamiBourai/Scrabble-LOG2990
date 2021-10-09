@@ -53,7 +53,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     ngOnInit() {
         this.pvs.loadDictionary().then(() => {
-            this.userService.startTimer();
             this.reserveService.size.subscribe((res) => {
                 setTimeout(() => {
                     this.remainingLetters = res;
