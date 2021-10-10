@@ -6,6 +6,7 @@
         <mat-card-subtitle class="score-time"> Temps par tour : {{ userService.vrUser.round }} </mat-card-subtitle>
         <mat-card-subtitle class="score-time"> Score : {{ userService.vrUser.score }} </mat-card-subtitle>
         <p>letter dans chevalet : {{ this.virtualPlayerService.vrEaselSize }}</p>
+        <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeVrPlayer.min }}:{{ this.timeService.timeVrPlayer.sec }}</mat-card-subtitle>
     </mat-card-header>
     <ngx-avatar
         class="avatar"

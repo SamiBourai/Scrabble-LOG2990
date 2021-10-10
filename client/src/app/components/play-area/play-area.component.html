@@ -47,7 +47,7 @@
 </div>
 
 <div>
-    <mat-card *ngIf="userService.time === 59; else displayVrUser" fxLayout="row">
+    <mat-card *ngIf="userService.realUser.turnToPlay===true; else displayVrUser" fxLayout="row">
         <ngx-avatar class="avatar" size="25" name="{{ userService.realUser.name }}"></ngx-avatar>
         <mat-card-header>
             <mat-card-title>{{ userService.realUser.name }}</mat-card-title>

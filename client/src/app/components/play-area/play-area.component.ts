@@ -29,7 +29,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
-
     remainingLetters: number = 0;
     dialogRef: unknown;
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };

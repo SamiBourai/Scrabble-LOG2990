@@ -24,7 +24,7 @@ export class UserService {
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
 
-    realUserTurnObs: BehaviorSubject<boolean>=new BehaviorSubject<boolean>({} as boolean);
+    realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     observableTurnToPlay: Observable<boolean>;
 
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
@@ -32,6 +32,7 @@ export class UserService {
     constructor(private messageService: MessageService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
         const first = this.chooseFirstToPlay();
+        console.log(first, 'first');
         this.realUser = {
             name: this.getUserName(),
             level: 'Joueur en ligne',
@@ -52,7 +53,7 @@ export class UserService {
     }
 
     chooseFirstToPlay(): boolean {
-        if (this.getRandomInt(NUMBER_TO_COMPARE) <= NUMBER_COMPARED) {
+        if (this.getRandomInt(NUMBER_COMPARED) <= NUMBER_TO_COMPARE) {
             return false;
         } else {
             return true;
@@ -131,8 +132,8 @@ export class UserService {
     //     }, ONE_SECOND);
     // }
 
-    resetCounter(min:number,sec:number){
-        this.counter={min:min,sec:sec}
+    resetCounter(min: number, sec: number) {
+        this.counter = { min, sec };
     }
     skipTurnValidUser(): boolean {
         if (this.time === MINUTE_TURN) return true;
@@ -141,10 +142,10 @@ export class UserService {
     detectSkipTurnBtn(): boolean {
         this.messageService.skipTurnIsPressed = true;
         this.userSkipingTurn = true;
-        this.realUser.turnToPlay=false;
+        this.realUser.turnToPlay = false;
         return true;
     }
-    get turnToPlayObs(): Observable<boolean>{
+    get turnToPlayObs(): Observable<boolean> {
         return this.observableTurnToPlay;
     }
 }

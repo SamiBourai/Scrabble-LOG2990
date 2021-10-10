@@ -20,7 +20,7 @@ import {
     TWELVE_POINTS,
     UNDEFINED_INDEX,
     WAIT_TIME_3_SEC,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';
@@ -68,7 +68,9 @@ export class VirtualPlayerService {
             'passTurn',
             'exchangeLetters',
         ];
+
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
+        this.played = false;
         switch (probability[randomIndex]) {
             case 'placeWord':
                 setTimeout(() => {
@@ -114,11 +116,9 @@ export class VirtualPlayerService {
                 break;
 
             case 'passTurn':
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.played = true;
                 }, WAIT_TIME_3_SEC);
-
-
 
                 break;
             case 'exchangeLetters':
