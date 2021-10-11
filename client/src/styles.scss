@@ -75,12 +75,12 @@ $indigo-pink-theme: mat.define-light-theme(
 
 html,
 body {
-    //     height: 100%;
-    //     width: 100%;
-    // }
-    // body {
-    margin: 0;
+
+    height: 100%;
+    width: 100%;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
+    margin: 0;
+
     background-color: #e5e5f7;
     opacity: 1;
     background-image: radial-gradient(#0d0f31 0.7000000000000001px, transparent 0.7000000000000001px),
@@ -89,11 +89,3 @@ body {
     background-position: 0 0, 14px 14px;
 }
 
-html,
-body {
-    // height: 100%;
-}
-body {
-    margin: 0;
-    font-family: Roboto, 'Helvetica Neue', sans-serif;
-}

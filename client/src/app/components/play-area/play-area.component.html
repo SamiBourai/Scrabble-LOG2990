@@ -3,70 +3,55 @@
     <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
 </div> -->
 
-<div id="grid-container">
-    <div>
-        <div class="user-component" fxLayout="row" fxLayoutAlign="space-between center">
-            <div fxLayout="column">
-                <div>
-                    <app-real-player></app-real-player>
-                </div>
+<div class="grid-container" fxLayout="column">
+    <div class="button-up" fxLayout="row" >
+        <div class="div">
+            <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
+
+        </div>
+        <div class="div">
+            <button
+            #skipTurn
+            id="btn"
+            mat-raised-button
+            color="primary"
+            [disabled]="userService.skipTurnValidUser() === false"
+            (click)="detectSkipTurnBtn()"
+            >
+            Passer son tour
+            </button>
+        </div>
+        <div class="div">
+             <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
+        </div>
+        <div class="div" fxLayout="row" >
+            <p class="actual-player">Joueur Actuel : </p>
+
+            <div *ngIf="userService.realUser.turnToPlay === true; else displayVrUser" fxLayout="row">
+
+                <ngx-avatar class="avatar" size="30" name="{{ userService.realUser.name }}">Joueur Actuel</ngx-avatar>
+
             </div>
-            <div fxLayout="column" fxLayoutAlign="space-between center">
-                <div class="button-game-page">
-                    <button
-                        #skipTurn
-                        id="btn"
-                        mat-raised-button
-                        color="primary"
-                        [disabled]="userService.skipTurnValidUser() === false"
-                        (click)="detectSkipTurnBtn()"
-                    >
-                        Passer son tour
-                    </button>
+
+            <ng-template #displayVrUser>
+                <div fxLayout="row">
+                    <ngx-avatar
+                        class="avatar"
+                        size="30"
+                        name="{{ userService.vrUser.name }}"
+                        src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
+                    ></ngx-avatar>
                 </div>
-                <div class="button-game-page">
-                    <span class="chronometer-title">{{0}}{{ userService.counter.min }}:{{ userService.counter.sec }} </span>
-                </div>
-                <div class="button-game-page">
-                    <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
-                </div>
-            </div>
-            <div fxLayout="column">
-                <div>
-                    <app-vr-user></app-vr-user>
-                </div>
-            </div>
+            </ng-template>
+
+
         </div>
 
+
+    </div>
+
+    <div>
         <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
     </div>
 
-    <div>
-        <p class="chronometer-title">Lettre restante : {{ this.remainingLetters }}</p>
-    </div>
-</div>
-
-<div>
-    <mat-card *ngIf="userService.realUser.turnToPlay===true; else displayVrUser" fxLayout="row">
-        <ngx-avatar class="avatar" size="25" name="{{ userService.realUser.name }}"></ngx-avatar>
-        <mat-card-header>
-            <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
-            <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
-        </mat-card-header>
-    </mat-card>
-
-    <ng-template #displayVrUser>
-        <mat-card fxLayout="row">
-            <ngx-avatar
-                class="avatar"
-                size="25"
-                name="{{ userService.vrUser.name }}"
-                src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
-            ></ngx-avatar>
-            <mat-card-header>
-                <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
-                <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
-            </mat-card-header>
-        </mat-card>
-    </ng-template>
 </div>

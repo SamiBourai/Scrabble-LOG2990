@@ -7,5 +7,10 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./game-page.component.scss'],
 })
 export class GamePageComponent {
+    remainingLetters: number = 0;
     constructor(public userService: UserService) {}
+
+    detectSkipTurnBtn() {
+        this.userService.userSkipingTurn = true;
+    }
 }
