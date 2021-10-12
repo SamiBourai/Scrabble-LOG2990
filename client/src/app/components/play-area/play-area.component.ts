@@ -4,7 +4,6 @@ import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, LEFTSPACE, NB
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
-import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 
@@ -38,7 +37,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly lettersService: LettersService,
         private readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
-        private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
     ) {
         this.easelLogisticsService.refillEasel(this.userService.realUser.easel);
@@ -49,18 +47,12 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     detectSkipTurnBtn() {
-        this.userService.userSkipingTurn = true;
+        this.userService.realUser.turnToPlay = !this.userService.realUser.turnToPlay;
+        this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
     }
 
     ngOnInit() {
-        this.pvs.loadDictionary().then(() => {
-            this.userService.startTimer();
-            this.reserveService.size.subscribe((res) => {
-                setTimeout(() => {
-                    this.remainingLetters = res;
-                }, 0);
-            });
-        });
+        this.pvs.loadDictionary().then(() => {});
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

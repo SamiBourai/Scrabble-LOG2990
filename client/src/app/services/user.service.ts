@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { EaselObject } from '@app/classes/EaselObject';
 import { RealUser, VrUser } from '@app/classes/user';
-import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, PARAMETERS_OF_SWAP, TIME_OF_VR, VR_TIME_PASS_TURN } from '@app/constants/constants';
+import { MINUTE_TURN, PARAMETERS_OF_SWAP } from '@app/constants/constants';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
-import { VirtualPlayerService } from './virtual-player.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -15,7 +15,7 @@ export class UserService {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
-    counter: { min: number; sec: number } = { min: 0, sec: 0 };
+    counter: { min: number; sec: number } = { min: 0, sec: 59 };
     passesCounter: number = 0;
     realUser: RealUser;
     vrUser: VrUser;
@@ -24,10 +24,18 @@ export class UserService {
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
+
+    realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
+    observableTurnToPlay: Observable<boolean>;
+    realUserSkipHisTurn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
+    obsSkipTurn: BehaviorSubject<boolean>;
+
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-    constructor(private messageService: MessageService, private virtualPlayerService: VirtualPlayerService) {
+    constructor(private messageService: MessageService) {
+        this.observableTurnToPlay = this.realUserTurnObs.asObservable();
         const first = this.chooseFirstToPlay();
+
         this.realUser = {
             name: this.getUserName(),
             level: 'Joueur en ligne',
@@ -37,7 +45,7 @@ export class UserService {
             turnToPlay: first,
             easel: new EaselObject(false),
         };
-
+        //
         this.vrUser = {
             name: this.chooseRandomName(),
             level: 'Débutant',
@@ -62,12 +70,9 @@ export class UserService {
         return Math.floor(Math.random() * max);
     }
     chooseRandomName(): string {
-        // comme ces constante on en a besoin ici seulement
         let randomInteger = 0;
-
         for (;;) {
             randomInteger = this.getRandomInt(3);
-
             if (this.vrPlayerNames[randomInteger] === localStorage.getItem('userName')) {
                 continue;
             } else break;
@@ -80,60 +85,13 @@ export class UserService {
         this.userNameLocalStorage = localStorage.getItem('userName');
         return this.userNameLocalStorage;
     }
-
     getVrUserName(): string {
         this.userNameLocalStorage = localStorage.getItem('vrUserName');
         return this.userNameLocalStorage;
     }
 
-    // timer
-
-    startTimer() {
-        if (this.realUser.turnToPlay) {
-            this.realUser.turnToPlay = false;
-            this.counter = { min: 0, sec: MINUTE_TURN };
-            this.time = this.counter.sec;
-        } else {
-            this.counter = { min: 0, sec: VR_TIME_PASS_TURN };
-            this.virtualPlayerService.manageVrPlayerActions();
-            this.realUser.turnToPlay = true;
-            this.time = this.counter.sec;
-        }
-
-        const intervalId = setInterval(() => {
-            if (this.vrSkipingTurn) {
-                this.counter = this.setCounter(0, MINUTE_TURN);
-                this.vrSkipingTurn = false;
-
-                this.time = this.counter.sec;
-                clearInterval(intervalId);
-                this.startTimer();
-            }
-            if (this.userSkipingTurn) {
-                this.counter = this.setCounter(0, VR_TIME_PASS_TURN);
-                this.time = this.counter.sec;
-                this.realUser.turnToPlay = false;
-                this.userSkipingTurn = false;
-                clearInterval(intervalId);
-                this.startTimer();
-            }
-            if (this.virtualPlayerService.played && this.counter.sec < TIME_OF_VR) {
-                this.counter = this.setCounter(0, MINUTE_TURN);
-                this.realUser.turnToPlay = true;
-                this.time = MINUTE_TURN;
-            }
-            this.counter.sec -= ONE_MINUTE;
-
-            if (this.counter.min === 0 && this.counter.sec === 0) {
-                clearInterval(intervalId);
-                this.startTimer();
-            }
-        }, ONE_SECOND);
-    }
-
-    setCounter(min: number, sec: number): { min: number; sec: number } {
-        const counter = { min, sec };
-        return counter;
+    resetCounter(min: number, sec: number) {
+        this.counter = { min, sec };
     }
     skipTurnValidUser(): boolean {
         if (this.time === MINUTE_TURN) return true;
@@ -142,6 +100,10 @@ export class UserService {
     detectSkipTurnBtn(): boolean {
         this.messageService.skipTurnIsPressed = true;
         this.userSkipingTurn = true;
+        this.realUser.turnToPlay = false;
         return true;
+    }
+    get turnToPlayObs(): Observable<boolean> {
+        return this.observableTurnToPlay;
     }
 }

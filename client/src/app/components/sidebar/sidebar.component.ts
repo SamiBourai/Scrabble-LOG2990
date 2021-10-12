@@ -159,7 +159,6 @@ export class SidebarComponent implements OnInit {
                         }
                     } else {
                         this.isImpossible = true;
-
                         this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
                         return;
                     }

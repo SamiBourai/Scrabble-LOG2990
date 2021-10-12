@@ -70,6 +70,7 @@ export class VirtualPlayerService {
             this.isDicFille = true;
         }
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
+        this.played = false;
         switch (probability[randomIndex]) {
             case 'placeWord':
                 setTimeout(() => {

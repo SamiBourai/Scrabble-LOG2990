@@ -3,16 +3,35 @@
 <div class="content">
     <header class="header-user-vs-player"> {{getNameFromLocalStorage()}} vous jouerez contre ...</header>
     <br>
-       
+
 
       <mat-card class="player-user-card" fxLayout="row">
-       
-        <app-real-player></app-real-player>
+        <mat-card class="mart-card-players" fxLayout="row">
+            <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
+            <mat-card-header>
+                <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
+                <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
+                <mat-card-subtitle class="score-time">Score : {{ this.userService.realUser.score }}</mat-card-subtitle>
+                <mat-card-subtitle class="score-time">temps par tour: 0{{ this.timeService.timeUser.min }}:{{ this.timeService.timeUser.sec }}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
 
 
-        <app-vr-user></app-vr-user>
-      
-        
+        <mat-card fxLayout="row">
+            <mat-card-header>
+                <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
+                <mat-card-subtitle>{{ userService.vrUser.level }}</mat-card-subtitle>
+                <mat-card-subtitle class="score-time"> Score : {{ userService.vrUser.score }} </mat-card-subtitle>
+                <mat-card-subtitle class="score-time">temps par tour: {{ this.timeService.timeVrPlayer.min }}:{{ this.timeService.timeVrPlayer.sec }}</mat-card-subtitle>
+            </mat-card-header>
+            <ngx-avatar
+                class="avatar"
+                size="50"
+                name="{{ userService.vrUser.name }}"
+                src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
+            ></ngx-avatar>
+        </mat-card>
+
       </mat-card>
 
       <mat-card-actions>
@@ -20,7 +39,7 @@
           <button mat-raised-button mat-dialog-close>Annuler La Partie</button>
           <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Démarrer La Partie</button>
         </div>
-          
+
       </mat-card-actions>
 </div>
 
