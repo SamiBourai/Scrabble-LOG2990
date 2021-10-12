@@ -19,9 +19,6 @@ import {
     SWAP_LENGTH,
 } from './../constants/constants';
 
-// import { Parameter } from './classes/parameter';
-// import { Parameter } from './classes/parameter';
-
 @Injectable({
     providedIn: 'root',
 })
@@ -36,6 +33,7 @@ export class MessageService {
     private orientation: string;
     private word: string;
     private possibleLigne: string = 'abcdefghijklmno';
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     private possibleColonne: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     private possibleOrientation: string = 'hv';
 
@@ -104,7 +102,7 @@ export class MessageService {
             this.word !== ''
         ) {
             this.command = { word: this.word, position: { x: this.column, y: this.getLineNumber(this.line) }, direction: this.orientation };
-            console.log(this.getLineNumber(this.line));
+
             this.array.push(this.command);
         }
         return this.array;
@@ -115,7 +113,6 @@ export class MessageService {
             return input.substring(PARAMETERS_OF_SWAP, input.length);
         }
         return '';
-        // recuperer les lettres a echanger
     }
 
     // !echanger
@@ -146,7 +143,7 @@ export class MessageService {
         return ligne;
     }
 
-    NumberOfLettersToSwap(lettersToSwap: string) {
+    numberOfLettersToSwap(lettersToSwap: string) {
         return lettersToSwap.length;
     }
 }

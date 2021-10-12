@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -6,16 +7,10 @@ import { UserService } from '@app/services/user.service';
     templateUrl: './modal-user-vs-player.component.html',
     styleUrls: ['./modal-user-vs-player.component.scss'],
 })
-export class ModalUserVsPlayerComponent implements OnInit {
-   
+export class ModalUserVsPlayerComponent {
+    constructor(public userService: UserService, public timeService:TimeService) {}
 
-  constructor(public userService:UserService) { }
-
-  ngOnInit(): void {
-    //   this.userService.chooseFirstToPlay();
-    
-  }
-  getNameFromLocalStorage() {
-    return localStorage.getItem('userName');
-  }
+    getNameFromLocalStorage() {
+        return localStorage.getItem('userName');
+    }
 }

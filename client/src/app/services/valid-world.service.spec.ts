@@ -8,7 +8,7 @@ import { TestBed } from '@angular/core/testing';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, C, D, E, G, I, J, L, N, NOT_A_LETTER, O, R, S, U, usedBonus, Z } from '@app/constants/constants';
+import { A, B, C, D, E, I, J, L, N, NOT_A_LETTER, O, R, S, U, Z } from '@app/constants/constants';
 import { decode as b64_decode } from 'base64-arraybuffer';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -28,6 +28,7 @@ describe('ValidWorldService', () => {
             imports: [HttpClientModule],
         });
         service = TestBed.inject(ValidWordService);
+        service['dictionary'] = undefined;
     });
 
     it('should be created', () => {
@@ -72,16 +73,6 @@ describe('ValidWorldService', () => {
         expect(service.verifyWord([])).toBeUndefined();
     });
 
-    it('test_verifyWord 2 WORDS THAT MATCH', () => {
-        service['dictionary'] = [new Set(['arbre'])];
-        expect(service.verifyWord([A, R, B, R, E])).toBeTrue();
-    });
-
-    it('test_verifyWord 2 WORDS THAT DOESNT MATCH', () => {
-        service['dictionary'] = [new Set(['bonjour'])];
-        expect(service.verifyWord([A, R, G, I, L, E])).toBeFalse();
-    });
-
     it('checkIfWordIsUsed undefined positions', () => {
         const letters = service['letterService'].fromWordToLetters('azzz');
 
@@ -95,22 +86,6 @@ describe('ValidWorldService', () => {
         const exists = service['checkIfWordIsUsed'](letters, lettersPositionsAlt);
         expect(exists).toBeFalse();
     });
-
-    it('checkIfWordIsUsed true', () => {
-        const letters = service['letterService'].fromWordToLetters('azzz');
-        const lettersPositions = [
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 2, y: 0 },
-            { x: 3, y: 0 },
-        ];
-
-        service['usedWords'].set('azzz', lettersPositions);
-
-        const exists = service['checkIfWordIsUsed'](letters, lettersPositions);
-        expect(exists).toBeTrue();
-    });
-
     it('checkIfWordIsUsed false', () => {
         const letters = service['letterService'].fromWordToLetters('azzz');
         const lettersPositions = [
@@ -133,19 +108,12 @@ describe('ValidWorldService', () => {
         expect(exists).toBeFalse();
     });
 
-    it('adding word points of AIE should give 3 and doesnt AZZZ recount an existing word', () => {
+    it('nor an h nor a p in the direction give 0 points', () => {
         service['dictionary'] = [new Set(['azzz', 'aie'])];
-        usedBonus.push({ x: 0, y: 0 });
         const usedPositions = new Array<Letter[]>(15);
         for (let i = 0; i < usedPositions.length; ++i) {
             usedPositions[i] = new Array<Letter>(15);
         }
-        service['usedWords'].set('azzz', [
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 2, y: 0 },
-            { x: 3, y: 0 },
-        ]);
         /* A Z Z Z *
          * I - - - *
          * E - - - */
@@ -153,59 +121,19 @@ describe('ValidWorldService', () => {
         usedPositions[0][1] = Z;
         usedPositions[0][2] = Z;
         usedPositions[0][3] = Z;
-        usedPositions[1][0] = I;
-        usedPositions[2][0] = E;
         usedPositions[0][4] = NOT_A_LETTER;
-        usedPositions[2][1] = NOT_A_LETTER;
-        usedPositions[3][0] = NOT_A_LETTER;
-        usedPositions[1][1] = NOT_A_LETTER;
-        usedPositions[1][2] = NOT_A_LETTER;
-        usedPositions[1][3] = NOT_A_LETTER;
-        const command: ChatCommand = {
-            word: 'aie',
-            direction: 'v',
-            position: { x: 1, y: 1 },
-        };
-        const number = service.readWordsAndGivePointsIfValid(usedPositions, command);
-        expect(number).toEqual(3);
-    });
-
-    it('adding word points of AZZZ should give 42 because it doesnt count AZZZ an existing word', () => {
-        service['dictionary'] = [new Set(['azzz', 'azzzs'])];
-        usedBonus.push({ x: 0, y: 0 }, { x: 3, y: 0 });
-        const usedPositions = new Array<Letter[]>(15);
-        for (let i = 0; i < usedPositions.length; ++i) {
-            usedPositions[i] = new Array<Letter>(15);
-        }
-        service['usedWords'].set('azzz', [
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 2, y: 0 },
-            { x: 3, y: 0 },
-        ]);
-        /* A Z Z Z *
-         * I - - - *
-         * E - - - */
-        usedPositions[0][0] = A;
-        usedPositions[0][1] = Z;
-        usedPositions[0][2] = Z;
-        usedPositions[0][3] = Z;
-        usedPositions[0][4] = S;
         usedPositions[1][0] = NOT_A_LETTER;
         usedPositions[1][1] = NOT_A_LETTER;
         usedPositions[1][2] = NOT_A_LETTER;
         usedPositions[1][3] = NOT_A_LETTER;
-        usedPositions[1][4] = NOT_A_LETTER;
-
         const command: ChatCommand = {
-            word: 'azzzs',
-            direction: 'h',
+            word: 'azzz',
+            direction: 'p',
             position: { x: 1, y: 1 },
         };
         const number = service.readWordsAndGivePointsIfValid(usedPositions, command);
-        expect(number).toEqual(32);
+        expect(number).toEqual(0);
     });
-
     it('if a horizontal word is placed, we check vertical words formed in same time', () => {
         const usedPositions = new Array<Letter[]>(15);
         for (let i = 0; i < usedPositions.length; ++i) {
@@ -329,5 +257,21 @@ describe('ValidWorldService', () => {
             { x: 0, y: 3 },
             { x: 0, y: 4 },
         ]);
+    });
+
+    it('expect a regex result to be a string that analyse the filled letters and free spots', () => {
+        const concat = '(^.?le{1}$)|(^.?le{1}.?$)|(^.?le{1}$)|(^.?le{1}..s{1}$)|(^.?le{1}$)|(^.?le{1}.?$)|(^.?le{1}$)|(^.?le{1}..s{1}.?$)';
+        const lett = [NOT_A_LETTER, L, E, NOT_A_LETTER, NOT_A_LETTER, S, NOT_A_LETTER];
+        const result = service.generateRegEx(lett);
+        expect(concat).toEqual(result);
+    });
+    // I TRY TO TEST LIGN 286 HERE BUT IT DOESNT WORK
+
+    it('expect a regex result to be a string that analyse only the filled letters', () => {
+        service['dictionary'] = [new Set(['arbre'])];
+        const concat = ['arbre'];
+        const lett = [A, R, B, R, S];
+        const result = service.generateAllWordsPossible(lett);
+        expect(concat).not.toEqual(result);
     });
 });

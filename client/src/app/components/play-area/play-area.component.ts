@@ -1,26 +1,11 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import {
-    A,
-    B,
-    BOARD_HEIGHT,
-    BOARD_WIDTH,
-    CANEVAS_HEIGHT,
-    CANEVAS_WIDTH,
-    D,
-    EASEL_LENGTH,
-    LEFTSPACE,
-    NB_TILES,
-    TOPSPACE,
-} from '@app/constants/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
-import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
-///import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 export enum MouseButton {
     Left = 0,
@@ -42,38 +27,32 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
-    let: Letter[] = [D, A, B, A];
     remainingLetters: number = 0;
+    dialogRef: unknown;
+
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
-    dialogRef: any;
+
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
         private readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
-        private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-    ) {}
+    ) {
+        this.easelLogisticsService.refillEasel(this.userService.realUser.easel);
+    }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
     }
 
     detectSkipTurnBtn() {
-        console.log(this.userService.userSkipingTurn);
-        this.userService.userSkipingTurn = true;
-        console.log(this.userService.userSkipingTurn);
+        this.userService.realUser.turnToPlay = !this.userService.realUser.turnToPlay;
+        this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
     }
 
     ngOnInit() {
-        this.pvs.loadDictionary().then(() => {
-            this.userService.startTimer();
-            this.reserveService.size.subscribe((res) => {
-                setTimeout(() => {
-                    this.remainingLetters = res;
-                }, 0);
-            });
-        });
+        this.pvs.loadDictionary().then(() => {});
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -85,27 +64,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
-        this.getLetters();
     }
 
-    // @HostListener('click', ['$skipTurn'])
-    // onClick(){
-    //     console.log(this.userService.userSkipingTurn);
-
-    getLetters(): void {
-        for (let i = 0; i < EASEL_LENGTH; i++) {
-            if (this.easelLogisticsService.occupiedPos[i] === false && this.reserveService.reserveSize > 0) {
-                const temp: Letter = this.reserveService.getRandomLetter();
-                this.easelLogisticsService.easelLetters[i] = {
-                    index: i,
-                    letters: temp,
-                };
-            }
-        }
-        if (this.reserveService.reserveSize > 0) {
-            this.easelLogisticsService.placeEaselLetters();
-        }
-    }
     get width(): number {
         return this.canvasSize.x;
     }
@@ -113,9 +73,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     get height(): number {
         return this.canvasSize.y;
     }
-    testVr() {
-        //this.virtualPlayer.manageVrPlayerActions(!this.userService.realUser.firstToPlay);
-    }
+
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (
@@ -130,12 +88,5 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                 y: Math.ceil((event.offsetY - TOPSPACE) / (BOARD_HEIGHT / NB_TILES)),
             };
         }
-    }
-    openDialogOfVrUser() {
-        this.dialogRef.open(PlayAreaComponent);
-    }
-
-    isGameOver() {
-        return this.userService.isGameOver();
     }
 }

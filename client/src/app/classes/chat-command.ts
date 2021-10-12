@@ -5,4 +5,3 @@ export interface ChatCommand {
     position: Vec2;
     direction: string;
 }
-//enum Direction { h,v}

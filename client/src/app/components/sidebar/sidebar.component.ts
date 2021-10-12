@@ -8,7 +8,6 @@ import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-sidebar',
@@ -34,15 +33,11 @@ export class SidebarComponent implements OnInit {
     errorMessage: string;
 
     score: number = 0;
-    scoreObs = new BehaviorSubject(this.score);
 
     form = new FormGroup({
         message: new FormControl(''),
     });
     isDebug: boolean = false;
-
-    // window: any;
-    // parameter:Parameter;
 
     constructor(
         private messageService: MessageService,
@@ -52,15 +47,11 @@ export class SidebarComponent implements OnInit {
         private userService: UserService,
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
-    ) {
-        //this.firstTurn = this.userService.realUser.firstToPlay;
-    }
+    ) {}
     ngOnInit(): void {
         this.virtualPlayerService.commandToSendVr.subscribe((res) => {
             setTimeout(() => {
-                // this.vrScore += res;
                 this.arrayOfVrCommands.push(res);
-                console.log(this.arrayOfVrCommands);
             }, 0);
         });
     }
@@ -72,9 +63,6 @@ export class SidebarComponent implements OnInit {
     isYourTurn() {
         return this.userService.skipTurnValidUser();
     }
-    get scoreOfRealPlayer(): BehaviorSubject<number> {
-        return this.scoreObs;
-    }
 
     getNameCurrentPlayer() {
         return this.userService.getUserName();
@@ -85,55 +73,53 @@ export class SidebarComponent implements OnInit {
     }
 
     logMessage() {
-        if (
-            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
-            !this.messageService.isCommand(this.typeArea)
-        ) {
-            if (this.logDebug()) {
-                this.isImpossible = false;
-                this.isDebug = !this.isDebug;
+        if (this.isYourTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) {
+            switch (this.typeArea.split(' ', 1)[0]) {
+                case '!placer':
+                    this.getLettersFromChat();
+                    this.messageService.skipTurnIsPressed = false;
+
+                    if (!this.isImpossible) {
+                        this.userService.detectSkipTurnBtn();
+                        this.arrayOfMessages.push(this.typeArea);
+                    } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
+                    break;
+                case '!echanger':
+                    if (this.reserveService.reserveSize < EASEL_LENGTH) {
+                        this.isImpossible = true;
+                        this.errorMessage = 'la reserve contient moins de 7 lettres';
+                    } else if (
+                        this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.realUser.easel)
+                    ) {
+                        this.isImpossible = false;
+                        this.arrayOfMessages.push(this.typeArea);
+                    } else {
+                        this.isImpossible = true;
+                        this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
+                    }
+                    if (!this.isImpossible) this.userService.detectSkipTurnBtn();
+                    break;
+                case '!debug':
+                    this.isImpossible = false;
+                    this.isDebug = !this.isDebug;
+                    break;
+                case '!passer':
+                    this.isImpossible = false;
+                    this.arrayOfMessages.push('!passer');
+                    this.userService.detectSkipTurnBtn();
+
+                    break;
             }
-
-            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn()) {
-                if (this.reserveService.reserveSize < EASEL_LENGTH) {
-                    this.isImpossible = true;
-                    this.errorMessage = 'la reserve contient moins de 7 lettres';
-                } else if (this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea))) this.isImpossible = false;
-                else {
-                    this.isImpossible = true;
-                    this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
-                }
-
-                if (!this.isImpossible) this.userService.detectSkipTurnBtn();
-            } else if (!this.messageService.containsSwapCommand(this.typeArea) && !this.isYourTurn()) {
-                this.isImpossible = true;
-            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
-                this.getLettersFromChat();
-                this.messageService.skipTurnIsPressed = false;
-
-                if (!this.isImpossible) this.userService.detectSkipTurnBtn();
-
-                this.arrayOfMessages.pop();
-            } else if (!this.messageService.containsPlaceCommand(this.typeArea) && !this.isYourTurn()) {
-                //this.arrayOfMessages.push('*placement impossible:* LES LETTRE NE SONT PAS DANS LE CHEVALET');
-                this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
-            }
-            if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+        } else {
+            if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
                 this.isImpossible = true;
                 this.errorMessage = 'ce n est pas votre tour';
             } else {
                 this.arrayOfMessages.push(this.typeArea);
             }
-            if (this.typeArea === '!passer' && this.isYourTurn()) {
-                this.userService.detectSkipTurnBtn();
-                this.isImpossible = false;
-                this.userService.skipTurn();
-                const index = this.arrayOfMessages.indexOf('!passer', 0);
-                if (index > -1) this.arrayOfMessages.splice(index, 1);
-            }
         }
-        console.log(this.arrayOfMessages);
+
         this.name = this.getNameCurrentPlayer();
         this.nameVr = this.getNameVrPlayer();
         this.impossibleAndValid();
@@ -143,9 +129,7 @@ export class SidebarComponent implements OnInit {
     isSkipButtonClicked() {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
-            this.arrayOfMessages.push('!passer');
             this.active = true;
-
             return true;
         }
         return false;
@@ -157,16 +141,13 @@ export class SidebarComponent implements OnInit {
 
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, this.messageService.command);
-
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
-            this.userService.resetPassesCounter();
-
             if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
                 if (this.firstTurn && this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
-                    if (this.messageService.command.position.x === 8 && this.messageService.command.position.y === 8) {
+                    if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
                         this.firstTurn = false;
-                        if (this.lettersService.wordInEasel(this.messageService.command.word)) {
-                            this.lettersService.placeLettersInScrable(this.messageService.command);
+                        if (this.userService.realUser.easel.contains(this.messageService.command.word)) {
+                            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel);
                             this.isImpossible = false;
                             this.virtualPlayerService.first = false;
                             this.userService.realUser.score += points;
@@ -178,42 +159,35 @@ export class SidebarComponent implements OnInit {
                         }
                     } else {
                         this.isImpossible = true;
-                        //window.alert('*PREMIER TOUR*: votre mot dois etre placer à la position central(h8)!');
                         this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
                         return;
                     }
-                } else if (this.lettersService.wordIsAttached(this.messageService.command) && points != 0) {
-                    if (this.lettersService.wordIsPlacable(this.messageService.command)) {
-                        this.lettersService.placeLettersInScrable(this.messageService.command);
+                } else if (this.lettersService.wordIsAttached(this.messageService.command) && points !== 0) {
+                    if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.realUser.easel)) {
+                        this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel);
                         this.isImpossible = false;
                         this.virtualPlayerService.first = false;
                         this.userService.realUser.score += points;
 
                         if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
                     } else {
-                        //window.alert('*ERREUR*: votre mot dois contenir les lettres dans le chevalet et sur la grille!');
                         this.errorMessage = 'votre mot dois contenir les lettres dans le chevalet et sur la grille! ';
                         this.isImpossible = true;
-
                         return;
                     }
                 } else {
                     this.isImpossible = true;
-                    //window.alert('*MOT DETTACHÉ*: votre mot dois etre attaché à ceux déjà présent dans la grille!');
                     this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
                     return;
                 }
             } else {
                 this.isImpossible = true;
-                //window.alert('*LE MOT DOIT ETRE DANS LE DIC.*: votre mot dois etre contenue dans le dictionnaire!');
                 this.errorMessage = 'les lettres a placer ne constituent pas un mot';
                 return;
             }
         } else {
             this.isImpossible = true;
-            //window.alert('*LE MOT DEPASSE LA GRILLE*: votre mot dois etre contenue dans la grille!');
             this.errorMessage = 'votre mot dois etre contenue dans la grille!';
-
             return;
         }
     }
