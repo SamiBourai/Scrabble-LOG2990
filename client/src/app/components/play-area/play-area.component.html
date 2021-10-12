@@ -15,7 +15,7 @@
             id="btn"
             mat-raised-button
             color="primary"
-            [disabled]="userService.skipTurnValidUser() === false"
+            [disabled]="userService.realUser.turnToPlay===false"
             (click)="detectSkipTurnBtn()"
             >
             Passer son tour
@@ -23,28 +23,6 @@
         </div>
         <div class="div">
              <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
-        </div>
-        <div class="div" fxLayout="row" >
-            <p class="actual-player">Joueur Actuel : </p>
-
-            <div *ngIf="userService.realUser.turnToPlay === true; else displayVrUser" fxLayout="row">
-
-                <ngx-avatar class="avatar" size="30" name="{{ userService.realUser.name }}">Joueur Actuel</ngx-avatar>
-
-            </div>
-
-            <ng-template #displayVrUser>
-                <div fxLayout="row">
-                    <ngx-avatar
-                        class="avatar"
-                        size="30"
-                        name="{{ userService.vrUser.name }}"
-                        src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
-                    ></ngx-avatar>
-                </div>
-            </ng-template>
-
-
         </div>
 
 

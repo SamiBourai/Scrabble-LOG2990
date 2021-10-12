@@ -1,4 +1,4 @@
-<mat-card class="" fxLayout="row">
+<mat-card class="card-not-playing" fxLayout="row" *ngIf="this.userService.realUser.turnToPlay===false; else elseBlock">
     <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
     <mat-card-header>
         <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
@@ -11,3 +11,16 @@
 
 </mat-card>
 
+<ng-template #elseBlock>
+    <mat-card class="card-playing" fxLayout="row" >
+        <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
+        <mat-card-header>
+            <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
+            <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
+            <mat-card-subtitle class="score-time">Temps par tour : {{ userService.realUser.round }}</mat-card-subtitle>
+            <mat-card-subtitle class="score-time">Score : {{ this.userService.realUser.score }}</mat-card-subtitle>
+            <mat-card-subtitle class="score-time" *ngif="this.easelLogisticService.easelSize<7">letter dans chevalet : {{ this.easelLogisticService.easelSize }}</mat-card-subtitle>
+            <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeUser.min }}:{{ this.timeService.timeUser.sec }}</mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+</ng-template>

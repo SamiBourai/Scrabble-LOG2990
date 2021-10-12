@@ -47,17 +47,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     detectSkipTurnBtn() {
-        this.userService.userSkipingTurn = true;
+        this.userService.realUser.turnToPlay=!this.userService.realUser.turnToPlay;
+        this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
     }
 
     ngOnInit() {
-        this.pvs.loadDictionary().then(() => {
-            this.reserveService.size.subscribe((res) => {
-                setTimeout(() => {
-                    this.remainingLetters = res;
-                }, 0);
-            });
-        });
+
+        this.pvs.loadDictionary().then(() => {});
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
