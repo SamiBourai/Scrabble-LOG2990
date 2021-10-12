@@ -9,7 +9,6 @@ import {
     EIGHTEEN_POINTS,
     INITIAL_BOX_X,
     INITIAL_BOX_Y,
-    MAX_INDEX_NUMBER_EASEL,
     MAX_INDEX_NUMBER_PROBABILITY_ARRAY,
     NB_TILES,
     NOT_A_LETTER,
@@ -33,12 +32,12 @@ export class VirtualPlayerService {
     vrPlayerEaselLetters: Letter[] = [];
     first: boolean = true;
     commandToSend: string = '';
-    // eslint-disable-next-line no-invalid-this
+
     commandObs = new BehaviorSubject<string>(this.commandToSend);
     playObs = new BehaviorSubject(false);
     vrPoints: number = 0;
     isDicFille: boolean = false;
-    // eslint-disable-next-line no-invalid-this
+
     vrScoreObs = new BehaviorSubject(this.vrPoints);
     played: boolean = false;
     vrEaselSize: number = EASEL_LENGTH;
@@ -55,25 +54,25 @@ export class VirtualPlayerService {
     ) {}
     manageVrPlayerActions(): void {
         const probability: string[] = [
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
+            'exchangeLetters',
+            'exchangeLetters',
+            'exchangeLetters',
+            'exchangeLetters',
+            'exchangeLetters',
+            'exchangeLetters',
+            'exchangeLetters',
+            'exchangeLetters',
             'passTurn',
             'exchangeLetters',
         ];
+        if (!this.isDicFille) {
+            this.generateVrPlayerEasel();
+            this.isDicFille = true;
+        }
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         switch (probability[randomIndex]) {
             case 'placeWord':
                 setTimeout(() => {
-                    if (!this.isDicFille) {
-                        this.generateVrPlayerEasel();
-                        this.isDicFille = true;
-                    }
                     if (this.first) {
                         this.first = false;
                         const words = this.validWordService.generateAllWordsPossible(this.vrPlayerEaselLetters);
@@ -122,12 +121,13 @@ export class VirtualPlayerService {
                 break;
             case 'exchangeLetters':
                 setTimeout(() => {
+                    this.commandToSend = '!echanger ';
                     this.exchangeLettersInEasel();
+                    this.commandObs.next(this.commandToSend);
+                    this.commandToSend = '';
                     this.played = true;
                 }, WAIT_TIME_3_SEC);
-                this.commandToSend = '!echanger ' + this.commandToSend;
-                this.commandObs.next(this.commandToSend);
-                this.commandToSend = '';
+
                 break;
         }
     }
@@ -212,11 +212,12 @@ export class VirtualPlayerService {
         return found;
     }
     private exchangeLettersInEasel(): void {
-        const numberOfLettersToExchange = Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL) + 1;
-        for (let i = 0; i <= numberOfLettersToExchange; i++) {
-            const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL);
-            this.commandToSend += this.vrPlayerEaselLetters[randomIndex].charac;
-            this.vrPlayerEaselLetters[randomIndex] = this.reserveService.getRandomLetter();
+        const numberOfLettersToExchange = Math.floor(Math.random() * EASEL_LENGTH);
+        for (let i = 0; i < numberOfLettersToExchange; i++) {
+            const letterTemp = this.vrPlayerEaselLetters[i];
+            this.commandToSend += this.vrPlayerEaselLetters[i].charac;
+            this.vrPlayerEaselLetters[i] = this.reserveService.getRandomLetter();
+            this.reserveService.reFillReserve(letterTemp);
         }
     }
     private generateProb(): void {
@@ -248,7 +249,6 @@ export class VirtualPlayerService {
                 lett.push(tiles[y][x]);
             }
             if (notEmpty) found = this.findPlacement(lett, letterIngrid, direction, x, y);
-
             notEmpty = false;
             letterIngrid.splice(0, letterIngrid.length);
             lett.splice(0, lett.length);

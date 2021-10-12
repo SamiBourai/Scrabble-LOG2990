@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, EASEL_LENGTH, LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -29,9 +28,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     buttonPressed = '';
     containsAllChars: boolean = true;
     chatWord: string;
-
     remainingLetters: number = 0;
     dialogRef: unknown;
+
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
 
     constructor(
@@ -41,7 +40,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly reserveService: ReserveService,
         private readonly pvs: ValidWordService,
-    ) {}
+    ) {
+        this.easelLogisticsService.refillEasel(this.userService.realUser.easel);
+    }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
@@ -71,23 +72,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
-        this.getLetters();
     }
 
-    getLetters(): void {
-        for (let i = 0; i < EASEL_LENGTH; i++) {
-            if (this.easelLogisticsService.occupiedPos[i] === false && this.reserveService.reserveSize > 0) {
-                const temp: Letter = this.reserveService.getRandomLetter();
-                this.easelLogisticsService.easelLetters[i] = {
-                    index: i,
-                    letters: temp,
-                };
-            }
-        }
-        if (this.reserveService.reserveSize > 0) {
-            this.easelLogisticsService.placeEaselLetters();
-        }
-    }
     get width(): number {
         return this.canvasSize.x;
     }

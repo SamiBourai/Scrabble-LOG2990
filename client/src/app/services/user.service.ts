@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { EaselObject } from '@app/classes/EaselObject';
 import { RealUser, VrUser } from '@app/classes/user';
 import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, PARAMETERS_OF_SWAP, TIME_OF_VR, VR_TIME_PASS_TURN } from '@app/constants/constants';
 import { MessageService } from './message.service';
@@ -23,8 +24,6 @@ export class UserService {
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
-    // realUserTurn: BehaviorSubject<boolean>;
-
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
     constructor(private messageService: MessageService, private virtualPlayerService: VirtualPlayerService) {
@@ -36,6 +35,7 @@ export class UserService {
             score: 0,
             firstToPlay: first, // if true le realuser va commencer sinon c'est vrUser va commencer
             turnToPlay: first,
+            easel: new EaselObject(false),
         };
 
         this.vrUser = {
@@ -43,6 +43,7 @@ export class UserService {
             level: 'Débutant',
             round: '20 sec',
             score: 0,
+            easel: new EaselObject(false),
         };
         this.vrSkipingTurn = false;
         this.userSkipingTurn = false;

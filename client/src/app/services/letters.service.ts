@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
+import { EaselObject } from '@app/classes/EaselObject';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import {
@@ -46,8 +47,7 @@ import { ReserveService } from './reserve.service';
 export class LettersService {
     usedAllEaselLetters: boolean = false;
     gridContext: CanvasRenderingContext2D;
-    foundLetter: boolean[] = [false, false, false, false, false, false, false];
-    indexOfEaselLetters: number[] = [];
+
     indexLettersAlreadyInBoard: number[] = [];
     tiles = new Array<Letter[]>(NB_TILES);
 
@@ -80,63 +80,24 @@ export class LettersService {
         else return false;
     }
 
-    wordInEasel(word: string): boolean {
-        // console.log(word);
-        let found = false;
-        let first = true;
-
-        for (let i = 0; i < word.length; i++) {
-            if (found || first) {
-                first = false;
-                found = false;
-
-                for (let j = 0; j < EASEL_LENGTH; j++) {
-                    //  console.log(word.charAt(i) + ' : ' + this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j]);
-                    if (word.charAt(i) === this.easelLogisticsService.easelLetters[j].letters.charac && this.foundLetter[j] === false) {
-                        this.foundLetter[j] = true;
-
-                        this.indexOfEaselLetters.push(j);
-                        // console.log('indexFind ' + j);
-                        found = true;
-                        break;
-                    }
-                }
-            } else {
-                break;
-            }
-        }
-
-        return found;
-    }
-    changeLetterFromReserve(letterToChange: string): boolean {
+    changeLetterFromReserve(letterToChange: string, easel: EaselObject): boolean {
         const temp: Letter[] = [];
-        if (this.wordInEasel(letterToChange) && !this.reserveService.isReserveEmpty()) {
+        if (easel.contains(letterToChange) && !this.reserveService.isReserveEmpty()) {
             for (let i = 0; i < letterToChange.length; i++) {
-                temp.push({
-                    score: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.score,
-                    charac: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.charac,
-                    img: this.easelLogisticsService.easelLetters[this.indexOfEaselLetters[i]]?.letters?.img,
-                });
-
-                this.easelLogisticsService.occupiedPos[this.indexOfEaselLetters[i]] = false;
+                temp.push(this.easelLogisticsService.getLetterFromEasel(easel, easel.indexOfEaselLetters[i]));
+                easel.occupiedPos[easel.indexOfEaselLetters[i]] = false;
             }
-            this.easelLogisticsService.refillEasel();
+            this.easelLogisticsService.refillEasel(easel);
             for (const lett of temp) {
                 this.reserveService.reFillReserve(lett);
             }
-            this.easelLogisticsService.placeEaselLetters();
 
-            this.resetVariables();
+            easel.resetVariables();
             return true;
         }
         return false;
     }
-    resetVariables(): void {
-        for (let i = 0; i < this.foundLetter.length; i++) this.foundLetter[i] = false;
-        this.indexOfEaselLetters.splice(0, this.indexOfEaselLetters.length);
-        this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
-    }
-    placeLettersInScrable(command: ChatCommand): void {
+    placeLettersInScrable(command: ChatCommand, easel: EaselObject): void {
         this.usedAllEaselLetters = false;
         let numberOfLettersUsed = 0;
         let boardLetterCounter = 0;
@@ -147,12 +108,12 @@ export class LettersService {
             } else {
                 numberOfLettersUsed++;
                 if (command.direction === 'h') {
-                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[easelLetterCounter]), {
+                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(easel, easel.indexOfEaselLetters[easelLetterCounter]), {
                         x: command.position.x + i,
                         y: command.position.y,
                     });
                 } else if (command.direction === 'v') {
-                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(this.indexOfEaselLetters[easelLetterCounter]), {
+                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(easel, easel.indexOfEaselLetters[easelLetterCounter]), {
                         x: command.position.x,
                         y: command.position.y + i,
                     });
@@ -161,35 +122,32 @@ export class LettersService {
             }
         }
         if (numberOfLettersUsed === EASEL_LENGTH) this.usedAllEaselLetters = true;
-        this.resetVariables();
-        this.easelLogisticsService.refillEasel();
+        easel.resetVariables();
+        this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
+        this.easelLogisticsService.refillEasel(easel);
     }
 
-    wordIsPlacable(command: ChatCommand): boolean {
+    wordIsPlacable(command: ChatCommand, easel: EaselObject): boolean {
         let saveLetter = '';
         let letterFromEasel = '';
-        // console.log('direction : ' + command.direction);
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
                 saveLetter = this.tiles[command.position.y - 1][command.position.x - 1 + i].charac;
             } else if (command.direction === 'v') {
                 saveLetter = this.tiles[command.position.y - 1 + i][command.position.x - 1].charac;
             }
-
             if (saveLetter === command.word.charAt(i)) {
                 this.indexLettersAlreadyInBoard.push(i);
-                // console.log(i + ' the letter are equals');
             } else {
                 letterFromEasel = letterFromEasel + command.word.charAt(i);
-                // console.log(i + ' : ' + letterFromEasel);
             }
         }
-        if (this.wordInEasel(letterFromEasel)) {
-            // console.log(save + 'are in easel');
+        if (easel.contains(letterFromEasel)) {
             return true;
         }
 
-        this.resetVariables();
+        easel.resetVariables();
+        this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
         return false;
     }
     fromWordToLetters(word: string): Letter[] {

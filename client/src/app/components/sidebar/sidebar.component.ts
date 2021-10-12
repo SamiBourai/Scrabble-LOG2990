@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
-import { BONUS_POINTS_50, EASEL_LENGTH, UNDEFINED_INDEX } from '@app/constants/constants';
+import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
@@ -56,7 +56,6 @@ export class SidebarComponent implements OnInit {
         });
     }
 
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }
@@ -73,53 +72,51 @@ export class SidebarComponent implements OnInit {
         return this.userService.getVrUserName();
     }
 
-    // eslint-disable-next-line complexity
     logMessage() {
-        if (
-            (this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) ||
-            !this.messageService.isCommand(this.typeArea)
-        ) {
-            if (this.logDebug()) {
-                this.isImpossible = false;
-                this.isDebug = !this.isDebug;
+        if (this.isYourTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) {
+            switch (this.typeArea.split(' ', 1)[0]) {
+                case '!placer':
+                    this.getLettersFromChat();
+                    this.messageService.skipTurnIsPressed = false;
+
+                    if (!this.isImpossible) {
+                        this.userService.detectSkipTurnBtn();
+                        this.arrayOfMessages.push(this.typeArea);
+                    } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
+                    break;
+                case '!echanger':
+                    if (this.reserveService.reserveSize < EASEL_LENGTH) {
+                        this.isImpossible = true;
+                        this.errorMessage = 'la reserve contient moins de 7 lettres';
+                    } else if (
+                        this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.realUser.easel)
+                    ) {
+                        this.isImpossible = false;
+                        this.arrayOfMessages.push(this.typeArea);
+                    } else {
+                        this.isImpossible = true;
+                        this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
+                    }
+                    if (!this.isImpossible) this.userService.detectSkipTurnBtn();
+                    break;
+                case '!debug':
+                    this.isImpossible = false;
+                    this.isDebug = !this.isDebug;
+                    break;
+                case '!passer':
+                    this.isImpossible = false;
+                    this.arrayOfMessages.push('!passer');
+                    this.userService.detectSkipTurnBtn();
+
+                    break;
             }
-
-            if (this.messageService.containsSwapCommand(this.typeArea) && this.isYourTurn()) {
-                if (this.reserveService.reserveSize < EASEL_LENGTH) {
-                    this.isImpossible = true;
-                    this.errorMessage = 'la reserve contient moins de 7 lettres';
-                } else if (this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea))) this.isImpossible = false;
-                else {
-                    this.isImpossible = true;
-                    this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
-                }
-
-                if (!this.isImpossible) this.userService.detectSkipTurnBtn();
-            } else if (!this.messageService.containsSwapCommand(this.typeArea) && !this.isYourTurn()) {
-                this.isImpossible = true;
-            } else if (this.messageService.containsPlaceCommand(this.typeArea) && this.isYourTurn()) {
-                this.getLettersFromChat();
-                this.messageService.skipTurnIsPressed = false;
-
-                if (!this.isImpossible) this.userService.detectSkipTurnBtn();
-
-                this.arrayOfMessages.pop();
-            } else if (!this.messageService.containsPlaceCommand(this.typeArea) && !this.isYourTurn()) {
-                this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
-            }
-            if (!this.isYourTurn() && this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+        } else {
+            if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                 this.skipTurn = true;
                 this.isImpossible = true;
                 this.errorMessage = 'ce n est pas votre tour';
             } else {
                 this.arrayOfMessages.push(this.typeArea);
-            }
-            if (this.typeArea === '!passer' && this.isYourTurn()) {
-                this.userService.detectSkipTurnBtn();
-                this.isImpossible = false;
-
-                const index = this.arrayOfMessages.indexOf('!passer', 0);
-                if (index > UNDEFINED_INDEX) this.arrayOfMessages.splice(index, 1);
             }
         }
 
@@ -133,7 +130,6 @@ export class SidebarComponent implements OnInit {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.active = true;
-
             return true;
         }
         return false;
@@ -145,14 +141,13 @@ export class SidebarComponent implements OnInit {
 
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, this.messageService.command);
-
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
             if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
                 if (this.firstTurn && this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
                     if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
                         this.firstTurn = false;
-                        if (this.lettersService.wordInEasel(this.messageService.command.word)) {
-                            this.lettersService.placeLettersInScrable(this.messageService.command);
+                        if (this.userService.realUser.easel.contains(this.messageService.command.word)) {
+                            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel);
                             this.isImpossible = false;
                             this.virtualPlayerService.first = false;
                             this.userService.realUser.score += points;
@@ -169,8 +164,8 @@ export class SidebarComponent implements OnInit {
                         return;
                     }
                 } else if (this.lettersService.wordIsAttached(this.messageService.command) && points !== 0) {
-                    if (this.lettersService.wordIsPlacable(this.messageService.command)) {
-                        this.lettersService.placeLettersInScrable(this.messageService.command);
+                    if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.realUser.easel)) {
+                        this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel);
                         this.isImpossible = false;
                         this.virtualPlayerService.first = false;
                         this.userService.realUser.score += points;
@@ -179,26 +174,21 @@ export class SidebarComponent implements OnInit {
                     } else {
                         this.errorMessage = 'votre mot dois contenir les lettres dans le chevalet et sur la grille! ';
                         this.isImpossible = true;
-
                         return;
                     }
                 } else {
                     this.isImpossible = true;
-
                     this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
                     return;
                 }
             } else {
                 this.isImpossible = true;
-
                 this.errorMessage = 'les lettres a placer ne constituent pas un mot';
                 return;
             }
         } else {
             this.isImpossible = true;
-
             this.errorMessage = 'votre mot dois etre contenue dans la grille!';
-
             return;
         }
     }
