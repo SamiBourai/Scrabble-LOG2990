@@ -1,11 +1,11 @@
 import { Message } from '@app/message';
-import { DateService } from '@app/services/date.service';
+// import { DateService } from '@app/services/date.service';
 import { Service } from 'typedi';
 
 @Service()
 export class ExampleService {
     clientMessages: Message[];
-    constructor(private readonly dateService: DateService) {
+    constructor() {
         this.clientMessages = [];
     }
 
@@ -17,20 +17,22 @@ export class ExampleService {
     }
 
     async helloWorld(): Promise<Message> {
-        return this.dateService
-            .currentTime()
-            .then((timeMessage: Message) => {
-                return {
-                    title: 'Hello world',
-                    body: 'Time is ' + timeMessage.body,
-                };
-            })
-            .catch((error: unknown) => {
-                return {
-                    title: 'Error',
-                    body: error as string,
-                };
-            });
+        // console.log(this.clientMessages, 'messages');
+        const message: Message = this.clientMessages?.pop() ?? {
+            title: 'undefind',
+            body: 'message is umpty',
+        };
+        return {
+            title: message.title,
+            body: message.body,
+        };
+
+        // .catch((error: unknown) => {
+        //     return {
+        //         title: 'Error',
+        //         body: error as string,
+        //     };
+        // });
     }
 
     // TODO : ceci est à titre d'exemple. À enlever pour la remise

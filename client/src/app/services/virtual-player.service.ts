@@ -54,14 +54,14 @@ export class VirtualPlayerService {
     ) {}
     manageVrPlayerActions(): void {
         const probability: string[] = [
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
             'passTurn',
             'exchangeLetters',
         ];
