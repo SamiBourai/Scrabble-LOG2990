@@ -9,6 +9,7 @@ import {
     EIGHTEEN_POINTS,
     INITIAL_BOX_X,
     INITIAL_BOX_Y,
+    MAX_INDEX_NUMBER_EASEL,
     MAX_INDEX_NUMBER_PROBABILITY_ARRAY,
     NB_TILES,
     NOT_A_LETTER,
@@ -32,13 +33,11 @@ export class VirtualPlayerService {
     vrPlayerEaselLetters: Letter[] = [];
     first: boolean = true;
     commandToSend: string = '';
-
-    commandObs = new BehaviorSubject<string>(this.commandToSend);
+    commandObs = new BehaviorSubject<string>('');
     playObs = new BehaviorSubject(false);
     vrPoints: number = 0;
     isDicFille: boolean = false;
-
-    vrScoreObs = new BehaviorSubject(this.vrPoints);
+    vrScoreObs = new BehaviorSubject<number>(0);
     played: boolean = false;
     vrEaselSize: number = EASEL_LENGTH;
     private firstTurnLetters: Letter[] = [];
@@ -54,14 +53,14 @@ export class VirtualPlayerService {
     ) {}
     manageVrPlayerActions(): void {
         const probability: string[] = [
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
-            'exchangeLetters',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
             'passTurn',
             'exchangeLetters',
         ];
@@ -159,7 +158,6 @@ export class VirtualPlayerService {
                     return true;
                 }
                 return false;
-
             case '{7,12}':
                 if (points >= SEVEN_POINTS && points <= TWELVE_POINTS) return true;
                 return false;
@@ -177,9 +175,9 @@ export class VirtualPlayerService {
         alreadyInBoard.splice(1, EASEL_LENGTH);
         // need index for pos i
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let j = 0; j < alreadyInBoard.length; j++) {
+        for (const letter of alreadyInBoard) {
             for (let i = 0; i < word.length; i++) {
-                if (word.charAt(i) === alreadyInBoard[j].charac && !pos[i]) {
+                if (word.charAt(i) === letter.charac && !pos[i]) {
                     pos[i] = true;
                     break;
                 }
@@ -196,7 +194,6 @@ export class VirtualPlayerService {
     private wordInEasel(word: string): boolean {
         let found = false;
         let first = true;
-
         for (let i = 0; i < word.length; i++) {
             if (found || first) {
                 first = false;
@@ -213,7 +210,8 @@ export class VirtualPlayerService {
         return found;
     }
     private exchangeLettersInEasel(): void {
-        const numberOfLettersToExchange = Math.floor(Math.random() * EASEL_LENGTH);
+        const numberOfLettersToExchange = Math.floor(Math.random() * MAX_INDEX_NUMBER_EASEL) + 1;
+
         for (let i = 0; i < numberOfLettersToExchange; i++) {
             const letterTemp = this.vrPlayerEaselLetters[i];
             this.commandToSend += this.vrPlayerEaselLetters[i].charac;
@@ -263,17 +261,15 @@ export class VirtualPlayerService {
         let found = false;
         const regEx = new RegExp(this.validWordService.generateRegEx(lett), 'g');
         const words: string[] = this.generateWords(letterIngrid);
-        // we need index
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let k = 0; k < words.length; k++) {
-            if (this.fitsTheProb(words[k]) && this.isWordPlacable(words[k], letterIngrid) && regEx.test(words[k])) {
+        for (const word of words) {
+            if (this.fitsTheProb(word) && this.isWordPlacable(word, letterIngrid) && regEx.test(word)) {
                 const position: Vec2 = { x: 0, y: 0 };
-                const pos = this.placeVrLettersInScrable(words[k], lett);
+                const pos = this.placeVrLettersInScrable(word, lett);
 
                 if (pos !== UNDEFINED_INDEX) {
                     let tempCommand: ChatCommand;
-                    if (direction === 'v') tempCommand = { word: words[k], position: { x: x + 1, y: pos + 1 }, direction };
-                    else tempCommand = { word: words[k], position: { x: pos + 1, y: y + 1 }, direction };
+                    if (direction === 'v') tempCommand = { word, position: { x: x + 1, y: pos + 1 }, direction };
+                    else tempCommand = { word, position: { x: pos + 1, y: y + 1 }, direction };
 
                     this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
                     if (this.vrPoints !== 0) {
@@ -283,10 +279,10 @@ export class VirtualPlayerService {
                             tempCommand.position.x +
                             tempCommand.direction +
                             ' ' +
-                            words[k];
+                            word;
                         this.commandObs.next(this.commandToSend);
                         this.commandToSend = '';
-                        for (let j = 0; j < words[k].length; j++) {
+                        for (let j = 0; j < word.length; j++) {
                             if (direction === 'v') {
                                 position.x = x + 1;
                                 position.y = pos + j + 1;
@@ -295,7 +291,7 @@ export class VirtualPlayerService {
                                 position.y = y + 1;
                                 this.wordPlacedInScrable = true;
                             }
-                            this.lettersService.placeLetter(this.lettersService.getTheLetter(words[k].charAt(j)), {
+                            this.lettersService.placeLetter(this.lettersService.getTheLetter(word.charAt(j)), {
                                 x: position.x,
                                 y: position.y,
                             });
@@ -321,7 +317,7 @@ export class VirtualPlayerService {
         return this.vrScoreObs;
     }
     private placeVrLettersInScrable(word: string, boarLetters: Letter[]): number {
-        let posInit = -1;
+        let posInit = DEFAULT_POS;
         let equal = false;
         let reRightCounter = 0;
         for (let i = 0; i < NB_TILES - word.length; i++) {
@@ -342,7 +338,7 @@ export class VirtualPlayerService {
                 break;
             } else {
                 reRightCounter = 0;
-                posInit = -1;
+                posInit = DEFAULT_POS;
             }
         }
         return posInit;

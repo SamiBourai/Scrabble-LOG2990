@@ -506,7 +506,7 @@ describe('SidebarComponent', () => {
 
     // test for isYourTurn
     it('verify that if the skipTurnValidUser return true isYourTurn do the same', () => {
-        userServiceSpy.skipTurnValidUser.and.callFake(() => {
+        userServiceSpy.isUserTurn.and.callFake(() => {
             return true;
         });
 
@@ -514,7 +514,7 @@ describe('SidebarComponent', () => {
     });
 
     it('verify that if the skipTurnValidUser return false isYourTurn do the same', () => {
-        userServiceSpy.skipTurnValidUser.and.callFake(() => {
+        userServiceSpy.isUserTurn.and.callFake(() => {
             return false;
         });
 

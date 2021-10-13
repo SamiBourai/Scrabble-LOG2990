@@ -14,6 +14,17 @@ export class VrUserComponent implements OnInit {
     constructor(public userService: UserService, public virtualPlayerService: VirtualPlayerService, public timeService: TimeService) {}
 
     ngOnInit() {
+        this.setVrTurnToPlay();
+        this.getScoreVrPlayer();
+    }
+
+    getScoreVrPlayer() {
+        this.virtualPlayerService.scoreVr.subscribe((score) => {
+            this.userService.vrUser.score += score;
+        });
+    }
+
+    setVrTurnToPlay() {
         this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
                 if (!this.userService.realUser.turnToPlay) {

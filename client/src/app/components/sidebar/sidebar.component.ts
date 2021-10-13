@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
@@ -14,7 +14,7 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, AfterViewChecked {
     arrayOfMessages: string[] = [];
     arrayOfVrCommands: string[] = [];
     typeArea: string = '';
@@ -30,7 +30,7 @@ export class SidebarComponent implements OnInit {
     name: string;
     nameVr: string;
     word: string = 'mot';
-    errorMessage: string;
+    errorMessage: string = '';
 
     score: number = 0;
 
@@ -61,7 +61,7 @@ export class SidebarComponent implements OnInit {
     }
 
     isYourTurn() {
-        return this.userService.skipTurnValidUser();
+        return this.userService.isUserTurn();
     }
 
     getNameCurrentPlayer() {
@@ -80,7 +80,8 @@ export class SidebarComponent implements OnInit {
                     this.messageService.skipTurnIsPressed = false;
 
                     if (!this.isImpossible) {
-                        this.userService.detectSkipTurnBtn();
+                        this.userService.userPlayed();
+                        this.errorMessage = '';
                         this.arrayOfMessages.push(this.typeArea);
                     } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
                     break;
@@ -92,12 +93,13 @@ export class SidebarComponent implements OnInit {
                         this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.realUser.easel)
                     ) {
                         this.isImpossible = false;
+                        this.errorMessage = '';
                         this.arrayOfMessages.push(this.typeArea);
                     } else {
                         this.isImpossible = true;
                         this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
                     }
-                    if (!this.isImpossible) this.userService.detectSkipTurnBtn();
+                    if (!this.isImpossible) this.userService.userPlayed();
                     break;
                 case '!debug':
                     this.isImpossible = false;
@@ -105,9 +107,8 @@ export class SidebarComponent implements OnInit {
                     break;
                 case '!passer':
                     this.isImpossible = false;
-                    this.arrayOfMessages.push('!passer');
+                    this.errorMessage = '';
                     this.userService.detectSkipTurnBtn();
-
                     break;
             }
         } else {
@@ -115,6 +116,8 @@ export class SidebarComponent implements OnInit {
                 this.skipTurn = true;
                 this.isImpossible = true;
                 this.errorMessage = 'ce n est pas votre tour';
+            } else if (this.typeArea === '!debug') {
+                this.isDebug = !this.isDebug;
             } else {
                 this.arrayOfMessages.push(this.typeArea);
             }
@@ -130,6 +133,8 @@ export class SidebarComponent implements OnInit {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.active = true;
+            this.errorMessage = '';
+            this.arrayOfMessages.push('!passer');
             return true;
         }
         return false;

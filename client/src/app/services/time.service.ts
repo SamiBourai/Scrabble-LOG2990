@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/constants/constants';
 import { UserService } from './user.service';
+import { VirtualPlayerService } from './virtual-player.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TimeService {
-    timeUser: { min: number; sec: number } = { min: 0, sec: 10 };
-    timeVrPlayer: { min: number; sec: number } = { min: 0, sec: 10 };
-    constructor(private userService: UserService) {}
+    timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
+    timeVrPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
+    constructor(private userService: UserService, private virtualPlayerService: VirtualPlayerService) {}
     // timeObs: BehaviorSubject<{ min: number; sec: number }> = new BehaviorSubject<{ min: number; sec: number }>(this.time);
     // here we disable the any eslint error, because there"s not type Timeout in typscript.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,8 +36,11 @@ export class TimeService {
 
                     if (this.timeUser.min === 0 && this.timeUser.sec === 0) {
                         this.userService.realUser.turnToPlay = false;
-                        this.timeUser = { min: 0, sec: 10 };
+                        this.timeUser = { min: 0, sec: MINUTE_TURN };
                         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
+                        clearInterval(intervalId);
+                    } else if (!this.userService.realUser.turnToPlay) {
+                        this.timeUser = { min: 0, sec: MINUTE_TURN };
                         clearInterval(intervalId);
                     }
                 }, ONE_SECOND_MS);
@@ -48,10 +52,10 @@ export class TimeService {
                         this.timeVrPlayer.min -= ONE_MINUTE;
                         this.timeVrPlayer.sec = MINUTE_TURN;
                     } else this.timeVrPlayer.sec -= ONE_SECOND;
-                    if (this.timeVrPlayer.min === 0 && this.timeVrPlayer.sec === 0) {
+                    if ((this.timeVrPlayer.min === 0 && this.timeVrPlayer.sec === 0) || this.virtualPlayerService.played) {
                         this.userService.realUser.turnToPlay = true;
                         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
-                        this.timeVrPlayer = { min: 0, sec: 10 };
+                        this.timeVrPlayer = { min: 0, sec: MINUTE_TURN };
                         clearInterval(intervalId);
                     }
                 }, ONE_SECOND_MS);

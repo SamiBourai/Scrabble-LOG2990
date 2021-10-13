@@ -47,8 +47,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     detectSkipTurnBtn() {
-        this.userService.realUser.turnToPlay = !this.userService.realUser.turnToPlay;
-        this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
+        this.userService.detectSkipTurnBtn();
     }
 
     ngOnInit() {

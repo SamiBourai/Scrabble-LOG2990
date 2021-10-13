@@ -123,16 +123,16 @@ describe('UserService', () => {
     it('test skipTurnValidUser, expect true when time=59 ', () => {
         userService.time = 59;
 
-        expect(userService.skipTurnValidUser()).toBeTrue();
+        expect(userService.isUserTurn()).toBeTrue();
     });
     it('test skipTurnValidUser, expect false when time=20 ', () => {
         userService.time = 20;
 
-        expect(userService.skipTurnValidUser()).toBeFalse();
+        expect(userService.isUserTurn()).toBeFalse();
     });
     it('test skipTurnValidUser, expect false when time!=20 and time!=59 ', () => {
         userService.time = 0;
 
-        expect(userService.skipTurnValidUser()).toBeFalse();
+        expect(userService.isUserTurn()).toBeFalse();
     });
 });

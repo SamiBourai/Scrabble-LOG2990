@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EaselObject } from '@app/classes/EaselObject';
 import { RealUser, VrUser } from '@app/classes/user';
-import { MINUTE_TURN, PARAMETERS_OF_SWAP } from '@app/constants/constants';
+import { PARAMETERS_OF_SWAP } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
 @Injectable({
@@ -27,8 +27,6 @@ export class UserService {
 
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     observableTurnToPlay: Observable<boolean>;
-    realUserSkipHisTurn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
-    obsSkipTurn: BehaviorSubject<boolean>;
 
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
@@ -93,17 +91,24 @@ export class UserService {
     resetCounter(min: number, sec: number) {
         this.counter = { min, sec };
     }
-    skipTurnValidUser(): boolean {
-        if (this.time === MINUTE_TURN) return true;
-        return false;
+    isUserTurn(): boolean {
+        return this.realUser.turnToPlay;
     }
     detectSkipTurnBtn(): boolean {
         this.messageService.skipTurnIsPressed = true;
-        this.userSkipingTurn = true;
         this.realUser.turnToPlay = false;
+        this.realUserTurnObs.next(this.realUser.turnToPlay);
         return true;
+    }
+
+    userPlayed() {
+        this.realUser.turnToPlay = false;
+        this.realUserTurnObs.next(this.realUser.turnToPlay);
     }
     get turnToPlayObs(): Observable<boolean> {
         return this.observableTurnToPlay;
+    }
+    scoreRealPlayer(): number {
+        return this.realUser.score;
     }
 }
