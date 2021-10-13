@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ModalUserNameComponent } from '@app/modal-user-name/modal-user-name.component';
+import { ModalUserNameComponent } from '@app/modals/modal-user-name/modal-user-name.component';
 import { AppMaterialModule } from '@app/modules/material.module';
 
 describe('ModalUserNameComponent', () => {

@@ -14,6 +14,7 @@ export class UserService {
     //  ou Declare your variable type as any
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    playMode: string;
     userNameLocalStorage: any;
     counter: { min: number; sec: number } = { min: 0, sec: 59 };
     passesCounter: number = 0;
