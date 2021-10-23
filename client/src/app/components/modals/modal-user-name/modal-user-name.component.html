@@ -1,6 +1,5 @@
 
-<div *ngIf="soloMode">
-
+<div *ngIf="soloMode" >
     <mat-card class="game-Configuration-Card">
     <mat-card-title>Configuration de la partie en Solo</mat-card-title>
 
@@ -53,31 +52,72 @@
 </mat-card>
 </div>
 
-
-
-   
-<div class="div" *ngIf="createMultiplayerGame">
-     <mat-card class="game-Configuration-Card">
+<div class="div" *ngIf="createMultiplayerGame"  >
+    <mat-card class="game-Configuration-Card" >
         <mat-card-title>Configuration de la partie multijoueurs </mat-card-title>
-    
-        <mat-card-subtitle>Entrez votre nom d'utilisateur afin de commencer la partie ! </mat-card-subtitle>
+    </mat-card>
+    <button mat-raised-button (click)="isOptional = !isOptional">
+  {{!isOptional ? 'Enable optional steps' : 'Disable optional steps'}}
+</button>
+<mat-stepper linear #stepper >
+    <mat-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Remplissez votre nom</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>Nom</mat-label>
+          <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext>Suivant</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" [optional]="isOptional">
+      <form [formGroup]="secondFormGroup">
+        <ng-template matStepLabel>Créez une partie</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>Nom de la partie</mat-label>
+          <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
+                 required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Retour</button>
+          <button mat-button matStepperNext>Suivant </button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Salle d'attente</ng-template>
+      <p>Attendez un autre utilisateur qui va joindre la partie</p>
+      <mat-spinner></mat-spinner>
+      <div>
+        <button mat-button matStepperPrevious>Retour</button>
+        <button mat-button (click)="passInSoloMode()">Jouer une partie classique</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+<!-- <mat-stepper linear #stepper>
+    <mat-step [stepControl]="firstFormGroup">
+        <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Fill out your name</ng-template>
         <form>
+            <mat-card-subtitle>Entrez votre nom d'utilisateur afin de commencer la partie ! </mat-card-subtitle>
             <div>
-                <!-- nom entre par l'utilisateur -->
+                <!-- nom entre par l'utilisateur 
                 <mat-form-field class="example-full-width">
-                    <mat-label>Name </mat-label>
+                    <mat-label>Nom </mat-label>
                     <input
                         class="user-name-input"
                         matInput
-                        placeholder="Name"
+                        placeholder="nom"
                         #message
                         maxlength="15"
                         [formControl]="userName"
+                        formControlName="firstCtrl"
                         placeholder="Ex. Sami1234"
                         required
                     />
                     <mat-hint align="end"> {{ message.value?.length }} / 15</mat-hint>
-    
                     <mat-hint align="start" class="error-hint" *ngIf="userName.value.length < 8 || userName.invalid">
                         &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
                         &#9679; Le nom ne doit pas contenir d'espace <br />
@@ -86,28 +126,50 @@
                     <mat-hint class="no-error-hint" align="start" *ngIf="userName.value.length >= 8 && userName.valid">
                         &#9679; Le nom entré est valide !!! <br />
                     </mat-hint>
-                    <!-- <p>{{userName.value}}xx</p> -->
+                    <!-- <p>{{userName.value}}xx</p> 
                     <mat-icon matSuffix mat-icon-button color="primary">info</mat-icon>
                 </mat-form-field>
             </div>
         </form>
+      <div>
         <mat-card-actions>
             <div class="play-btn">
                 <button mat-raised-button mat-dialog-close>Annuler</button>
                 <button
                     mat-raised-button
+                    mat-button matStepperNex
                     color="primary"
-                    [disabled]="userName.value.length < 8 || userName.invalid"
-                    mat-dialog-close
-                    (click)="openDialogOfVrUser()"
-                    (click)="storeNameInLocalStorage()"
-                >
+                    [disabled]="userName.value.length < 8 || userName.invalid">
                     suivant
                 </button>
             </div>
         </mat-card-actions>
-    </mat-card>
-    
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="secondFormGroup" [optional]="isOptional">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Fill out your address</ng-template>
+      <mat-form-field appearance="fill">
+        <mat-label>Address</mat-label>
+        <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
+               required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-stepper>    -->
 </div>
 
 

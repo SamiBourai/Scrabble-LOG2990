@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { UserService } from '@app/services/user.service';
@@ -9,14 +9,17 @@ import { UserService } from '@app/services/user.service';
     templateUrl: './modal-user-name.component.html',
     styleUrls: ['./modal-user-name.component.scss'],
 })
-export class ModalUserNameComponent {
+export class ModalUserNameComponent implements OnInit {
     soloMode: boolean = false;
     createMultiplayerGame: boolean = false;
     joinMultiplayerGame: boolean = false;
+    firstFormGroup: FormGroup;
+    secondFormGroup: FormGroup;
+    isOptional = false;
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
 
-    constructor(private dialogRef: MatDialog, private userService: UserService) {
+    constructor(private dialogRef: MatDialog, private userService: UserService, private formBuilder: FormBuilder) {
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
@@ -29,13 +32,25 @@ export class ModalUserNameComponent {
                 break;
         }
     }
+    ngOnInit(): void {
+        this.firstFormGroup = this.formBuilder.group({
+            firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+        });
+        this.secondFormGroup = this.formBuilder.group({
+            secondCtrl: new FormControl(''),
+        });
+    }
 
-    openDialogOfVrUser() {
+    openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
     }
 
-    storeNameInLocalStorage() {
+    storeNameInLocalStorage(): void {
         this.name = this.userName.value;
         localStorage.setItem('userName', this.name);
+    }
+    passInSoloMode(): void {
+        this.soloMode = true;
+        this.createMultiplayerGame = false;
     }
 }
