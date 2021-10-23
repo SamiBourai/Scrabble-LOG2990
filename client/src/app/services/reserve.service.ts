@@ -43,8 +43,8 @@ export class ReserveService {
     random: number;
     save: Letter;
     reserveSize: number = 0;
-    // eslint-disable-next-line no-invalid-this
-    sizeObs = new BehaviorSubject(this.reserveSize);
+
+    sizeObs = new BehaviorSubject(0);
 
     constructor() {
         for (let i = 0; i < SWAP_LENGTH; i++) {
@@ -104,6 +104,7 @@ export class ReserveService {
             this.letters.push(L);
             this.reserveSize++;
         }
+        this.sizeObs.next(this.reserveSize);
     }
 
     getRandomLetter(): Letter {

@@ -27,7 +27,7 @@ export class VrUserComponent implements OnInit {
     setVrTurnToPlay() {
         this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
-                if (!this.userService.realUser.turnToPlay) {
+                if (!this.userService.realUser.turnToPlay && !this.userService.endOfGame) {
                     this.timeService.startTime('vrPlayer');
                     this.virtualPlayerService.manageVrPlayerActions();
                 }

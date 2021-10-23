@@ -24,7 +24,6 @@ export class TimeService {
     //     this.time = time;
     //     this.timeObs.next(this.time);
     // }
-
     startTime(playerTurn: string) {
         switch (playerTurn) {
             case 'user': {
@@ -35,6 +34,7 @@ export class TimeService {
                     } else this.timeUser.sec -= ONE_SECOND;
 
                     if (this.timeUser.min === 0 && this.timeUser.sec === 0) {
+                        this.userService.detectSkipTurnBtn();
                         this.userService.realUser.turnToPlay = false;
                         this.timeUser = { min: 0, sec: MINUTE_TURN };
                         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
@@ -53,6 +53,12 @@ export class TimeService {
                         this.timeVrPlayer.sec = MINUTE_TURN;
                     } else this.timeVrPlayer.sec -= ONE_SECOND;
                     if ((this.timeVrPlayer.min === 0 && this.timeVrPlayer.sec === 0) || this.virtualPlayerService.played) {
+                        if (this.virtualPlayerService.skipTurn) {
+                            this.userService.checkForSixthSkip();
+                            this.virtualPlayerService.skipTurn = false;
+                        } else {
+                            this.userService.endOfGameCounter = 0;
+                        }
                         this.userService.realUser.turnToPlay = true;
                         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
                         this.timeVrPlayer = { min: 0, sec: MINUTE_TURN };

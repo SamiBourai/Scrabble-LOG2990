@@ -65,7 +65,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     getNameCurrentPlayer() {
-        return this.userService.getUserName();
+        return this.userService.getUserName;
     }
 
     getNameVrPlayer() {
@@ -73,7 +73,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
-        if (this.isYourTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea)) {
+        if (
+            this.isYourTurn() &&
+            this.messageService.isCommand(this.typeArea) &&
+            this.messageService.isValid(this.typeArea) &&
+            !this.isTheGameDone()
+        ) {
             switch (this.typeArea.split(' ', 1)[0]) {
                 case '!placer':
                     this.getLettersFromChat();
@@ -82,6 +87,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     if (!this.isImpossible) {
                         this.userService.userPlayed();
                         this.errorMessage = '';
+                        this.userService.endOfGameCounter = 0;
                         this.arrayOfMessages.push(this.typeArea);
                     } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
                     break;
@@ -95,6 +101,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         this.isImpossible = false;
                         this.errorMessage = '';
                         this.arrayOfMessages.push(this.typeArea);
+                        this.userService.endOfGameCounter = 0;
                     } else {
                         this.isImpossible = true;
                         this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
@@ -152,7 +159,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
                         this.firstTurn = false;
                         if (this.userService.realUser.easel.contains(this.messageService.command.word)) {
-                            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel);
+                            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel, true);
                             this.isImpossible = false;
                             this.virtualPlayerService.first = false;
                             this.userService.realUser.score += points;
@@ -169,7 +176,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     }
                 } else if (this.lettersService.wordIsAttached(this.messageService.command) && points !== 0) {
                     if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.realUser.easel)) {
-                        this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel);
+                        this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel, true);
                         this.isImpossible = false;
                         this.virtualPlayerService.first = false;
                         this.userService.realUser.score += points;
@@ -204,5 +211,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.isImpossible = true;
         }
         this.isValid = this.messageService.isValid(this.typeArea);
+    }
+
+    isTheGameDone(): boolean {
+        return this.userService.endOfGame;
     }
 }

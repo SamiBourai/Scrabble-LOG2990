@@ -5,8 +5,8 @@
         <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
         <mat-card-subtitle class="score-time">Temps par tour : {{ userService.realUser.round }}</mat-card-subtitle>
         <mat-card-subtitle class="score-time">Score : {{ this.userService.realUser.score }}</mat-card-subtitle>
-        <mat-card-subtitle class="score-time" *ngif="this.easelLogisticService.easelSize < 7"
-            >letter dans chevalet : {{ this.userService.realUser.easel.easelSize }}</mat-card-subtitle
+        <mat-card-subtitle class="score-time" *ngIf="this.userService.realUser.easel.getEaselSize() < 7"
+            >letter dans chevalet : {{ this.userService.realUser.easel.getEaselSize() }}</mat-card-subtitle
         >
         <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeUser.min }}:{{ this.timeService.timeUser.sec }}</mat-card-subtitle>
     </mat-card-header>
@@ -20,8 +20,8 @@
             <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
             <mat-card-subtitle class="score-time">Temps par tour : {{ userService.realUser.round }}</mat-card-subtitle>
             <mat-card-subtitle class="score-time">Score : {{ this.userService.scoreRealPlayer() }}</mat-card-subtitle>
-            <mat-card-subtitle class="score-time" *ngif="this.easelLogisticService.easelSize < 7"
-                >letter dans chevalet : {{ this.userService.realUser.easel.easelSize }}</mat-card-subtitle
+            <mat-card-subtitle class="score-time" *ngIf="this.userService.realUser.easel.getEaselSize() < 7">
+                letter dans chevalet : {{ this.userService.realUser.easel.getEaselSize() }}</mat-card-subtitle
             >
             <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeUser.min }}:{{ this.timeService.timeUser.sec }}</mat-card-subtitle>
         </mat-card-header>

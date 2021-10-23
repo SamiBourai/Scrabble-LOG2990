@@ -87,7 +87,7 @@ export class LettersService {
                 temp.push(this.easelLogisticsService.getLetterFromEasel(easel, easel.indexOfEaselLetters[i]));
                 easel.occupiedPos[easel.indexOfEaselLetters[i]] = false;
             }
-            this.easelLogisticsService.refillEasel(easel);
+            this.easelLogisticsService.refillEasel(easel, true);
             for (const lett of temp) {
                 this.reserveService.reFillReserve(lett);
             }
@@ -97,7 +97,7 @@ export class LettersService {
         }
         return false;
     }
-    placeLettersInScrable(command: ChatCommand, easel: EaselObject): void {
+    placeLettersInScrable(command: ChatCommand, easel: EaselObject, user: boolean): void {
         this.usedAllEaselLetters = false;
         let numberOfLettersUsed = 0;
         let boardLetterCounter = 0;
@@ -124,7 +124,7 @@ export class LettersService {
         if (numberOfLettersUsed === EASEL_LENGTH) this.usedAllEaselLetters = true;
         easel.resetVariables();
         this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
-        this.easelLogisticsService.refillEasel(easel);
+        this.easelLogisticsService.refillEasel(easel, user);
     }
 
     wordIsPlacable(command: ChatCommand, easel: EaselObject): boolean {

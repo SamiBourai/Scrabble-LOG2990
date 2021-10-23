@@ -22,6 +22,4 @@ export class ModalUserNameComponent {
         this.name = this.userName.value;
         localStorage.setItem('userName', this.name);
     }
-
-    
 }
