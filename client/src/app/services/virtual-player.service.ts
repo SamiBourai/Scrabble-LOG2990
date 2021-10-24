@@ -46,7 +46,7 @@ export class VirtualPlayerService {
         private lettersService: LettersService,
         private easelLogic: EaselLogiscticsService,
     ) {
-        this.easelLogic.refillEasel(this.easel, false);
+        this.easelLogic.fillEasel(this.easel, false);
     }
     manageVrPlayerActions(): void {
         this.skipTurn = false;
@@ -59,8 +59,8 @@ export class VirtualPlayerService {
             'placeWord',
             'placeWord',
             'placeWord',
-            'passTurn',
-            'exchangeLetters',
+            'placeWord',
+            'placeWord',
         ];
         if (!this.isDicFille) {
             this.isDicFille = true;
@@ -85,6 +85,7 @@ export class VirtualPlayerService {
                                 this.commandObs.next(this.commandToSend);
                                 this.commandToSend = '';
                                 this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                                this.vrScoreObs.next(this.vrPoints);
                                 this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
                                 this.wordPlacedInScrable = true;
                                 this.easelLogic.refillEasel(this.easel, false);
@@ -99,7 +100,6 @@ export class VirtualPlayerService {
                     if (!this.wordPlacedInScrable) {
                         this.passTurnSteps();
                     } else {
-                        this.vrScoreObs.next(this.vrPoints);
                         this.wordPlacedInScrable = false;
                         this.played = true;
                         this.skipTurn = false;
@@ -201,7 +201,7 @@ export class VirtualPlayerService {
             lett.splice(0, lett.length);
             if (placed) {
                 this.wordPlacedInScrable = true;
-                break;
+                return;
             }
         }
     }
@@ -218,26 +218,28 @@ export class VirtualPlayerService {
                     let tempCommand: ChatCommand;
                     if (direction === 'v') tempCommand = { word, position: { x: x + 1, y: pos + 1 }, direction };
                     else tempCommand = { word, position: { x: pos + 1, y: y + 1 }, direction };
-                    this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
-                    if (this.lettersService.wordIsPlacable(tempCommand, this.easel) && this.vrPoints !== 0) {
-                        this.commandToSend =
-                            '!placer ' +
-                            String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
-                            tempCommand.position.x +
-                            tempCommand.direction +
-                            ' ' +
-                            word;
 
-                        this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
+                    if (this.lettersService.wordIsPlacable(tempCommand, this.easel)) {
+                        this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                        if (this.vrPoints !== 0) {
+                            this.commandToSend =
+                                '!placer ' +
+                                String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
+                                tempCommand.position.x +
+                                tempCommand.direction +
+                                ' ' +
+                                word;
 
-                        this.commandObs.next(this.commandToSend);
-                        this.commandToSend = '';
-                        found = true;
-                        break;
+                            this.vrScoreObs.next(this.vrPoints);
+                            this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
+                            this.commandObs.next(this.commandToSend);
+                            this.commandToSend = '';
+                            found = true;
+                            return found;
+                        }
                     }
                 }
             }
-            this.easel.resetVariables();
         }
         return found;
     }
