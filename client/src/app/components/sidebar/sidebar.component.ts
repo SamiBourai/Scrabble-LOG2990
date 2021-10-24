@@ -73,12 +73,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
-        if (
-            this.isYourTurn() &&
-            this.messageService.isCommand(this.typeArea) &&
-            this.messageService.isValid(this.typeArea) &&
-            !this.isTheGameDone()
-        ) {
+        const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea) && this.isYourTurn();
+        this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
+        if (validPlay && !this.isTheGameDone()) {
             switch (this.typeArea.split(' ', 1)[0]) {
                 case '!placer':
                     this.getLettersFromChat();
@@ -119,21 +116,25 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
             }
         } else {
-            if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
-                this.skipTurn = true;
-                this.isImpossible = true;
-                this.errorMessage = 'ce n est pas votre tour';
-            } else if (this.typeArea === '!debug') {
-                this.isDebug = !this.isDebug;
-            } else {
-                this.arrayOfMessages.push(this.typeArea);
-            }
+            this.skipTurnCommand();
         }
 
         this.name = this.getNameCurrentPlayer();
         this.nameVr = this.getNameVrPlayer();
         this.impossibleAndValid();
         this.typeArea = '';
+    }
+
+    skipTurnCommand() {
+        if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+            this.skipTurn = true;
+            this.isImpossible = true;
+            this.errorMessage = 'ce n est pas votre tour';
+        } else if (this.typeArea === '!debug') {
+            this.isDebug = !this.isDebug;
+        } else if (this.messageService.isCommand(this.typeArea) && !this.messageService.isValid(this.typeArea)) {
+            this.errorMessage = 'commande invalide';
+        } else this.arrayOfMessages.push(this.typeArea);
     }
 
     isSkipButtonClicked() {

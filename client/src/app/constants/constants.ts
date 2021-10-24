@@ -159,7 +159,7 @@ export const PINK_BOX: Vec2[] = [
 ];
 
 // sidebar
-
+export const COLUMN_RANGE = 16;
 // the length of the command !placer and !echanger
 export const PLACE_LENGTH = 7;
 export const SWAP_LENGTH = 9;
