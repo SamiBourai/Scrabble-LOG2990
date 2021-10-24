@@ -82,7 +82,7 @@
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Retour</button>
-          <button mat-button matStepperNext>Suivant </button>
+          <button mat-button (click)="createGame()"matStepperNext>Suivant </button>
         </div>
       </form>
     </mat-step>
@@ -176,8 +176,46 @@
 
     
    
-<div class="div" *ngIf="joinMultiplayerGame">
-    
-    <p>frkejgkrjgktrnjgktrgtrgtrgtrt</p>
+<div class="div" *ngIf="joinMultiplayerGame">   
+  <mat-card class="game-Configuration-Card" >
+    <mat-card-title>Joindre une partie</mat-card-title>
+</mat-card>
+<!-- <button mat-raised-button (click)="isOptional = !isOptional">
+{{!isOptional ? 'Enable optional steps' : 'Disable optional steps'}}
+</button>
+<mat-stepper linear #stepper >
+<mat-step [stepControl]="firstFormGroup">
+  <form [formGroup]="firstFormGroup">
+    <ng-template matStepLabel>Remplissez votre nom</ng-template>
+    <mat-form-field appearance="fill">
+      <mat-label>Nom</mat-label>
+      <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+    </mat-form-field>
+    <div>
+      <button mat-button matStepperNext>Suivant</button>
+    </div>
+  </form>
+</mat-step>
+<mat-step>
+  <ng-template matStepLabel>voir les parties</ng-template>
+  <p>cliquez sur la partie que vous voulez rejoindre</p>
+  <table mat-table [dataSource]="rooms" class="mat-elevation-z8 demo-table">
+    <!-- Position Column 
+    <ng-container matColumnDef="clientName">
+      <th mat-header-cell *matHeaderCellDef>nom de l'utilisateur</th>
+      <td mat-cell *matCellDef="let element">{{element.clientName}}</td>
+    </ng-container>
+  
+    <!-- Name Column 
+    <ng-container matColumnDef="gameName">
+      <th mat-header-cell *matHeaderCellDef>nom de la partie</th>
+      <td mat-cell *matCellDef="let element">{{element.gameName}}</td>
+    </ng-container>
+  </table>
+  <div>
+    <button mat-button matStepperPrevious>Retour</button>
+  </div>
+</mat-step>
+</mat-stepper> -->
 
 </div>
