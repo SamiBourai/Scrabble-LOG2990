@@ -35,7 +35,8 @@ describe('SidebarComponent', () => {
             'debugCommand',
             'containsPlaceCommand',
             'swapCommand',
-            'replaceSpecialChar'
+            'replaceSpecialChar',
+            'removeDuplicate'
         ]);
 
         userServiceSpy = jasmine.createSpyObj('UserServiceSpy', [
@@ -47,7 +48,8 @@ describe('SidebarComponent', () => {
             'getVrUserName',
             'skipTurn',
             'resetPassesCounter',
-            'isUserTurn'
+            'isUserTurn',
+            'userPlayed'
         ]);
         letterServiceSpy = jasmine.createSpyObj('letterServiceSpy', [
             'changeLetterFromReserve',
@@ -197,10 +199,12 @@ describe('SidebarComponent', () => {
     });
 
     it('verify that when isImpossible is false, detectSkipTurnBtn is called', () => {
-        messageServiceSpy.containsSwapCommand.and.callFake(() => {
-            return false;
+        
+        messageServiceSpy.isCommand.and.callFake(() => {
+            return true;
         });
-        messageServiceSpy.containsPlaceCommand.and.callFake(() => {
+
+        messageServiceSpy.isValid.and.callFake(() => {
             return true;
         });
 
@@ -208,10 +212,10 @@ describe('SidebarComponent', () => {
             return true;
         });
 
-        spyOn<any>(component, 'isImpossible').and.resolveTo(false);
+        component.isImpossible = false;
 
         component.logMessage();
-        expect(messageServiceSpy.skipTurnIsPressed).toBeFalse();
+        expect(userServiceSpy.userPlayed()).toBeFalse();
     });
 
     it('should verify that isImpossible is true when the reserveSize < 7', () => {

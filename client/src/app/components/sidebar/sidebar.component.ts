@@ -61,7 +61,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.chatService.emit('identify', this.userService.getUserName);
 
         // Selon typescript, value est un string, mais lors de l'execution le navigateur indique Object??
-        this.chatService.listen('chat').subscribe((value:Object) => {
+        this.chatService.listen('chat').subscribe((value:any) => {
             const socketMessage = value as SocketMessage;
             if (socketMessage.name === this.userService.getUserName) {
                 socketMessage.name = '(moi) ' + socketMessage.name;
@@ -70,7 +70,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
             const msg = `${socketMessage.name}: ${socketMessage.message}`;
 
-            if (this.messageService.isCommand(socketMessage.message) && !this.messageService.isValid(socketMessage.message)){}
+            if (this.messageService.isCommand(socketMessage.message) && !this.messageService.isValid(socketMessage.message)) this.errorMessage = "erreur";
             else this.arrayOfMessages.push(msg);
         });
 
