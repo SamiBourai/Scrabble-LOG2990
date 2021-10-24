@@ -150,4 +150,10 @@ export class MessageService {
         const ligne = asciiCode - CHAR_OFFSET;
         return ligne;
     }
+
+    removeDuplicate(array:string[],element:string){
+        const index = array.indexOf(element,0);
+        if(index > -1) array.splice(index,1)
+    }
+
 }

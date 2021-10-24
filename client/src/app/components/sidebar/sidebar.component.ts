@@ -1,7 +1,9 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
+import { SocketMessage } from '@app/classes/socketMessage';
 import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
+import { ChatService } from '@app/services/chat.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
@@ -47,6 +49,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private userService: UserService,
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
+        private chatService: ChatService,
     ) {}
     ngOnInit(): void {
         this.virtualPlayerService.commandToSendVr.subscribe((res) => {
@@ -54,6 +57,24 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.arrayOfVrCommands.push(res);
             }, 0);
         });
+
+        this.chatService.emit('identify', this.userService.getUserName);
+
+        // Selon typescript, value est un string, mais lors de l'execution le navigateur indique Object??
+        this.chatService.listen('chat').subscribe((value:Object) => {
+            const socketMessage = value as SocketMessage;
+            if (socketMessage.name === this.userService.getUserName) {
+                socketMessage.name = '(moi) ' + socketMessage.name;
+            }
+            socketMessage.message = this.messageService.replaceSpecialChar(socketMessage.message);
+
+            const msg = `${socketMessage.name}: ${socketMessage.message}`;
+
+            if (this.messageService.isCommand(socketMessage.message) && !this.messageService.isValid(socketMessage.message)){}
+            else this.arrayOfMessages.push(msg);
+        });
+
+        this.chatService.connect();
     }
 
     ngAfterViewChecked(): void {
@@ -117,6 +138,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             }
         } else {
             this.skipTurnCommand();
+            if (!this.messageService.isCommand(this.typeArea)) {
+                this.messageService.removeDuplicate(this.arrayOfMessages, this.typeArea);
+            }
         }
 
         this.name = this.getNameCurrentPlayer();
@@ -216,5 +240,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
     isTheGameDone(): boolean {
         return this.userService.endOfGame;
+    }
+
+    sendMessage(): void {
+        this.chatService.emit('chat', this.typeArea);
     }
 }
