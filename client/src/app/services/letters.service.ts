@@ -48,7 +48,6 @@ export class LettersService {
     usedAllEaselLetters: boolean = false;
     gridContext: CanvasRenderingContext2D;
 
-    indexLettersAlreadyInBoard: number[] = [];
     tiles = new Array<Letter[]>(NB_TILES);
 
     constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {
@@ -99,32 +98,23 @@ export class LettersService {
     }
     placeLettersInScrable(command: ChatCommand, easel: EaselObject, user: boolean): void {
         this.usedAllEaselLetters = false;
-        let numberOfLettersUsed = 0;
-        let boardLetterCounter = 0;
-        let easelLetterCounter = 0;
         for (let i = 0; i < command.word.length; i++) {
-            if (i === this.indexLettersAlreadyInBoard[boardLetterCounter]) {
-                boardLetterCounter++;
-            } else {
-                numberOfLettersUsed++;
-                if (command.direction === 'h') {
-                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(easel, easel.indexOfEaselLetters[easelLetterCounter]), {
-                        x: command.position.x + i,
-                        y: command.position.y,
-                    });
-                } else if (command.direction === 'v') {
-                    this.placeLetter(this.easelLogisticsService.getLetterFromEasel(easel, easel.indexOfEaselLetters[easelLetterCounter]), {
-                        x: command.position.x,
-                        y: command.position.y + i,
-                    });
-                }
-                easelLetterCounter++;
+            if (command.direction === 'h') {
+                this.placeLetter(this.getTheLetter(command.word.charAt(i)), {
+                    x: command.position.x + i,
+                    y: command.position.y,
+                });
+            } else if (command.direction === 'v') {
+                this.placeLetter(this.getTheLetter(command.word.charAt(i)), {
+                    x: command.position.x,
+                    y: command.position.y + i,
+                });
             }
         }
-        if (numberOfLettersUsed === EASEL_LENGTH) this.usedAllEaselLetters = true;
-        easel.resetVariables();
-        this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
+
+        if (easel.indexOfEaselLetters.length === EASEL_LENGTH) this.usedAllEaselLetters = true;
         this.easelLogisticsService.refillEasel(easel, user);
+        easel.resetVariables();
     }
 
     wordIsPlacable(command: ChatCommand, easel: EaselObject): boolean {
@@ -136,10 +126,8 @@ export class LettersService {
             } else if (command.direction === 'v') {
                 saveLetter = this.tiles[command.position.y - 1 + i][command.position.x - 1].charac;
             }
-            if (saveLetter === command.word.charAt(i)) {
-                this.indexLettersAlreadyInBoard.push(i);
-            } else {
-                letterFromEasel = letterFromEasel + command.word.charAt(i);
+            if (saveLetter !== command.word.charAt(i)) {
+                letterFromEasel += command.word.charAt(i);
             }
         }
         if (easel.contains(letterFromEasel)) {
@@ -147,7 +135,7 @@ export class LettersService {
         }
 
         easel.resetVariables();
-        this.indexLettersAlreadyInBoard.splice(0, this.indexLettersAlreadyInBoard.length);
+
         return false;
     }
     fromWordToLetters(word: string): Letter[] {

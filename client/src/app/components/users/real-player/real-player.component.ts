@@ -14,9 +14,10 @@ export class RealPlayerComponent implements OnInit {
 
     ngOnInit() {
         this.userService.turnToPlayObs.subscribe(() => {
-            setTimeout(() => {
-                if (this.userService.realUser.turnToPlay && !this.userService.endOfGame) this.timeService.startTime('user');
-            }, 0);
+            if (this.userService.realUser.turnToPlay && !this.userService.endOfGame) {
+                this.timeService.startTime('user');
+            }
         });
     }
 }
+
