@@ -43,9 +43,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly pvs: ValidWordService,
     ) {
-        console.log('user Easel init');
-        this.easelLogisticsService.refillEasel(this.userService.realUser.easel, true);
-        console.log(this.userService.realUser.easel.easelLetters);
+        this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
     }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -141,3 +139,4 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         }
     }
 }
+

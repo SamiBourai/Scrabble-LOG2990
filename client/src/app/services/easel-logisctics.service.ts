@@ -51,6 +51,13 @@ export class EaselLogiscticsService {
                         BOARD_HEIGHT / NB_TILES,
                     );
                 };
+            } else {
+                this.gridContext.clearRect(
+                    LEFTSPACE + ((HAND_POSITION_START + pos) * BOARD_WIDTH) / NB_TILES + 2,
+                    TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + 2,
+                    BOARD_WIDTH / NB_TILES - CLEAR_RECT_FIX,
+                    BOARD_HEIGHT / NB_TILES - CLEAR_RECT_FIX,
+                );
             }
             counter++;
         }
@@ -66,31 +73,20 @@ export class EaselLogiscticsService {
     }
 
     refillEasel(easel: EaselObject, user: boolean): void {
-        for (let i = 0; i < EASEL_LENGTH; i++) {
-            if (easel.easelLetters[i] === NOT_A_LETTER) {
-                if (this.reserveService.reserveSize > 0) {
-                    const temp: Letter = this.reserveService.getRandomLetter();
-                    easel.add(temp, i);
-                } else {
-                    if (user) {
-                        this.gridContext.clearRect(
-                            LEFTSPACE + ((HAND_POSITION_START + i) * BOARD_WIDTH) / NB_TILES + 2,
-                            TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + 2,
-                            BOARD_WIDTH / NB_TILES - CLEAR_RECT_FIX,
-                            BOARD_HEIGHT / NB_TILES - CLEAR_RECT_FIX,
-                        );
-                    }
-                    easel.easelSize--;
-                    easel.add(NOT_A_LETTER, i);
-                }
+        for (const nb of easel.indexOfEaselLetters) {
+            if (!this.reserveService.isReserveEmpty()) easel.add(this.reserveService.getRandomLetter(), nb);
+            else {
+                easel.add(NOT_A_LETTER, nb);
+                easel.easelSize--;
             }
         }
-        if (this.reserveService.isReserveEmpty() && this.firstMessage) {
-            window.alert('*LA RESERVE EST MAINTENANT VIDE*');
-            this.firstMessage = false;
+
+        if (user) this.placeEaselLetters(easel);
+    }
+    fillEasel(easel: EaselObject, user: boolean): void {
+        for (let i = 0; i < EASEL_LENGTH; i++) {
+            if (!this.reserveService.isReserveEmpty()) easel.add(this.reserveService.getRandomLetter(), i);
         }
-        if (user) {
-            this.placeEaselLetters(easel);
-        }
+        if (user) this.placeEaselLetters(easel);
     }
 }

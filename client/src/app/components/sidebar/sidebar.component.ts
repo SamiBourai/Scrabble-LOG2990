@@ -70,7 +70,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
             const msg = `${socketMessage.name}: ${socketMessage.message}`;
 
-            if (this.messageService.isCommand(socketMessage.message) && !this.messageService.isValid(socketMessage.message)) this.errorMessage = "erreur";
+            if (this.messageService.isCommand(socketMessage.message) && !this.messageService.isValid(socketMessage.message))
+                this.errorMessage = 'erreur';
             else this.arrayOfMessages.push(msg);
         });
 

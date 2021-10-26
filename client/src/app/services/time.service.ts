@@ -35,9 +35,7 @@ export class TimeService {
 
                     if (this.timeUser.min === 0 && this.timeUser.sec === 0) {
                         this.userService.detectSkipTurnBtn();
-                        this.userService.realUser.turnToPlay = false;
                         this.timeUser = { min: 0, sec: MINUTE_TURN };
-                        this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
                         clearInterval(intervalId);
                     } else if (!this.userService.realUser.turnToPlay) {
                         this.timeUser = { min: 0, sec: MINUTE_TURN };
