@@ -116,6 +116,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     } else if (
                         this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.realUser.easel)
                     ) {
+                        console.log(this.userService.realUser.easel);
                         this.isImpossible = false;
                         this.errorMessage = '';
                         this.arrayOfMessages.push(this.typeArea);
