@@ -15,9 +15,12 @@
             <div>
                 <app-real-player></app-real-player>
             </div>
-            <div *ngIf = "soloMode">
+            <div *ngIf = "soloMode; else elseBlock">
                 <app-vr-user></app-vr-user>
             </div>
+            <ng-template #elseBlock>
+                <app-joined-user></app-joined-user>
+            </ng-template>
         </div>
     </div>
 </div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EaselObject } from '@app/classes/EaselObject';
-import { RealUser, VrUser } from '@app/classes/user';
+import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { MINUTE_TURN, PARAMETERS_OF_SWAP } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
@@ -15,28 +15,44 @@ export class UserService {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     playMode: string;
-    userNameLocalStorage: any;
     counter: { min: number; sec: number } = { min: 0, sec: 59 };
     passesCounter: number = 0;
     realUser: RealUser;
+    joinedUser: JoinedUser;
     vrUser: VrUser;
     intervalId = 0;
-
     time: number;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
-
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     observableTurnToPlay: Observable<boolean>;
     realUserSkipHisTurn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     obsSkipTurn: BehaviorSubject<boolean>;
-
+    creatorFirstPlayer: boolean;
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
     constructor(private messageService: MessageService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
+        if (this.playMode !== 'soloMode') {
+            this.joinedUser = {
+                name: 'default',
+                level: 'Joueur en ligne',
+                round: '1 min',
+                score: 0,
+                turnToPlay: false,
+                easel: new EaselObject(false),
+            };
+        } else {
+            this.vrUser = {
+                name: this.chooseRandomName(),
+                level: 'Débutant',
+                round: '20 sec',
+                score: 0,
+                easel: new EaselObject(false),
+            };
+            this.vrSkipingTurn = false;
+        }
         const first = this.chooseFirstToPlay();
-
         this.realUser = {
             name: this.getUserName(),
             level: 'Joueur en ligne',
@@ -46,15 +62,7 @@ export class UserService {
             turnToPlay: first,
             easel: new EaselObject(false),
         };
-        //
-        this.vrUser = {
-            name: this.chooseRandomName(),
-            level: 'Débutant',
-            round: '20 sec',
-            score: 0,
-            easel: new EaselObject(false),
-        };
-        this.vrSkipingTurn = false;
+
         this.userSkipingTurn = false;
     }
 
@@ -83,17 +91,19 @@ export class UserService {
     }
 
     getUserName(): string {
-        this.userNameLocalStorage = localStorage.getItem('userName');
-        return this.userNameLocalStorage;
+        if (this.playMode === 'soloMode') {
+            const userNameLocalStorage = localStorage.getItem('userName');
+            return userNameLocalStorage ?? '';
+        } else return 'default';
     }
     getVrUserName(): string {
-        this.userNameLocalStorage = localStorage.getItem('vrUserName');
-        return this.userNameLocalStorage;
+        const userNameLocalStorage = localStorage.getItem('vrUserName');
+        return userNameLocalStorage ?? '';
     }
 
-    resetCounter(min: number, sec: number) {
-        this.counter = { min, sec };
-    }
+    // resetCounter(min: number, sec: number) {
+    //     this.counter = { min, sec };
+    // }
     skipTurnValidUser(): boolean {
         if (this.time === MINUTE_TURN) return true;
         return false;

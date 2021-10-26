@@ -1,0 +1,19 @@
+
+.card-not-playing{
+    border: none !important;
+    box-shadow: none !important;
+    background-color: #e5e5f7;
+}
+
+.score-time{
+    font-size: 1rem;
+    font-weight: 300;
+    font-weight: bold;
+}
+
+.card-playing{
+    border: 4px solid black ;
+    border-color: orangered;
+    background-color: #e5e5f7;
+    border-radius: 10px;
+}

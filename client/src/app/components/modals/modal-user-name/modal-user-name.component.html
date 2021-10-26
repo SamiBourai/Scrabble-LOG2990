@@ -64,7 +64,7 @@
         <ng-template matStepLabel>Remplissez votre nom</ng-template>
         <mat-form-field appearance="fill">
           <mat-label>Nom</mat-label>
-          <input matInput placeholder="entrez votre prenom"  formControlName="firstCtrl" [(ngModel)]="clientName" required>
+          <input matInput placeholder="entrez votre prenom"  formControlName="firstCtrl" [(ngModel)]="creatorName" required>
         </mat-form-field>
         <div>
           <button mat-button matStepperNext>Suivant</button>
@@ -119,7 +119,7 @@
     <ng-template matStepLabel>Remplissez votre nom</ng-template>
     <mat-form-field appearance="fill">
       <mat-label>Nom</mat-label>
-      <input matInput placeholder="Last name, First name" formControlName="firstCtrl" [(ngModel)]="clientName" required>
+      <input matInput placeholder="Last name, First name" formControlName="firstCtrl" [(ngModel)]="joinedUserName" required>
     </mat-form-field>
     <div>
       <button mat-raised-button color="primary" mat-button matStepperNext>Suivant</button>

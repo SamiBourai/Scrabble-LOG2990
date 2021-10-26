@@ -17,7 +17,7 @@ export class SocketManagementService {
     listen(eventName: string) {
         return new Observable((subscriber) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.socket.on(eventName, (data: Game[]) => {
+            this.socket.on(eventName, (data: any) => {
                 subscriber.next(data);
             });
         });

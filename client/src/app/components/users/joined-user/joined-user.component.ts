@@ -4,15 +4,17 @@ import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
-    selector: 'app-real-player',
-    templateUrl: './real-player.component.html',
-    styleUrls: ['./real-player.component.scss'],
+    selector: 'app-joined-user',
+    templateUrl: './joined-user.component.html',
+    styleUrls: ['./joined-user.component.scss'],
 })
-export class RealPlayerComponent implements OnInit {
+export class JoinedUserComponent implements OnInit {
     turnToPlay: boolean;
     constructor(public userService: UserService, readonly easelLogisticService: EaselLogiscticsService, public timeService: TimeService) {}
 
     ngOnInit() {
+        console.log(this.userService.joinedUser, 'joined');
+        console.log(this.userService.realUser, 'real'); 
         this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
                 if (this.userService.realUser.turnToPlay) this.timeService.startTime('user');

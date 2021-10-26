@@ -1,3 +1,4 @@
+import { PARAMETERS_OF_SWAP } from '@app/classes/constants';
 import { Game } from '@app/classes/game';
 import * as http from 'http';
 import * as io from 'socket.io';
@@ -24,17 +25,21 @@ export class SocketManagerService {
                 socket.emit('createdGames', this.rooms);
                 console.log(this.createdGame);
             });
+            socket.on('joinRoom', (game: Game) => {
+                socket.join(game.gameName);
+                this.sio.to(game.gameName).emit('userJoined', game);
+                this.deleteRoom(game);
+            });
+            socket.on('chooseFirstToPlay', (gameName: string) => {
+                this.sio.to(gameName).emit('chooseFirstToPlay', this.chooseFirstToPlay());
+            });
+
             socket.on('validate', (word: string) => {
                 const isValid = word.length > 5;
                 socket.emit('wordValidated', isValid);
             });
             socket.on('broadcastAll', (message: string) => {
                 this.sio.sockets.emit('massMessage', `${socket.id} : ${message}`);
-            });
-            socket.on('joinRoom', (game: Game) => {
-                socket.join(game.gameName);
-                this.sio.to(game.gameName).emit('userJoined', game);
-                this.deleteRoom(game);
             });
             socket.on('roomMessage', (message: string) => {
                 this.sio.to(this.room).emit('roomMessage', `${socket.id} : ${message}`);
@@ -57,5 +62,13 @@ export class SocketManagerService {
     }
     private emitTime() {
         this.sio.sockets.emit('clock', new Date().toLocaleTimeString());
+    }
+    private chooseFirstToPlay(): boolean {
+        const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);
+        if (randomIndex <= PARAMETERS_OF_SWAP / 2) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
