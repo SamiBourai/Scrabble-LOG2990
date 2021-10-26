@@ -9,7 +9,7 @@ export class Server {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     private static readonly baseDix: number = 10;
     private server: http.Server;
-    private socketManger: SocketManagerService;
+    private socketManager: SocketManagerService;
 
     constructor(private readonly application: Application) {}
 
@@ -27,8 +27,8 @@ export class Server {
         this.application.app.set('port', Server.appPort);
 
         this.server = http.createServer(this.application.app);
-        this.socketManger = new SocketManagerService(this.server);
-        this.socketManger.handleSockets();
+        this.socketManager = new SocketManagerService(this.server);
+        this.socketManager.handleSockets();
 
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));

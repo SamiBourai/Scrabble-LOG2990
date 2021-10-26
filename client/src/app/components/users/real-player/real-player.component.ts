@@ -19,4 +19,5 @@ export class RealPlayerComponent implements OnInit {
             }, 0);
         });
     }
+    
 }

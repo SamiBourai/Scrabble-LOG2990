@@ -21,9 +21,13 @@ export class ModalUserNameComponent implements OnInit {
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
     createdGame: Game = { clientName: 'YAN', gameName: 'GAME1' };
-    rooms = new Array<Game>();
-    dataArray: unknown;
-
+    clientName: string = '';
+    gameName: string = '';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rooms: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    game: any;
+    isEmptyRoom: boolean = true;
     constructor(
         private dialogRef: MatDialog,
         private userService: UserService,
@@ -43,12 +47,20 @@ export class ModalUserNameComponent implements OnInit {
                 this.secondFormGroup = this.formBuilder.group({
                     secondCtrl: new FormControl(''),
                 });
+                this.socketManagementService.listen('userJoined').subscribe((room) => {
+                    this.game = room;
+                    localStorage.setItem('userName', this.createdGame.clientName);
+                    localStorage.setItem('joinedUserName', this.game.joinedUserName);
+                    console.log(this.game, 'userJoined');
+                });
                 break;
             case 'joinMultiplayerGame':
                 this.createMultiplayerGame = false;
                 this.joinMultiplayerGame = true;
+                this.firstFormGroup = this.formBuilder.group({
+                    firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                });
                 this.generateRooms();
-                console.log(this.dataArray);
                 break;
         }
     }
@@ -58,25 +70,43 @@ export class ModalUserNameComponent implements OnInit {
     }
 
     storeNameInLocalStorage(): void {
-        this.name = this.userName.value;
-        localStorage.setItem('userName', this.name);
+        switch (true) {
+            case this.soloMode:
+                this.name = this.userName.value;
+                localStorage.setItem('userName', this.name);
+                break;
+            case this.createMultiplayerGame:
+                this.name = this.createdGame.clientName;
+                localStorage.setItem('userName', this.name);
+                break;
+        }
     }
     passInSoloMode(): void {
         this.soloMode = true;
         this.createMultiplayerGame = false;
+        this.disconnectUser();
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createGame() {
+        this.createdGame = { clientName: this.clientName, gameName: this.gameName };
         this.socketManagementService.emit('createGame', this.createdGame);
     }
     generateRooms() {
-        this.socketManagementService.listen('createdGame').subscribe((data) => {
-            console.log(data);
-            this.dataArray = data;
+        this.socketManagementService.emit('generateAllRooms');
+        this.socketManagementService.listen('createdGames').subscribe((data) => {
+            this.rooms = data;
+            if (this.rooms.length === 0) this.isEmptyRoom = true;
+            else this.isEmptyRoom = false;
         });
     }
-    joinGame() {
-        this.socketManagementService.listen('joinRoom');
+    disconnectUser() {
+        this.socketManagementService.emit('disconnect', undefined, 'user gave up the game');
+    }
+    joinGame(room: Game) {
+        room = { clientName: room.clientName, gameName: room.gameName, joinedUserName: this.clientName };
+        this.socketManagementService.emit('joinRoom', room);
+        localStorage.setItem('userName', this.clientName);
+        localStorage.setItem('gameCreaterName', room.clientName);
     }
     // console.log('data');
     // this.socketManagementService.listen('hello').subscribe((data) => {

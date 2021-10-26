@@ -9,16 +9,20 @@ import { UserService } from '@app/services/user.service';
 })
 export class GamePageComponent implements OnInit {
     remainingLetters: number = 0;
-    constructor(public userService: UserService, public reserverService:ReserveService) {}
+    soloMode: boolean = false;
+    constructor(public userService: UserService, public reserverService: ReserveService) {}
 
     detectSkipTurnBtn() {
         this.userService.userSkipingTurn = true;
     }
-    ngOnInit(){
+    ngOnInit() {
         this.getLetter();
+        if (this.userService.playMode === 'solomode') {
+            this.soloMode = true;
+        }
     }
 
-    getLetter(){
+    getLetter() {
         this.reserverService.size.subscribe((res) => {
             setTimeout(() => {
                 this.remainingLetters = res;

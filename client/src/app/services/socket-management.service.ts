@@ -16,15 +16,16 @@ export class SocketManagementService {
 
     listen(eventName: string) {
         return new Observable((subscriber) => {
-            console.log(eventName);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.socket.on(eventName, (data: any) => {
+            this.socket.on(eventName, (data: Game[]) => {
                 subscriber.next(data);
             });
         });
     }
-    emit(eventName: string, data: Game) {
-        this.socket.emit(eventName, data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    emit(eventName: string, data?: Game, reason?: string) {
+        if (reason) this.socket.emit(eventName, reason);
+        else this.socket.emit(eventName, data);
     }
 
     // configureBaseSocketFeatures(): Rx.Subject<MessageEvent> {
