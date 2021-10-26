@@ -6,6 +6,7 @@ import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
+import { Letter } from '@app/classes/letter';
 
 export enum MouseButton {
     Left = 0,
@@ -29,6 +30,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     chatWord: string;
     remainingLetters: number = 0;
     dialogRef: unknown;
+    
+    lettersToSwapByClick: Letter[] = [];
 
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
 
@@ -36,6 +39,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
         private readonly easelLogisticsService: EaselLogiscticsService,
+        
         public userService: UserService,
         private readonly pvs: ValidWordService,
     ) {
@@ -44,6 +48,52 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
+    }
+
+    easelClicked(event:any) {
+        let vec = this.easelLogisticsService.showCoords(event);
+
+        if (this.easelLogisticsService.isBetween(vec.y, 840, 887)) {
+            if (this.easelLogisticsService.isBetween(vec.x, 264, 313)) {
+                // console.log('bien');
+                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[0]);
+            }
+            if (this.easelLogisticsService.isBetween(vec.x, 317, 371)) {
+                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[1]);
+            }
+
+            if (this.easelLogisticsService.isBetween(vec.x, 373, 424)) {
+                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[2]);
+            }
+
+            if (this.easelLogisticsService.isBetween(vec.x, 426, 478)) {
+                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[3]);
+            }
+
+            if (this.easelLogisticsService.isBetween(vec.x, 480, 531)) {
+                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[4]);
+            }
+
+            if (this.easelLogisticsService.isBetween(vec.x, 534, 584)) {
+                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[5]);
+            }
+
+            if (this.easelLogisticsService.isBetween(vec.x, 586, 637)) {
+                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[6]);
+            }
+        }
+        console.log(this.userService.realUser.easel)
+        console.log(this.lettersToSwapByClick);
+        return this.lettersToSwapByClick;
+    }
+
+    swapByClick(event:any) {
+        const letters = this.easelClicked(event);
+        for (const i of letters) {
+            this.lettersService.changeLetterFromReserve(i.charac,this.userService.realUser.easel);
+        }
+
+        this.lettersToSwapByClick = [];
     }
 
     detectSkipTurnBtn() {

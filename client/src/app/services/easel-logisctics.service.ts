@@ -13,6 +13,7 @@ import {
     TOPSPACE,
 } from '@app/constants/constants';
 import { ReserveService } from './reserve.service';
+import { Vec2 } from '@app/classes/vec2';
 @Injectable({
     providedIn: 'root',
 })
@@ -20,6 +21,19 @@ export class EaselLogiscticsService {
     gridContext: CanvasRenderingContext2D;
     firstMessage: boolean = true;
     constructor(private reserveService: ReserveService) {}
+
+    showCoords(event: any): Vec2 {
+        const cX = event.offsetX;
+        const cY = event.offsetY;
+        const coords1 = { x: cX, y: cY };
+        console.log(coords1);
+        return coords1;
+    }
+
+    isBetween(number: Number, min: Number, max: Number) {
+        if (number > min && number < max) return true;
+        return false;
+    }
 
     placeEaselLetters(easel: EaselObject): void {
         let counter = 0;

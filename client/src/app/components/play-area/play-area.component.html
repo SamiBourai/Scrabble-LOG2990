@@ -3,7 +3,7 @@
     <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
 </div> -->
 
-<div class="grid-container" fxLayout="column">
+<div (click) = "easelClicked($event)" class="grid-container" fxLayout="column">
     <div class="button-up" fxLayout="row" >
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
@@ -30,6 +30,10 @@
 
     <div>
         <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
+    </div>
+
+    <div>
+        <button (click) = "swapByClick($event)">echanger</button>
     </div>
 
 </div>
