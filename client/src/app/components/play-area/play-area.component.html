@@ -3,26 +3,25 @@
     <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
 </div> -->
 
-<div (click) = "easelClicked($event)" class="grid-container" fxLayout="column">
-    <div class="button-up" fxLayout="row" >
+<div (click)="easelClicked($event)" class="grid-container" fxLayout="column">
+    <div class="button-up" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
-
         </div>
         <div class="div">
             <button
-            #skipTurn
-            id="btn"
-            mat-raised-button
-            color="primary"
-            [disabled]="userService.realUser.turnToPlay===false"
-            (click)="detectSkipTurnBtn()"
+                #skipTurn
+                id="btn"
+                mat-raised-button
+                color="primary"
+                [disabled]="userService.realUser.turnToPlay === false"
+                (click)="detectSkipTurnBtn()"
             >
-            Passer son tour
+                Passer son tour
             </button>
         </div>
         <div class="div">
-             <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
+            <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
         </div>
     </div>
 
@@ -31,15 +30,25 @@
     </div>
 </div>
 
-<div class = "swapSection">
-    <button mat-raised-button
-    color="primary" id = "swapButton"  [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()" (click) = "swapByClick($event); ">echanger</button>
-
-    
+<div class="swapSection">
+    <button
+        mat-raised-button
+        color="primary"
+        id="swapButton"
+        [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()"
+        (click)="swapByClick($event)"
+    >
+        echanger
+    </button>
 </div>
-<div class = "cancelSection">
-    <button mat-raised-button
-    color="primary" id = "cancelButton" [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()" (click) = "cancelByClick()">annuler</button>
+<div class="cancelSection">
+    <button
+        mat-raised-button
+        color="primary"
+        id="cancelButton"
+        [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()"
+        (click)="cancelByClick()"
+    >
+        annuler
+    </button>
 </div>
-
-
