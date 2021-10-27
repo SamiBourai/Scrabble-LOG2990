@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { EaselObject } from '@app/classes/EaselObject';
 import { Letter } from '@app/classes/letter';
+import { Pair } from '@app/classes/pair';
+import { Vec2 } from '@app/classes/vec2';
 import {
     BOARD_HEIGHT,
     BOARD_WIDTH,
@@ -13,8 +15,6 @@ import {
     TOPSPACE,
 } from '@app/constants/constants';
 import { ReserveService } from './reserve.service';
-import { Vec2 } from '@app/classes/vec2';
-import { Pair } from '@app/classes/pair';
 @Injectable({
     providedIn: 'root',
 })
@@ -31,21 +31,15 @@ export class EaselLogiscticsService {
         return coords1;
     }
 
-    rightClick(e:MouseEvent){
-        switch (e.which) { 
-            case 1: 
-                alert('Left Mouse button pressed.'); 
-                break; 
-            case 2: 
-                alert('Middle Mouse button pressed.'); 
-                break; 
-            case 3: 
-                alert('Right Mouse button pressed.'); 
-                break; 
-            default: 
-                alert('You have a strange Mouse!'); 
-        } 
-        
+    rightClick(e: MouseEvent) {
+        switch (e.button) {
+            case 1:
+                alert('Left Mouse button pressed.');
+                break;
+            case 2:
+                alert('ntm1');
+                break;
+        }
     }
 
     isBetween(pair: Pair, number: number) {

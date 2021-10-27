@@ -3,7 +3,7 @@
     <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
 </div> -->
 
-<div (click)="easelClicked($event); this.easelLogisticsService.rightClick($event);" oncontextmenu="return false" class="grid-container" fxLayout="column">
+<div (contextmenu)="easelClicked($event)" (click)="easelClicked($event)" oncontextmenu="return false" class="grid-container" fxLayout="column">
     <div class="button-up" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
