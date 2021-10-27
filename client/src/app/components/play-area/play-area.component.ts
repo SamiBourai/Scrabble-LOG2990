@@ -51,7 +51,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
-        public readonly easelLogisticsService: EaselLogiscticsService,
+        readonly easelLogisticsService: EaselLogiscticsService,
 
         public userService: UserService,
         private readonly pvs: ValidWordService,
@@ -95,9 +95,15 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     }
                 }
             });
+        } else {
+            const element = document.getElementById('swapButton') as HTMLElement;
+            element.addEventListener('click', () => {
+                this.swapByClick(event);
+            });
+            setTimeout(() => {
+                this.lettersToSwapByClick = [];
+            }, 1);
         }
-
-        console.log(this.userService.realUser.easel);
         console.log(this.lettersToSwapByClick);
         return this.lettersToSwapByClick;
     }
