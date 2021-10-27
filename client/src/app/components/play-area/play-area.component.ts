@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild }
 import { Letter } from '@app/classes/letter';
 import { Pair } from '@app/classes/pair';
 import { Vec2 } from '@app/classes/vec2';
-import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH,  LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -33,6 +33,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     remainingLetters: number = 0;
     dialogRef: unknown;
     isClicked: boolean = false;
+    isGood: boolean = false;
 
     lettersToSwapByClick: Letter[] = [];
     letterIsClicked = new Map<Pair, boolean>([
@@ -65,7 +66,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     easelClicked(event: MouseEvent) {
         const vec = this.easelLogisticsService.showCoords(event);
 
-        if (this.easelLogisticsService.isBetween(RANGE_Y, vec.y)) {
+        if (this.easelLogisticsService.isBetween(RANGE_Y, vec.y) && this.easelLogisticsService.isBetween({ min: 264, max: 637 }, vec.x)) {
+            this.isGood = true;
             this.letterIsClicked.forEach((value: boolean, key: Pair) => {
                 for (const easelPosition of EASEL_POSITIONS) {
                     // For each intervalle de lettre du chevalet
@@ -93,8 +95,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     }
                 }
             });
-            // else if (!this.easelLogisticsService.isBetween(EASEL_RANGE, vec.x)) {
-            //     this.lettersToSwapByClick = [];
         }
 
         console.log(this.userService.realUser.easel);
@@ -109,6 +109,16 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             this.lettersService.changeLetterFromReserve(letter.charac, this.userService.realUser.easel);
         }
         this.lettersToSwapByClick = [];
+    }
+
+    cancelByClick(){
+        this.lettersToSwapByClick = [];
+    }
+
+    isLettersArrayEmpty(){
+        if (this.lettersToSwapByClick.length > 0) return false;
+        return true;
+
     }
 
     doubleClickOnLetter(letter: Letter) {

@@ -27,7 +27,7 @@ export class EaselLogiscticsService {
         const cX = event.offsetX;
         const cY = event.offsetY;
         const coords1 = { x: cX, y: cY };
-        //console.log(coords1);
+        console.log(coords1);
         return coords1;
     }
 

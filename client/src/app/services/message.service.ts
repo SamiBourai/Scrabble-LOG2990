@@ -25,7 +25,7 @@ import {
 })
 export class MessageService {
     chatCommandArray = new Array<ChatCommand>();
-    arrayOfCommand: string[] = ['!aide', '!debug', '!passer','!reserve'];
+    arrayOfCommand: string[] = ['!aide', '!debug', '!passer', '!reserve'];
     command: ChatCommand = { word: '', position: { x: 0, y: 0 }, direction: 'h' };
     arrayOfSpecialChars: string[] = ['ç', 'é', 'è', 'ë'];
     skipTurnIsPressed: boolean = false;
@@ -151,9 +151,8 @@ export class MessageService {
         return ligne;
     }
 
-    removeDuplicate(array:string[],element:string){
-        const index = array.indexOf(element,0);
-        if(index > -1) array.splice(index,1)
+    removeDuplicate(array: string[], element: string) {
+        const index = array.indexOf(element, 0);
+        if (index > -1) array.splice(index, 1);
     }
-
 }
