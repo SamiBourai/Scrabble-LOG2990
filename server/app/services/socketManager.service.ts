@@ -28,16 +28,6 @@ export class SocketManagerService {
                 });
             });
 
-            // socket.on('message', (message: string) => {
-            //     console.log(message);
-            // });
-
-            // message initial
-            // socket.emit('hello', 'Hello World!');
-            // socket.on('validate', (word: string) => {
-            //     const isValid = word.length > 5;
-            //     socket.emit('wordValidated', isValid);
-            // });
             socket.on('broadcastAll', (message: string) => {
                 this.sio.sockets.emit('massMessage', `${socket.id} : ${message}`);
             });
