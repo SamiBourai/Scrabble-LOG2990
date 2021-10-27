@@ -7,7 +7,7 @@
                     <!-- <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div> -->
                     <div class="debugActive" *ngIf="isDebug">affichage de debogage activé</div>
                     <div class="debug" *ngIf="!isDebug">affichage de debogage desactivé</div>
-                    <div id="turn" *ngIf="isImpossible && isValid && isCommand" class="alert alert-danger">
+                    <div id="turn" *ngIf="isImpossible && isValid && isCommand && errorMessage !== ''" class="alert alert-danger">
                         commande impossible a realiser {{ ' ' + 'car ' + errorMessage }}
                     </div>
                     <ng-container>
@@ -35,7 +35,6 @@
                         </div>
 
                         <input
-
                             formControlName="message"
                             maxlength="512"
                             [(ngModel)]="typeArea"

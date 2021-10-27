@@ -21,6 +21,18 @@
             <ng-template #elseBlock>
                 <app-joined-user></app-joined-user>
             </ng-template>
+            <div>
+                <mat-card class="card-not-playing" fxLayout="row" *ngIf="this.userService.endOfGame">
+                    <mat-card-header>
+                        <mat-card-title class="score-time" *ngIf="this.userService.getWinnerName() !== 'egal'; elseBlock">
+                            {{ 'GAGNANT: ' + this.userService.getWinnerName() }}</mat-card-title
+                        >
+                        <ng-template #elseBlock> {{ this.userService.realUser.name + ' **EGALITE** ' + this.userService.vrUser.name }}</ng-template>
+                        <mat-card-subtitle class="score-time"> {{ 'CHEVALET JV: ' + this.virtualPlayerService.easel.toString() }}</mat-card-subtitle>
+                        <mat-card-subtitle class="score-time"> {{ 'CHEVALET Joueur: ' + this.userService.realUser.easel.toString() }}</mat-card-subtitle>
+                    </mat-card-header>
+                </mat-card>
+            </div>
         </div>
     </div>
 </div>

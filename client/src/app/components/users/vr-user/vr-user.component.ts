@@ -14,13 +14,23 @@ export class VrUserComponent implements OnInit {
     constructor(public userService: UserService, public virtualPlayerService: VirtualPlayerService, public timeService: TimeService) {}
 
     ngOnInit() {
+        this.setVrTurnToPlay();
+        this.getScoreVrPlayer();
+        console.log('syu8iunla')
+    }
+
+    getScoreVrPlayer() {
+        this.virtualPlayerService.scoreVr.subscribe((score) => {
+            this.userService.vrUser.score += score;
+        });
+    }
+
+    setVrTurnToPlay() {
         this.userService.turnToPlayObs.subscribe(() => {
-            setTimeout(() => {
-                if (!this.userService.realUser.turnToPlay) {
-                    this.timeService.startTime('vrPlayer');
-                    this.virtualPlayerService.manageVrPlayerActions();
-                }
-            }, 0);
+            if (!this.userService.realUser.turnToPlay && !this.userService.endOfGame) {
+                this.timeService.startTime('vrPlayer');
+                this.virtualPlayerService.manageVrPlayerActions();
+            }
         });
     }
 }

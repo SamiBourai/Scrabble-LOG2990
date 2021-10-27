@@ -38,6 +38,7 @@ export class ModalUserNameComponent implements OnInit {
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
+                this.userService.initiliseUsers(this.soloMode);
                 break;
             case 'createMultiplayerGame':
                 this.createMultiplayerGame = true;
@@ -49,11 +50,11 @@ export class ModalUserNameComponent implements OnInit {
                 });
                 this.socketManagementService.listen('userJoined').subscribe((room) => {
                     this.game = room;
+                    this.userService.initiliseUsers(this.soloMode);
                     this.userService.joinedUser.name = this.game.joinedUserName;
                     this.socketManagementService.emit('chooseFirstToPlay', this.game.gameName);
                 });
                 this.chooseFirstPlayer();
-
                 break;
             case 'joinMultiplayerGame':
                 this.createMultiplayerGame = false;
@@ -63,6 +64,7 @@ export class ModalUserNameComponent implements OnInit {
                 });
                 this.generateRooms();
                 this.chooseFirstPlayer();
+
                 break;
         }
     }
@@ -99,6 +101,7 @@ export class ModalUserNameComponent implements OnInit {
     joinGame(room: Game): void {
         room = { clientName: room.clientName, gameName: room.gameName, joinedUserName: this.joinedUserName };
         this.socketManagementService.emit('joinRoom', room);
+        this.userService.initiliseUsers(this.soloMode);
         this.userService.realUser.name = room.clientName;
         this.userService.joinedUser.name = this.joinedUserName;
     }
@@ -108,7 +111,6 @@ export class ModalUserNameComponent implements OnInit {
             this.userService.realUser.firstToPlay = firstPlayer;
             this.userService.realUser.turnToPlay = firstPlayer;
             this.userService.joinedUser.turnToPlay = !firstPlayer;
-
         });
     }
 }

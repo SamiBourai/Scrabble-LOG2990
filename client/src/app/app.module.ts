@@ -23,6 +23,7 @@ import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-world.service';
 import { WordPointsService } from './services/word-points.service';
 import { JoinedUserComponent } from './components/users/joined-user/joined-user.component';
+import { ModalEndOfGameComponent } from './modal-end-of-game/modal-end-of-game.component';
 
 /**
  * Main module that is used in main.ts.
@@ -45,6 +46,7 @@ import { JoinedUserComponent } from './components/users/joined-user/joined-user.
         RealPlayerComponent,
         VrUserComponent,
         JoinedUserComponent,
+        ModalEndOfGameComponent,
     ],
     imports: [
         AppMaterialModule,

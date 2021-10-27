@@ -13,8 +13,7 @@ export class JoinedUserComponent implements OnInit {
     constructor(public userService: UserService, readonly easelLogisticService: EaselLogiscticsService, public timeService: TimeService) {}
 
     ngOnInit() {
-        console.log(this.userService.joinedUser, 'joined');
-        console.log(this.userService.realUser, 'real'); 
+        console.log(this.userService.playMode, 'joined');
         this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
                 if (this.userService.realUser.turnToPlay) this.timeService.startTime('user');

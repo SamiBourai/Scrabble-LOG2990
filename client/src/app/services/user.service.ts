@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { EaselObject } from '@app/classes/EaselObject';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
-import { MINUTE_TURN, PARAMETERS_OF_SWAP } from '@app/constants/constants';
+import { PARAMETERS_OF_SWAP, SIX_TURN } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
+import { VirtualPlayerService } from './virtual-player.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -14,6 +15,7 @@ export class UserService {
     //  ou Declare your variable type as any
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    userNameLocalStorage: any;
     playMode: string;
     counter: { min: number; sec: number } = { min: 0, sec: 59 };
     passesCounter: number = 0;
@@ -26,32 +28,17 @@ export class UserService {
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     observableTurnToPlay: Observable<boolean>;
-    realUserSkipHisTurn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
-    obsSkipTurn: BehaviorSubject<boolean>;
-    creatorFirstPlayer: boolean;
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
 
-    constructor(private messageService: MessageService) {
+    endOfGameCounter: number = 0;
+
+    endOfGame: boolean = false;
+    endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    endOfGameObs: Observable<boolean>;
+    constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
-        if (this.playMode !== 'soloMode') {
-            this.joinedUser = {
-                name: 'default',
-                level: 'Joueur en ligne',
-                round: '1 min',
-                score: 0,
-                turnToPlay: false,
-                easel: new EaselObject(false),
-            };
-        } else {
-            this.vrUser = {
-                name: this.chooseRandomName(),
-                level: 'Débutant',
-                round: '20 sec',
-                score: 0,
-                easel: new EaselObject(false),
-            };
-            this.vrSkipingTurn = false;
-        }
+        this.vrSkipingTurn = false;
+        this.endOfGameObs = this.endOfGameBehaviorSubject.asObservable();
         const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
@@ -62,10 +49,27 @@ export class UserService {
             turnToPlay: first,
             easel: new EaselObject(false),
         };
-
         this.userSkipingTurn = false;
     }
-
+    initiliseUsers(soloMode: boolean) {
+        if (!soloMode)
+            this.joinedUser = {
+                name: 'default',
+                level: 'Joueur en ligne',
+                round: '1 min',
+                score: 0,
+                turnToPlay: false,
+                easel: new EaselObject(false),
+            };
+        else
+            this.vrUser = {
+                name: this.chooseRandomName(),
+                level: 'Débutant',
+                round: '20 sec',
+                score: 0,
+                easel: new EaselObject(false),
+            };
+    }
     chooseFirstToPlay(): boolean {
         const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);
         if (randomIndex <= PARAMETERS_OF_SWAP / 2) {
@@ -74,7 +78,6 @@ export class UserService {
             return true;
         }
     }
-
     getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
     }
@@ -87,34 +90,56 @@ export class UserService {
             } else break;
         }
         localStorage.setItem('vrUserName', this.vrPlayerNames[randomInteger]);
+        console.log(this.vrPlayerNames[randomInteger]);
         return this.vrPlayerNames[randomInteger];
     }
-
     getUserName(): string {
-        if (this.playMode === 'soloMode') {
-            const userNameLocalStorage = localStorage.getItem('userName');
-            return userNameLocalStorage ?? '';
-        } else return 'default';
-    }
-    getVrUserName(): string {
-        const userNameLocalStorage = localStorage.getItem('vrUserName');
-        return userNameLocalStorage ?? '';
+        this.userNameLocalStorage = localStorage.getItem('userName');
+        return this.userNameLocalStorage;
     }
 
-    // resetCounter(min: number, sec: number) {
-    //     this.counter = { min, sec };
-    // }
-    skipTurnValidUser(): boolean {
-        if (this.time === MINUTE_TURN) return true;
-        return false;
+    getVrUserName(): string {
+        this.userNameLocalStorage = localStorage.getItem('vrUserName');
+        return this.userNameLocalStorage;
+    }
+
+    isUserTurn(): boolean {
+        return this.realUser.turnToPlay;
     }
     detectSkipTurnBtn(): boolean {
         this.messageService.skipTurnIsPressed = true;
-        this.userSkipingTurn = true;
         this.realUser.turnToPlay = false;
+        this.realUserTurnObs.next(this.realUser.turnToPlay);
+        this.checkForSixthSkip();
         return true;
+    }
+    userPlayed() {
+        this.endOfGameCounter = 0;
+        this.realUser.turnToPlay = false;
+        this.realUserTurnObs.next(this.realUser.turnToPlay);
     }
     get turnToPlayObs(): Observable<boolean> {
         return this.observableTurnToPlay;
+    }
+    get isEndOfGame(): Observable<boolean> {
+        return this.endOfGameBehaviorSubject;
+    }
+    scoreRealPlayer(): number {
+        return this.realUser.score;
+    }
+    checkForSixthSkip(): void {
+        this.endOfGameCounter++;
+        if (this.endOfGameCounter === SIX_TURN) {
+            this.endOfGame = true;
+            this.realUser.score = this.realUser.score - this.realUser.easel.pointInEasel();
+            this.vrUser.score = this.vrUser.score - this.virtualPlayer.easel.pointInEasel();
+            this.endOfGameBehaviorSubject.next(this.endOfGame);
+        }
+    }
+
+    getWinnerName(): string {
+        if (this.realUser.score > this.vrUser.score) return this.realUser.name;
+        else if (this.realUser.score < this.vrUser.score) return this.vrUser.name;
+        else return 'egale';
     }
 }

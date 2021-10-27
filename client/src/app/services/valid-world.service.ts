@@ -154,7 +154,6 @@ export class ValidWordService {
                 // word exists in the dictionnary
 
                 // check if this exact word was used before
-
                 const exists = this.checkIfWordIsUsed(array, arrayPosition);
                 if (exists) {
                     totalPointsSum += 0;

@@ -39,7 +39,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly pvs: ValidWordService,
     ) {
-        this.easelLogisticsService.refillEasel(this.userService.realUser.easel);
+        this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
     }
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
@@ -47,8 +47,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     detectSkipTurnBtn() {
-        this.userService.realUser.turnToPlay = !this.userService.realUser.turnToPlay;
-        this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
+        this.userService.detectSkipTurnBtn();
     }
 
     ngOnInit() {
