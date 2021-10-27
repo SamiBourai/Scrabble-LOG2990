@@ -14,6 +14,7 @@ import {
 } from '@app/constants/constants';
 import { ReserveService } from './reserve.service';
 import { Vec2 } from '@app/classes/vec2';
+import { Pair } from '@app/classes/pair';
 @Injectable({
     providedIn: 'root',
 })
@@ -22,16 +23,16 @@ export class EaselLogiscticsService {
     firstMessage: boolean = true;
     constructor(private reserveService: ReserveService) {}
 
-    showCoords(event: any): Vec2 {
+    showCoords(event: MouseEvent): Vec2 {
         const cX = event.offsetX;
         const cY = event.offsetY;
         const coords1 = { x: cX, y: cY };
-        console.log(coords1);
+        //console.log(coords1);
         return coords1;
     }
 
-    isBetween(number: Number, min: Number, max: Number) {
-        if (number > min && number < max) return true;
+    isBetween(pair: Pair, number: number) {
+        if (number >= pair.min && number <= pair.max) return true;
         return false;
     }
 
@@ -59,6 +60,7 @@ export class EaselLogiscticsService {
                     BOARD_HEIGHT / NB_TILES - CLEAR_RECT_FIX,
                 );
             }
+
             counter++;
         }
     }

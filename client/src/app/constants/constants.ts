@@ -1,4 +1,6 @@
+import { Pair } from './../classes/pair';
 import { Letter } from '@app/classes/letter';
+import { MousePosition } from '@app/classes/MousePosition';
 import { Vec2 } from '@app/classes/vec2';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
@@ -158,6 +160,17 @@ export const PINK_BOX: Vec2[] = [
     { x: 10, y: 10 },
 ];
 
+export const EASEL_POSITIONS: MousePosition[] = [
+    { letterRange: { min: 264, max: 313 }, index: 0 },
+    { letterRange: { min: 315, max: 371 }, index: 1 },
+    { letterRange: { min: 373, max: 424 }, index: 2 },
+    { letterRange: { min: 426, max: 478 }, index: 3 },
+    { letterRange: { min: 480, max: 531 }, index: 4 },
+    { letterRange: { min: 534, max: 584 }, index: 5 },
+    { letterRange: { min: 586, max: 637 }, index: 6 },
+];
+export const EASEL_RANGE = { min: 264, max: 637 }
+export const RANGE_Y: Pair = { min: 840, max: 887 };
 // sidebar
 export const COLUMN_RANGE = 16;
 // the length of the command !placer and !echanger

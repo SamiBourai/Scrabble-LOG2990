@@ -24,16 +24,15 @@
         <div class="div">
              <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
         </div>
-
-
     </div>
 
     <div>
         <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
     </div>
-
-    <div>
-        <button (click) = "swapByClick($event)">echanger</button>
-    </div>
-
 </div>
+
+<div class = "swapSection">
+    <button mat-raised-button
+    color="primary" id = "swapButton" (click) = "swapByClick($event); ">echanger</button>
+</div>
+
