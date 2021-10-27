@@ -31,6 +31,23 @@ export class EaselLogiscticsService {
         return coords1;
     }
 
+    rightClick(e:MouseEvent){
+        switch (e.which) { 
+            case 1: 
+                alert('Left Mouse button pressed.'); 
+                break; 
+            case 2: 
+                alert('Middle Mouse button pressed.'); 
+                break; 
+            case 3: 
+                alert('Right Mouse button pressed.'); 
+                break; 
+            default: 
+                alert('You have a strange Mouse!'); 
+        } 
+        
+    }
+
     isBetween(pair: Pair, number: number) {
         if (number >= pair.min && number <= pair.max) return true;
         return false;

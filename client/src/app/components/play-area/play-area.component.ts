@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild }
 import { Letter } from '@app/classes/letter';
 import { Pair } from '@app/classes/pair';
 import { Vec2 } from '@app/classes/vec2';
-import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH,  LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
@@ -51,7 +51,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     constructor(
         private readonly gridService: GridService,
         private readonly lettersService: LettersService,
-        private readonly easelLogisticsService: EaselLogiscticsService,
+        public readonly easelLogisticsService: EaselLogiscticsService,
 
         public userService: UserService,
         private readonly pvs: ValidWordService,
@@ -111,20 +111,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.lettersToSwapByClick = [];
     }
 
-    cancelByClick(){
+    cancelByClick() {
         this.lettersToSwapByClick = [];
     }
 
-    isLettersArrayEmpty(){
+    isLettersArrayEmpty() {
         if (this.lettersToSwapByClick.length > 0) return false;
         return true;
-
-    }
-
-    doubleClickOnLetter(letter: Letter) {
-        const index = this.lettersToSwapByClick.indexOf(letter, 0);
-        console.log(index);
-        if (index > -1) this.lettersToSwapByClick.splice(index, 1);
     }
 
     detectSkipTurnBtn() {

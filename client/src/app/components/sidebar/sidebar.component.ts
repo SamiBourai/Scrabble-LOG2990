@@ -74,7 +74,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
             if (this.messageService.isCommand(socketMessage.message) && !this.messageService.isValid(socketMessage.message))
                 this.errorMessage = 'erreur';
-            else this.arrayOfMessages.push(msg);
+            else if (socketMessage.message === '!reserve') {
+                // do nothing
+            } else this.arrayOfMessages.push(msg);
         });
 
         this.chatService.connect();
