@@ -1,9 +1,9 @@
 #canvas {
     position: fixed;
     border: 1px solid black;
-    border-radius: 10px;
     background-color: #ffe4c4;
-
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px black;
 }
 .grid-container {
     position: relative;
@@ -11,17 +11,17 @@
     display: flex;
 }
 
-.button-up{
+.button-up {
     position: relative;
     margin-top: 1%;
     margin-bottom: 1%;
     width: auto;
 }
-.div{
+.div {
     margin: 5% 50% 0% 10%;
 }
 
-.actual-player{
+.actual-player {
     clear: both;
     display: inline-block;
     overflow: hidden;
@@ -32,7 +32,7 @@
     vertical-align: center;
     border-radius: 5%;
     padding: 6% 3% 2% 3%;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 500;
 }
