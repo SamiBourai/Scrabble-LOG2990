@@ -161,15 +161,18 @@ export const PINK_BOX: Vec2[] = [
 ];
 
 export const EASEL_POSITIONS: MousePosition[] = [
-    { letterRange: { min: 264, max: 313 }, index: 0 },
-    { letterRange: { min: 315, max: 371 }, index: 1 },
-    { letterRange: { min: 373, max: 424 }, index: 2 },
-    { letterRange: { min: 426, max: 478 }, index: 3 },
-    { letterRange: { min: 480, max: 531 }, index: 4 },
-    { letterRange: { min: 534, max: 584 }, index: 5 },
-    { letterRange: { min: 586, max: 637 }, index: 6 },
+    { letterRange: { min: 264, max: 313 }, index: 0, isClicked: false },
+    { letterRange: { min: 315, max: 371 }, index: 1, isClicked: false },
+    { letterRange: { min: 373, max: 424 }, index: 2, isClicked: false },
+    { letterRange: { min: 426, max: 478 }, index: 3, isClicked: false },
+    { letterRange: { min: 480, max: 531 }, index: 4, isClicked: false },
+    { letterRange: { min: 534, max: 584 }, index: 5, isClicked: false },
+    { letterRange: { min: 586, max: 637 }, index: 6, isClicked: false },
 ];
-export const EASEL_RANGE = { min: 264, max: 637 }
+export const SWAP_BUTTON_RANGE_X = { min: 3, max: 85 };
+export const SWAP_BUTTON_RANGE_Y = { min: 4, max: 29 };
+export const EASEL_RANGE = { min: 264, max: 637 };
+
 export const RANGE_Y: Pair = { min: 840, max: 887 };
 // sidebar
 export const COLUMN_RANGE = 16;

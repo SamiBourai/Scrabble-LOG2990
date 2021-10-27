@@ -46,6 +46,7 @@ export class EaselLogiscticsService {
         if (number >= pair.min && number <= pair.max) return true;
         return false;
     }
+    
 
     placeEaselLetters(easel: EaselObject): void {
         let counter = 0;

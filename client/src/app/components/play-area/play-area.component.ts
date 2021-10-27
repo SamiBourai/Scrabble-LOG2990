@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Letter } from '@app/classes/letter';
-import { Pair } from '@app/classes/pair';
 import { Vec2 } from '@app/classes/vec2';
 import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
@@ -8,7 +7,7 @@ import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
-import { EASEL_POSITIONS, RANGE_Y } from './../../constants/constants';
+import { EASEL_POSITIONS, RANGE_Y, SWAP_BUTTON_RANGE_X, SWAP_BUTTON_RANGE_Y } from './../../constants/constants';
 
 export enum MouseButton {
     Left = 0,
@@ -36,15 +35,15 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     isGood: boolean = false;
 
     lettersToSwapByClick: Letter[] = [];
-    letterIsClicked = new Map<Pair, boolean>([
-        [{ min: 264, max: 313 }, false],
-        [{ min: 315, max: 371 }, false],
-        [{ min: 373, max: 424 }, false],
-        [{ min: 426, max: 478 }, false],
-        [{ min: 480, max: 531 }, false],
-        [{ min: 534, max: 584 }, false],
-        [{ min: 586, max: 637 }, false],
-    ]);
+    // letterIsClicked = new Map<Pair, boolean>([
+    //     [{ min: 264, max: 313 }, false],
+    //     [{ min: 315, max: 371 }, false],
+    //     [{ min: 373, max: 424 }, false],
+    //     [{ min: 426, max: 478 }, false],
+    //     [{ min: 480, max: 531 }, false],
+    //     [{ min: 534, max: 584 }, false],
+    //     [{ min: 586, max: 637 }, false],
+    // ]);
 
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
 
@@ -65,44 +64,39 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     easelClicked(event: MouseEvent) {
         const vec = this.easelLogisticsService.showCoords(event);
-
-        if (this.easelLogisticsService.isBetween(RANGE_Y, vec.y) && this.easelLogisticsService.isBetween({ min: 264, max: 637 }, vec.x)) {
+        const rangeEasleValid =
+            this.easelLogisticsService.isBetween(RANGE_Y, vec.y) && this.easelLogisticsService.isBetween({ min: 264, max: 637 }, vec.x);
+        const rangeSwapButtonValid =
+            this.easelLogisticsService.isBetween(SWAP_BUTTON_RANGE_X, vec.x) && this.easelLogisticsService.isBetween(SWAP_BUTTON_RANGE_Y, vec.y);
+        if (rangeEasleValid || rangeSwapButtonValid) {
             this.isGood = true;
-            this.letterIsClicked.forEach((value: boolean, key: Pair) => {
-                for (const easelPosition of EASEL_POSITIONS) {
-                    // For each intervalle de lettre du chevalet
 
-                    if (
-                        easelPosition.letterRange.min === key.min &&
-                        easelPosition.letterRange.max === key.max &&
-                        this.easelLogisticsService.isBetween(easelPosition.letterRange, vec.x)
-                    ) {
-                        if (!value) {
-                            console.log('1111111111111111');
-                            console.log('avant le push :' + value);
-                            this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
-                            this.letterIsClicked.set(key, true);
-                            console.log('apres le push :' + value);
-                            console.log(JSON.stringify(this.letterIsClicked));
-                        } else {
-                            console.log('2222222222222222');
-                            const index = this.lettersToSwapByClick.indexOf(this.userService.realUser.easel.easelLetters[easelPosition.index]);
-                            this.lettersToSwapByClick.splice(index, 1);
-                            this.letterIsClicked.set(key, false);
-                            console.log('Nous avons declique');
-                            console.log(JSON.stringify(this.letterIsClicked));
-                        }
+            for (const easelPosition of EASEL_POSITIONS) {
+                // For each intervalle de lettre du chevalet
+
+                if (this.easelLogisticsService.isBetween(easelPosition.letterRange, vec.x)) {
+                    if (!easelPosition.isClicked) {
+                        console.log('1111111111111111');
+                        console.log('avant le push :' + easelPosition.isClicked);
+                        this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                        // this.letterIsClicked.set(easelPosition.letterRange, true);
+                        easelPosition.isClicked = true;
+                        console.log('apres le push :' + easelPosition.isClicked);
+                        console.log('Nous avons clique');
+                    } else {
+                        console.log('2222222222222222');
+                        const index = this.lettersToSwapByClick.indexOf(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                        this.lettersToSwapByClick.splice(index, 1);
+                        console.log('avant le push :' + easelPosition.isClicked);
+                        easelPosition.isClicked = false;
+                        console.log('apres le push :' + easelPosition.isClicked);
+                        console.log('Nous avons declique');
                     }
                 }
-            });
+            }
         } else {
-            const element = document.getElementById('swapButton') as HTMLElement;
-            element.addEventListener('click', () => {
-                this.swapByClick(event);
-            });
-            setTimeout(() => {
-                this.lettersToSwapByClick = [];
-            }, 1);
+            this.lettersToSwapByClick = [];
+            this.allIsClickedToFalse();
         }
         console.log(this.lettersToSwapByClick);
         return this.lettersToSwapByClick;
@@ -115,15 +109,23 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             this.lettersService.changeLetterFromReserve(letter.charac, this.userService.realUser.easel);
         }
         this.lettersToSwapByClick = [];
+        this.allIsClickedToFalse();
     }
 
     cancelByClick() {
         this.lettersToSwapByClick = [];
+        this.allIsClickedToFalse();
     }
 
     isLettersArrayEmpty() {
         if (this.lettersToSwapByClick.length > 0) return false;
         return true;
+    }
+
+    allIsClickedToFalse() {
+        for (const easelPosition of EASEL_POSITIONS) {
+            easelPosition.isClicked = false;
+        }
     }
 
     detectSkipTurnBtn() {
