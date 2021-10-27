@@ -1,8 +1,8 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
-import { SocketMessage } from '@app/classes/socketMessage';
 import { Letter } from '@app/classes/letter';
+import { SocketMessage } from '@app/classes/socketMessage';
 import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
 import { ChatService } from '@app/services/chat.service';
 import { LettersService } from '@app/services/letters.service';
@@ -63,7 +63,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.chatService.emit('identify', this.userService.getUserName);
 
         // Selon typescript, value est un string, mais lors de l'execution le navigateur indique Object??
-        this.chatService.listen('chat').subscribe((value: any) => {
+        this.chatService.listen('chat').subscribe((value: unknown) => {
             const socketMessage = value as SocketMessage;
             if (socketMessage.name === this.userService.getUserName) {
                 socketMessage.name = '(moi) ' + socketMessage.name;
@@ -97,19 +97,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
-        if (
-            this.isYourTurn() &&
-            this.messageService.isCommand(this.typeArea) &&
-            this.messageService.isValid(this.typeArea) &&
-            !this.isTheGameDone()
-        ) {
+        const validPlayAndYourTurn = this.isYourTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
+        const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
+        if (validPlayAndYourTurn && !this.isTheGameDone()) {
             this.switchCaseCommands();
-        } else if (
-            this.messageService.isCommand(this.typeArea) &&
-            this.messageService.isValid(this.typeArea) &&
-            !this.isTheGameDone() &&
-            this.isDebug
-        ) {
+        } else if (validPlay && !this.isTheGameDone() && this.isDebug) {
             if (this.typeArea === '!reserve') {
                 this.isImpossible = false;
                 this.errorMessage = '';
