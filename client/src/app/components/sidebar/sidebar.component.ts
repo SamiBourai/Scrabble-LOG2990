@@ -2,6 +2,7 @@ import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { SocketMessage } from '@app/classes/socketMessage';
+import { Letter } from '@app/classes/letter';
 import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
 import { ChatService } from '@app/services/chat.service';
 import { LettersService } from '@app/services/letters.service';
@@ -19,6 +20,7 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 export class SidebarComponent implements OnInit, AfterViewChecked {
     arrayOfMessages: string[] = [];
     arrayOfVrCommands: string[] = [];
+    arrayOfReserveLetters: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
     isImpossible: boolean = false;
@@ -95,48 +97,23 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
-        const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea) && this.isYourTurn();
-        this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
-        if (validPlay && !this.isTheGameDone()) {
-            switch (this.typeArea.split(' ', 1)[0]) {
-                case '!placer':
-                    this.getLettersFromChat();
-                    this.messageService.skipTurnIsPressed = false;
-
-                    if (!this.isImpossible) {
-                        this.userService.userPlayed();
-                        this.errorMessage = '';
-                        this.userService.endOfGameCounter = 0;
-                        this.arrayOfMessages.push(this.typeArea);
-                    } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
-                    break;
-                case '!echanger':
-                    if (this.reserveService.reserveSize < EASEL_LENGTH) {
-                        this.isImpossible = true;
-                        this.errorMessage = 'la reserve contient moins de 7 lettres';
-                    } else if (
-                        this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.realUser.easel)
-                    ) {
-                        console.log(this.userService.realUser.easel);
-                        this.isImpossible = false;
-                        this.errorMessage = '';
-                        this.arrayOfMessages.push(this.typeArea);
-                        this.userService.endOfGameCounter = 0;
-                    } else {
-                        this.isImpossible = true;
-                        this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
-                    }
-                    if (!this.isImpossible) this.userService.userPlayed();
-                    break;
-                case '!debug':
-                    this.isImpossible = false;
-                    this.isDebug = !this.isDebug;
-                    break;
-                case '!passer':
-                    this.isImpossible = false;
-                    this.errorMessage = '';
-                    this.userService.detectSkipTurnBtn();
-                    break;
+        if (
+            this.isYourTurn() &&
+            this.messageService.isCommand(this.typeArea) &&
+            this.messageService.isValid(this.typeArea) &&
+            !this.isTheGameDone()
+        ) {
+            this.switchCaseCommands();
+        } else if (
+            this.messageService.isCommand(this.typeArea) &&
+            this.messageService.isValid(this.typeArea) &&
+            !this.isTheGameDone() &&
+            this.isDebug
+        ) {
+            if (this.typeArea === '!reserve') {
+                this.isImpossible = false;
+                this.errorMessage = '';
+                this.reserveLettersQuantity();
             }
         } else {
             this.skipTurnCommand();
@@ -246,5 +223,65 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
     sendMessage(): void {
         this.chatService.emit('chat', this.typeArea);
+    }
+    reserveLettersQuantity() {
+        let s: string;
+        this.reserveService.lettersReserveQty.forEach((value: number, key: Letter) => {
+            s = JSON.stringify(key.charac.toUpperCase())[1] + ': ' + JSON.stringify(value);
+            this.arrayOfReserveLetters.push(s);
+        });
+    }
+
+    private switchCaseCommands() {
+        switch (this.typeArea.split(' ', 1)[0]) {
+            case '!placer':
+                this.getLettersFromChat();
+                this.messageService.skipTurnIsPressed = false;
+
+                if (!this.isImpossible) {
+                    this.userService.userPlayed();
+                    this.errorMessage = '';
+                    this.userService.endOfGameCounter = 0;
+                    this.arrayOfMessages.push(this.typeArea);
+                } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
+                break;
+            case '!echanger':
+                if (this.reserveService.reserveSize < EASEL_LENGTH) {
+                    this.isImpossible = true;
+                    this.errorMessage = 'la reserve contient moins de 7 lettres';
+                } else if (
+                    this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.realUser.easel)
+                ) {
+                    this.isImpossible = false;
+                    this.errorMessage = '';
+                    this.arrayOfMessages.push(this.typeArea);
+                    this.userService.endOfGameCounter = 0;
+                } else {
+                    this.isImpossible = true;
+                    this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
+                }
+                if (!this.isImpossible) this.userService.userPlayed();
+                break;
+            case '!debug':
+                this.isImpossible = false;
+                this.isDebug = !this.isDebug;
+                break;
+            case '!passer':
+                this.isImpossible = false;
+                this.errorMessage = '';
+                this.userService.detectSkipTurnBtn();
+                break;
+            // CODE SPRINT 2 ABDEL POUR !RESERVE
+            case '!reserve':
+                this.isImpossible = false;
+                this.errorMessage = '';
+                if (this.isDebug) {
+                    this.reserveLettersQuantity();
+                } else {
+                    this.isImpossible = true;
+                    this.errorMessage = 'vous n etes pas en mode debogage';
+                }
+            // FIN CODE SPRINT 2 ABDEL POUR !RESERVE
+        }
     }
 }

@@ -1,13 +1,14 @@
 .container {
     position: relative;
     border: 1px solid black;
-    border-radius: 15px;
     overflow-y: auto;
     width: auto;
     height: 900px;
-    margin-top: 5vh;
-    margin-bottom: 50%;
+    margin-top: 6.5vh;
+    margin-bottom: 50% ;
     background-color: #ffe4c4;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px black;
 }
 
 #message {

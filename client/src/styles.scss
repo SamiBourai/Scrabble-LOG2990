@@ -75,17 +75,15 @@ $indigo-pink-theme: mat.define-light-theme(
 
 html,
 body {
-
     height: 100%;
     width: 100%;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
     margin: 0;
 
-    background-color: #e5e5f7;
+    background-image: url(https://media.istockphoto.com/vectors/abstract-gradient-orange-vector-background-vector-id1170025348?b=1&k=20&m=1170025348&s=612x612&w=0&h=Ppx4rNrIABqs43P4FO4T-18z-fz6CZaFvPfTu20l2Jo=);
     opacity: 1;
-    background-image: radial-gradient(#0d0f31 0.7000000000000001px, transparent 0.7000000000000001px),
-        radial-gradient(#0d0f31 0.7000000000000001px, #e5e5f7 0.7000000000000001px);
-    background-size: 28px 28px;
+    //background-image: radial-gradient(#0d0f31 0.7000000000000001px, transparent 0.7000000000000001px),
+    //   radial-gradient(#0d0f31 0.7000000000000001px, #e5e5f7 0.7000000000000001px);
+    background-size: 100%;
     background-position: 0 0, 14px 14px;
 }
-
