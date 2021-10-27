@@ -35,15 +35,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     isGood: boolean = false;
 
     lettersToSwapByClick: Letter[] = [];
-    // letterIsClicked = new Map<Pair, boolean>([
-    //     [{ min: 264, max: 313 }, false],
-    //     [{ min: 315, max: 371 }, false],
-    //     [{ min: 373, max: 424 }, false],
-    //     [{ min: 426, max: 478 }, false],
-    //     [{ min: 480, max: 531 }, false],
-    //     [{ min: 534, max: 584 }, false],
-    //     [{ min: 586, max: 637 }, false],
-    // ]);
 
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
 
@@ -76,21 +67,12 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
                 if (this.easelLogisticsService.isBetween(easelPosition.letterRange, vec.x)) {
                     if (!easelPosition.isClicked) {
-                        console.log('1111111111111111');
-                        console.log('avant le push :' + easelPosition.isClicked);
                         this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
-                        // this.letterIsClicked.set(easelPosition.letterRange, true);
                         easelPosition.isClicked = true;
-                        console.log('apres le push :' + easelPosition.isClicked);
-                        console.log('Nous avons clique');
                     } else {
-                        console.log('2222222222222222');
                         const index = this.lettersToSwapByClick.indexOf(this.userService.realUser.easel.easelLetters[easelPosition.index]);
                         this.lettersToSwapByClick.splice(index, 1);
-                        console.log('avant le push :' + easelPosition.isClicked);
                         easelPosition.isClicked = false;
-                        console.log('apres le push :' + easelPosition.isClicked);
-                        console.log('Nous avons declique');
                     }
                 }
             }
@@ -98,7 +80,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             this.lettersToSwapByClick = [];
             this.allIsClickedToFalse();
         }
-        console.log(this.lettersToSwapByClick);
         return this.lettersToSwapByClick;
     }
 
@@ -122,12 +103,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         return true;
     }
 
-    allIsClickedToFalse() {
-        for (const easelPosition of EASEL_POSITIONS) {
-            easelPosition.isClicked = false;
-        }
-    }
-
     detectSkipTurnBtn() {
         this.userService.detectSkipTurnBtn();
     }
@@ -147,14 +122,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridCanvas.nativeElement.focus();
     }
 
-    get width(): number {
-        return this.canvasSize.x;
-    }
-
-    get height(): number {
-        return this.canvasSize.y;
-    }
-
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (
@@ -169,5 +136,19 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                 y: Math.ceil((event.offsetY - TOPSPACE) / (BOARD_HEIGHT / NB_TILES)),
             };
         }
+    }
+
+    private allIsClickedToFalse() {
+        for (const easelPosition of EASEL_POSITIONS) {
+            easelPosition.isClicked = false;
+        }
+    }
+
+    get width(): number {
+        return this.canvasSize.x;
+    }
+
+    get height(): number {
+        return this.canvasSize.y;
     }
 }
