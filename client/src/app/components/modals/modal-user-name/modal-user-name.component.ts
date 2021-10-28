@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Game } from '@app/classes/game';
+import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { DEFAULT_TIME, TIME_CHOICE } from '@app/constants/constants';
+import { GridService } from '@app/services/grid.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
+import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -27,12 +31,17 @@ export class ModalUserNameComponent implements OnInit {
     gameName: string = '';
     rooms: any;
     game: any;
+    timeCounter: number = DEFAULT_TIME;
+    time: GameTime = TIME_CHOICE[this.timeCounter];
+    isRandom = false;
     isEmptyRoom: boolean = true;
     constructor(
         private dialogRef: MatDialog,
         private userService: UserService,
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
+        private gridService:GridService,
+        private timeService:TimeService,
     ) {}
     ngOnInit(): void {
         switch (this.userService.playMode) {
@@ -80,6 +89,7 @@ export class ModalUserNameComponent implements OnInit {
         this.soloMode = true;
         this.createMultiplayerGame = false;
         this.disconnectUser();
+        // this.timeService.timeMultiplayer(this.time);
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createGame(): void {
@@ -113,4 +123,46 @@ export class ModalUserNameComponent implements OnInit {
             this.userService.joinedUser.turnToPlay = !firstPlayer;
         });
     }
+
+
+    randomBonusActivated() {
+        this.gridService.isBonusRandom = true;
+    }
+    setMultiplayerGame() {
+        this.timeService.timeMultiplayer(this.time);
+    }
+    @HostListener('document:click.minusBtn', ['$eventX'])
+    onClickInMinusButton(event: Event) {
+        event.preventDefault()
+
+        if (this.timeCounter === 0) {
+            return;
+        }else if(this.timeCounter<0){
+            this.timeCounter=0
+        }
+        else if (this.timeCounter > 0) {
+            this.timeCounter--;
+            this.time=TIME_CHOICE[this.timeCounter];
+        }
+    }
+    @HostListener('document:click.addBtn', ['$event'])
+    onClickInAddButton(event: Event) {
+        event.preventDefault()
+
+        if (this.timeCounter === TIME_CHOICE.length) {
+            return;
+
+        } else if (this.timeCounter > TIME_CHOICE.length) {
+            this.timeCounter = TIME_CHOICE.length;
+            return;
+
+        } else if (this.timeCounter < TIME_CHOICE.length) {
+            this.timeCounter++;
+            this.time=TIME_CHOICE[this.timeCounter];
+        }
+
+    }
+
+
+
 }

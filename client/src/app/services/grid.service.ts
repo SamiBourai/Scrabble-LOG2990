@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import {
     ADJUSTEMENT_TOPSPACE,
+    ALL_BONUS_BOX,
     AZUR_BOX,
     BLUE_BOX,
     BOARD_HEIGHT,
@@ -30,6 +31,8 @@ export class GridService {
     playerImage: ImageData;
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
+    isBonusRandom: boolean;
+    allBonusQuantity: number = ALL_BONUS_BOX.length;
 
     drawGrid() {
         this.gridContext.beginPath();
@@ -197,5 +200,34 @@ export class GridService {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+
+    randomizeBonuses(): void {
+
+        for (let i = 0; i < RED_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            RED_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
+        for (let i = 0; i < AZUR_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            AZUR_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
+        for (let i = 0; i < BLUE_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            BLUE_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
+        for (let i = 0; i < PINK_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            PINK_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
     }
 }

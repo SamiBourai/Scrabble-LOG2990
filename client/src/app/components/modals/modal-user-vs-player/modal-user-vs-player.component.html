@@ -3,8 +3,6 @@
 <div class="content">
     <header class="header-user-vs-player"> {{getNameFromLocalStorage()}} vous jouerez contre ...</header>
     <br>
-
-
       <mat-card class="player-user-card" fxLayout="row">
         <mat-card class="mart-card-players" fxLayout="row">
             <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
@@ -15,8 +13,6 @@
                 <mat-card-subtitle class="score-time">temps par tour: 0{{ this.timeService.timeUser.min }}:{{ this.timeService.timeUser.sec }}</mat-card-subtitle>
             </mat-card-header>
         </mat-card>
-
-
         <mat-card fxLayout="row">
             <mat-card-header>
                 <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
@@ -44,3 +40,51 @@
 </div>
 
 
+
+<div class="content" *ngIf="this.userService.isUserQuitGame===true">
+    <header class="header-user-vs-player"> Voulez-vous vraiment abandonner la partie ? </header>
+    <br>
+    <hr>
+      <mat-card-actions>
+        <div class="btn-user-player">
+          <button mat-raised-button  mat-dialog-close (click)="setIsUserQuitGame()">Reprendre la partie</button>
+          <button mat-raised-button color="primary" (click)="setIsUserQuitGame()">Abandonner la partie</button>
+        </div>
+
+      </mat-card-actions>
+</div>
+
+
+<!--
+
+<div class="content" >
+    <header class="header-user-vs-player"> Le gagnant de la partie est : </header>
+    <br>
+    <br>
+    <hr>
+
+
+        <mat-card fxLayout="row">
+            <mat-card-header>
+                <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
+                <mat-card-subtitle>{{ userService.vrUser.level }}</mat-card-subtitle>
+                <mat-card-subtitle class="score-time"> Score : {{ userService.vrUser.score }} </mat-card-subtitle>
+                <mat-card-subtitle class="score-time">temps par tour: {{ this.timeService.timeVrPlayer.min }}:{{ this.timeService.timeVrPlayer.sec }}</mat-card-subtitle>
+            </mat-card-header>
+            <ngx-avatar
+                class="avatar"
+                size="50"
+                name="{{ userService.vrUser.name }}"
+                src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
+            ></ngx-avatar>
+        </mat-card>
+
+    <hr>
+
+      <mat-card-actions>
+        <div class="btn-user-player">
+          <button mat-raised-button mat-dialog-close color="primary"  routerLink="/home" (click)="setIsUserQuitGame()" >Retour à la page principale</button>
+        </div>
+
+      </mat-card-actions>
+</div> -->

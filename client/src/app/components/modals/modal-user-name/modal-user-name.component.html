@@ -66,6 +66,40 @@
           <mat-label>Nom</mat-label>
           <input matInput placeholder="entrez votre prenom"  formControlName="firstCtrl" [(ngModel)]="creatorName" required>
         </mat-form-field>
+        <div class="container">
+            <div fxLayout="row">
+                <div>
+                    <p class="text-config">Temps par tour :</p>
+                </div>
+
+                <div class="time-config">
+                    <button #minusBtn class="btn btn-primary" [disabled]="this.timeCounter === 0" (click)="onClickInMinusButton($event)">
+                        -
+                    </button>
+                </div>
+                <div class="time-config">
+                    <p class="form-control">{{this.time.min | number: '2.0-0'}}</p>
+
+                </div>
+
+                <div class="time-config">
+                    <p class="form-control">{{':'}}</p>
+                </div>
+                <div>
+                    <p class="form-control">{{this.time.sec |number: '2.0-0' }}</p>
+
+                </div>
+                <div class="time-config">
+                    <button #addBtn class="btn btn-primary" [disabled]="this.timeCounter === 9" (click)="onClickInAddButton($event)">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        <mat-slide-toggle [(ngModel)]="isRandom" #switchBon (change)="(isRandom)">Bonus Aléatoire!</mat-slide-toggle> <br />
+        <hr />
         <div>
           <button mat-button matStepperNext>Suivant</button>
         </div>
@@ -89,7 +123,7 @@
       <ng-template matStepLabel>Salle d'attente</ng-template>
       <div *ngIf= "game; else elseBlock">
         <p class="multiplayerP">vous allez jouer contre l'utilisateur {{game.joinedUserName}}</p>
-        
+
         <button mat-button routerLink="/game" mat-dialog-close>Démarer la partie</button>
         <button mat-button  mat-dialog-close>Annuler</button>
       </div>
@@ -104,8 +138,8 @@
     </mat-step>
   </mat-stepper>
 </div>
-   
-<div class="div" *ngIf="joinMultiplayerGame">   
+
+<div class="div" *ngIf="joinMultiplayerGame">
   <mat-card class="game-Configuration-Card" >
     <mat-card-title>Joindre une partie</mat-card-title>
     <!-- <button (click)= 'joinGame()'> joindre </button> -->
@@ -129,14 +163,14 @@
 
 <mat-step>
   <ng-template matStepLabel>voir les parties</ng-template>
-  <div *ngIf ="!isEmptyRoom; else elseBlock"> 
+  <div *ngIf ="!isEmptyRoom; else elseBlock">
     <p class="multiplayerP">cliquez sur la partie que vous voulez rejoindre</p>
     <table id="ht" align="center"  width="400" class="table-striped table-hover">
       <thead class="header">
         <th class="contentCell">nom du client</th>
         <th class="contentCell">nom de la partie</th>
       </thead>
-      
+
         <tbody>
           <tr *ngFor="let room of rooms">
             <td class="contentCell" (click)= "joinGame(room)" routerLink="/game" mat-dialog-close >{{ room.clientName }}</td>
@@ -144,17 +178,17 @@
           </tr>
         </tbody>
     </table>
-  
-  </div> 
+
+  </div>
   <ng-template #elseBlock>
     <p class="multiplayerP">Il n'y a pas de partie en ce moment!</p>
-    
+
   </ng-template>
   <div>
     <br>
     <button mat-button matStepperPrevious mat-raised-button color="accent">Retour</button>
   </div>
-  
+
 </mat-step>
 </mat-stepper>
 </div>

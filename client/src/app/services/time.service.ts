@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { GameTime } from '@app/classes/time';
 import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/constants/constants';
 import { UserService } from './user.service';
 import { VirtualPlayerService } from './virtual-player.service';
@@ -10,25 +11,16 @@ export class TimeService {
     timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     timeVrPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     constructor(private userService: UserService, private virtualPlayerService: VirtualPlayerService) {}
-    // timeObs: BehaviorSubject<{ min: number; sec: number }> = new BehaviorSubject<{ min: number; sec: number }>(this.time);
-    // here we disable the any eslint error, because there"s not type Timeout in typscript.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
-    // get getTimeDataObs(): BehaviorSubject<{ min: number; sec: number }> {
-    //     return this.timeObs;
-    // }
-    // get getTimeData(): { min: number; sec: number } {
-    //     return this.time;
-    // }
-    // setTimeData(time: { min: number; sec: number }) {
-    //     this.time = time;
-    //     this.timeObs.next(this.time);
-    // }
+    timeMultiplayer(gameTime: GameTime): void {
+        this.timeUser = gameTime;
+    }
+
     startTime(playerTurn: string) {
         switch (playerTurn) {
             case 'user': {
                 const intervalId = setInterval(() => {
-                    if (this.timeUser.sec === 0) {
+                    if (this.timeUser.sec - ONE_SECOND === -ONE_SECOND) {
                         this.timeUser.min -= ONE_MINUTE;
                         this.timeUser.sec = MINUTE_TURN;
                     } else this.timeUser.sec -= ONE_SECOND;
@@ -47,7 +39,7 @@ export class TimeService {
 
             case 'joiner': {
                 const intervalId = setInterval(() => {
-                    if (this.timeUser.sec === 0) {
+                    if (this.timeUser.sec - ONE_SECOND === -ONE_SECOND) {
                         this.timeUser.min -= ONE_MINUTE;
                         this.timeUser.sec = MINUTE_TURN;
                     } else this.timeUser.sec -= ONE_SECOND;
