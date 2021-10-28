@@ -14,6 +14,7 @@ import {
     J,
     K,
     L,
+    LETTERS_RESERVE_QTY,
     M,
     MIN_SWAP_LENGTH,
     N,
@@ -45,7 +46,7 @@ export class ReserveService {
     reserveSize: number = 0;
 
     sizeObs = new BehaviorSubject(0);
-    lettersReserveQty = new Map<Letter, number>();
+
     constructor() {
         for (let i = 0; i < SWAP_LENGTH; i++) {
             this.letters.push(A);
@@ -107,32 +108,6 @@ export class ReserveService {
             this.reserveSize++;
         }
 
-        this.lettersReserveQty.set(A, SWAP_LENGTH);
-        this.lettersReserveQty.set(B, 2);
-        this.lettersReserveQty.set(C, 2);
-        this.lettersReserveQty.set(D, 3);
-        this.lettersReserveQty.set(E, NB_TILES);
-        this.lettersReserveQty.set(F, 2);
-        this.lettersReserveQty.set(G, 2);
-        this.lettersReserveQty.set(H, 2);
-        this.lettersReserveQty.set(I, MIN_SWAP_LENGTH);
-        this.lettersReserveQty.set(J, 1);
-        this.lettersReserveQty.set(K, 1);
-        this.lettersReserveQty.set(L, INDEX_2WORD);
-        this.lettersReserveQty.set(M, 3);
-        this.lettersReserveQty.set(N, SIX);
-        this.lettersReserveQty.set(O, SIX);
-        this.lettersReserveQty.set(P, 2);
-        this.lettersReserveQty.set(Q, 1);
-        this.lettersReserveQty.set(R, SIX);
-        this.lettersReserveQty.set(S, SIX);
-        this.lettersReserveQty.set(T, SIX);
-        this.lettersReserveQty.set(U, SIX);
-        this.lettersReserveQty.set(V, 2);
-        this.lettersReserveQty.set(W, 1);
-        this.lettersReserveQty.set(X, 1);
-        this.lettersReserveQty.set(Y, 1);
-        this.lettersReserveQty.set(Z, 1);
         this.sizeObs.next(this.reserveSize);
     }
 
@@ -144,8 +119,8 @@ export class ReserveService {
         this.reserveSize--;
 
         // [A, 2]
-        let qty = this.lettersReserveQty.get(this.save) as number;
-        this.lettersReserveQty.set(this.save, --qty);
+        let qty = LETTERS_RESERVE_QTY.get(this.save) as number;
+        LETTERS_RESERVE_QTY.set(this.save, --qty);
 
         this.sizeObs.next(this.reserveSize);
         return this.save;
@@ -158,8 +133,8 @@ export class ReserveService {
     reFillReserve(lett: Letter) {
         this.letters.push(lett);
         this.reserveSize++;
-        let qty = this.lettersReserveQty.get(lett) as number;
-        this.lettersReserveQty.set(lett, ++qty);
+        let qty = LETTERS_RESERVE_QTY.get(lett) as number;
+        LETTERS_RESERVE_QTY.set(lett, ++qty);
         this.sizeObs.next(this.reserveSize);
     }
 

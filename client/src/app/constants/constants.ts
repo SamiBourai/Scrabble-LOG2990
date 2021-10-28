@@ -1,7 +1,7 @@
-import { Pair } from './../classes/pair';
 import { Letter } from '@app/classes/letter';
 import { MousePosition } from '@app/classes/MousePosition';
 import { Vec2 } from '@app/classes/vec2';
+import { Pair } from './../classes/pair';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
 
@@ -81,6 +81,7 @@ export const ZERO_POINTS = 0;
 export const SIX_POINTS = 6;
 export const SEVEN_POINTS = 7;
 export const TWELVE_POINTS = 12;
+export const FIFTEEN = 15;
 export const THIRTEEN_POINTS = 13;
 export const EIGHTEEN_POINTS = 18;
 export const INITIAL_BOX_X = 8;
@@ -174,6 +175,7 @@ export const SWAP_BUTTON_RANGE_Y = { min: 4, max: 29 };
 export const EASEL_RANGE = { min: 264, max: 637 };
 
 export const RANGE_Y: Pair = { min: 840, max: 887 };
+
 // sidebar
 export const COLUMN_RANGE = 16;
 // the length of the command !placer and !echanger
@@ -217,3 +219,33 @@ export const MIN_SWAP_LENGTH = 8;
 // for get the parametre of the command !echanger. ex: !echanger as => as
 export const PARAMETERS_OF_SWAP = 10;
 export const FOURTY = 40;
+
+// reserve
+export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
+    [A, SWAP_LENGTH],
+    [B, 2],
+    [C, 2],
+    [D, 3],
+    [E, FIFTEEN],
+    [F, 2],
+    [G, 2],
+    [H, 2],
+    [I, MIN_SWAP_LENGTH],
+    [J, 1],
+    [K, 1],
+    [L, INDEX_2WORD],
+    [M, 3],
+    [N, SIX],
+    [O, SIX],
+    [P, 2],
+    [Q, 1],
+    [R, SIX],
+    [S, SIX],
+    [T, SIX],
+    [U, SIX],
+    [V, 2],
+    [W, 1],
+    [X, 1],
+    [Y, 1],
+    [Z, 1],
+]);
