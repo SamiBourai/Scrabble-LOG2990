@@ -53,6 +53,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     this.mousHandelingService.resetSteps();
                     this.mousHandelingService.previousClick = { x: -1, y: -1 };
                     break;
+                // case 'left arrow':
+                //     this.mousHandelingService.moveLeft();
+                //     break;
+                // case 'right arrow':
+                //     console.log('right');
+                //     this.mousHandelingService.moveRight();
+                //     break;
                 default:
                     if (this.lettersService.tiles[this.gridService.previousTile.y - 1][this.gridService.previousTile.x - 1] === NOT_A_LETTER) {
                         this.mousHandelingService.keyBoardEntryManage(event.key);

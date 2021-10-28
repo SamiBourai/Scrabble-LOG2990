@@ -55,6 +55,8 @@
         "prettier": "^2.3.2",
         "reflect-metadata": "^0.1.13",
         "serve-favicon": "~2.5.0",
+        "socket.io": "^4.3.1",
+        "socket.io-client": "^4.3.2",
         "swagger-jsdoc": "^6.1.0",
         "swagger-ui-express": "^4.1.6",
         "typedi": "^0.10.0"

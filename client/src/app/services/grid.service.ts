@@ -3,6 +3,7 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import {
     ADJUSTEMENT_TOPSPACE,
+    ALL_BONUS_BOX,
     AZUR_BOX,
     BLUE_BOX,
     BOARD_HEIGHT,
@@ -41,6 +42,7 @@ export class GridService {
     playerImage: ImageData;
     tempWord: string = '';
     previousTile: Vec2 = { x: -1, y: -1 };
+    allBonusQuantity: number = ALL_BONUS_BOX.length;
     private direction: string = H_ARROW;
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
@@ -191,8 +193,8 @@ export class GridService {
         this.tempWord = this.tempWord.slice(0, UNDEFINED_INDEX);
     }
     decrementDirection() {
-        if (this.direction === H_ARROW && this.previousTile.x < NB_TILES) this.previousTile.x--;
-        else if (this.direction === V_ARROW && this.previousTile.y < NB_TILES) this.previousTile.y--;
+        if (this.direction === H_ARROW && this.previousTile.x <= NB_TILES) this.previousTile.x--;
+        else if (this.direction === V_ARROW && this.previousTile.y <= NB_TILES) this.previousTile.y--;
     }
     incrementDirection() {
         if (this.direction === H_ARROW && this.previousTile.x < NB_TILES) this.previousTile.x++;
@@ -248,6 +250,46 @@ export class GridService {
             BOARD_WIDTH / NB_TILES + 3,
             BOARD_WIDTH / NB_TILES + 3,
         );
+    }
+    randomizeBonuses(): void {
+        for (let i = 0; i < RED_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            RED_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
+        for (let i = 0; i < AZUR_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            AZUR_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
+        for (let i = 0; i < BLUE_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            BLUE_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
+        for (let i = 0; i < PINK_BOX.length; i++) {
+            const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
+            PINK_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
+            ALL_BONUS_BOX.splice(randomBonusIndex, 1);
+            this.allBonusQuantity--;
+        }
+    }
+    letterEaselToMove(index: number) {
+        this.easelContext.beginPath();
+        this.easelContext.strokeStyle = 'green';
+        this.easelContext.lineWidth = 3;
+        this.easelContext.shadowColor = 'red';
+        this.easelContext.shadowBlur = 5;
+        this.easelContext.rect(
+            LEFTSPACE + ((HAND_POSITION_START + index) * BOARD_WIDTH) / NB_TILES,
+            TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2,
+            BOARD_WIDTH / NB_TILES,
+            BOARD_WIDTH / NB_TILES,
+        );
+        this.easelContext.stroke();
     }
     private drawArrow(pos: Vec2) {
         if (this.direction === H_ARROW) {

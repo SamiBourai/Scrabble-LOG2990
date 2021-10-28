@@ -16,6 +16,7 @@ import {
     SWAP_BUTTON_RANGE_X,
     SWAP_BUTTON_RANGE_Y,
     TOPSPACE,
+    UNDEFINED_INDEX,
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
@@ -30,7 +31,7 @@ export class MouseHandelingService {
     previousClick: Vec2 = { x: -1, y: -1 };
     firstBorderLetter: boolean = true;
     placeTempCommand: string;
-
+    lastWasLeftClick: boolean = false;
     first = true;
     buttonPressed = '';
     containsAllChars: boolean = true;
@@ -128,14 +129,30 @@ export class MouseHandelingService {
                     const indexCounter = easelIndex;
                     if (this.easelLogic.isBetween(easelPosition.letterRange, vec.x)) {
                         if (!easelPosition.isClicked) {
-                            this.gridService.setLetterClicked(indexCounter);
-                            this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
-                            easelPosition.isClicked = true;
-                        } else {
+                            if (event.button === 0) {
+                                this.userService.realUser.easel.indexToMove = UNDEFINED_INDEX;
+                                if (!this.lastWasLeftClick) {
+                                    this.cancelByClick();
+                                    this.lastWasLeftClick = true;
+                                }
+                                this.gridService.setLetterClicked(indexCounter);
+                                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                                easelPosition.isClicked = true;
+                            } else {
+                                this.cancelByClick();
+                                this.lastWasLeftClick = false;
+                                this.gridService.letterEaselToMove(indexCounter);
+                                this.userService.realUser.easel.indexToMove = indexCounter;
+                                easelPosition.isClicked = true;
+                            }
+                        } else if (event.button === 0 && this.lastWasLeftClick) {
                             const index = this.lettersToSwapByClick.indexOf(this.userService.realUser.easel.easelLetters[easelPosition.index]);
                             this.lettersToSwapByClick.splice(index, 1);
                             this.gridService.unclickLetter(indexCounter);
                             easelPosition.isClicked = false;
+                        } else if (event.button === 2 && !this.lastWasLeftClick) {
+                            this.cancelByClick();
+                            this.userService.realUser.easel.indexToMove = UNDEFINED_INDEX;
                         }
                     }
                     easelIndex++;
@@ -154,6 +171,7 @@ export class MouseHandelingService {
         this.commandObs.next(this.placeTempCommand);
         this.cancelByClick();
     }
+
     cancelByClick() {
         this.lettersToSwapByClick = [];
         this.allIsClickedToFalse();
@@ -163,6 +181,26 @@ export class MouseHandelingService {
         if (this.lettersToSwapByClick.length > 0) return false;
         return true;
     }
+    // moveLeft() {
+    //     if (!this.lastWasLeftClick) {
+    //         this.userService.realUser.easel.moveLeft();
+    //         this.easelLogic.placeEaselLetters(this.userService.realUser.easel);
+    //         this.userService.realUser.easel.indexToMove--;
+    //         this.cancelByClick();
+    //         this.lastWasLeftClick = false;
+    //         this.gridService.letterEaselToMove(this.userService.realUser.easel.indexToMove);
+    //     }
+    // }
+    // moveRight() {
+    //     if (!this.lastWasLeftClick) {
+    //         this.userService.realUser.easel.moveRight();
+    //         this.easelLogic.placeEaselLetters(this.userService.realUser.easel);
+    //         this.userService.realUser.easel.indexToMove++;
+    //         this.cancelByClick();
+    //         this.lastWasLeftClick = false;
+    //         this.gridService.letterEaselToMove(this.userService.realUser.easel.indexToMove);
+    //     }
+    // }
     private allIsClickedToFalse() {
         for (const easelPosition of EASEL_POSITIONS) {
             easelPosition.isClicked = false;
