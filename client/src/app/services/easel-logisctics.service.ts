@@ -75,4 +75,40 @@ export class EaselLogiscticsService {
         }
         if (user) this.placeEaselLetters(easel);
     }
+    tempGetLetter(letter: string, easel: EaselObject): Letter {
+        let counter = 0;
+        for (const lett of easel.easelLetters) {
+            const pos = counter;
+            if (lett.charac === letter && !easel.posTempLetters[pos]) {
+                this.gridContext.clearRect(
+                    LEFTSPACE + ((HAND_POSITION_START + pos) * BOARD_WIDTH) / NB_TILES + 2,
+                    TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + 2,
+                    BOARD_WIDTH / NB_TILES - CLEAR_RECT_FIX,
+                    BOARD_HEIGHT / NB_TILES - CLEAR_RECT_FIX,
+                );
+                easel.posTempLetters[pos] = true;
+                easel.indexTempLetters.push(pos);
+                return lett;
+            }
+            counter++;
+        }
+        return NOT_A_LETTER;
+    }
+    replaceTempInEasel(easel: EaselObject) {
+        const img = new Image();
+        if (easel.indexTempLetters.length !== 0) {
+            const pos = easel.indexTempLetters.pop() || 0;
+            img.src = easel.easelLetters[pos].img;
+            easel.posTempLetters[pos] = false;
+            img.onload = () => {
+                this.gridContext.drawImage(
+                    img,
+                    LEFTSPACE + ((HAND_POSITION_START + pos) * BOARD_WIDTH) / NB_TILES,
+                    TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2,
+                    BOARD_WIDTH / NB_TILES,
+                    BOARD_HEIGHT / NB_TILES,
+                );
+            };
+        }
+    }
 }

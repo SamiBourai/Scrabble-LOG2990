@@ -4,6 +4,7 @@ import { ChatCommand } from '@app/classes/chat-command';
 import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
+import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
@@ -47,11 +48,19 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private userService: UserService,
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
+        private mouseHandelingService: MouseHandelingService,
     ) {}
     ngOnInit(): void {
         this.virtualPlayerService.commandToSendVr.subscribe((res) => {
             setTimeout(() => {
                 this.arrayOfVrCommands.push(res);
+            }, 0);
+        });
+
+        this.mouseHandelingService.commandObs.subscribe((res) => {
+            setTimeout(() => {
+                this.typeArea = res;
+                this.logMessage();
             }, 0);
         });
     }
@@ -89,7 +98,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         this.errorMessage = '';
                         this.userService.endOfGameCounter = 0;
                         this.arrayOfMessages.push(this.typeArea);
-                    } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
+                    }
                     break;
                 case '!echanger':
                     if (this.reserveService.reserveSize < EASEL_LENGTH) {

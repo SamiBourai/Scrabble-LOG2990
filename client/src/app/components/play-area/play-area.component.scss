@@ -3,7 +3,6 @@
     border: 1px solid black;
     border-radius: 10px;
     background-color: #ffe4c4;
-
 }
 .grid-container {
     position: relative;
@@ -11,17 +10,35 @@
     display: flex;
 }
 
-.button-up{
+.firstLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 1;
+}
+.secondLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 2;
+}
+.thirdLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 3;
+}
+.button-up {
     position: relative;
     margin-top: 1%;
     margin-bottom: 1%;
     width: auto;
 }
-.div{
+.div {
     margin: 5% 50% 0% 10%;
 }
 
-.actual-player{
+.actual-player {
     clear: both;
     display: inline-block;
     overflow: hidden;
@@ -32,7 +49,7 @@
     vertical-align: center;
     border-radius: 5%;
     padding: 6% 3% 2% 3%;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 500;
 }

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
+import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -17,6 +18,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
         private reserverService: ReserveService,
         private dialogRef: MatDialog,
         public virtualPlayerService: VirtualPlayerService,
+        private mouseHandlingService: MouseHandelingService,
     ) {}
 
     detectSkipTurnBtn() {
@@ -48,6 +50,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
     isUserEaselEmpty() {
         this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
+                this.mouseHandlingService.resetSteps();
                 if (
                     this.remainingLetters === 0 &&
                     (this.userService.realUser.easel.getEaselSize() === 0 || this.virtualPlayerService.easel.getEaselSize() === 0)

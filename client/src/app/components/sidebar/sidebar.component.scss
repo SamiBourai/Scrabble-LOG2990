@@ -6,7 +6,7 @@
     width: auto;
     height: 900px;
     margin-top: 5vh;
-    margin-bottom: 50% ;
+    margin-bottom: 50%;
     background-color: #ffe4c4;
 }
 
@@ -60,23 +60,21 @@ hr {
 
 ::-webkit-scrollbar {
     width: 20px;
-  }
+}
 
-  /* Track */
-  ::-webkit-scrollbar-track {
+/* Track */
+::-webkit-scrollbar-track {
     background: #f1f1f1;
-  }
+}
 
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
+/* Handle */
+::-webkit-scrollbar-thumb {
     background-color: #babac0;
     border-radius: 16px;
     border: 8px solid #fff;
-  }
+}
 
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
     background: #fff;
-
-  }
-
+}

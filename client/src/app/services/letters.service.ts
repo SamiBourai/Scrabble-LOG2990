@@ -84,7 +84,6 @@ export class LettersService {
         if (easel.contains(letterToChange) && !this.reserveService.isReserveEmpty()) {
             for (let i = 0; i < letterToChange.length; i++) {
                 temp.push(this.easelLogisticsService.getLetterFromEasel(easel, easel.indexOfEaselLetters[i]));
-                easel.occupiedPos[easel.indexOfEaselLetters[i]] = false;
             }
             this.easelLogisticsService.refillEasel(easel, true);
             for (const lett of temp) {

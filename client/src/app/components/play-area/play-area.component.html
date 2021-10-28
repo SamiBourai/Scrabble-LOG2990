@@ -4,32 +4,37 @@
 </div> -->
 
 <div class="grid-container" fxLayout="column">
-    <div class="button-up" fxLayout="row" >
+    <div class="button-up" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
-
         </div>
         <div class="div">
             <button
-            #skipTurn
-            id="btn"
-            mat-raised-button
-            color="primary"
-            [disabled]="userService.realUser.turnToPlay===false"
-            (click)="detectSkipTurnBtn()"
+                #skipTurn
+                id="btn"
+                mat-raised-button
+                color="primary"
+                [disabled]="userService.realUser.turnToPlay === false"
+                (click)="detectSkipTurnBtn()"
             >
-            Passer son tour
+                Passer son tour
             </button>
         </div>
         <div class="div">
-             <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
+            <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
         </div>
-
-
     </div>
 
     <div>
-        <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="canvas" class="firstLayer" #gridCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="tempCanvas" class="secondLayer" #tempCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas
+            id="focusCanvas"
+            class="thirdLayer"
+            #focusCanvas
+            (click)="this.mousHandelingService.mouseHitDetect($event)"
+            [attr.width]="width"
+            [attr.height]="height"
+        ></canvas>
     </div>
-
 </div>

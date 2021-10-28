@@ -27,6 +27,8 @@ export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;
 export const CTX_PX = 15;
 export const ADJUSTEMENT_TOPSPACE = 5;
+export const H_ARROW = '→';
+export const V_ARROW = '↓';
 
 // play-area-comp
 export const CANEVAS_WIDTH = 900;
