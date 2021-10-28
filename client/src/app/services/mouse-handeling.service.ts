@@ -20,7 +20,6 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { GridService } from './grid.service';
-import { LettersService } from './letters.service';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -43,12 +42,7 @@ export class MouseHandelingService {
 
     lettersToSwapByClick: Letter[] = [];
     commandObs = new BehaviorSubject<string>('');
-    constructor(
-        private readonly gridService: GridService,
-        private easelLogic: EaselLogiscticsService,
-        private userService: UserService,
-        private letterService: LettersService,
-    ) {}
+    constructor(private readonly gridService: GridService, private easelLogic: EaselLogiscticsService, private userService: UserService) {}
     placeTempWord() {
         if (this.gridService.tempWord !== '') {
             this.placeTempCommand =
@@ -114,7 +108,6 @@ export class MouseHandelingService {
             this.previousClick = { x: -1, y: -1 };
         }
     }
-
     resetSteps() {
         this.firstBorderLetter = true;
         this.userService.realUser.easel.resetTempIndex();
@@ -152,16 +145,15 @@ export class MouseHandelingService {
             }
         return this.lettersToSwapByClick;
     }
-
     swapByClick(event: MouseEvent) {
         const letters = this.easelClicked(event);
-
-        for (const letter of letters) {
-            this.letterService.changeLetterFromReserve(letter.charac, this.userService.realUser.easel);
+        this.placeTempCommand = '!echanger ';
+        for (const lett of letters) {
+            this.placeTempCommand += lett.charac;
         }
+        this.commandObs.next(this.placeTempCommand);
         this.cancelByClick();
     }
-
     cancelByClick() {
         this.lettersToSwapByClick = [];
         this.allIsClickedToFalse();
