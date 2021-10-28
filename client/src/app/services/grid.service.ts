@@ -62,6 +62,9 @@ export class GridService {
         this.gridContext.beginPath();
         this.gridContext.strokeStyle = 'black';
         this.gridContext.lineWidth = 3;
+        this.gridContext.shadowColor = 'red';
+        this.gridContext.shadowBlur = 5;
+
         for (let i = 0; i <= NB_LETTER_HAND; i++) {
             this.gridContext.moveTo(LEFTSPACE + ((HAND_POSITION_START + i) * BOARD_WIDTH) / NB_TILES, TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2);
             this.gridContext.lineTo(
@@ -79,6 +82,7 @@ export class GridService {
             LEFTSPACE + (HAND_POSITION_END * BOARD_WIDTH) / NB_TILES,
             TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + BOARD_WIDTH / NB_TILES,
         );
+
         this.gridContext.stroke();
     }
 

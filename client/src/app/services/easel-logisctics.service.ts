@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { EaselObject } from '@app/classes/EaselObject';
 import { Letter } from '@app/classes/letter';
+import { Pair } from '@app/classes/pair';
+import { Vec2 } from '@app/classes/vec2';
 import {
     BOARD_HEIGHT,
     BOARD_WIDTH,
@@ -20,6 +22,29 @@ export class EaselLogiscticsService {
     gridContext: CanvasRenderingContext2D;
     firstMessage: boolean = true;
     constructor(private reserveService: ReserveService) {}
+
+    showCoords(event: MouseEvent): Vec2 {
+        const cX = event.offsetX;
+        const cY = event.offsetY;
+        const coords1 = { x: cX, y: cY };
+        return coords1;
+    }
+
+    rightClick(e: MouseEvent) {
+        switch (e.button) {
+            case 1:
+                alert('Left Mouse button pressed.');
+                break;
+            case 2:
+                alert('ntm1');
+                break;
+        }
+    }
+
+    isBetween(pair: Pair, number: number) {
+        if (number >= pair.min && number <= pair.max) return true;
+        return false;
+    }
 
     placeEaselLetters(easel: EaselObject): void {
         let counter = 0;
@@ -45,6 +70,7 @@ export class EaselLogiscticsService {
                     BOARD_HEIGHT / NB_TILES - CLEAR_RECT_FIX,
                 );
             }
+
             counter++;
         }
     }

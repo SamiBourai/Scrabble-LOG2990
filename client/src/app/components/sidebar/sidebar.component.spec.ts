@@ -1,9 +1,11 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { EaselObject } from '@app/classes/EaselObject';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
@@ -33,6 +35,8 @@ describe('SidebarComponent', () => {
             'debugCommand',
             'containsPlaceCommand',
             'swapCommand',
+            'replaceSpecialChar',
+            'removeDuplicate'
         ]);
 
         userServiceSpy = jasmine.createSpyObj('UserServiceSpy', [
@@ -44,6 +48,8 @@ describe('SidebarComponent', () => {
             'getVrUserName',
             'skipTurn',
             'resetPassesCounter',
+            'isUserTurn',
+            'userPlayed'
         ]);
         letterServiceSpy = jasmine.createSpyObj('letterServiceSpy', [
             'changeLetterFromReserve',
@@ -60,7 +66,7 @@ describe('SidebarComponent', () => {
             'tileIsEmpty',
             'tile',
         ]);
-        reserveServiceSpy = jasmine.createSpyObj('reserveServiceSpy', ['reserveSize']);
+        reserveServiceSpy = jasmine.createSpyObj('reserveServiceSpy', ['reserveSize','isReserveEmpty']);
 
         validWordServiceSpy = jasmine.createSpyObj('validWordServiceSpy', ['readWordsAndGivePointsIfValid', 'verifyWord']);
 
@@ -170,9 +176,30 @@ describe('SidebarComponent', () => {
     });
 
     it('should call the method changeLetterFromReserve', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
+       //component.typeArea = "!echanger ea"
+        messageServiceSpy.isCommand.and.callFake(() => {
+            return true;
+        });
 
+        messageServiceSpy.isValid.and.callFake(() => {
+            return true;
+        });
+        spyOn(component, 'isYourTurn').and.callFake(() => {
+            return true;
+        });
+
+        spyOn(component, 'isTheGameDone').and.callFake(() => {
+            return false;
+        });
+
+        const spy = spyOn<any>(letterServiceSpy, 'changeLetterFromReserve');
+        component.logMessage();
+
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('verify that when isImpossible is false, detectSkipTurnBtn is called', () => {
+        
         messageServiceSpy.isCommand.and.callFake(() => {
             return true;
         });
@@ -181,41 +208,17 @@ describe('SidebarComponent', () => {
             return true;
         });
 
-        messageServiceSpy.containsSwapCommand.and.callFake(() => {
-            return true;
-        });
-
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'changeLetterFromReserve').and.callFake(() => {
-            return true;
-        });
-
-        component.logMessage();
-        expect(component.isImpossible).toBeFalse();
-    });
-
-    it('verify that when isImpossible is false, detectSkipTurnBtn is called', () => {
-        messageServiceSpy.containsSwapCommand.and.callFake(() => {
-            return false;
-        });
-        messageServiceSpy.containsPlaceCommand.and.callFake(() => {
-            return true;
-        });
-
         spyOn<any>(component, 'isYourTurn').and.callFake(() => {
             return true;
         });
 
-        spyOn<any>(component, 'isImpossible').and.resolveTo(false);
+        component.isImpossible = false;
 
         component.logMessage();
-        expect(messageServiceSpy.skipTurnIsPressed).toBeFalse();
+        expect(userServiceSpy.userPlayed()).toBeFalse();
     });
 
-    it('should verify that isImpossible is true when the reserveSize > 7', () => {
+    it('should verify that isImpossible is true when the reserveSize < 7', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
 
@@ -302,6 +305,14 @@ describe('SidebarComponent', () => {
     });
 
     it('should verify that getLettersFromChat', () => {
+
+        messageServiceSpy.isCommand.and.callFake(() => {
+            return true;
+        });
+
+        messageServiceSpy.isValid.and.callFake(() => {
+            return true;
+        });
         messageServiceSpy.containsPlaceCommand.and.callFake(() => {
             return true;
         });
@@ -319,8 +330,8 @@ describe('SidebarComponent', () => {
     it('177', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true };
-        userServiceSpy.realUser = user;
+         const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true,easel:new EaselObject(true) };
+         userServiceSpy.realUser = user;
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
         });
@@ -345,7 +356,7 @@ describe('SidebarComponent', () => {
     it('195', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true };
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
         userServiceSpy.realUser = user;
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
@@ -455,10 +466,19 @@ describe('SidebarComponent', () => {
     it('verify that detectSkipTurnBtn has been called when typeArea = !passer', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        spyOn(component, 'isYourTurn').and.callFake(() => {
+        component.typeArea = "!passer"
+
+        messageServiceSpy.isCommand.and.callFake(() => {
             return true;
         });
-        component.typeArea = '!passer';
+        messageServiceSpy.isValid.and.callFake(() => {
+            return true;
+        });
+
+        spyOn<any>(component, 'isYourTurn').and.callFake(() => {
+            return true;
+        });
+        
         component.logMessage();
         expect(userServiceSpy.detectSkipTurnBtn).toHaveBeenCalled();
     });
@@ -544,6 +564,10 @@ describe('SidebarComponent', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
 
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        userServiceSpy.realUser = user;
+
+        
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
         });
@@ -552,23 +576,24 @@ describe('SidebarComponent', () => {
             return true;
         });
 
+        
+
         spyOn<any>(letterServiceSpy, 'tileIsEmpty').and.callFake(() => {
             return true;
         });
-        const spy = spyOn(letterServiceSpy, 'wordInEasel');
-
+        
         component.getLettersFromChat();
 
         expect(component.firstTurn).toBe(false);
-        expect(spy).toHaveBeenCalled();
+        
     });
 
     it('verify that placeLettersInScrabble will be called ', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
 
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true };
-        userServiceSpy.realUser = user;
+         const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true,easel:new EaselObject(true) };
+         userServiceSpy.realUser = user;
 
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
@@ -582,9 +607,12 @@ describe('SidebarComponent', () => {
             return true;
         });
 
-        spyOn<any>(letterServiceSpy, 'wordInEasel').and.callFake(() => {
+        // spyOn<any>(letterServiceSpy, 'wordInEasel').and.callFake(() => {
+        //     return true;
+        // });
+        spyOn<any>(userServiceSpy.realUser.easel,'contains').and.callFake(() =>{
             return true;
-        });
+        })
         const spy = spyOn<any>(letterServiceSpy, 'placeLettersInScrable');
 
         component.getLettersFromChat();
@@ -637,9 +665,9 @@ describe('SidebarComponent', () => {
     it('verify that when wordIsAttached and wordIsPlacable, placeLettersInScrabble is called', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true };
-        userServiceSpy.realUser = user;
+        
+         const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel:new EaselObject(true) };
+         userServiceSpy.realUser = user;
 
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
@@ -666,6 +694,8 @@ describe('SidebarComponent', () => {
         const cmd = { word: 'mot', position: { x: 9, y: 9 }, direction: 'h' };
         messageServiceSpy.command = cmd;
         component.firstTurn = true;
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel:new EaselObject(true) };
+         userServiceSpy.realUser = user;
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
         });
@@ -730,21 +760,21 @@ describe('SidebarComponent', () => {
         expect(component.errorMessage).toBeDefined();
     });
 
-    it('verify that logDebug is called', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-        spyOn<any>(messageServiceSpy, 'isCommand').and.callFake(() => {
-            return true;
-        });
+    // it('verify that logDebug is called', () => {
+    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+    //     messageServiceSpy.command = cmd;
+    //     spyOn<any>(messageServiceSpy, 'isCommand').and.callFake(() => {
+    //         return true;
+    //     });
 
-        spyOn<any>(messageServiceSpy, 'isValid').and.callFake(() => {
-            return true;
-        });
+    //     spyOn<any>(messageServiceSpy, 'isValid').and.callFake(() => {
+    //         return true;
+    //     });
 
-        spyOn<any>(component, 'logDebug').and.callFake(() => {
-            return true;
-        });
-        component.logMessage();
-        expect(component.isDebug).toBeTrue();
-    });
+    //     spyOn<any>(component, 'logDebug').and.callFake(() => {
+    //         return true;
+    //     });
+    //     component.logMessage();
+    //     expect(component.isDebug).toBeTrue();
+    // });
 });

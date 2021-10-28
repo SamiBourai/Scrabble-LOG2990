@@ -3,7 +3,7 @@
     <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
 </div> -->
 
-<div class="grid-container" fxLayout="column">
+<div (contextmenu)="easelClicked($event)" (click)="easelClicked($event)" oncontextmenu="return false" class="grid-container" fxLayout="column">
     <div class="button-up" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
@@ -40,4 +40,27 @@
             [attr.height]="height"
         ></canvas>
     </div>
+</div>
+
+<div class="swapSection">
+    <button
+        mat-raised-button
+        color="primary"
+        id="swapButton"
+        [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()"
+        (click)="swapByClick($event)"
+    >
+        echanger
+    </button>
+</div>
+<div class="cancelSection">
+    <button
+        mat-raised-button
+        color="primary"
+        id="cancelButton"
+        [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()"
+        (click)="cancelByClick()"
+    >
+        annuler
+    </button>
 </div>

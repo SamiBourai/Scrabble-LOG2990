@@ -2,7 +2,9 @@ import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
-import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
+import { SocketMessage } from '@app/classes/socketMessage';
+import { BONUS_POINTS_50, EASEL_LENGTH, LETTERS_RESERVE_QTY } from '@app/constants/constants';
+import { ChatService } from '@app/services/chat.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
@@ -51,6 +53,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
+        private chatService: ChatService,
     ) {}
     ngOnInit(): void {
         this.virtualPlayerService.commandToSendVr.subscribe((res) => {
@@ -65,6 +68,26 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.logMessage();
             }, 0);
         });
+        this.chatService.emit('identify', this.userService.getUserName);
+
+        // Selon typescript, value est un string, mais lors de l'execution le navigateur indique Object??
+        this.chatService.listen('chat').subscribe((value: unknown) => {
+            const socketMessage = value as SocketMessage;
+            if (socketMessage.name === this.userService.getUserName) {
+                socketMessage.name = '(moi) ' + socketMessage.name;
+            }
+            socketMessage.message = this.messageService.replaceSpecialChar(socketMessage.message);
+
+            const msg = `${socketMessage.name}: ${socketMessage.message}`;
+
+            if (this.messageService.isCommand(socketMessage.message) && !this.messageService.isValid(socketMessage.message))
+                this.errorMessage = 'erreur';
+            else if (socketMessage.message === '!reserve') {
+                // do nothing
+            } else this.arrayOfMessages.push(msg);
+        });
+
+        this.chatService.connect();
     }
 
     ngAfterViewChecked(): void {
@@ -84,33 +107,20 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
-        if (
-            this.isYourTurn() &&
-            this.messageService.isCommand(this.typeArea) &&
-            this.messageService.isValid(this.typeArea) &&
-            !this.isTheGameDone()
-        ) {
+        const validPlayAndYourTurn = this.isYourTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
+        const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
+        if (validPlayAndYourTurn && !this.isTheGameDone()) {
             this.switchCaseCommands();
-        } else if (
-            this.messageService.isCommand(this.typeArea) &&
-            this.messageService.isValid(this.typeArea) &&
-            !this.isTheGameDone() &&
-            this.isDebug
-        ) {
+        } else if (validPlay && !this.isTheGameDone() && this.isDebug) {
             if (this.typeArea === '!reserve') {
                 this.isImpossible = false;
                 this.errorMessage = '';
                 this.reserveLettersQuantity();
             }
         } else {
-            if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
-                this.skipTurn = true;
-                this.isImpossible = true;
-                this.errorMessage = 'ce n est pas votre tour';
-            } else if (this.typeArea === '!debug') {
-                this.isDebug = !this.isDebug;
-            } else {
-                this.arrayOfMessages.push(this.typeArea);
+            this.skipTurnCommand();
+            if (!this.messageService.isCommand(this.typeArea)) {
+                this.messageService.removeDuplicate(this.arrayOfMessages, this.typeArea);
             }
         }
 
@@ -118,6 +128,18 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.nameVr = this.getNameVrPlayer();
         this.impossibleAndValid();
         this.typeArea = '';
+    }
+
+    skipTurnCommand() {
+        if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+            this.skipTurn = true;
+            this.isImpossible = true;
+            this.errorMessage = 'ce n est pas votre tour';
+        } else if (this.typeArea === '!debug') {
+            this.isDebug = !this.isDebug;
+        } else if (this.messageService.isCommand(this.typeArea) && !this.messageService.isValid(this.typeArea)) {
+            this.errorMessage = 'commande invalide';
+        } else this.arrayOfMessages.push(this.typeArea);
     }
 
     isSkipButtonClicked() {
@@ -201,10 +223,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         return this.userService.endOfGame;
     }
 
+    sendMessage(): void {
+        this.chatService.emit('chat', this.typeArea);
+    }
     reserveLettersQuantity() {
         let s: string;
-        this.reserveService.lettersReserveQty.forEach((value: number, key: Letter) => {
-            s = JSON.stringify(key.charac.toUpperCase())[1] + ': ' + JSON.stringify(value);
+        LETTERS_RESERVE_QTY.forEach((value: number, key: Letter) => {
+            s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
         });
     }

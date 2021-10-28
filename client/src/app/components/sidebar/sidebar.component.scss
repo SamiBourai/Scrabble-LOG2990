@@ -6,7 +6,7 @@
     height: 900px;
     margin-top: 6.5vh;
     margin-bottom: 50%;
-    background-color: #ffe4c4;
+    background-color: #f3f3f3;
     border-radius: 10px;
     box-shadow: 5px 5px 10px black;
 }
@@ -46,11 +46,27 @@ hr {
     color: red;
 }
 
+.myMessage {
+    color: rebeccapurple;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.otherMessage {
+    color: rgb(214, 48, 125);
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .debug {
     color: red;
+    font-size: 15px;
+    font-weight: bold;
 }
 .debugActive {
     color: green;
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .messageList {

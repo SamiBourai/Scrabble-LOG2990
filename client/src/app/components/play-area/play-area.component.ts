@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Letter } from '@app/classes/letter';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -6,6 +7,7 @@ import { LettersService } from '@app/services/letters.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
+import { EASEL_POSITIONS, RANGE_Y, SWAP_BUTTON_RANGE_X, SWAP_BUTTON_RANGE_Y } from './../../constants/constants';
 
 export enum MouseButton {
     Left = 0,
@@ -30,13 +32,19 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     chatWord: string;
     remainingLetters: number = 0;
     dialogRef: unknown;
+    isClicked: boolean = false;
+    isGood: boolean = false;
+
+    lettersToSwapByClick: Letter[] = [];
+
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
 
     constructor(
         private readonly gridService: GridService,
         public mousHandelingService: MouseHandelingService,
         private readonly lettersService: LettersService,
-        private readonly easelLogisticsService: EaselLogiscticsService,
+        readonly easelLogisticsService: EaselLogiscticsService,
+
         public userService: UserService,
         private readonly pvs: ValidWordService,
     ) {
@@ -69,6 +77,56 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             }
     }
 
+    easelClicked(event: MouseEvent) {
+        const vec = this.easelLogisticsService.showCoords(event);
+        const rangeEasleValid =
+            this.easelLogisticsService.isBetween(RANGE_Y, vec.y) && this.easelLogisticsService.isBetween({ min: 264, max: 637 }, vec.x);
+        const rangeSwapButtonValid =
+            this.easelLogisticsService.isBetween(SWAP_BUTTON_RANGE_X, vec.x) && this.easelLogisticsService.isBetween(SWAP_BUTTON_RANGE_Y, vec.y);
+        if (rangeEasleValid || rangeSwapButtonValid) {
+            this.isGood = true;
+
+            for (const easelPosition of EASEL_POSITIONS) {
+                // For each intervalle de lettre du chevalet
+
+                if (this.easelLogisticsService.isBetween(easelPosition.letterRange, vec.x)) {
+                    if (!easelPosition.isClicked) {
+                        this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                        easelPosition.isClicked = true;
+                    } else {
+                        const index = this.lettersToSwapByClick.indexOf(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                        this.lettersToSwapByClick.splice(index, 1);
+                        easelPosition.isClicked = false;
+                    }
+                }
+            }
+        } else {
+            this.lettersToSwapByClick = [];
+            this.allIsClickedToFalse();
+        }
+        return this.lettersToSwapByClick;
+    }
+
+    swapByClick(event: MouseEvent) {
+        const letters = this.easelClicked(event);
+
+        for (const letter of letters) {
+            this.lettersService.changeLetterFromReserve(letter.charac, this.userService.realUser.easel);
+        }
+        this.lettersToSwapByClick = [];
+        this.allIsClickedToFalse();
+    }
+
+    cancelByClick() {
+        this.lettersToSwapByClick = [];
+        this.allIsClickedToFalse();
+    }
+
+    isLettersArrayEmpty() {
+        if (this.lettersToSwapByClick.length > 0) return false;
+        return true;
+    }
+
     detectSkipTurnBtn() {
         this.userService.detectSkipTurnBtn();
     }
@@ -88,6 +146,12 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
+    }
+
+    private allIsClickedToFalse() {
+        for (const easelPosition of EASEL_POSITIONS) {
+            easelPosition.isClicked = false;
+        }
     }
 
     get width(): number {

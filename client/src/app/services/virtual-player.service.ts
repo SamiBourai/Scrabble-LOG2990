@@ -51,16 +51,16 @@ export class VirtualPlayerService {
     manageVrPlayerActions(): void {
         this.skipTurn = false;
         const probability: string[] = [
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
             'passTurn',
-            'passTurn',
-            'passTurn',
-            'passTurn',
-            'passTurn',
-            'passTurn',
-            'passTurn',
-            'passTurn',
-            'passTurn',
-            'passTurn',
+            'exchangeLetters',
         ];
         if (!this.isDicFille) {
             this.isDicFille = true;
