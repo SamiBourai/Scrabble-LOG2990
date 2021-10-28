@@ -24,7 +24,7 @@ import {
 })
 export class MessageService {
     array = new Array<ChatCommand>();
-    arrayOfCommand: string[] = ['!aide', '!debug', '!passer'];
+    arrayOfCommand: string[] = ['!aide', '!debug', '!passer', '!reserve'];
     command: ChatCommand = { word: '', position: { x: 0, y: 0 }, direction: 'h' };
     arrayOfSpecialChars: string[] = ['ç', 'é', 'è', 'ë'];
     skipTurnIsPressed: boolean = false;

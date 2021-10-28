@@ -1,8 +1,9 @@
 #canvas {
     position: fixed;
     border: 1px solid black;
-    border-radius: 10px;
     background-color: #ffe4c4;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px black;
 }
 .grid-container {
     position: relative;
