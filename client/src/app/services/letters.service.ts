@@ -36,7 +36,7 @@ import {
     W,
     X,
     Y,
-    Z,
+    Z
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
@@ -98,6 +98,13 @@ export class LettersService {
     }
     placeLettersInScrable(command: ChatCommand, easel: EaselObject, user: boolean): void {
         this.usedAllEaselLetters = false;
+        this.placeLettersWithDirection(command);
+
+        if (easel.indexOfEaselLetters.length === EASEL_LENGTH) this.usedAllEaselLetters = true;
+        this.easelLogisticsService.refillEasel(easel, user);
+        easel.resetVariables();
+    }
+    placeLettersWithDirection(command: ChatCommand): void {
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
                 this.placeLetter(this.getTheLetter(command.word.charAt(i)), {
@@ -111,10 +118,6 @@ export class LettersService {
                 });
             }
         }
-
-        if (easel.indexOfEaselLetters.length === EASEL_LENGTH) this.usedAllEaselLetters = true;
-        this.easelLogisticsService.refillEasel(easel, user);
-        easel.resetVariables();
     }
 
     wordIsPlacable(command: ChatCommand, easel: EaselObject): boolean {

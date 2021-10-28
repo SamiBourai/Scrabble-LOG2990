@@ -9,6 +9,7 @@ import { VirtualPlayerService } from './virtual-player.service';
 export class TimeService {
     timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     timeVrPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
+    timeGuestPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     constructor(private userService: UserService, private virtualPlayerService: VirtualPlayerService) {}
     // timeObs: BehaviorSubject<{ min: number; sec: number }> = new BehaviorSubject<{ min: number; sec: number }>(this.time);
     // here we disable the any eslint error, because there"s not type Timeout in typscript.
@@ -41,20 +42,21 @@ export class TimeService {
                         this.timeUser = { min: 0, sec: MINUTE_TURN };
                         clearInterval(intervalId);
                     }
+                    console.log('shui dans le timer ')
                 }, ONE_SECOND_MS);
                 break;
             }
 
-            case 'joiner': {
+            case 'guestPlayer': {
                 const intervalId = setInterval(() => {
-                    if (this.timeUser.sec === 0) {
-                        this.timeUser.min -= ONE_MINUTE;
-                        this.timeUser.sec = MINUTE_TURN;
-                    } else this.timeUser.sec -= ONE_SECOND;
+                    if (this.timeGuestPlayer.sec === 0) {
+                        this.timeGuestPlayer.min -= ONE_MINUTE;
+                        this.timeGuestPlayer.sec = MINUTE_TURN;
+                    } else this.timeGuestPlayer.sec -= ONE_SECOND;
 
-                    if (this.timeUser.min === 0 && this.timeUser.sec === 0) {
-                        this.userService.realUser.turnToPlay = false;
-                        this.timeUser = { min: 0, sec: 10 };
+                    if (this.timeGuestPlayer.min === 0 && this.timeGuestPlayer.sec === 0) {
+                        this.userService.realUser.turnToPlay = true;
+                        this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };
                         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
                         clearInterval(intervalId);
                     }

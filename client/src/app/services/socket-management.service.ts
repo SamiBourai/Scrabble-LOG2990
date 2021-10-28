@@ -23,9 +23,10 @@ export class SocketManagementService {
         });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    emit(eventName: string, data?: Game, reason?: string) {
+    emit(eventName: string, data?: Game, reason?: string, command?: any) {
         if (reason) this.socket.emit(eventName, reason);
-        else this.socket.emit(eventName, data);
+        else if (data) this.socket.emit(eventName, data);
+        else this.socket.emit(eventName, command);
     }
 
     // configureBaseSocketFeatures(): Rx.Subject<MessageEvent> {

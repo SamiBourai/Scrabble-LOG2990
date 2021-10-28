@@ -1,0 +1,70 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable } from '@angular/core';
+import { ChatCommand } from '@app/classes/chat-command';
+import { LettersService } from './letters.service';
+import { SocketManagementService } from './socket-management.service';
+import { UserService } from './user.service';
+
+@Injectable({
+    providedIn: 'root',
+})
+export class MultiplayerModeService {
+    gameStarted: boolean = false;
+    guestCommand: ChatCommand;
+    constructor(private socketManagementService: SocketManagementService, private userService: UserService, private lettersService: LettersService) {}
+
+    beginGame(): void {
+        this.socketManagementService.listen('beginGame').subscribe((data) => {
+            const begin: any = data;
+            this.gameStarted = begin;
+            if (!this.userService.joinedUser.guestPlayer)
+                this.socketManagementService.emit('chooseFirstToPlay', undefined, this.userService.gameName);
+        });
+        this.socketManagementService.listen('chooseFirstToPlay').subscribe((data) => {
+            const firstPlayer: any = data;
+            this.userService.realUser.firstToPlay = firstPlayer;
+            this.userService.realUser.turnToPlay = firstPlayer;
+            this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
+        });
+    }
+    play(playMethod: string): void {
+        if (this.userService.chatCommandToSend) {
+            const command = {
+                word: this.userService.chatCommandToSend.word,
+                position: this.userService.chatCommandToSend.position,
+                direction: this.userService.chatCommandToSend.direction,
+                gameName: this.userService.gameName,
+            };
+            this.socketManagementService.emit(playMethod, undefined, undefined, command);
+            if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
+            else this.userService.realUser.turnToPlay = false;
+        }
+    }
+    getPlayedCommand(playedMethod: string) {
+        this.socketManagementService.listen(playedMethod).subscribe((data) => {
+            const command: any = data;
+            this.guestCommand = command;
+            this.lettersService.placeLettersWithDirection(this.guestCommand);
+            if (playedMethod === 'guestUserPlayed') {
+                this.userService.realUser.turnToPlay = true;
+            } else {
+                this.userService.realUser.turnToPlay = false;
+            }
+            this.userService.firstTurn = false;
+        });
+    }
+    isTimeStartable(): boolean {
+        switch (this.userService.playMode) {
+            case 'soloGame':
+                if (this.userService.realUser.turnToPlay && !this.userService.endOfGame) return true;
+                break;
+            case 'createMultiplayerGame':
+                if (this.gameStarted && this.userService.realUser.turnToPlay && !this.userService.endOfGame) return true;
+                break;
+            case 'joinMultiplayerGame':
+                if (this.gameStarted && !this.userService.realUser.turnToPlay && !this.userService.endOfGame) return true;
+                break;
+        }
+        return false;
+    }
+}

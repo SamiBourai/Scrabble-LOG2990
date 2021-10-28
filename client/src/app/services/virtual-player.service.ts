@@ -45,9 +45,7 @@ export class VirtualPlayerService {
         private validWordService: ValidWordService,
         private lettersService: LettersService,
         private easelLogic: EaselLogiscticsService,
-    ) {
-        this.easelLogic.fillEasel(this.easel, false);
-    }
+    ) {}
     manageVrPlayerActions(): void {
         this.skipTurn = false;
         const probability: string[] = [
@@ -64,6 +62,7 @@ export class VirtualPlayerService {
         ];
         if (!this.isDicFille) {
             this.isDicFille = true;
+            this.easelLogic.fillEasel(this.easel, false);
         }
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         this.played = false;

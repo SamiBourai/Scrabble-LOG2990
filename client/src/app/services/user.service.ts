@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/EaselObject';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { PARAMETERS_OF_SWAP, SIX_TURN } from '@app/constants/constants';
@@ -22,6 +23,8 @@ export class UserService {
     realUser: RealUser;
     joinedUser: JoinedUser;
     vrUser: VrUser;
+    gameName: string;
+    chatCommandToSend: ChatCommand;
     intervalId = 0;
     time: number;
     vrSkipingTurn: boolean;
@@ -29,12 +32,11 @@ export class UserService {
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     observableTurnToPlay: Observable<boolean>;
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
-
     endOfGameCounter: number = 0;
-
     endOfGame: boolean = false;
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     endOfGameObs: Observable<boolean>;
+    firstTurn: boolean = true;
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
         this.vrSkipingTurn = false;
@@ -58,7 +60,7 @@ export class UserService {
                 level: 'Joueur en ligne',
                 round: '1 min',
                 score: 0,
-                turnToPlay: false,
+                guestPlayer: false,
                 easel: new EaselObject(false),
             };
         else
@@ -90,7 +92,6 @@ export class UserService {
             } else break;
         }
         localStorage.setItem('vrUserName', this.vrPlayerNames[randomInteger]);
-        console.log(this.vrPlayerNames[randomInteger]);
         return this.vrPlayerNames[randomInteger];
     }
     getUserName(): string {
@@ -104,7 +105,8 @@ export class UserService {
     }
 
     isUserTurn(): boolean {
-        return this.realUser.turnToPlay;
+        if (this.joinedUser.guestPlayer === false) return this.realUser.turnToPlay;
+        else return !this.realUser.turnToPlay;
     }
     detectSkipTurnBtn(): boolean {
         this.messageService.skipTurnIsPressed = true;
