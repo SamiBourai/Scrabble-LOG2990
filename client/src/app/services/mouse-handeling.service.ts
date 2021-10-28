@@ -2,10 +2,25 @@ import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/components/play-area/play-area.component';
-import { ASCI_CODE_A, BOARD_HEIGHT, BOARD_WIDTH, LEFTSPACE, NB_TILES, NOT_A_LETTER, TOPSPACE } from '@app/constants/constants';
+import {
+    ASCI_CODE_A,
+    BOARD_HEIGHT,
+    BOARD_WIDTH,
+    CANEVAS_HEIGHT,
+    CANEVAS_WIDTH,
+    EASEL_POSITIONS,
+    LEFTSPACE,
+    NB_TILES,
+    NOT_A_LETTER,
+    RANGE_Y,
+    SWAP_BUTTON_RANGE_X,
+    SWAP_BUTTON_RANGE_Y,
+    TOPSPACE,
+} from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { GridService } from './grid.service';
+import { LettersService } from './letters.service';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -16,8 +31,24 @@ export class MouseHandelingService {
     previousClick: Vec2 = { x: -1, y: -1 };
     firstBorderLetter: boolean = true;
     placeTempCommand: string;
+
+    first = true;
+    buttonPressed = '';
+    containsAllChars: boolean = true;
+    chatWord: string;
+    remainingLetters: number = 0;
+    dialogRef: unknown;
+    isClicked: boolean = false;
+    isGood: boolean = false;
+
+    lettersToSwapByClick: Letter[] = [];
     commandObs = new BehaviorSubject<string>('');
-    constructor(private readonly gridService: GridService, private easelLogic: EaselLogiscticsService, private userService: UserService) {}
+    constructor(
+        private readonly gridService: GridService,
+        private easelLogic: EaselLogiscticsService,
+        private userService: UserService,
+        private letterService: LettersService,
+    ) {}
     placeTempWord() {
         if (this.gridService.tempWord !== '') {
             this.placeTempCommand =
@@ -90,6 +121,60 @@ export class MouseHandelingService {
         this.gridService.clearLayers();
         this.easelLogic.placeEaselLetters(this.userService.realUser.easel);
         this.gridService.tempWord = '';
+    }
+    easelClicked(event: MouseEvent) {
+        const vec = this.easelLogic.showCoords(event);
+        const rangeEasleValid = this.easelLogic.isBetween(RANGE_Y, vec.y) && this.easelLogic.isBetween({ min: 264, max: 637 }, vec.x);
+        const rangeSwapButtonValid = this.easelLogic.isBetween(SWAP_BUTTON_RANGE_X, vec.x) && this.easelLogic.isBetween(SWAP_BUTTON_RANGE_Y, vec.y);
+        if (this.userService.realUser.turnToPlay)
+            if (rangeEasleValid || rangeSwapButtonValid) {
+                this.isGood = true;
+                let easelIndex = 0;
+                for (const easelPosition of EASEL_POSITIONS) {
+                    // For each intervalle de lettre du chevalet
+                    const indexCounter = easelIndex;
+                    if (this.easelLogic.isBetween(easelPosition.letterRange, vec.x)) {
+                        if (!easelPosition.isClicked) {
+                            this.gridService.setLetterClicked(indexCounter);
+                            this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                            easelPosition.isClicked = true;
+                        } else {
+                            const index = this.lettersToSwapByClick.indexOf(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                            this.lettersToSwapByClick.splice(index, 1);
+                            this.gridService.unclickLetter(indexCounter);
+                            easelPosition.isClicked = false;
+                        }
+                    }
+                    easelIndex++;
+                }
+            } else {
+                this.cancelByClick();
+            }
+        return this.lettersToSwapByClick;
+    }
+
+    swapByClick(event: MouseEvent) {
+        const letters = this.easelClicked(event);
+
+        for (const letter of letters) {
+            this.letterService.changeLetterFromReserve(letter.charac, this.userService.realUser.easel);
+        }
+        this.cancelByClick();
+    }
+
+    cancelByClick() {
+        this.lettersToSwapByClick = [];
+        this.allIsClickedToFalse();
+        this.gridService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_HEIGHT);
+    }
+    isLettersArrayEmpty() {
+        if (this.lettersToSwapByClick.length > 0) return false;
+        return true;
+    }
+    private allIsClickedToFalse() {
+        for (const easelPosition of EASEL_POSITIONS) {
+            easelPosition.isClicked = false;
+        }
     }
 
     get tempCommand(): BehaviorSubject<string> {

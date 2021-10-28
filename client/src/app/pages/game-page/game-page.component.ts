@@ -51,6 +51,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
         this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
                 this.mouseHandlingService.resetSteps();
+                this.mouseHandlingService.cancelByClick();
                 if (
                     this.remainingLetters === 0 &&
                     (this.userService.realUser.easel.getEaselSize() === 0 || this.virtualPlayerService.easel.getEaselSize() === 0)

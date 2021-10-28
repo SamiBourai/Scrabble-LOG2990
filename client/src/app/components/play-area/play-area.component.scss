@@ -11,6 +11,12 @@
     display: flex;
 }
 
+.easelLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 4;
+}
 .firstLayer {
     position: absolute;
     margin-top: 0%;
@@ -39,27 +45,25 @@
     margin: 5% 50% 0% 10%;
 }
 
-.swapSection{
+.swapSection {
     position: relative;
-    right:0%;
+    right: 0%;
     top: 85%;
     margin-top: 1%;
     margin-bottom: 1%;
     width: auto;
-    
 }
 
-.cancelSection{
+.cancelSection {
     position: relative;
-    left:200%;
+    left: 200%;
     top: 80%;
     margin-top: 5%;
     margin-bottom: 1%;
     width: auto;
-    
 }
 
-.actual-player{
+.actual-player {
     clear: both;
     display: inline-block;
     overflow: hidden;

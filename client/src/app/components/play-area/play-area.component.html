@@ -3,7 +3,7 @@
     <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
 </div> -->
 
-<div (contextmenu)="easelClicked($event)" (click)="easelClicked($event)" oncontextmenu="return false" class="grid-container" fxLayout="column">
+<div (click)="mousHandelingService.easelClicked($event)" oncontextmenu="return false" class="grid-container" fxLayout="column">
     <div class="button-up" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
@@ -31,10 +31,11 @@
     <div>
         <canvas id="canvas" class="firstLayer" #gridCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas id="tempCanvas" class="secondLayer" #tempCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="focusCanvas" class="thirdLayer" #focusCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas
-            id="focusCanvas"
-            class="thirdLayer"
-            #focusCanvas
+            id="easelCanvas"
+            class="easelLayer"
+            #easelCanvas
             (click)="this.mousHandelingService.mouseHitDetect($event)"
             [attr.width]="width"
             [attr.height]="height"
@@ -47,8 +48,8 @@
         mat-raised-button
         color="primary"
         id="swapButton"
-        [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()"
-        (click)="swapByClick($event)"
+        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
+        (click)="mousHandelingService.swapByClick($event)"
     >
         echanger
     </button>
@@ -58,8 +59,8 @@
         mat-raised-button
         color="primary"
         id="cancelButton"
-        [disabled]="!userService.realUser.turnToPlay || isLettersArrayEmpty()"
-        (click)="cancelByClick()"
+        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
+        (click)="mousHandelingService.cancelByClick()"
     >
         annuler
     </button>

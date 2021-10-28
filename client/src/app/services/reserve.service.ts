@@ -41,8 +41,6 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ReserveService {
     letters = new Array<Letter>();
-    random: number;
-    save: Letter;
     reserveSize: number = 0;
 
     sizeObs = new BehaviorSubject(0);
@@ -98,11 +96,6 @@ export class ReserveService {
         this.letters.push(Z);
         this.reserveSize += 7;
 
-        for (let i = 0; i < NB_TILES; i++) {
-            this.letters.push(E);
-            this.reserveSize++;
-        }
-
         for (let i = 0; i < INDEX_2WORD; i++) {
             this.letters.push(L);
             this.reserveSize++;
@@ -112,18 +105,14 @@ export class ReserveService {
     }
 
     getRandomLetter(): Letter {
-        this.random = Math.floor(Math.random() * this.letters.length);
-        this.save = this.letters[this.random];
-
-        this.letters.splice(this.random, 1);
+        const random = Math.floor(Math.random() * this.letters.length);
+        const save = this.letters[random];
+        let qty = LETTERS_RESERVE_QTY.get(save) as number;
+        LETTERS_RESERVE_QTY.set(save, --qty);
+        this.letters.splice(random, 1);
         this.reserveSize--;
-
-        // [A, 2]
-        let qty = LETTERS_RESERVE_QTY.get(this.save) as number;
-        LETTERS_RESERVE_QTY.set(this.save, --qty);
-
         this.sizeObs.next(this.reserveSize);
-        return this.save;
+        return save;
     }
 
     get size(): BehaviorSubject<number> {

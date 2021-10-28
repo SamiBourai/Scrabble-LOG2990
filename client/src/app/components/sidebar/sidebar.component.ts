@@ -245,7 +245,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.errorMessage = '';
                     this.userService.endOfGameCounter = 0;
                     this.arrayOfMessages.push(this.typeArea);
-                } else this.errorMessage = 'les lettres a placer ne sont pas dans le chevalet';
+                }
                 break;
             case '!echanger':
                 if (this.reserveService.reserveSize < EASEL_LENGTH) {
