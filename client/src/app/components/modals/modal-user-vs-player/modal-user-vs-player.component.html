@@ -1,6 +1,6 @@
 
 
-<div class="content">
+<div class="content" #divX *ngIf="!this.userService.isUserQuitGame " >
     <header class="header-user-vs-player"> {{getNameFromLocalStorage()}} vous jouerez contre ...</header>
     <br>
       <mat-card class="player-user-card" fxLayout="row">
@@ -35,35 +35,30 @@
           <button mat-raised-button mat-dialog-close>Annuler La Partie</button>
           <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Démarrer La Partie</button>
         </div>
-
       </mat-card-actions>
 </div>
 
 
 
 <div class="content" *ngIf="this.userService.isUserQuitGame===true">
-    <header class="header-user-vs-player"> Voulez-vous vraiment abandonner la partie ? </header>
+    <mat-card-title>Voulez-vous vraiment abandonner la partie ?</mat-card-title>
+    <mat-card-subtitle>Si oui vous serez déclaré perdant !</mat-card-subtitle>
     <br>
     <hr>
       <mat-card-actions>
         <div class="btn-user-player">
           <button mat-raised-button  mat-dialog-close (click)="setIsUserQuitGame()">Reprendre la partie</button>
-          <button mat-raised-button color="primary" (click)="setIsUserQuitGame()">Abandonner la partie</button>
+          <button mat-raised-button color="primary" (click)="isUserReturnToMenu=true" (click)="setIsUserQuitGame()">Abandonner la partie</button>
         </div>
 
       </mat-card-actions>
 </div>
 
-
-<!--
-
-<div class="content" >
+<div class="content" #hpopUpWinner *ngIf="isUserReturnToMenu" >
     <header class="header-user-vs-player"> Le gagnant de la partie est : </header>
     <br>
     <br>
     <hr>
-
-
         <mat-card fxLayout="row">
             <mat-card-header>
                 <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
@@ -83,8 +78,8 @@
 
       <mat-card-actions>
         <div class="btn-user-player">
-          <button mat-raised-button mat-dialog-close color="primary"  routerLink="/home" (click)="setIsUserQuitGame()" >Retour à la page principale</button>
+          <button mat-raised-button mat-dialog-close color="primary"  (click)="isUserReturnToMenu=false"routerLink="/home" (click)="setIsUserQuitGame()" >Retour à la page principale</button>
         </div>
 
       </mat-card-actions>
-</div> -->
+</div>

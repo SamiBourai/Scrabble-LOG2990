@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
@@ -8,6 +8,9 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./modal-user-vs-player.component.scss'],
 })
 export class ModalUserVsPlayerComponent {
+    @ViewChild('divX') divX:ElementRef<HTMLDivElement>
+    isUserReturnToMenu:boolean;
+    // isUserClickOnGiveUp:string="0";
     constructor(public userService: UserService, public timeService: TimeService) {
     }
 
@@ -17,4 +20,13 @@ export class ModalUserVsPlayerComponent {
     setIsUserQuitGame():void{
         this.userService.isUserQuitGame=false;
     }
+
+
+
+
+    // @HostListener('document.click', ['$event.target'])
+    // setDivToHidden():void{
+    //     this.divX.nativeElement.hidden=false;
+    // }
+
 }

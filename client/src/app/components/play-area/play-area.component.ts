@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
 import { BOARD_HEIGHT, BOARD_WIDTH, CANEVAS_HEIGHT, CANEVAS_WIDTH, LEFTSPACE, NB_TILES, TOPSPACE } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
-import { GameManagementService } from '@app/services/game-management.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { UserService } from '@app/services/user.service';
@@ -42,8 +41,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly pvs: ValidWordService,
         private dialogRef:MatDialog,
-        private gameManagement:GameManagementService,
-
     ) {
         this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
     }
@@ -96,7 +93,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     detectGameQuit():void{
-        this.gameManagement.isUserQuitGame=true;
+        this.userService.isUserQuitGame=true;
     }
 
     openDialogOfVrUser(): void {

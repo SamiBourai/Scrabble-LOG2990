@@ -88,6 +88,7 @@ export class GridService {
 
     drawBonusBox() {
         // triple letter score
+        this.randomizeBonuses();
         this.gridContext.font = 'bold 15px system-ui';
 
         for (const v of RED_BOX) {

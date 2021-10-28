@@ -25,7 +25,7 @@ export class UserService {
     vrUser: VrUser;
     intervalId = 0;
     time: number;
-    public isUserQuitGame:boolean = false;
+    public isUserQuitGame:boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
