@@ -23,12 +23,26 @@ export class EaselObject {
     contains(word: string): boolean {
         let found = false;
         let first = true;
+        let majuscule = false;
         for (let i = 0; i < word.length; i++) {
             if (found || first) {
                 first = false;
                 found = false;
+                if (word.charAt(i) === word.charAt(i).toUpperCase()) {
+                    console.log(word.charAt(i) + ' est majuscues');
+                    majuscule = true;
+                }
                 for (let j = 0; j < EASEL_LENGTH; j++) {
-                    if (word.charAt(i) === this.easelLetters[j].charac && this.foundLetter[j] === false) {
+                    if (majuscule && this.easelLetters[j].charac === '*' && this.foundLetter[j] === false) {
+                        // const letter = STRING_LETTER_OBJECTS.get(word.charAt(i).toLowerCase()) as Letter;
+                        // const temp = JSON.parse(JSON.stringify(this.easelLetters[j]));
+                        // temp.img = letter.img;
+                        // temp.score = letter.score;
+                        this.foundLetter[j] = true;
+                        this.indexOfEaselLetters.push(j);
+                        found = true;
+                        break;
+                    } else if (this.easelLetters[j].charac === word.charAt(i) && this.foundLetter[j] === false) {
                         this.foundLetter[j] = true;
                         this.indexOfEaselLetters.push(j);
                         found = true;

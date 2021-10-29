@@ -160,7 +160,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, this.messageService.command);
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
-            if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
+            if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word.toLowerCase()))) {
                 if (this.firstTurn && this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
                     if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
                         this.firstTurn = false;
@@ -194,6 +194,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         return;
                     }
                 } else {
+                    console.log('C1 :' + this.lettersService.wordIsAttached(this.messageService.command));
+                    console.log('C2 :' + (points !== 0));
                     this.isImpossible = true;
                     this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
                     return;

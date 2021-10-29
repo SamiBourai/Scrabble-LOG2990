@@ -17,6 +17,7 @@ import {
     H,
     I,
     J,
+    JOKER,
     K,
     L,
     LEFTSPACE,
@@ -29,6 +30,7 @@ import {
     Q,
     R,
     S,
+    STRING_LETTER_OBJECTS,
     T,
     TOPSPACE,
     U,
@@ -97,14 +99,22 @@ export class LettersService {
     }
     placeLettersInScrable(command: ChatCommand, easel: EaselObject, user: boolean): void {
         this.usedAllEaselLetters = false;
+        let letter: Letter;
         for (let i = 0; i < command.word.length; i++) {
+            if (command.word.charAt(i) === command.word.charAt(i).toUpperCase()) {
+                letter = STRING_LETTER_OBJECTS.get(command.word.charAt(i).toLowerCase()) as Letter;
+                this.reserveService.letters.push(letter);
+                this.reserveService.letters.splice(this.reserveService.letters.indexOf(JOKER), 1);
+            } else {
+                letter = this.getTheLetter(command.word.charAt(i));
+            }
             if (command.direction === 'h') {
-                this.placeLetter(this.getTheLetter(command.word.charAt(i)), {
+                this.placeLetter(letter, {
                     x: command.position.x + i,
                     y: command.position.y,
                 });
             } else if (command.direction === 'v') {
-                this.placeLetter(this.getTheLetter(command.word.charAt(i)), {
+                this.placeLetter(letter, {
                     x: command.position.x,
                     y: command.position.y + i,
                 });

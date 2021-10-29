@@ -41,6 +41,7 @@ export const LEFTSPACE = 50;
 
 // LETTERS
 export const NOT_A_LETTER: Letter = { score: 0, charac: '1', img: 'no-image' };
+export const JOKER: Letter = { score: 0, charac: '*', img: '../../assets/letter-joker.png' };
 export const A: Letter = { score: 1, charac: 'a', img: '../../assets/letter-A.png' };
 export const B: Letter = { score: 3, charac: 'b', img: '../../assets/letter-b.png' };
 export const C: Letter = { score: 3, charac: 'c', img: '../../assets/letter-c.png' };
@@ -286,6 +287,7 @@ export const FOURTY = 40;
 
 // reserve
 export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
+    [JOKER, 2],
     [A, SWAP_LENGTH],
     [B, 2],
     [C, 2],
@@ -312,4 +314,33 @@ export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
     [X, 1],
     [Y, 1],
     [Z, 1],
+]);
+
+export const STRING_LETTER_OBJECTS = new Map<string, Letter>([
+    ['a', A],
+    ['b', B],
+    ['c', C],
+    ['d', D],
+    ['e', E],
+    ['f', F],
+    ['g', G],
+    ['h', H],
+    ['i', I],
+    ['j', J],
+    ['k', K],
+    ['l', L],
+    ['m', M],
+    ['n', N],
+    ['o', O],
+    ['p', P],
+    ['q', Q],
+    ['r', R],
+    ['s', S],
+    ['t', T],
+    ['u', U],
+    ['v', V],
+    ['w', W],
+    ['x', X],
+    ['y', Y],
+    ['z', Z],
 ]);

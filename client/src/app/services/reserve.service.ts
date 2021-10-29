@@ -12,6 +12,7 @@ import {
     I,
     INDEX_2WORD,
     J,
+    JOKER,
     K,
     L,
     LETTERS_RESERVE_QTY,
@@ -52,6 +53,7 @@ export class ReserveService {
         }
 
         for (let i = 0; i < 2; i++) {
+            this.letters.push(JOKER);
             this.letters.push(B);
             this.letters.push(C);
             this.letters.push(F);
@@ -59,7 +61,7 @@ export class ReserveService {
             this.letters.push(H);
             this.letters.push(P);
             this.letters.push(V);
-            this.reserveSize += 7;
+            this.reserveSize += 8;
         }
 
         for (let i = 0; i < 3; i++) {

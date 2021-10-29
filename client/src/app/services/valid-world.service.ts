@@ -17,17 +17,10 @@ export class ValidWordService {
     matchWords: string[] = [];
     concatWord: string = '';
     private usedWords = new Map<string, Vec2[]>();
-
     private readonly utf8Decoder = new TextDecoder('UTF-8');
-
     private dictionary?: Set<string>[];
-    constructor(
-        private http: HttpClient,
-        private wps: WordPointsService,
-
-        private letterService: LettersService,
-    ) {}
-    async loadDictionary() {
+    constructor(private http: HttpClient, private wps: WordPointsService, private letterService: LettersService) {}
+    async loadDictionary(): Promise<void> {
         const wordsObs = this.getWords();
         const words = await wordsObs.toPromise();
         const letterIndexes = new Array<number[]>();
@@ -47,13 +40,13 @@ export class ValidWordService {
         this.dictionary = letterIndexes.map(([t, h]) => new Set(words.slice(t, h)));
     }
 
-    generateRegEx(lett: Letter[]): string {
+    generateRegEx(letter: Letter[]): string {
         let concat = '(^';
 
         let lastWasEmpty = true;
         let spotDefine = false;
         let metLetter = false;
-        for (let i = 0; i < lett.length; i++) {
+        for (let i = 0; i < letter.length; i++) {
             if (spotDefine) {
                 const save: string = concat.slice();
                 concat += '$)|';
@@ -61,16 +54,16 @@ export class ValidWordService {
                 spotDefine = false;
             }
 
-            if (lett[i].charac === NOT_A_LETTER.charac) {
+            if (letter[i].charac === NOT_A_LETTER.charac) {
                 concat += '.';
 
-                if (i !== lett.length - 1) {
+                if (i !== letter.length - 1) {
                     if (!metLetter) {
                         concat += '?';
-                    } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                    } else if (letter[i + 1].charac === NOT_A_LETTER.charac) {
                         concat += '?';
                         spotDefine = true;
-                    } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
+                    } else if (letter[i + 1].charac !== NOT_A_LETTER.charac) {
                         let spaceCounter = 0;
                         while (concat.charAt(concat.length - 1) !== '}') {
                             if (concat.charAt(concat.length - 1) === '.') {
@@ -84,9 +77,9 @@ export class ValidWordService {
                 lastWasEmpty = true;
             } else {
                 metLetter = true;
-                concat += lett[i].charac;
-                if (i !== lett.length - 1)
-                    if (lett[i + 1].charac === NOT_A_LETTER.charac) {
+                concat += letter[i].charac;
+                if (i !== letter.length - 1)
+                    if (letter[i + 1].charac === NOT_A_LETTER.charac) {
                         concat += '{1}';
                         spotDefine = true;
                     }
@@ -136,6 +129,8 @@ export class ValidWordService {
         const positionsWordCommand = this.convertIntoPositionArray(command, usedPositionLocal);
 
         let totalPointsSum = 0;
+        const lowerCaseWord = command.word.toLowerCase();
+
         for (let letterIndex = 0; letterIndex < command.word.length; letterIndex++) {
             const array: Letter[] = [];
             const arrayPosition: Vec2[] = [];
@@ -168,9 +163,11 @@ export class ValidWordService {
             }
         }
 
-        if (this.verifyWord(this.letterService.fromWordToLetters(command.word))) {
-            this.usedWords.set(command.word, positionsWordCommand);
-            const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand);
+        if (this.verifyWord(this.letterService.fromWordToLetters(lowerCaseWord))) {
+            console.log('le mot ' + this.fromLettersToString(this.letterService.fromWordToLetters(lowerCaseWord)) + ' est valid');
+            this.usedWords.set(lowerCaseWord, positionsWordCommand);
+            const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(lowerCaseWord), positionsWordCommand);
+            console.log(wordItselfPoints);
             totalPointsSum += wordItselfPoints;
             return totalPointsSum;
         } else {
@@ -180,24 +177,23 @@ export class ValidWordService {
         }
     }
 
-    verifyWord(word: Letter[]) {
+    verifyWord(word: Letter[]): boolean {
         let concatWord = '';
         if (this.dictionary === undefined) {
-            return;
+            return false;
         }
         if (word.length === 0) {
-            return;
+            return false;
         }
         for (const i of word) {
             const letter = i.charac;
             concatWord += letter;
         }
-
         const letterIndexInput = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
-        return this.dictionary[letterIndexInput].has(concatWord);
+        return this.dictionary[letterIndexInput].has(concatWord) as boolean;
     }
 
-    private fromLettersToString(word: Letter[]) {
+    private fromLettersToString(word: Letter[]): string {
         return word.map(({ charac }) => charac).reduce((a, b) => a + b);
     }
 
@@ -219,22 +215,22 @@ export class ValidWordService {
         for (let i = 0; i < command.word.length; i++) {
             if (command.direction === 'h') {
                 position.push({ x: command.position.x - 1 + i, y: command.position.y - 1 });
-                usedPosition[command.position.y - 1][command.position.x - 1 + i] = this.letterService.getTheLetter(command.word.charAt(i));
+                usedPosition[command.position.y - 1][command.position.x - 1 + i] = this.letterService.getTheLetter(
+                    command.word.charAt(i).toLowerCase(),
+                );
             } else if (command.direction === 'v') {
                 position.push({ x: command.position.x - 1, y: command.position.y - 1 + i });
-                usedPosition[command.position.y - 1 + i][command.position.x - 1] = this.letterService.getTheLetter(command.word.charAt(i));
+                usedPosition[command.position.y - 1 + i][command.position.x - 1] = this.letterService.getTheLetter(
+                    command.word.charAt(i).toLowerCase(),
+                );
             }
         }
 
         return position;
     }
 
-    private getCompressedWords(): Observable<ArrayBuffer> {
-        return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
-    }
-
     private getWords(): Observable<string[]> {
-        const compressedWords = this.getCompressedWords();
+        const compressedWords = this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
         return compressedWords.pipe(
             map((buf) => new Uint8Array(buf)),
             map((data) => decompress(data)),
@@ -243,7 +239,7 @@ export class ValidWordService {
         );
     }
 
-    private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
+    private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]): void {
         let counter = 1;
         positions = JSON.parse(JSON.stringify(positions));
         const currentPosition = positions[letterIndex];
@@ -277,7 +273,7 @@ export class ValidWordService {
         counter = 0;
     }
 
-    private checkBottomTopSide(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
+    private checkBottomTopSide(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]): void {
         // check bottom side
         positions = JSON.parse(JSON.stringify(positions));
         let counter = 1;
