@@ -267,6 +267,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 if (!this.isImpossible) this.userService.userPlayed();
                 break;
             case '!debug':
+                console.log(JSON.stringify(this.reserveService.letters));
+                console.log(JSON.stringify(this.reserveService.letters.length));
                 this.isImpossible = false;
                 this.isDebug = !this.isDebug;
                 break;

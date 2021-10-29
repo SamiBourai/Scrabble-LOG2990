@@ -29,15 +29,10 @@ export class EaselObject {
                 first = false;
                 found = false;
                 if (word.charAt(i) === word.charAt(i).toUpperCase()) {
-                    console.log(word.charAt(i) + ' est majuscues');
                     majuscule = true;
                 }
                 for (let j = 0; j < EASEL_LENGTH; j++) {
                     if (majuscule && this.easelLetters[j].charac === '*' && this.foundLetter[j] === false) {
-                        // const letter = STRING_LETTER_OBJECTS.get(word.charAt(i).toLowerCase()) as Letter;
-                        // const temp = JSON.parse(JSON.stringify(this.easelLetters[j]));
-                        // temp.img = letter.img;
-                        // temp.score = letter.score;
                         this.foundLetter[j] = true;
                         this.indexOfEaselLetters.push(j);
                         found = true;
