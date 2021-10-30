@@ -1,6 +1,5 @@
 import { MINUTE_TURN, ONE_SECOND, ONE_SECOND_MS } from '@app/classes/constants';
 import { Subject } from 'rxjs';
-
 export class Timer {
     timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     timeGuestPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
