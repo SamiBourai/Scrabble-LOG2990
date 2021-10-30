@@ -4,7 +4,7 @@
     <mat-card-title>Configuration de la partie en Solo</mat-card-title>
 
     <mat-card-subtitle>Entrez votre nom d'utilisateur afin de commencer la partie ! </mat-card-subtitle>
-    <form>
+    <form [formGroup]="userFormGroup" (ngSubmit)="onSubmitUserName()">
         <div>
             <!-- nom entre par l'utilisateur -->
             <mat-form-field class="example-full-width">
@@ -33,8 +33,7 @@
                 <mat-icon matSuffix mat-icon-button color="primary">info</mat-icon>
             </mat-form-field>
         </div>
-    </form>
-    <mat-card-actions>
+        <mat-card-actions>
         <div class="play-btn">
             <button mat-raised-button mat-dialog-close>Annuler</button>
             <button
@@ -42,13 +41,14 @@
                 color="primary"
                 [disabled]="userName.value.length < 8 || userName.invalid"
                 mat-dialog-close
-                (click)="openDialogOfVrUser()"
-                (click)="storeNameInLocalStorage()"
+                type="submit"
             >
                 Suivant
             </button>
         </div>
     </mat-card-actions>
+    </form>
+
 </mat-card>
 </div>
 <div class="div" *ngIf="createMultiplayerGame"  >
@@ -69,7 +69,7 @@
         <div class="container">
             <div fxLayout="row">
                 <div>
-                    <p class="text-config">Temps par tour :</p>
+                    <p class="multiplayerP-btn">Temps par tour :</p>
                 </div>
 
                 <div class="time-config">
@@ -79,7 +79,6 @@
                 </div>
                 <div class="time-config">
                     <p class="form-control">{{this.time.min | number: '2.0-0'}}</p>
-
                 </div>
 
                 <div class="time-config">
@@ -97,11 +96,25 @@
             </div>
         </div>
         <br />
+        <p><span class="multiplayerP">Mode de jeu :</span></p>
+        <div class="radio" *ngFor='let mode of modes' >
+            <label >
+            <input
+            type="radio"
+            name="gameMode"
+            [value]="mode"
+            checked
+            (change)="radioChagesHandler($event)"
+            >
+            {{mode}}
+            </label>
 
-        <mat-slide-toggle [(ngModel)]="isRandom" #switchBon (change)="(isRandom)">Bonus Aléatoire!</mat-slide-toggle> <br />
+        </div>
+        <p><span class="multiplayerP">Vous avez séléctionner le mode de jeu  </span> <b class="multiplayerP-chosen">{{chosenMode}}</b></p>
+        <!-- <mat-slide-toggle [(ngModel)]="isRandom" #switchBon (change)="(isRandom)">Bonus Aléatoire!</mat-slide-toggle> <br /> -->
         <hr />
-        <div>
-          <button mat-button matStepperNext>Suivant</button>
+        <div >
+          <button mat-button matStepperNext type="submit">Suivant</button>
         </div>
       </form>
     </mat-step>

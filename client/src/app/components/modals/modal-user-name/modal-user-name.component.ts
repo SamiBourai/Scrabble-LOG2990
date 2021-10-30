@@ -20,6 +20,7 @@ export class ModalUserNameComponent implements OnInit {
     soloMode: boolean = false;
     createMultiplayerGame: boolean = false;
     joinMultiplayerGame: boolean = false;
+    userFormGroup: FormGroup;
     firstFormGroup: FormGroup;
     secondFormGroup: FormGroup;
     isOptional = false;
@@ -35,6 +36,8 @@ export class ModalUserNameComponent implements OnInit {
     time: GameTime = TIME_CHOICE[this.timeCounter];
     isRandom = false;
     isEmptyRoom: boolean = true;
+    modes:string[]=['Aléatoire', 'Normal'];
+    chosenMode:string=this.modes[1];
     constructor(
         private dialogRef: MatDialog,
         private userService: UserService,
@@ -47,10 +50,17 @@ export class ModalUserNameComponent implements OnInit {
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
+                this.userFormGroup = new FormGroup({
+                    userName: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                });
+
                 this.userService.initiliseUsers(this.soloMode);
                 break;
             case 'createMultiplayerGame':
                 this.createMultiplayerGame = true;
+                this.userFormGroup = this.formBuilder.group({
+                    userName: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                });
                 this.firstFormGroup = this.formBuilder.group({
                     firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
                 });
@@ -159,6 +169,25 @@ export class ModalUserNameComponent implements OnInit {
         } else if (this.timeCounter < TIME_CHOICE.length) {
             this.timeCounter++;
             this.time=TIME_CHOICE[this.timeCounter];
+        }
+
+    }
+
+    onSubmitUserName():void{
+        console.log("forme : "+this.userName.value);
+        this.openDialogOfVrUser();
+        this.storeNameInLocalStorage()
+        console.log("salut mec");
+
+    }
+
+    radioChagesHandler(event:any):void{
+        this.chosenMode=event.target.value;
+
+        if(this.chosenMode===this.modes[0]){
+            console.log("mo0de aleatoire detecte");
+
+
         }
 
     }

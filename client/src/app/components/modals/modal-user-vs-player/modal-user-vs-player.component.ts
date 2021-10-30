@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
@@ -8,15 +8,17 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./modal-user-vs-player.component.scss'],
 })
 export class ModalUserVsPlayerComponent {
-    isUserReturnToMenu:boolean;
-    constructor(public userService: UserService, public timeService: TimeService) {
-    }
+    // @ViewChild('divX') divX:ElementRef<HTMLDivElement>
+    isUserReturnToMenu: boolean;
+    isUserAcceptQuit: boolean;
+    // isUserClickOnGiveUp:string="0";
+    constructor(public userService: UserService, public timeService: TimeService) {}
 
     getNameFromLocalStorage() {
         return localStorage.getItem('userName');
     }
-    setIsUserQuitGame():void{
-        this.userService.isUserQuitGame=false;
+    setIsUserQuitGame(): void {
+        this.userService.isUserQuitGame = false;
     }
 
 }

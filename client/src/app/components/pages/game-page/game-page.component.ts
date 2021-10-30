@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
 import { ReserveService } from '@app/services/reserve.service';
@@ -13,6 +13,7 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 export class GamePageComponent implements OnInit, AfterViewInit {
     remainingLetters: number = 0;
     soloMode: boolean = false;
+    event:any;
     constructor(
         public userService: UserService,
         private reserverService: ReserveService,
@@ -29,6 +30,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
             this.soloMode = true;
         }
         this.isUserEaselEmpty();
+        // this.onWindowClose(event);
     }
     ngAfterViewInit() {
         this.openDialog();
@@ -65,5 +67,22 @@ export class GamePageComponent implements OnInit, AfterViewInit {
                 }
             }, 0);
         });
+    }
+
+    @HostListener('window:unload', ['$event'])
+    onWindowClose(event: any): void {
+       // Do something
+        event.preventDefault();
+        // event.returnValue = 'You have unsaved changes, leave anyway?';
+        // setTimeout(()=>{
+        //     console.log("vous avez quitter");
+        // },5000);
+        // envoyer un signal au serveur, comme quoi il a fermer la page
+        // le serveur attend 5 seconde
+        // se serveur envoi un signal a l'autre joueur afin de dire qu'il a a gagner car l'autre a quitte
+        
+        localStorage.clear();
+
+
     }
 }
