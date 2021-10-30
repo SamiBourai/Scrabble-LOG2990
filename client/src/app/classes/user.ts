@@ -14,5 +14,5 @@ export interface RealUser extends VrUser {
 }
 
 export interface JoinedUser extends VrUser {
-    turnToPlay: boolean;
+    guestPlayer: boolean;
 }

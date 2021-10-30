@@ -20,15 +20,9 @@ export class MultiplayerModeService {
             if (!this.userService.joinedUser.guestPlayer)
                 this.socketManagementService.emit('chooseFirstToPlay', undefined, this.userService.gameName);
         });
-        this.socketManagementService.listen('chooseFirstToPlay').subscribe((data) => {
-            const firstPlayer: any = data;
-            this.userService.realUser.firstToPlay = firstPlayer;
-            this.userService.realUser.turnToPlay = firstPlayer;
-            this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
-        });
     }
     play(playMethod: string): void {
-        if (this.userService.chatCommandToSend) {
+        if (this.userService.chatCommandToSend && this.userService.playMode !== 'soloGame') {
             const command = {
                 word: this.userService.chatCommandToSend.word,
                 position: this.userService.chatCommandToSend.position,
@@ -53,16 +47,14 @@ export class MultiplayerModeService {
             this.userService.firstTurn = false;
         });
     }
-    isTimeStartable(): boolean {
+    isTimeStartable(guest: boolean): boolean {
         switch (this.userService.playMode) {
             case 'soloGame':
                 if (this.userService.realUser.turnToPlay && !this.userService.endOfGame) return true;
                 break;
-            case 'createMultiplayerGame':
-                if (this.gameStarted && this.userService.realUser.turnToPlay && !this.userService.endOfGame) return true;
-                break;
-            case 'joinMultiplayerGame':
-                if (this.gameStarted && !this.userService.realUser.turnToPlay && !this.userService.endOfGame) return true;
+            default:
+                if (this.gameStarted && this.userService.realUser.turnToPlay && !this.userService.endOfGame && !guest) return true;
+                if (this.gameStarted && !this.userService.realUser.turnToPlay && !this.userService.endOfGame && guest) return true;
                 break;
         }
         return false;

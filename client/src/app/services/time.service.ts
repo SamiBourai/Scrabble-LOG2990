@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/constants/constants';
+import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
 import { VirtualPlayerService } from './virtual-player.service';
 
@@ -10,7 +12,12 @@ export class TimeService {
     timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     timeVrPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     timeGuestPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
-    constructor(private userService: UserService, private virtualPlayerService: VirtualPlayerService) {}
+    timeStarted: boolean = false;
+    constructor(
+        private userService: UserService,
+        private virtualPlayerService: VirtualPlayerService,
+        private socketManagementService: SocketManagementService,
+    ) {}
     // timeObs: BehaviorSubject<{ min: number; sec: number }> = new BehaviorSubject<{ min: number; sec: number }>(this.time);
     // here we disable the any eslint error, because there"s not type Timeout in typscript.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,7 +49,7 @@ export class TimeService {
                         this.timeUser = { min: 0, sec: MINUTE_TURN };
                         clearInterval(intervalId);
                     }
-                    console.log('shui dans le timer ')
+                    console.log('shui dans le timer ');
                 }, ONE_SECOND_MS);
                 break;
             }
@@ -86,5 +93,24 @@ export class TimeService {
                 break;
             }
         }
+    }
+    startMultiplayerTimer() {
+        if (!this.userService.joinedUser.guestPlayer && !this.timeStarted) {
+            this.socketManagementService.emit('startTimer', undefined, this.userService.gameName);
+            this.timeStarted = true;
+        }
+        this.socketManagementService.listen('updateTime').subscribe((timer) => {
+            const time: any = timer;
+            console.log(timer); 
+            if (time.creatorTurn) {
+                this.timeUser = { min: time.min, sec: time.sec };
+                this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };
+                this.userService.realUser.turnToPlay = true;
+            } else {
+                this.timeGuestPlayer = { min: time.min, sec: time.sec };
+                this.timeUser = { min: 0, sec: MINUTE_TURN };
+                this.userService.realUser.turnToPlay = false;
+            }
+        });
     }
 }

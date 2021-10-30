@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
+import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
@@ -13,20 +15,32 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 export class GamePageComponent implements OnInit, AfterViewInit {
     remainingLetters: number = 0;
     soloMode: boolean = false;
+    playersInGamePage: boolean = false;
     constructor(
         public userService: UserService,
         private reserverService: ReserveService,
         private dialogRef: MatDialog,
         public virtualPlayerService: VirtualPlayerService,
+        private socketManagementService: SocketManagementService,
+        private multiplayerModeService: MultiplayerModeService,
     ) {}
-
     detectSkipTurnBtn() {
         this.userService.userSkipingTurn = true;
     }
     ngOnInit() {
         this.getLetter();
-        if (this.userService.playMode === 'soloGame') {
-            this.soloMode = true;
+        switch (this.userService.playMode) {
+            case 'soloGame':
+                this.soloMode = true;
+                break;
+            case 'createMultiplayerGame':
+                this.socketManagementService.emit('creatorInGamePage', undefined, this.userService.gameName);
+                this.multiplayerModeService.beginGame();
+                break;
+            case 'joinMultiplayerGame':
+                this.socketManagementService.emit('guestInGamePage', undefined, this.userService.gameName);
+                this.multiplayerModeService.beginGame();
+                break;
         }
         this.isUserEaselEmpty();
     }

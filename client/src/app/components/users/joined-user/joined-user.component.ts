@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
-import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
@@ -9,15 +10,15 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./joined-user.component.scss'],
 })
 export class JoinedUserComponent implements OnInit {
-    turnToPlay: boolean;
-    constructor(public userService: UserService, readonly easelLogisticService: EaselLogiscticsService, public timeService: TimeService) {}
+    constructor(public userService: UserService, public timeService: TimeService, private mutltiplayerModeService: MultiplayerModeService) {}
 
     ngOnInit() {
-        console.log(this.userService.playMode, 'joined');
+        this.timeService.startMultiplayerTimer();
         this.userService.turnToPlayObs.subscribe(() => {
-            setTimeout(() => {
-                if (this.userService.realUser.turnToPlay) this.timeService.startTime('user');
-            }, 0);
+            if (this.mutltiplayerModeService.isTimeStartable(true)) {
+            }
+            if (this.userService.joinedUser.guestPlayer) this.mutltiplayerModeService.play('guestUserPlayed');
         });
+        this.mutltiplayerModeService.getPlayedCommand('creatorPlayed');
     }
 }

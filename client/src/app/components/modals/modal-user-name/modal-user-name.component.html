@@ -89,9 +89,8 @@
       <ng-template matStepLabel>Salle d'attente</ng-template>
       <div *ngIf= "game; else elseBlock">
         <p class="multiplayerP">vous allez jouer contre l'utilisateur {{game.joinedUserName}}</p>
-        
-        <button mat-button routerLink="/game" mat-dialog-close>Démarer la partie</button>
-        <button mat-button  mat-dialog-close>Annuler</button>
+        <button mat-button (click)= 'beginGame(true)' routerLink="/game" mat-dialog-close >Démarer la partie</button>
+        <button mat-button (click)= 'beginGame(false)' mat-dialog-close>Annuler</button>
       </div>
       <ng-template #elseBlock>
        <br> <p class="multiplayerP">Patientez pour un utilisateur s'il vous plait</p>  <br> <hr>
@@ -130,20 +129,29 @@
 <mat-step>
   <ng-template matStepLabel>voir les parties</ng-template>
   <div *ngIf ="!isEmptyRoom; else elseBlock"> 
+    <div *ngIf = "!roomJoined; else elseBlock"  > 
     <p class="multiplayerP">cliquez sur la partie que vous voulez rejoindre</p>
     <table id="ht" align="center"  width="400" class="table-striped table-hover">
       <thead class="header">
         <th class="contentCell">nom du client</th>
         <th class="contentCell">nom de la partie</th>
-      </thead>
-      
+      </thead>     
         <tbody>
           <tr *ngFor="let room of rooms">
-            <td class="contentCell" (click)= "joinGame(room)" routerLink="/game" mat-dialog-close >{{ room.clientName }}</td>
-            <td class="contentCell" (click)= "joinGame(room)" routerLink="/game" mat-dialog-close >{{ room.gameName }}</td>
+            <td class="contentCell" (click)= "joinGame(room)"  >{{ room.clientName }}</td>
+            <td class="contentCell" (click)= "joinGame(room)"  >{{ room.gameName }}</td>
           </tr>
         </tbody>
     </table>
+    </div>
+    <ng-template #elseBlock>
+      <div *ngIf ="!requestAccepted; else elseBlock">
+      Le joueur n'a pas encore démarer la partie!
+      </div>
+      <ng-template #elseBlock>
+        <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close >Rejoindre la partie</button>
+      </ng-template>
+    </ng-template>
   
   </div> 
   <ng-template #elseBlock>

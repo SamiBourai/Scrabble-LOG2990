@@ -28,6 +28,8 @@ export class ModalUserNameComponent implements OnInit {
     rooms: any;
     game: any;
     isEmptyRoom: boolean = true;
+    roomJoined: boolean = false;
+    requestAccepted: boolean = false;
     constructor(
         private dialogRef: MatDialog,
         private userService: UserService,
@@ -52,9 +54,7 @@ export class ModalUserNameComponent implements OnInit {
                     this.game = room;
                     this.userService.initiliseUsers(this.soloMode);
                     this.userService.joinedUser.name = this.game.joinedUserName;
-                    this.socketManagementService.emit('chooseFirstToPlay', this.game.gameName);
                 });
-                this.chooseFirstPlayer();
                 break;
             case 'joinMultiplayerGame':
                 this.createMultiplayerGame = false;
@@ -63,10 +63,13 @@ export class ModalUserNameComponent implements OnInit {
                     firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
                 });
                 this.generateRooms();
-                this.chooseFirstPlayer();
-
+                this.gameAccepted();
                 break;
         }
+    }
+    beginGame(response: boolean): void {
+        const gamerResponse = { gameName: this.game.gameName, accepted: response };
+        this.socketManagementService.emit('acceptGame', undefined, undefined, gamerResponse);
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -86,6 +89,7 @@ export class ModalUserNameComponent implements OnInit {
         this.createdGame = { clientName: this.creatorName, gameName: this.gameName };
         this.socketManagementService.emit('createGame', this.createdGame);
         this.userService.realUser.name = this.createdGame.clientName;
+        this.userService.gameName = this.gameName;
     }
     generateRooms(): void {
         this.socketManagementService.emit('generateAllRooms');
@@ -104,13 +108,24 @@ export class ModalUserNameComponent implements OnInit {
         this.userService.initiliseUsers(this.soloMode);
         this.userService.realUser.name = room.clientName;
         this.userService.joinedUser.name = this.joinedUserName;
+        this.userService.joinedUser.guestPlayer = true;
+        this.userService.gameName = room.gameName;
+        this.roomJoined = true;
     }
-    chooseFirstPlayer(): void {
-        this.socketManagementService.listen('chooseFirstToPlay').subscribe((data) => {
-            const firstPlayer: any = data;
-            this.userService.realUser.firstToPlay = firstPlayer;
-            this.userService.realUser.turnToPlay = firstPlayer;
-            this.userService.joinedUser.turnToPlay = !firstPlayer;
+    gameAccepted(): void {
+        this.socketManagementService.listen('gameAccepted').subscribe((data) => {
+            const acceptGame: any = data;
+            this.requestAccepted = acceptGame;
+            console.log('zebi', this.requestAccepted);
         });
     }
 }
+// chooseFirstPlayer(): void {
+//     this.socketManagementService.listen('chooseFirstToPlay').subscribe((data) => {
+//         const firstPlayer: any = data;
+//         this.userService.realUser.firstToPlay = firstPlayer;
+//         this.userService.realUser.turnToPlay = firstPlayer;
+//         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
+//         this.firstPlayerChoosed = true;
+//     });
+// }

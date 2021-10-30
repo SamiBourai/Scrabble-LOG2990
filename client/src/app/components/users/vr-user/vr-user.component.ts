@@ -16,7 +16,6 @@ export class VrUserComponent implements OnInit {
     ngOnInit() {
         this.setVrTurnToPlay();
         this.getScoreVrPlayer();
-        console.log('syu8iunla')
     }
 
     getScoreVrPlayer() {

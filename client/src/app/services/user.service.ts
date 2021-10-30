@@ -105,6 +105,7 @@ export class UserService {
     }
 
     isUserTurn(): boolean {
+        if (this.playMode === 'soloGame') return this.realUser.turnToPlay;
         if (this.joinedUser.guestPlayer === false) return this.realUser.turnToPlay;
         else return !this.realUser.turnToPlay;
     }

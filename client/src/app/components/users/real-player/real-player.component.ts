@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
-import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
@@ -9,14 +10,14 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./real-player.component.scss'],
 })
 export class RealPlayerComponent implements OnInit {
-    turnToPlay: boolean;
-    constructor(public userService: UserService, readonly easelLogisticService: EaselLogiscticsService, public timeService: TimeService) {}
-
+    constructor(public userService: UserService, public timeService: TimeService, private mutltiplayerModeService: MultiplayerModeService) {}
     ngOnInit() {
         this.userService.turnToPlayObs.subscribe(() => {
-            if (this.userService.realUser.turnToPlay && !this.userService.endOfGame) {
-                this.timeService.startTime('user');
+            if (this.mutltiplayerModeService.isTimeStartable(false)) {
+                if (this.userService.playMode === 'soloGame') this.timeService.startTime('user');
             }
+            if (!this.userService.joinedUser.guestPlayer) this.mutltiplayerModeService.play('creatorPlayed');
         });
+        this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
     }
 }
