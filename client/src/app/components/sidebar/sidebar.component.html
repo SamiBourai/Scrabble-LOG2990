@@ -42,6 +42,7 @@
                             maxlength="512"
                             [(ngModel)]="typeArea"
                             #message
+                            (keyup.enter)="logMessage()"
                             type="text"
                             class="form-control"
                             autofocus

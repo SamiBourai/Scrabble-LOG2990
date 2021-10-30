@@ -18,20 +18,6 @@ export class TimeService {
         private virtualPlayerService: VirtualPlayerService,
         private socketManagementService: SocketManagementService,
     ) {}
-    // timeObs: BehaviorSubject<{ min: number; sec: number }> = new BehaviorSubject<{ min: number; sec: number }>(this.time);
-    // here we disable the any eslint error, because there"s not type Timeout in typscript.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-    // get getTimeDataObs(): BehaviorSubject<{ min: number; sec: number }> {
-    //     return this.timeObs;
-    // }
-    // get getTimeData(): { min: number; sec: number } {
-    //     return this.time;
-    // }
-    // setTimeData(time: { min: number; sec: number }) {
-    //     this.time = time;
-    //     this.timeObs.next(this.time);
-    // }
     startTime(playerTurn: string) {
         switch (playerTurn) {
             case 'user': {
@@ -53,24 +39,6 @@ export class TimeService {
                 }, ONE_SECOND_MS);
                 break;
             }
-
-            case 'guestPlayer': {
-                const intervalId = setInterval(() => {
-                    if (this.timeGuestPlayer.sec === 0) {
-                        this.timeGuestPlayer.min -= ONE_MINUTE;
-                        this.timeGuestPlayer.sec = MINUTE_TURN;
-                    } else this.timeGuestPlayer.sec -= ONE_SECOND;
-
-                    if (this.timeGuestPlayer.min === 0 && this.timeGuestPlayer.sec === 0) {
-                        this.userService.realUser.turnToPlay = true;
-                        this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };
-                        this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
-                        clearInterval(intervalId);
-                    }
-                }, ONE_SECOND_MS);
-                break;
-            }
-
             case 'vrPlayer': {
                 const intervalId = setInterval(() => {
                     if (this.timeVrPlayer.sec === 0) {
@@ -95,7 +63,9 @@ export class TimeService {
         }
     }
     startMultiplayerTimer() {
-        if (!this.userService.joinedUser.guestPlayer && !this.timeStarted) {
+        console.log(this.userService.joinedUser.guestPlayer,'userjoiner guestPlayer')
+        if (this.userService.joinedUser.guestPlayer && !this.timeStarted) {
+            console.log('je suis dans start game');
             this.socketManagementService.emit('startTimer', undefined, this.userService.gameName);
             this.timeStarted = true;
         }

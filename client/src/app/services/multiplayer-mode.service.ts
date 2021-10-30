@@ -18,7 +18,7 @@ export class MultiplayerModeService {
         this.socketManagementService.listen('beginGame').subscribe((data) => {
             const begin: any = data;
             this.gameStarted = begin;
-            console.log('shuisla');
+            console.log('gamestarted', this.gameStarted);
             if (!this.userService.joinedUser.guestPlayer) {
                 console.log('shuisla');
                 this.socketManagementService.emit('chooseFirstToPlay', undefined, this.userService.gameName);
