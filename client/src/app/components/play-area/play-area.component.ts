@@ -37,7 +37,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly pvs: ValidWordService,
     ) {
-        if (!this.userService.joinedUser.guestPlayer) this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
+        if (this.userService.playMode !== 'joinMultiplayerGame') this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
         else this.easelLogisticsService.fillEasel(this.userService.joinedUser.easel, true);
     }
     @HostListener('window:keydown', ['$event'])

@@ -48,16 +48,4 @@ export class MultiplayerModeService {
             this.userService.firstTurn = false;
         });
     }
-    isTimeStartable(guest: boolean): boolean {
-        switch (this.userService.playMode) {
-            case 'soloGame':
-                if (this.userService.realUser.turnToPlay && !this.userService.endOfGame) return true;
-                break;
-            default:
-                if (this.gameStarted && this.userService.realUser.turnToPlay && !this.userService.endOfGame && !guest) return true;
-                if (this.gameStarted && !this.userService.realUser.turnToPlay && !this.userService.endOfGame && guest) return true;
-                break;
-        }
-        return false;
-    }
 }

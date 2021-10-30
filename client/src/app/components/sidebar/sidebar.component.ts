@@ -192,7 +192,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     playFirstTurn(points: number): boolean {
         let lettersplaced = false;
 
-        if (this.userService.joinedUser.guestPlayer) {
+        if (this.userService.playMode === 'joinMultiplayerGame') {
             if (this.userService.joinedUser.easel.contains(this.messageService.command.word)) {
                 this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.joinedUser.easel, true);
                 this.updateGuestVariables(points);
@@ -210,7 +210,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         return lettersplaced;
     }
     placeOtherTurns(points: number): boolean {
-        if (this.userService.joinedUser.guestPlayer) {
+        if (this.userService.playMode === 'joinMultiplayerGame') {
             if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.joinedUser.easel)) {
                 this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.joinedUser.easel, true);
                 this.updateGuestVariables(points);
@@ -239,7 +239,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.lettersService.usedAllEaselLetters) this.userService.joinedUser.score += BONUS_POINTS_50;
     }
     verifyWord(): boolean {
-        if (this.userService.joinedUser.guestPlayer) {
+        if (this.userService.playMode === 'joinMultiplayerGame') {
             return this.lettersService.wordIsPlacable(this.messageService.command, this.userService.joinedUser.easel);
         }
         return this.lettersService.wordIsPlacable(this.messageService.command, this.userService.realUser.easel);
