@@ -1,18 +1,19 @@
 /* eslint-disable prettier/prettier */
-import { EASEL_LENGTH, NOT_A_LETTER } from '@app/constants/constants';
+import { EASEL_LENGTH, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
 import { Letter } from './letter';
 
 export class EaselObject {
-    occupiedPos = new Array<boolean>(EASEL_LENGTH);
     easelSize: number = EASEL_LENGTH;
     easelLetters = new Array<Letter>(EASEL_LENGTH);
     foundLetter = new Array<boolean>(EASEL_LENGTH);
     indexOfEaselLetters: number[] = [];
-
+    posTempLetters = new Array<boolean>(EASEL_LENGTH);
+    indexTempLetters = new Array<number>();
+    indexToMove: number = UNDEFINED_INDEX;
     constructor(initEasel: boolean) {
-        this.occupiedPos.fill(initEasel);
         this.foundLetter.fill(initEasel);
         this.easelLetters.fill(NOT_A_LETTER);
+        this.posTempLetters.fill(initEasel);
     }
 
     getEaselSize(): number {
@@ -47,7 +48,12 @@ export class EaselObject {
 
     resetVariables(): void {
         this.foundLetter.fill(false);
+
         this.indexOfEaselLetters.splice(0, this.indexOfEaselLetters.length);
+    }
+    resetTempIndex() {
+        this.posTempLetters.fill(false);
+        this.indexTempLetters.splice(0, this.indexTempLetters.length);
     }
 
     toString(): string {
@@ -65,4 +71,20 @@ export class EaselObject {
         }
         return points;
     }
+    // moveLeft() {
+    //     let save: Letter;
+    //     if (this.indexToMove !== 0) {
+    //         save = this.easelLetters[this.indexToMove - 1];
+    //         this.easelLetters[this.indexToMove - 1] = this.easelLetters[this.indexToMove];
+    //         this.easelLetters[this.indexToMove] = save;
+    //     }
+    // }
+    // moveRight() {
+    //     let save: Letter;
+    //     if (this.indexToMove !== EASEL_LENGTH - 1) {
+    //         save = this.easelLetters[this.indexToMove + 1];
+    //         this.easelLetters[this.indexToMove + 1] = this.easelLetters[this.indexToMove];
+    //         this.easelLetters[this.indexToMove] = save;
+    //     }
+    // }
 }

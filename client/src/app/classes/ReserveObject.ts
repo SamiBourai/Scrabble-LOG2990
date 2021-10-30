@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/* eslint-disable prettier/prettier */
 import { Letter } from '@app/classes/letter';
 import {
     A,
@@ -14,7 +14,6 @@ import {
     J,
     K,
     L,
-    LETTERS_RESERVE_QTY,
     M,
     MIN_SWAP_LENGTH,
     N,
@@ -36,11 +35,10 @@ import {
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 
-@Injectable({
-    providedIn: 'root',
-})
 export class ReserveService {
     letters = new Array<Letter>();
+    random: number;
+    save: Letter;
     reserveSize: number = 0;
 
     sizeObs = new BehaviorSubject(0);
@@ -61,7 +59,6 @@ export class ReserveService {
             this.letters.push(V);
             this.reserveSize += 7;
         }
-
         for (let i = 0; i < 3; i++) {
             this.letters.push(D);
             this.letters.push(M);
@@ -82,7 +79,6 @@ export class ReserveService {
             this.letters.push(U);
             this.reserveSize += 6;
         }
-
         for (let i = 0; i < NB_TILES; i++) {
             this.letters.push(E);
             this.reserveSize++;
@@ -96,23 +92,27 @@ export class ReserveService {
         this.letters.push(Z);
         this.reserveSize += 7;
 
+        for (let i = 0; i < NB_TILES; i++) {
+            this.letters.push(E);
+            this.reserveSize++;
+        }
+
         for (let i = 0; i < INDEX_2WORD; i++) {
             this.letters.push(L);
             this.reserveSize++;
         }
-
         this.sizeObs.next(this.reserveSize);
     }
 
     getRandomLetter(): Letter {
-        const random = Math.floor(Math.random() * this.letters.length);
-        const save = this.letters[random];
-        let qty = LETTERS_RESERVE_QTY.get(save) as number;
-        LETTERS_RESERVE_QTY.set(save, --qty);
-        this.letters.splice(random, 1);
+        this.random = Math.floor(Math.random() * this.letters.length);
+        this.save = this.letters[this.random];
+
+        this.letters.splice(this.random, 1);
         this.reserveSize--;
+
         this.sizeObs.next(this.reserveSize);
-        return save;
+        return this.save;
     }
 
     get size(): BehaviorSubject<number> {
@@ -122,8 +122,6 @@ export class ReserveService {
     reFillReserve(lett: Letter) {
         this.letters.push(lett);
         this.reserveSize++;
-        let qty = LETTERS_RESERVE_QTY.get(lett) as number;
-        LETTERS_RESERVE_QTY.set(lett, ++qty);
         this.sizeObs.next(this.reserveSize);
     }
 

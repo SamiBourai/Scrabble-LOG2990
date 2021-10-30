@@ -54,6 +54,7 @@ export class ModalUserNameComponent implements OnInit {
                     this.game = room;
                     this.userService.initiliseUsers(this.soloMode);
                     this.userService.joinedUser.name = this.game.joinedUserName;
+                    this.userService.joinedUser.guestPlayer = false; 
                 });
                 break;
             case 'joinMultiplayerGame':

@@ -3,33 +3,71 @@
     <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
 </div> -->
 
-<div class="grid-container" fxLayout="column">
-    <div class="button-up" fxLayout="row" >
+<div
+    (contextmenu)="mousHandelingService.easelClicked($event)"
+    (click)="mousHandelingService.easelClicked($event)"
+    oncontextmenu="return false"
+    class="grid-container"
+    fxLayout="column"
+>
+    <div class="button-up" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
-
         </div>
         <div class="div">
             <button
-            #skipTurn
-            id="btn"
-            mat-raised-button
-            color="primary"
-            [disabled]="userService.realUser.turnToPlay===false"
-            (click)="detectSkipTurnBtn()"
+                #skipTurn
+                id="btn"
+                mat-raised-button
+                color="primary"
+                [disabled]="userService.realUser.turnToPlay === false"
+                (click)="detectSkipTurnBtn()"
             >
-            Passer son tour
+                Passer son tour
+            </button>
+            <button mat-fab color="accent" [disabled]="userService.realUser.turnToPlay === false" (click)="mousHandelingService.placeTempWord()">
+                <mat-icon>play_circle_outline</mat-icon>
             </button>
         </div>
         <div class="div">
-             <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
+            <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
         </div>
-
-
     </div>
 
     <div>
-        <canvas id="canvas" #gridCanvas (click)="mouseHitDetect($event)" [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="canvas" class="firstLayer" #gridCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="tempCanvas" class="secondLayer" #tempCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="focusCanvas" class="thirdLayer" #focusCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas
+            id="easelCanvas"
+            class="easelLayer"
+            #easelCanvas
+            (click)="this.mousHandelingService.mouseHitDetect($event)"
+            [attr.width]="width"
+            [attr.height]="height"
+        ></canvas>
     </div>
+</div>
 
+<div class="swapSection">
+    <button
+        mat-raised-button
+        color="primary"
+        id="swapButton"
+        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
+        (click)="mousHandelingService.swapByClick($event)"
+    >
+        echanger
+    </button>
+</div>
+<div class="cancelSection">
+    <button
+        mat-raised-button
+        color="primary"
+        id="cancelButton"
+        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
+        (click)="mousHandelingService.cancelByClick()"
+    >
+        annuler
+    </button>
 </div>

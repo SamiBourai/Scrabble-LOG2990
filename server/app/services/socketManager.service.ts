@@ -52,9 +52,11 @@ export class SocketManagerService {
             });
             socket.on('creatorInGamePage', (gameName) => {
                 this.startGame(gameName);
+                console.log('guesrInGame');
             });
             socket.on('guestInGamePage', (gameName) => {
                 this.startGame(gameName);
+                console.log('guesrInGame');
             });
             socket.on('startTimer', (gameName) => {
                 console.log(this.timers.get(gameName));
@@ -95,6 +97,7 @@ export class SocketManagerService {
     private startGame(gameName: string) {
         if (this.players.size !== 0 && this.players.has(gameName)) {
             this.sio.to(gameName).emit('beginGame', true);
+            console.log('je start game');
         } else this.players.set(gameName, { firstPlayer: true, secondPlayer: true });
     }
 }

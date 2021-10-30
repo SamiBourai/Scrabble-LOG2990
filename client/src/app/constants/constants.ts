@@ -1,5 +1,7 @@
 import { Letter } from '@app/classes/letter';
+import { MousePosition } from '@app/classes/MousePosition';
 import { Vec2 } from '@app/classes/vec2';
+import { Pair } from './../classes/pair';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
 
@@ -27,6 +29,8 @@ export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;
 export const CTX_PX = 15;
 export const ADJUSTEMENT_TOPSPACE = 5;
+export const H_ARROW = '→';
+export const V_ARROW = '↓';
 
 // play-area-comp
 export const CANEVAS_WIDTH = 900;
@@ -64,6 +68,68 @@ export const X: Letter = { score: 10, charac: 'x', img: '../../assets/letter-x.p
 export const Y: Letter = { score: 10, charac: 'y', img: '../../assets/letter-y.png' };
 export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.png' };
 
+export const ALL_BONUS_BOX: Vec2[] = [
+    { x: 0, y: 0 },
+    { x: 7, y: 0 },
+    { x: 14, y: 0 },
+    { x: 0, y: 7 },
+    { x: 14, y: 7 },
+    { x: 0, y: 14 },
+    { x: 7, y: 14 },
+    { x: 14, y: 14 },
+    { x: 3, y: 0 },
+    { x: 11, y: 0 },
+    { x: 6, y: 2 },
+    { x: 8, y: 2 },
+    { x: 0, y: 3 },
+    { x: 7, y: 3 },
+    { x: 14, y: 3 },
+    { x: 2, y: 6 },
+    { x: 6, y: 6 },
+    { x: 8, y: 6 },
+    { x: 12, y: 6 },
+    { x: 3, y: 7 },
+    { x: 11, y: 7 },
+    { x: 2, y: 8 },
+    { x: 6, y: 8 },
+    { x: 8, y: 8 },
+    { x: 12, y: 8 },
+    { x: 0, y: 11 },
+    { x: 7, y: 11 },
+    { x: 14, y: 11 },
+    { x: 6, y: 12 },
+    { x: 8, y: 12 },
+    { x: 3, y: 14 },
+    { x: 11, y: 14 },
+    { x: 5, y: 1 },
+    { x: 9, y: 1 },
+    { x: 1, y: 5 },
+    { x: 5, y: 5 },
+    { x: 9, y: 5 },
+    { x: 13, y: 5 },
+    { x: 1, y: 9 },
+    { x: 5, y: 9 },
+    { x: 9, y: 9 },
+    { x: 13, y: 9 },
+    { x: 5, y: 13 },
+    { x: 9, y: 13 },
+    { x: 1, y: 1 },
+    { x: 2, y: 2 },
+    { x: 3, y: 3 },
+    { x: 4, y: 4 },
+    { x: 13, y: 1 },
+    { x: 12, y: 2 },
+    { x: 11, y: 3 },
+    { x: 10, y: 4 },
+    { x: 1, y: 13 },
+    { x: 2, y: 12 },
+    { x: 3, y: 11 },
+    { x: 4, y: 10 },
+    { x: 13, y: 13 },
+    { x: 12, y: 12 },
+    { x: 11, y: 11 },
+    { x: 10, y: 10 },
+];
 // easel
 export const EASEL_LENGTH = 7;
 export const CLEAR_RECT_FIX = 5;
@@ -79,6 +145,7 @@ export const ZERO_POINTS = 0;
 export const SIX_POINTS = 6;
 export const SEVEN_POINTS = 7;
 export const TWELVE_POINTS = 12;
+export const FIFTEEN = 15;
 export const THIRTEEN_POINTS = 13;
 export const EIGHTEEN_POINTS = 18;
 export const INITIAL_BOX_X = 8;
@@ -158,8 +225,23 @@ export const PINK_BOX: Vec2[] = [
     { x: 10, y: 10 },
 ];
 
-// sidebar
+export const EASEL_POSITIONS: MousePosition[] = [
+    { letterRange: { min: 264, max: 313 }, index: 0, isClicked: false },
+    { letterRange: { min: 315, max: 371 }, index: 1, isClicked: false },
+    { letterRange: { min: 373, max: 424 }, index: 2, isClicked: false },
+    { letterRange: { min: 426, max: 478 }, index: 3, isClicked: false },
+    { letterRange: { min: 480, max: 531 }, index: 4, isClicked: false },
+    { letterRange: { min: 534, max: 584 }, index: 5, isClicked: false },
+    { letterRange: { min: 586, max: 637 }, index: 6, isClicked: false },
+];
+export const SWAP_BUTTON_RANGE_X = { min: 3, max: 85 };
+export const SWAP_BUTTON_RANGE_Y = { min: 4, max: 29 };
+export const EASEL_RANGE = { min: 264, max: 637 };
 
+export const RANGE_Y: Pair = { min: 840, max: 887 };
+
+// sidebar
+export const COLUMN_RANGE = 16;
 // the length of the command !placer and !echanger
 export const PLACE_LENGTH = 7;
 export const SWAP_LENGTH = 9;
@@ -201,3 +283,33 @@ export const MIN_SWAP_LENGTH = 8;
 // for get the parametre of the command !echanger. ex: !echanger as => as
 export const PARAMETERS_OF_SWAP = 10;
 export const FOURTY = 40;
+
+// reserve
+export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
+    [A, SWAP_LENGTH],
+    [B, 2],
+    [C, 2],
+    [D, 3],
+    [E, FIFTEEN],
+    [F, 2],
+    [G, 2],
+    [H, 2],
+    [I, MIN_SWAP_LENGTH],
+    [J, 1],
+    [K, 1],
+    [L, INDEX_2WORD],
+    [M, 3],
+    [N, SIX],
+    [O, SIX],
+    [P, 2],
+    [Q, 1],
+    [R, SIX],
+    [S, SIX],
+    [T, SIX],
+    [U, SIX],
+    [V, 2],
+    [W, 1],
+    [X, 1],
+    [Y, 1],
+    [Z, 1],
+]);

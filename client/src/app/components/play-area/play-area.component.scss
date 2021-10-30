@@ -1,9 +1,9 @@
 #canvas {
     position: fixed;
     border: 1px solid black;
+    background-color: #f3f3f3;
     border-radius: 10px;
-    background-color: #ffe4c4;
-
+    box-shadow: 5px 5px 10px black;
 }
 .grid-container {
     position: relative;
@@ -11,17 +11,59 @@
     display: flex;
 }
 
-.button-up{
+.easelLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 4;
+}
+.firstLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 1;
+}
+.secondLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 2;
+}
+.thirdLayer {
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    z-index: 3;
+}
+.button-up {
     position: relative;
     margin-top: 1%;
     margin-bottom: 1%;
     width: auto;
 }
-.div{
+.div {
     margin: 5% 50% 0% 10%;
 }
 
-.actual-player{
+.swapSection {
+    position: relative;
+    right: 0%;
+    top: 85%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    width: auto;
+}
+
+.cancelSection {
+    position: relative;
+    left: 200%;
+    top: 80%;
+    margin-top: 5%;
+    margin-bottom: 1%;
+    width: auto;
+}
+
+.actual-player {
     clear: both;
     display: inline-block;
     overflow: hidden;
@@ -32,7 +74,7 @@
     vertical-align: center;
     border-radius: 5%;
     padding: 6% 3% 2% 3%;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 500;
 }

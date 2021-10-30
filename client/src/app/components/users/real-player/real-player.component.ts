@@ -21,3 +21,4 @@ export class RealPlayerComponent implements OnInit {
         this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
     }
 }
+

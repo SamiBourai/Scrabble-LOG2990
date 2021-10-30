@@ -168,7 +168,7 @@ describe('MessageService', () => {
         spyOn(service, 'isInside').and.callFake(() => {
             return false;
         });
-        expect(service.isValid(command)).toBeTrue();
+        expect(service.isValid(command)).toBe(false);
     });
 
     it('confirm if the command is invalid when the command dont correspond to a existant command', () => {
@@ -205,8 +205,8 @@ describe('MessageService', () => {
     it('confirm that the special char has been changed to a normal char', () => {
         const command1 = 'çava';
         const command2 = 'élève';
-        expect(service.remplaceSpecialChar(command1)).toBe('cava');
-        expect(service.remplaceSpecialChar(command2)).toBe('eleve');
+        expect(service.replaceSpecialChar(command1)).toBe('cava');
+        expect(service.replaceSpecialChar(command2)).toBe('eleve');
     });
 
     // test for swapCommand

@@ -14,11 +14,15 @@ export class MultiplayerModeService {
     constructor(private socketManagementService: SocketManagementService, private userService: UserService, private lettersService: LettersService) {}
 
     beginGame(): void {
+        console.log('beginGame');
         this.socketManagementService.listen('beginGame').subscribe((data) => {
             const begin: any = data;
             this.gameStarted = begin;
-            if (!this.userService.joinedUser.guestPlayer)
+            console.log('shuisla');
+            if (!this.userService.joinedUser.guestPlayer) {
+                console.log('shuisla');
                 this.socketManagementService.emit('chooseFirstToPlay', undefined, this.userService.gameName);
+            }
         });
     }
     play(playMethod: string): void {

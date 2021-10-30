@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
@@ -23,6 +24,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
         public virtualPlayerService: VirtualPlayerService,
         private socketManagementService: SocketManagementService,
         private multiplayerModeService: MultiplayerModeService,
+        private mouseHandlingService: MouseHandelingService,
     ) {}
     detectSkipTurnBtn() {
         this.userService.userSkipingTurn = true;
@@ -65,6 +67,9 @@ export class GamePageComponent implements OnInit, AfterViewInit {
     isUserEaselEmpty() {
         this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
+                this.mouseHandlingService.previousClick = { x: -1, y: -1 };
+                this.mouseHandlingService.resetSteps();
+                this.mouseHandlingService.cancelByClick();
                 if (
                     this.remainingLetters === 0 &&
                     (this.userService.realUser.easel.getEaselSize() === 0 || this.virtualPlayerService.easel.getEaselSize() === 0)

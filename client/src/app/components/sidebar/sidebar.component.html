@@ -6,13 +6,13 @@
                     <div *ngIf="isCommand && !isValid" class="alert alert-danger">commande invalide</div>
                     <!-- <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div> -->
                     <div class="debugActive" *ngIf="isDebug">affichage de debogage activé</div>
-                    <div class="debug" *ngIf="!isDebug">affichage de debogage desactivé</div>
+                    <div class="debug" *ngIf="!isDebug">affichage de debogage desactivé <br /><br /></div>
                     <div id="turn" *ngIf="isImpossible && isValid && isCommand && errorMessage !== ''" class="alert alert-danger">
                         commande impossible a realiser {{ ' ' + 'car ' + errorMessage }}
                     </div>
                     <ng-container>
                         <div *ngFor="let message of arrayOfMessages">
-                            <p>{{ message }}</p>
+                            <p [class.myMessage]="message[0] === '('" [class.otherMessage]="message[0] !== '('">{{ message }}</p>
                         </div>
                     </ng-container>
 
@@ -23,6 +23,9 @@
                     <div class="debugActive" *ngIf="isDebug">
                         <div *ngFor="let cmd of arrayOfVrCommands">
                             <p>{{ '[' + nameVr + ']' + ' ' + cmd }}</p>
+                        </div>
+                        <div *ngFor="let i of arrayOfReserveLetters">
+                            <p>{{ i }}</p>
                         </div>
                     </div>
                 </div>
@@ -39,7 +42,6 @@
                             maxlength="512"
                             [(ngModel)]="typeArea"
                             #message
-                            (keyup.enter)="logMessage()"
                             type="text"
                             class="form-control"
                             autofocus
