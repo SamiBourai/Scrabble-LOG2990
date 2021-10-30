@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
-import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
@@ -17,6 +17,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
     remainingLetters: number = 0;
     soloMode: boolean = false;
     playersInGamePage: boolean = false;
+    event: unknown;
     constructor(
         public userService: UserService,
         private reserverService: ReserveService,
@@ -45,6 +46,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
                 break;
         }
         this.isUserEaselEmpty();
+        // this.onWindowClose(event);
     }
     ngAfterViewInit() {
         this.openDialog();
@@ -85,4 +87,10 @@ export class GamePageComponent implements OnInit, AfterViewInit {
             }, 0);
         });
     }
+
+    // @HostListener('window:unload', ['$event'])
+    // onWindowClose(event: unknown): void {
+    //     event.preventDefault();
+    //     localStorage.clear();
+    // }
 }

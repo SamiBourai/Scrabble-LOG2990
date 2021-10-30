@@ -47,6 +47,8 @@ export class GridService {
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
     constructor(private letterService: LettersService) {}
+    isBonusRandom: boolean;
+
     drawGrid() {
         this.gridContext.beginPath();
         this.gridContext.strokeStyle = 'black';
@@ -102,6 +104,9 @@ export class GridService {
 
     drawBonusBox() {
         // triple letter score
+        if (this.isBonusRandom) {
+            this.randomizeBonuses();
+        }
         this.gridContext.font = 'bold 15px system-ui';
         for (const v of RED_BOX) {
             this.gridContext.fillStyle = 'red';

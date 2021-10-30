@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -6,6 +7,7 @@ import { LettersService } from '@app/services/letters.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
+import { ModalUserVsPlayerComponent } from '../modals/modal-user-vs-player/modal-user-vs-player.component';
 
 export enum MouseButton {
     Left = 0,
@@ -36,6 +38,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
         public userService: UserService,
         private readonly pvs: ValidWordService,
+        private dialogRef: MatDialog,
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
         else this.easelLogisticsService.fillEasel(this.userService.joinedUser.easel, true);
@@ -100,5 +103,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    detectGameQuit(): void {
+        this.userService.isUserQuitGame = true;
+    }
+
+    openDialogOfVrUser(): void {
+        this.dialogRef.open(ModalUserVsPlayerComponent, { disableClose: true });
     }
 }

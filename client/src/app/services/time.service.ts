@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
+import { GameTime } from '@app/classes/time';
 import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/constants/constants';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
@@ -18,11 +19,16 @@ export class TimeService {
         private virtualPlayerService: VirtualPlayerService,
         private socketManagementService: SocketManagementService,
     ) {}
+
+    timeMultiplayer(gameTime: GameTime): void {
+        this.timeUser = gameTime;
+    }
+
     startTime(playerTurn: string) {
         switch (playerTurn) {
             case 'user': {
                 const intervalId = setInterval(() => {
-                    if (this.timeUser.sec === 0) {
+                    if (this.timeUser.sec - ONE_SECOND === -ONE_SECOND) {
                         this.timeUser.min -= ONE_MINUTE;
                         this.timeUser.sec = MINUTE_TURN;
                     } else this.timeUser.sec -= ONE_SECOND;
@@ -63,7 +69,7 @@ export class TimeService {
         }
     }
     startMultiplayerTimer() {
-        console.log(this.userService.joinedUser.guestPlayer,'userjoiner guestPlayer')
+        console.log(this.userService.joinedUser.guestPlayer, 'userjoiner guestPlayer');
         if (this.userService.joinedUser.guestPlayer && !this.timeStarted) {
             console.log('je suis dans start game');
             this.socketManagementService.emit('startTimer', undefined, this.userService.gameName);
@@ -71,7 +77,7 @@ export class TimeService {
         }
         this.socketManagementService.listen('updateTime').subscribe((timer) => {
             const time: any = timer;
-            console.log(timer); 
+            console.log(timer);
             if (time.creatorTurn) {
                 this.timeUser = { min: time.min, sec: time.sec };
                 this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };

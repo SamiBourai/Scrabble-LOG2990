@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/EaselObject';
+import { GameTime } from '@app/classes/time';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { PARAMETERS_OF_SWAP, SIX_TURN } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -18,7 +19,7 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     playMode: string;
-    counter: { min: number; sec: number } = { min: 0, sec: 59 };
+    counter: GameTime = { min: 0, sec: 59 };
     passesCounter: number = 0;
     realUser: RealUser;
     joinedUser: JoinedUser;
@@ -27,6 +28,7 @@ export class UserService {
     chatCommandToSend: ChatCommand;
     intervalId = 0;
     time: number;
+    public isUserQuitGame:boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);

@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Game } from '@app/classes/game';
+import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { DEFAULT_TIME, TIME_CHOICE } from '@app/constants/constants';
+import { GridService } from '@app/services/grid.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
+import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -16,6 +20,7 @@ export class ModalUserNameComponent implements OnInit {
     soloMode: boolean = false;
     createMultiplayerGame: boolean = false;
     joinMultiplayerGame: boolean = false;
+    userFormGroup: FormGroup;
     firstFormGroup: FormGroup;
     secondFormGroup: FormGroup;
     isOptional = false;
@@ -27,23 +32,37 @@ export class ModalUserNameComponent implements OnInit {
     gameName: string = '';
     rooms: any;
     game: any;
+    timeCounter: number = DEFAULT_TIME;
+    time: GameTime = TIME_CHOICE[this.timeCounter];
+    isRandom = false;
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
     requestAccepted: boolean = false;
+    modes: string[] = ['Aléatoire', 'Normal'];
+    chosenMode: string = this.modes[1];
     constructor(
         private dialogRef: MatDialog,
         private userService: UserService,
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
+        private gridService: GridService,
+        private timeService: TimeService,
     ) {}
     ngOnInit(): void {
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
+                this.userFormGroup = new FormGroup({
+                    userName: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                });
+
                 this.userService.initiliseUsers(this.soloMode);
                 break;
             case 'createMultiplayerGame':
                 this.createMultiplayerGame = true;
+                this.userFormGroup = this.formBuilder.group({
+                    userName: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                });
                 this.firstFormGroup = this.formBuilder.group({
                     firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
                 });
@@ -84,6 +103,7 @@ export class ModalUserNameComponent implements OnInit {
         this.soloMode = true;
         this.createMultiplayerGame = false;
         this.disconnectUser();
+        // this.timeService.timeMultiplayer(this.time);
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createGame(): void {
@@ -119,6 +139,52 @@ export class ModalUserNameComponent implements OnInit {
             this.requestAccepted = acceptGame;
             console.log('zebi', this.requestAccepted);
         });
+    }
+
+    setMultiplayerGame() {
+        this.timeService.timeMultiplayer(this.time);
+    }
+    @HostListener('document:click.minusBtn', ['$eventX'])
+    onClickInMinusButton(event: Event) {
+        event.preventDefault();
+
+        if (this.timeCounter === 0) {
+            return;
+        } else if (this.timeCounter < 0) {
+            this.timeCounter = 0;
+        } else if (this.timeCounter > 0) {
+            this.timeCounter--;
+            this.time = TIME_CHOICE[this.timeCounter];
+        }
+    }
+    @HostListener('document:click.addBtn', ['$event'])
+    onClickInAddButton(event: Event) {
+        event.preventDefault();
+
+        if (this.timeCounter === TIME_CHOICE.length) {
+            return;
+        } else if (this.timeCounter > TIME_CHOICE.length) {
+            this.timeCounter = TIME_CHOICE.length;
+            return;
+        } else if (this.timeCounter < TIME_CHOICE.length) {
+            this.timeCounter++;
+            this.time = TIME_CHOICE[this.timeCounter];
+        }
+    }
+
+    onSubmitUserName(): void {
+        console.log('forme : ' + this.userName.value);
+        this.openDialogOfVrUser();
+        this.storeNameInLocalStorage();
+        console.log('salut mec');
+    }
+
+    randomBonusActivated(event: any): void {
+        this.chosenMode = event.target.value;
+
+        if (this.chosenMode === this.modes[0]) {
+            this.gridService.isBonusRandom = true;
+        }
     }
 }
 // chooseFirstPlayer(): void {

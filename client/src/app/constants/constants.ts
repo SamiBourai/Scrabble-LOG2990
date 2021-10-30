@@ -1,9 +1,24 @@
 import { Letter } from '@app/classes/letter';
 import { MousePosition } from '@app/classes/MousePosition';
+import { GameTime } from '@app/classes/time';
 import { Vec2 } from '@app/classes/vec2';
 import { Pair } from './../classes/pair';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
+// modal user-component
+export const TIME_CHOICE: GameTime[] = [
+    { min: 0, sec: 30 },
+    { min: 1, sec: 0 },
+    { min: 1, sec: 30 },
+    { min: 2, sec: 0 },
+    { min: 2, sec: 30 },
+    { min: 3, sec: 0 },
+    { min: 3, sec: 30 },
+    { min: 4, sec: 0 },
+    { min: 4, sec: 30 },
+    { min: 5, sec: 0 },
+];
+export const DEFAULT_TIME = 1;
 
 // user-service
 export const NUMBER_COMPARED = 20;

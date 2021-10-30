@@ -8,9 +8,17 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./modal-user-vs-player.component.scss'],
 })
 export class ModalUserVsPlayerComponent {
+    // @ViewChild('divX') divX:ElementRef<HTMLDivElement>
+    isUserReturnToMenu: boolean;
+    isUserAcceptQuit: boolean;
+    // isUserClickOnGiveUp:string="0";
     constructor(public userService: UserService, public timeService: TimeService) {}
 
     getNameFromLocalStorage() {
         return localStorage.getItem('userName');
     }
+    setIsUserQuitGame(): void {
+        this.userService.isUserQuitGame = false;
+    }
+
 }

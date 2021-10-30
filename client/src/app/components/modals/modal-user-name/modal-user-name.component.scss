@@ -1,8 +1,8 @@
 .game-Configuration-Card{
-    
+
     border: none !important;
     box-shadow: none !important;
-    
+
 }
 .play-btn{
     margin-top: 30Px;
@@ -27,9 +27,44 @@ element.style {
 }
 
 .multiplayerP{
-    
+
     color: #3f51b5;
     font-size: 19px;
     font-weight: 450;
 }
 
+
+.text-config{
+    margin-top: 10%;
+}
+
+
+input[type="radio"] {
+	appearance:none;
+	width: 20px;
+	height: 20px;
+	border: 1px solid #3f51b5;
+	border-radius: 50%;
+	background-clip: content-box;
+	padding: 3px;
+}
+
+input[type="radio"]:checked {
+	background-color: #3f51b5;
+}
+
+
+.multiplayerP-btn{
+
+    margin-top: 7%;
+    color: #3f51b5;
+    font-size: 19px;
+    font-weight: 450;
+}
+
+
+.multiplayerP-chosen{
+    color: red;
+    font-size: 19px;
+    font-weight: 450;
+}
