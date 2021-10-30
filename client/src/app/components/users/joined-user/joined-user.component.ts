@@ -15,8 +15,6 @@ export class JoinedUserComponent implements OnInit {
     ngOnInit() {
         this.timeService.startMultiplayerTimer();
         this.userService.turnToPlayObs.subscribe(() => {
-            if (this.mutltiplayerModeService.isTimeStartable(true)) {
-            }
             if (this.userService.joinedUser.guestPlayer) this.mutltiplayerModeService.play('guestUserPlayed');
         });
         this.mutltiplayerModeService.getPlayedCommand('creatorPlayed');

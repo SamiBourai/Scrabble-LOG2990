@@ -60,11 +60,13 @@ export class SocketManagerService {
             });
             socket.on('startTimer', (gameName) => {
                 console.log(this.timers.get(gameName));
-                this.timers.get(gameName).timerObs.subscribe((value: any) => {
-                    const userTimer = { min: value.min, sec: value.sec, creatorTurn: this.timers.get(gameName).creatorTurn };
-                    this.sio.to(gameName).emit('updateTime', userTimer);
-                });
-                console.log('update');
+                if (this.timers.size !== 0) {
+                    this.timers.get(gameName).timerObs.subscribe((value: any) => {
+                        const userTimer = { min: value.min, sec: value.sec, creatorTurn: this.timers.get(gameName).creatorTurn };
+                        this.sio.to(gameName).emit('updateTime', userTimer);
+                        console.log('update');
+                    });
+                } else console.log('undefuned timers');
             });
 
             socket.on('disconnect', (reason) => {
@@ -97,7 +99,6 @@ export class SocketManagerService {
     private startGame(gameName: string) {
         if (this.players.size !== 0 && this.players.has(gameName)) {
             this.sio.to(gameName).emit('beginGame', true);
-            console.log('je start game');
         } else this.players.set(gameName, { firstPlayer: true, secondPlayer: true });
     }
 }

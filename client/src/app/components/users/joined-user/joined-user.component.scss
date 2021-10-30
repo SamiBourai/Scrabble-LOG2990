@@ -2,7 +2,7 @@
 .card-not-playing{
     border: none !important;
     box-shadow: none !important;
-    background-color: #e5e5f7;
+    background-color: #e5f7ed;
 }
 
 .score-time{
@@ -13,7 +13,7 @@
 
 .card-playing{
     border: 4px solid black ;
-    border-color: orangered;
+    border-color: rgb(0, 255, 21);
     background-color: #e5e5f7;
     border-radius: 10px;
 }
