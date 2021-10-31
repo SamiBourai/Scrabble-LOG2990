@@ -11,6 +11,8 @@ export class SocketManagerService {
     private players = new Map();
     private timers = new Map();
     private rooms = new Array<Game>();
+    private bonusRandomBox = new Map();
+
     constructor(server: http.Server) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
     }
@@ -21,7 +23,7 @@ export class SocketManagerService {
             socket.emit('hello', `je suis ${socket.id}`);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             socket.on('createGame', (message: Game) => {
-                this.createdGame = { clientName: message.clientName, gameName: message.gameName, socketId: socket.id };
+                this.createdGame = { clientName: message.clientName, gameName: message.gameName, socketId: socket.id, bonus: message.bonus };
                 socket.join(message.gameName);
                 this.rooms.push(this.createdGame);
             });
@@ -52,21 +54,28 @@ export class SocketManagerService {
             });
             socket.on('creatorInGamePage', (gameName) => {
                 this.startGame(gameName);
-                console.log('guesrInGame');
+            });
+            socket.on('randomBonusActivated', (randomBonusArray) => {
+                console.log(this.bonusRandomBox, 'activated');
+                this.bonusRandomBox.set(randomBonusArray.gameName, randomBonusArray.arrayOfBonusBox);
+            });
+            socket.on('guestRandomBonusBox', (gameName) => {
+                console.log('randomBox', this.bonusRandomBox.get(gameName));
+                this.sio.to(gameName).emit('guestRandomBonusBox', this.bonusRandomBox.get(gameName));
+            });
+            socket.on('randomBonusActivited', (bonusActivated) => {
+                this.sio.to(gameName).emit('guestRandomBonusBox', this.bonusRandomBox.get(gameName));
             });
             socket.on('guestInGamePage', (gameName) => {
                 this.startGame(gameName);
-                console.log('guesrInGame');
             });
             socket.on('startTimer', (gameName) => {
-                console.log(this.timers.get(gameName));
                 if (this.timers.size !== 0) {
                     this.timers.get(gameName).timerObs.subscribe((value: any) => {
                         const userTimer = { min: value.min, sec: value.sec, creatorTurn: this.timers.get(gameName).creatorTurn };
                         this.sio.to(gameName).emit('updateTime', userTimer);
-                        console.log('update');
                     });
-                } else console.log('undefuned timers');
+                }
             });
 
             socket.on('disconnect', (reason) => {

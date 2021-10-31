@@ -30,6 +30,9 @@ import {
     V_ARROW,
 } from '@app/constants/constants';
 import { LettersService } from './letters.service';
+import { MultiplayerModeService } from './multiplayer-mode.service';
+import { SocketManagementService } from './socket-management.service';
+import { UserService } from './user.service';
 
 @Injectable({
     providedIn: 'root',
@@ -43,11 +46,18 @@ export class GridService {
     tempWord: string = '';
     previousTile: Vec2 = { x: -1, y: -1 };
     allBonusQuantity: number = ALL_BONUS_BOX.length;
+    isBonusRandom: boolean = true;
+    arrayOfBonusBox = new Array<Vec2[]>(RED_BOX, PINK_BOX, BLUE_BOX, AZUR_BOX);
+
     private direction: string = H_ARROW;
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
-    constructor(private letterService: LettersService) {}
-    isBonusRandom: boolean;
+    constructor(
+        private letterService: LettersService,
+        private userService: UserService,
+        private multiplayerService: MultiplayerModeService,
+        private socketManagementService: SocketManagementService,
+    ) {}
 
     drawGrid() {
         this.gridContext.beginPath();
@@ -103,27 +113,41 @@ export class GridService {
     }
 
     drawBonusBox() {
-        // triple letter score
-        if (this.isBonusRandom) {
+        // triple letter score&& this.userService.playMode === 'createMultiplayerGame'
+        if (this.userService.playMode === 'createMultiplayerGame') {
             this.randomizeBonuses();
-        }
+            this.multiplayerService.sendGridToJoiner(this.arrayOfBonusBox);
+            this.drawBox();
+        } else this.drawBonusGuestUser();
+    }
+    drawBonusGuestUser(): void {
+        this.socketManagementService.emit('guestRandomBonusBox', undefined, this.userService.gameName, undefined);
+        this.socketManagementService.listen('guestRandomBonusBox').subscribe((data) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const arrayRecieved: any = data;
+            this.arrayOfBonusBox = arrayRecieved;
+            console.log('data', data);
+            this.drawBox();
+        });
+    }
+    drawBox(): void {
         this.gridContext.font = 'bold 15px system-ui';
-        for (const v of RED_BOX) {
+        for (const v of this.arrayOfBonusBox[0]) {
             this.gridContext.fillStyle = 'red';
             this.drawBonus(v, 'MOT  X3');
         }
         // triple letter score
-        for (const v of PINK_BOX) {
+        for (const v of this.arrayOfBonusBox[1]) {
             this.gridContext.fillStyle = 'pink';
             this.drawBonus(v, 'MOT  X2');
         }
         // triple letter score
-        for (const v of BLUE_BOX) {
+        for (const v of this.arrayOfBonusBox[2]) {
             this.gridContext.fillStyle = 'blue';
             this.drawBonus(v, 'L.  X3');
         }
         // triple letter score
-        for (const v of AZUR_BOX) {
+        for (const v of this.arrayOfBonusBox[3]) {
             this.gridContext.fillStyle = 'cyan';
             this.drawBonus(v, 'L.  X2');
         }
@@ -145,7 +169,6 @@ export class GridService {
         };
         return img;
     }
-
     get width(): number {
         return this.canvasSize.x;
     }
@@ -281,6 +304,10 @@ export class GridService {
             ALL_BONUS_BOX.splice(randomBonusIndex, 1);
             this.allBonusQuantity--;
         }
+        this.arrayOfBonusBox.push(RED_BOX);
+        this.arrayOfBonusBox.push(AZUR_BOX);
+        this.arrayOfBonusBox.push(BLUE_BOX);
+        this.arrayOfBonusBox.push(PINK_BOX);
     }
     letterEaselToMove(index: number) {
         this.easelContext.beginPath();

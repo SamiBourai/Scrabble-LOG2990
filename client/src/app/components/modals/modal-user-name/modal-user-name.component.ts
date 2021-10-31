@@ -6,9 +6,7 @@ import { Game } from '@app/classes/game';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { DEFAULT_TIME, TIME_CHOICE } from '@app/constants/constants';
-import { GridService } from '@app/services/grid.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
-import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -45,8 +43,6 @@ export class ModalUserNameComponent implements OnInit {
         private userService: UserService,
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
-        private gridService: GridService,
-        private timeService: TimeService,
     ) {}
     ngOnInit(): void {
         switch (this.userService.playMode) {
@@ -84,6 +80,10 @@ export class ModalUserNameComponent implements OnInit {
                 });
                 this.generateRooms();
                 this.gameAccepted();
+                this.socketManagementService.listen('randomBonusActivited').subscribe((data) => {
+                    const bonus: any = data;
+                    this.userService.isBonusBox = bonus;
+                });
                 break;
         }
     }
@@ -108,7 +108,8 @@ export class ModalUserNameComponent implements OnInit {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createGame(): void {
         this.createdGame = { clientName: this.creatorName, gameName: this.gameName };
-        this.socketManagementService.emit('createGame', this.createdGame);
+        const gameCongif = { clientName: this.creatorName, gameName: this.gameName, bonusBox: this.userService.isBonusBox };
+        this.socketManagementService.emit('createGame', undefined, undefined, gameCongif);
         this.userService.realUser.name = this.createdGame.clientName;
         this.userService.gameName = this.gameName;
     }
@@ -124,13 +125,14 @@ export class ModalUserNameComponent implements OnInit {
         this.socketManagementService.emit('disconnect', undefined, 'user gave up the game');
     }
     joinGame(room: Game): void {
-        room = { clientName: room.clientName, gameName: room.gameName, joinedUserName: this.joinedUserName };
+        room = { clientName: room.clientName, gameName: room.gameName, joinedUserName: this.joinedUserName, bonus: room.bonus };
         this.socketManagementService.emit('joinRoom', room);
         this.userService.initiliseUsers(this.soloMode);
         this.userService.realUser.name = room.clientName;
         this.userService.joinedUser.name = this.joinedUserName;
         this.userService.joinedUser.guestPlayer = true;
         this.userService.gameName = room.gameName;
+        this.userService.isBonusBox = room.bonus ?? false;
         this.roomJoined = true;
     }
     gameAccepted(): void {
@@ -141,9 +143,9 @@ export class ModalUserNameComponent implements OnInit {
         });
     }
 
-    setMultiplayerGame() {
-        this.timeService.timeMultiplayer(this.time);
-    }
+    // setMultiplayerGame() {
+    //     this.timeService.timeMultiplayer(this.time);
+    // }
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
         event.preventDefault();
@@ -181,9 +183,8 @@ export class ModalUserNameComponent implements OnInit {
 
     randomBonusActivated(event: any): void {
         this.chosenMode = event.target.value;
-
         if (this.chosenMode === this.modes[0]) {
-            this.gridService.isBonusRandom = true;
+            this.userService.isBonusBox = true;
         }
     }
 }

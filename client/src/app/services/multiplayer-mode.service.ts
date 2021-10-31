@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
+import { Vec2 } from '@app/classes/vec2';
 import { LettersService } from './letters.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
@@ -47,5 +48,24 @@ export class MultiplayerModeService {
             }
             this.userService.firstTurn = false;
         });
+    }
+    sendGridToJoiner(arrayOfBonusBox: Vec2[][]): void {
+        console.log('shuidans send');
+        const bonusArray = { gameName: this.userService.gameName, arrayOfBonusBox };
+        this.socketManagementService.emit('randomBonusActivated', undefined, undefined, bonusArray);
+    }
+    receiveGridFromCreator(): Vec2[][] {
+        console.log('shui dans receive');
+        let bonusBoxArray = new Array<Vec2[]>();
+        this.socketManagementService.emit('guestRandomBonusBox', undefined, this.userService.gameName, undefined);
+        this.socketManagementService.listen('guestRandomBonusBox').subscribe((data) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const arrayRecieved: any = data;
+            bonusBoxArray = arrayRecieved;
+            console.log('mon array', bonusBoxArray);
+            console.log('data', data);
+            return bonusBoxArray;
+        });
+        return bonusBoxArray;
     }
 }

@@ -28,7 +28,8 @@ export class UserService {
     chatCommandToSend: ChatCommand;
     intervalId = 0;
     time: number;
-    public isUserQuitGame:boolean;
+    isUserQuitGame:boolean;
+    isBonusBox: boolean = false;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);

@@ -3,4 +3,5 @@ export interface Game {
     gameName: string;
     socketId?: string;
     joinedUserName?:string;
+    bonus?: boolean;
 }
