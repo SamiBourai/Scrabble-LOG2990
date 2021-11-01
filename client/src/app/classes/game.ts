@@ -1,6 +1,8 @@
 export interface Game {
-    clientName: string;
+    clientName?: string;
     gameName: string;
+    gameTime?: { min: number; sec: number };
     socketId?: string;
-    joinedUserName?:string;
+    joinedUserName?: string;
+    aleatoryBonus?: boolean;
 }

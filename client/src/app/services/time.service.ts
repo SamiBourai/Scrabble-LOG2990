@@ -68,7 +68,6 @@ export class TimeService {
         }
         this.socketManagementService.listen('updateTime').subscribe((timer) => {
             const time: any = timer;
-
             if (time.creatorTurn) {
                 this.timeUser = { min: time.min, sec: time.sec };
                 this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };

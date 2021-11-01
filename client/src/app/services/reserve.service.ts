@@ -32,7 +32,7 @@ import {
     W,
     X,
     Y,
-    Z,
+    Z
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 

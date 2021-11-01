@@ -25,6 +25,8 @@ export class UserService {
     vrUser: VrUser;
     gameName: string;
     chatCommandToSend: ChatCommand;
+    passTurn: boolean = false;
+    exchangeLetters: boolean = false;
     intervalId = 0;
     time: number;
     vrSkipingTurn: boolean;
@@ -116,10 +118,12 @@ export class UserService {
         else return !this.realUser.turnToPlay;
     }
     detectSkipTurnBtn(): boolean {
-        this.messageService.skipTurnIsPressed = true;
-        this.realUser.turnToPlay = false;
-        this.realUserTurnObs.next(this.realUser.turnToPlay);
-        this.checkForSixthSkip();
+        if (this.playMode === 'soloGame') {
+            this.messageService.skipTurnIsPressed = true;
+            this.realUser.turnToPlay = false;
+            this.realUserTurnObs.next(this.realUser.turnToPlay);
+            this.checkForSixthSkip();
+        } else this.passTurn = true;
         return true;
     }
     userPlayed() {

@@ -35,11 +35,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.getLetter();
         switch (this.userService.playMode) {
-            case 'soloGame':
-                this.soloMode = true;
-                break;
             case 'createMultiplayerGame':
-                this.socketManagementService.emit('creatorInGamePage', undefined, this.userService.gameName);
                 this.multiplayerModeService.beginGame();
                 break;
             case 'joinMultiplayerGame':

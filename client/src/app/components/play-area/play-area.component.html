@@ -1,8 +1,3 @@
-<!-- <div [hidden]="!isGameOver()" *ngIf="isGameOver()">
-    <mat-card-title>La partie est fini</mat-card-title>
-    <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
-</div> -->
-
 <div
     (contextmenu)="mousHandelingService.easelClicked($event)"
     (click)="mousHandelingService.easelClicked($event)"
@@ -20,7 +15,7 @@
                 id="btn"
                 mat-raised-button
                 color="primary"
-                [disabled]="userService.realUser.turnToPlay === false"
+                [disabled]="disableButton('passTurn')"
                 (click)="detectSkipTurnBtn()"
             >
                 Passer son tour
@@ -54,7 +49,7 @@
         mat-raised-button
         color="primary"
         id="swapButton"
-        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
+        [disabled]="disableButton('exchange')"
         (click)="mousHandelingService.swapByClick($event)"
     >
         echanger
@@ -65,7 +60,7 @@
         mat-raised-button
         color="primary"
         id="cancelButton"
-        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
+        [disabled]="disableButton('cancel')"
         (click)="mousHandelingService.cancelByClick()"
     >
         annuler
