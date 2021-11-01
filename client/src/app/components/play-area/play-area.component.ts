@@ -37,12 +37,11 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly pvs: ValidWordService,
     ) {
-        if (this.userService.playMode !== 'joinMultiplayerGame') this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
-        else this.easelLogisticsService.fillEasel(this.userService.joinedUser.easel, true);
+        this.easelLogisticsService.fillEasel(this.userService.getPlayerEasel(), true);
     }
     @HostListener('window:keydown', ['$event'])
     spaceEvent(event: KeyboardEvent) {
-        if (this.mousHandelingService.previousClick.x !== UNDEFINED_INDEX)
+        if (this.mousHandelingService.previousClick.x !== UNDEFINED_INDEX) {
             switch (event.key) {
                 case 'Backspace':
                     this.mousHandelingService.deletPreviousLetter();
@@ -54,13 +53,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     this.mousHandelingService.resetSteps();
                     this.mousHandelingService.previousClick = { x: -1, y: -1 };
                     break;
-                // case 'left arrow':
-                //     this.mousHandelingService.moveLeft();
-                //     break;
-                // case 'right arrow':
-                //     console.log('right');
-                //     this.mousHandelingService.moveRight();
-                //     break;
                 default:
                     if (this.lettersService.tiles[this.gridService.previousTile.y - 1][this.gridService.previousTile.x - 1] === NOT_A_LETTER) {
                         this.mousHandelingService.keyBoardEntryManage(event.key);
@@ -70,6 +62,18 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                             this.lettersService.tiles[this.gridService.previousTile.y - 1][this.gridService.previousTile.x - 1],
                         );
                     }
+                    break;
+            }
+        }
+        if (this.userService.getPlayerEasel().indexToMove !== UNDEFINED_INDEX)
+            switch (event.key) {
+                case 'ArrowLeft':
+                    console.log('Left');
+                    this.mousHandelingService.moveLeft();
+                    break;
+                case 'ArrowRight':
+                    console.log('right');
+                    this.mousHandelingService.moveRight();
                     break;
             }
     }

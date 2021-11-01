@@ -117,7 +117,6 @@ export class ModalUserNameComponent implements OnInit {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {
             const acceptGame: any = data;
             this.requestAccepted = acceptGame;
-            console.log('zebi', this.requestAccepted);
         });
     }
 }

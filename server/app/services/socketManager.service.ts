@@ -16,7 +16,6 @@ export class SocketManagerService {
     }
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
-            console.log(`Connexion par l'utilisateur avec id : ${socket.id}`);
             // message initial
             socket.emit('hello', `je suis ${socket.id}`);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,26 +51,23 @@ export class SocketManagerService {
             });
             socket.on('creatorInGamePage', (gameName) => {
                 this.startGame(gameName);
-                console.log('guesrInGame');
             });
             socket.on('guestInGamePage', (gameName) => {
                 this.startGame(gameName);
-                console.log('guesrInGame');
             });
             socket.on('startTimer', (gameName) => {
-                console.log(this.timers.get(gameName));
                 if (this.timers.size !== 0) {
                     this.timers.get(gameName).timerObs.subscribe((value: any) => {
                         const userTimer = { min: value.min, sec: value.sec, creatorTurn: this.timers.get(gameName).creatorTurn };
                         this.sio.to(gameName).emit('updateTime', userTimer);
-                        console.log('update');
                     });
-                } else console.log('undefuned timers');
+                }
             });
 
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);
+                socket.disconnect();
             });
         });
         setInterval(() => {

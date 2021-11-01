@@ -25,7 +25,7 @@
             >
                 Passer son tour
             </button>
-            <button mat-fab color="accent" [disabled]="userService.realUser.turnToPlay === false" (click)="mousHandelingService.placeTempWord()">
+            <button mat-fab color="accent" [disabled]="!userService.isPlayerTurn()" (click)="mousHandelingService.placeTempWord()">
                 <mat-icon>play_circle_outline</mat-icon>
             </button>
         </div>

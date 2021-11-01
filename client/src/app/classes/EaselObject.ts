@@ -71,20 +71,4 @@ export class EaselObject {
         }
         return points;
     }
-    // moveLeft() {
-    //     let save: Letter;
-    //     if (this.indexToMove !== 0) {
-    //         save = this.easelLetters[this.indexToMove - 1];
-    //         this.easelLetters[this.indexToMove - 1] = this.easelLetters[this.indexToMove];
-    //         this.easelLetters[this.indexToMove] = save;
-    //     }
-    // }
-    // moveRight() {
-    //     let save: Letter;
-    //     if (this.indexToMove !== EASEL_LENGTH - 1) {
-    //         save = this.easelLetters[this.indexToMove + 1];
-    //         this.easelLetters[this.indexToMove + 1] = this.easelLetters[this.indexToMove];
-    //         this.easelLetters[this.indexToMove] = save;
-    //     }
-    // }
 }

@@ -80,6 +80,12 @@ export class UserService {
             return true;
         }
     }
+
+    getPlayerEasel(): EaselObject {
+        if (this.playMode === 'joinMultiplayerGame') {
+            return this.joinedUser.easel;
+        } else return this.realUser.easel;
+    }
     getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
     }
@@ -144,5 +150,12 @@ export class UserService {
         if (this.realUser.score > this.vrUser.score) return this.realUser.name;
         else if (this.realUser.score < this.vrUser.score) return this.vrUser.name;
         else return 'egale';
+    }
+
+    isPlayerTurn(): boolean {
+        if (this.playMode === 'joinMultiplayerGame' && !this.realUser.turnToPlay) {
+            return true;
+        } else if (this.playMode === 'joinMultiplayerGame' && this.realUser.turnToPlay) return false;
+        else return this.realUser.turnToPlay;
     }
 }

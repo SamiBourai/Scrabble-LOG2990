@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CANEVAS_WIDTH } from '@app/constants/constants';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
-import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { GridService } from '@app/services/grid.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
@@ -25,6 +27,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
         private socketManagementService: SocketManagementService,
         private multiplayerModeService: MultiplayerModeService,
         private mouseHandlingService: MouseHandelingService,
+        private gridService: GridService,
     ) {}
     detectSkipTurnBtn() {
         this.userService.userSkipingTurn = true;
@@ -70,6 +73,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
                 this.mouseHandlingService.previousClick = { x: -1, y: -1 };
                 this.mouseHandlingService.resetSteps();
                 this.mouseHandlingService.cancelByClick();
+                this.gridService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);
                 if (
                     this.remainingLetters === 0 &&
                     (this.userService.realUser.easel.getEaselSize() === 0 || this.virtualPlayerService.easel.getEaselSize() === 0)

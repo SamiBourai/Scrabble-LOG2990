@@ -150,7 +150,6 @@ export class GridService {
     }
     placeTempLetter(lett: Letter): void {
         const imgLetter = new Image();
-
         imgLetter.src = lett.img;
         const x = this.previousTile.x;
         const y = this.previousTile.y;
@@ -168,7 +167,6 @@ export class GridService {
         if (this.letterService.tiles[this.previousTile.y - 1][this.previousTile.x - 1] === NOT_A_LETTER) this.drawTileFocus(this.previousTile);
         this.tempWord += lett.charac;
     }
-
     addLetterFromGrid(letter: string) {
         this.tempWord += letter;
         this.drawRedFocus(this.previousTile, this.tempContext);
@@ -207,7 +205,6 @@ export class GridService {
         this.drawRedFocus(pos, this.focusContext);
         this.previousTile = pos;
     }
-
     clearLayers(): void {
         this.focusContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);
         this.tempContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);

@@ -156,8 +156,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     }
                 } else if (this.lettersService.wordIsAttached(this.messageService.command) && points !== 0) {
                     if (this.verifyWord()) {
-                        console.log(this.placeOtherTurns(points));
-
                         if (!this.placeOtherTurns(points)) {
                             this.errorMessage = 'votre mot dois contenir les lettres dans le chevalet et sur la grille! ';
                             this.isImpossible = true;
@@ -214,7 +212,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.joinedUser.easel)) {
                 this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.joinedUser.easel, true);
                 this.updateGuestVariables(points);
-                console.log('retourne true normalement');
 
                 return true;
             }

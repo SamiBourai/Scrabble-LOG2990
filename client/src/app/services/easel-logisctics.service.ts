@@ -12,6 +12,7 @@ import {
     LEFTSPACE,
     NB_TILES,
     NOT_A_LETTER,
+    SIX,
     TOPSPACE,
 } from '@app/constants/constants';
 import { ReserveService } from './reserve.service';
@@ -136,5 +137,44 @@ export class EaselLogiscticsService {
                 );
             };
         }
+    }
+
+    moveLeft(easel: EaselObject) {
+        let save: Letter;
+        if (easel.indexToMove !== 0) {
+            save = easel.easelLetters[easel.indexToMove - 1];
+            easel.easelLetters[easel.indexToMove - 1] = easel.easelLetters[easel.indexToMove];
+            easel.easelLetters[easel.indexToMove] = save;
+            easel.indexToMove--;
+        } else {
+            easel.indexToMove = SIX;
+            save = easel.easelLetters[easel.indexToMove];
+            easel.easelLetters[easel.indexToMove] = easel.easelLetters[0];
+            for (let i = 0; i < SIX; i++) {
+                easel.easelLetters[i] = easel.easelLetters[i + 1];
+                if (i === 5) easel.easelLetters[i] = save;
+            }
+        }
+
+        this.placeEaselLetters(easel);
+    }
+    moveRight(easel: EaselObject) {
+        let save: Letter;
+        if (easel.indexToMove !== EASEL_LENGTH - 1) {
+            save = easel.easelLetters[easel.indexToMove + 1];
+            easel.easelLetters[easel.indexToMove + 1] = easel.easelLetters[easel.indexToMove];
+            easel.easelLetters[easel.indexToMove] = save;
+            easel.indexToMove++;
+        } else {
+            easel.indexToMove = 0;
+            save = easel.easelLetters[easel.indexToMove];
+            easel.easelLetters[easel.indexToMove] = easel.easelLetters[EASEL_LENGTH - 1];
+            for (let i = 6; i > 0; i--) {
+                easel.easelLetters[i] = easel.easelLetters[i - 1];
+                if (i === 1) easel.easelLetters[i] = save;
+            }
+        }
+
+        this.placeEaselLetters(easel);
     }
 }

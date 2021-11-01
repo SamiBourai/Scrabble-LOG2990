@@ -61,14 +61,14 @@ export class MouseHandelingService {
     deletPreviousLetter() {
         if (this.gridService.tempWord !== '') {
             this.gridService.removeLastLetter();
-            this.easelLogic.replaceTempInEasel(this.userService.realUser.easel);
+            this.easelLogic.replaceTempInEasel(this.userService.getPlayerEasel());
         }
     }
     keyBoardEntryManage(key: string) {
         let letter: Letter = NOT_A_LETTER;
 
         if ((this.gridService.previousTile.x !== NB_TILES && this.gridService.previousTile.y !== NB_TILES) || this.firstBorderLetter) {
-            letter = this.easelLogic.tempGetLetter(key, this.userService.realUser.easel);
+            letter = this.easelLogic.tempGetLetter(key, this.userService.getPlayerEasel());
             if (this.gridService.previousTile.x === NB_TILES || this.gridService.previousTile.y === NB_TILES) this.firstBorderLetter = false;
         }
         if (letter !== NOT_A_LETTER) {
@@ -82,7 +82,7 @@ export class MouseHandelingService {
     }
     mouseHitDetect(event: MouseEvent) {
         if (
-            this.userService.realUser.turnToPlay &&
+            this.userService.isPlayerTurn() &&
             event.button === MouseButton.Left &&
             event.offsetX > LEFTSPACE &&
             event.offsetX < BOARD_WIDTH + LEFTSPACE &&
@@ -111,16 +111,16 @@ export class MouseHandelingService {
     }
     resetSteps() {
         this.firstBorderLetter = true;
-        this.userService.realUser.easel.resetTempIndex();
+        this.userService.getPlayerEasel().resetTempIndex();
         this.gridService.clearLayers();
-        this.easelLogic.placeEaselLetters(this.userService.realUser.easel);
+        this.easelLogic.placeEaselLetters(this.userService.getPlayerEasel());
         this.gridService.tempWord = '';
     }
     easelClicked(event: MouseEvent) {
         const vec = this.easelLogic.showCoords(event);
         const rangeEasleValid = this.easelLogic.isBetween(RANGE_Y, vec.y) && this.easelLogic.isBetween({ min: 264, max: 637 }, vec.x);
         const rangeSwapButtonValid = this.easelLogic.isBetween(SWAP_BUTTON_RANGE_X, vec.x) && this.easelLogic.isBetween(SWAP_BUTTON_RANGE_Y, vec.y);
-        if (this.userService.realUser.turnToPlay)
+        if (this.userService.isPlayerTurn())
             if (rangeEasleValid || rangeSwapButtonValid) {
                 this.isGood = true;
                 let easelIndex = 0;
@@ -130,29 +130,29 @@ export class MouseHandelingService {
                     if (this.easelLogic.isBetween(easelPosition.letterRange, vec.x)) {
                         if (!easelPosition.isClicked) {
                             if (event.button === 0) {
-                                this.userService.realUser.easel.indexToMove = UNDEFINED_INDEX;
+                                this.userService.getPlayerEasel().indexToMove = UNDEFINED_INDEX;
                                 if (!this.lastWasLeftClick) {
                                     this.cancelByClick();
                                     this.lastWasLeftClick = true;
                                 }
                                 this.gridService.setLetterClicked(indexCounter);
-                                this.lettersToSwapByClick.push(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                                this.lettersToSwapByClick.push(this.userService.getPlayerEasel().easelLetters[easelPosition.index]);
                                 easelPosition.isClicked = true;
                             } else {
                                 this.cancelByClick();
                                 this.lastWasLeftClick = false;
                                 this.gridService.letterEaselToMove(indexCounter);
-                                this.userService.realUser.easel.indexToMove = indexCounter;
+                                this.userService.getPlayerEasel().indexToMove = indexCounter;
                                 easelPosition.isClicked = true;
                             }
                         } else if (event.button === 0 && this.lastWasLeftClick) {
-                            const index = this.lettersToSwapByClick.indexOf(this.userService.realUser.easel.easelLetters[easelPosition.index]);
+                            const index = this.lettersToSwapByClick.indexOf(this.userService.getPlayerEasel().easelLetters[easelPosition.index]);
                             this.lettersToSwapByClick.splice(index, 1);
                             this.gridService.unclickLetter(indexCounter);
                             easelPosition.isClicked = false;
                         } else if (event.button === 2 && !this.lastWasLeftClick) {
                             this.cancelByClick();
-                            this.userService.realUser.easel.indexToMove = UNDEFINED_INDEX;
+                            this.userService.getPlayerEasel().indexToMove = UNDEFINED_INDEX;
                         }
                     }
                     easelIndex++;
@@ -181,26 +181,24 @@ export class MouseHandelingService {
         if (this.lettersToSwapByClick.length > 0) return false;
         return true;
     }
-    // moveLeft() {
-    //     if (!this.lastWasLeftClick) {
-    //         this.userService.realUser.easel.moveLeft();
-    //         this.easelLogic.placeEaselLetters(this.userService.realUser.easel);
-    //         this.userService.realUser.easel.indexToMove--;
-    //         this.cancelByClick();
-    //         this.lastWasLeftClick = false;
-    //         this.gridService.letterEaselToMove(this.userService.realUser.easel.indexToMove);
-    //     }
-    // }
-    // moveRight() {
-    //     if (!this.lastWasLeftClick) {
-    //         this.userService.realUser.easel.moveRight();
-    //         this.easelLogic.placeEaselLetters(this.userService.realUser.easel);
-    //         this.userService.realUser.easel.indexToMove++;
-    //         this.cancelByClick();
-    //         this.lastWasLeftClick = false;
-    //         this.gridService.letterEaselToMove(this.userService.realUser.easel.indexToMove);
-    //     }
-    // }
+    moveLeft() {
+        console.log('moveLeft');
+        if (!this.lastWasLeftClick) {
+            this.easelLogic.moveLeft(this.userService.getPlayerEasel());
+            this.cancelByClick();
+            this.lastWasLeftClick = false;
+            this.gridService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
+        }
+    }
+    moveRight() {
+        console.log('moveRight');
+        if (!this.lastWasLeftClick) {
+            this.easelLogic.moveRight(this.userService.getPlayerEasel());
+            this.cancelByClick();
+            this.lastWasLeftClick = false;
+            this.gridService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
+        }
+    }
     private allIsClickedToFalse() {
         for (const easelPosition of EASEL_POSITIONS) {
             easelPosition.isClicked = false;
