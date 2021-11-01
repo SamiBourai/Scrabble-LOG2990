@@ -21,7 +21,8 @@ export class ModalUserNameComponent implements OnInit {
     isOptional = false;
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
-    createdGame: Game = { clientName: 'YAN', gameName: 'GAME1' };
+    createdGame: Game;
+    aleatoryBonus: boolean = false;
     joinedUserName: string = '';
     creatorName: string = '';
     gameName: string = '';
@@ -58,7 +59,6 @@ export class ModalUserNameComponent implements OnInit {
                 });
                 break;
             case 'joinMultiplayerGame':
-                this.createMultiplayerGame = false;
                 this.joinMultiplayerGame = true;
                 this.firstFormGroup = this.formBuilder.group({
                     firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
@@ -85,11 +85,15 @@ export class ModalUserNameComponent implements OnInit {
         this.createMultiplayerGame = false;
         this.disconnectUser();
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createGame(): void {
-        this.createdGame = { clientName: this.creatorName, gameName: this.gameName };
+        this.createdGame = {
+            clientName: this.creatorName,
+            gameName: this.gameName,
+            gameTime: { min: 0, sec: 59 },
+            aleatoryBonus: this.aleatoryBonus,
+        };
         this.socketManagementService.emit('createGame', this.createdGame);
-        this.userService.realUser.name = this.createdGame.clientName;
+        this.userService.realUser.name = this.creatorName;
         this.userService.gameName = this.gameName;
     }
     generateRooms(): void {
@@ -104,14 +108,18 @@ export class ModalUserNameComponent implements OnInit {
         this.socketManagementService.emit('disconnect', undefined, 'user gave up the game');
     }
     joinGame(room: Game): void {
-        room = { clientName: room.clientName, gameName: room.gameName, joinedUserName: this.joinedUserName };
-        this.socketManagementService.emit('joinRoom', room);
+        const joinedUserInformations = {
+            gameName: room.gameName,
+            joinedUserName: this.joinedUserName,
+        };
+        this.socketManagementService.emit('joinRoom', undefined, undefined, joinedUserInformations);
         this.userService.initiliseUsers(this.soloMode);
-        this.userService.realUser.name = room.clientName;
+        this.userService.realUser.name = room.clientName ?? 'default';
         this.userService.joinedUser.name = this.joinedUserName;
         this.userService.joinedUser.guestPlayer = true;
         this.userService.gameName = room.gameName;
         this.roomJoined = true;
+        this.aleatoryBonus = room.aleatoryBonus ?? false;
     }
     gameAccepted(): void {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {
@@ -121,12 +129,3 @@ export class ModalUserNameComponent implements OnInit {
         });
     }
 }
-// chooseFirstPlayer(): void {
-//     this.socketManagementService.listen('chooseFirstToPlay').subscribe((data) => {
-//         const firstPlayer: any = data;
-//         this.userService.realUser.firstToPlay = firstPlayer;
-//         this.userService.realUser.turnToPlay = firstPlayer;
-//         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
-//         this.firstPlayerChoosed = true;
-//     });
-// }

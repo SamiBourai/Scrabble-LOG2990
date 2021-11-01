@@ -155,29 +155,21 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         return;
                     }
                 } else if (this.lettersService.wordIsAttached(this.messageService.command) && points !== 0) {
-                    if (this.verifyWord()) {
-                        console.log(this.placeOtherTurns(points));
-
-                        if (!this.placeOtherTurns(points)) {
-                            this.errorMessage = 'votre mot dois contenir les lettres dans le chevalet et sur la grille! ';
-                            this.isImpossible = true;
-                            return;
-                        }
+                    if (!this.placeOtherTurns(points)) {
+                        this.isImpossible = true;
+                        this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
+                        return;
                     }
                 } else {
                     this.isImpossible = true;
-                    this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
+                    this.errorMessage = 'les lettres a placer ne constituent pas un mot';
                     return;
                 }
             } else {
                 this.isImpossible = true;
-                this.errorMessage = 'les lettres a placer ne constituent pas un mot';
+                this.errorMessage = 'votre mot dois etre contenue dans la grille!';
                 return;
             }
-        } else {
-            this.isImpossible = true;
-            this.errorMessage = 'votre mot dois etre contenue dans la grille!';
-            return;
         }
     }
 
@@ -214,8 +206,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.joinedUser.easel)) {
                 this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.joinedUser.easel, true);
                 this.updateGuestVariables(points);
-                console.log('retourne true normalement');
-
                 return true;
             }
         } else if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.realUser.easel)) {
@@ -237,12 +227,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.userService.joinedUser.score += points;
         this.isImpossible = false;
         if (this.lettersService.usedAllEaselLetters) this.userService.joinedUser.score += BONUS_POINTS_50;
-    }
-    verifyWord(): boolean {
-        if (this.userService.playMode === 'joinMultiplayerGame') {
-            return this.lettersService.wordIsPlacable(this.messageService.command, this.userService.joinedUser.easel);
-        }
-        return this.lettersService.wordIsPlacable(this.messageService.command, this.userService.realUser.easel);
     }
     isTheGameDone(): boolean {
         return this.userService.endOfGame;
@@ -284,7 +268,10 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.isImpossible = true;
                     this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
                 }
-                if (!this.isImpossible) this.userService.userPlayed();
+                if (!this.isImpossible) {
+                    this.userService.userPlayed();
+                    this.userService.exchangeLetters = true;
+                }
                 break;
             case '!debug':
                 this.isImpossible = false;

@@ -170,6 +170,7 @@ export class MouseHandelingService {
         }
         this.commandObs.next(this.placeTempCommand);
         this.cancelByClick();
+        this.userService.exchangeLetters = true;
     }
 
     cancelByClick() {

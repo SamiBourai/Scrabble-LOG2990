@@ -4,6 +4,7 @@ import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 
@@ -33,12 +34,19 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public mousHandelingService: MouseHandelingService,
         private readonly lettersService: LettersService,
         readonly easelLogisticsService: EaselLogiscticsService,
-
         public userService: UserService,
         private readonly pvs: ValidWordService,
+        private multiplayer: MultiplayerModeService,
     ) {
-        if (this.userService.playMode !== 'joinMultiplayerGame') this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
-        else this.easelLogisticsService.fillEasel(this.userService.joinedUser.easel, true);
+        if (this.userService.playMode !== 'joinMultiplayerGame') {
+            this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
+            if (this.userService.playMode === 'createMultiplayerGame') {
+                this.multiplayer.sendReserve();
+                this.multiplayer.updateReserve();
+            }
+        } else {
+            this.multiplayer.updateReserve();
+        }
     }
     @HostListener('window:keydown', ['$event'])
     spaceEvent(event: KeyboardEvent) {
@@ -100,5 +108,15 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+    disableButton(event: string): boolean {
+        if (event !== 'passTurn') {
+            if (this.userService.playMode !== 'joinMultiplayerGame') {
+                return !this.userService.realUser.turnToPlay || this.mousHandelingService.isLettersArrayEmpty();
+            } else return this.userService.realUser.turnToPlay || this.mousHandelingService.isLettersArrayEmpty();
+        } else {
+            if (this.userService.playMode !== 'joinMultiplayerGame') return !this.userService.realUser.turnToPlay;
+            else return this.userService.realUser.turnToPlay;
+        }
     }
 }

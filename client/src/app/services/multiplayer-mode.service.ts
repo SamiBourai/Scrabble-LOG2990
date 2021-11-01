@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
+import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
+import { ReserveService } from './reserve.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
 
@@ -11,19 +13,23 @@ import { UserService } from './user.service';
 export class MultiplayerModeService {
     gameStarted: boolean = false;
     guestCommand: ChatCommand;
-    constructor(private socketManagementService: SocketManagementService, private userService: UserService, private lettersService: LettersService) {}
+    first: boolean = true;
+    constructor(
+        private socketManagementService: SocketManagementService,
+        private userService: UserService,
+        private lettersService: LettersService,
+        private easelLogic: EaselLogiscticsService,
+        private reserveService: ReserveService,
+    ) {}
 
     beginGame(): void {
         this.socketManagementService.listen('beginGame').subscribe((data) => {
             const begin: any = data;
             this.gameStarted = begin;
-            if (!this.userService.joinedUser.guestPlayer) {
-                this.socketManagementService.emit('chooseFirstToPlay', undefined, this.userService.gameName);
-            }
         });
     }
     play(playMethod: string): void {
-        if (this.userService.chatCommandToSend && this.userService.playMode !== 'soloGame') {
+        if (this.userService.chatCommandToSend) {
             const command = {
                 word: this.userService.chatCommandToSend.word,
                 position: this.userService.chatCommandToSend.position,
@@ -34,6 +40,11 @@ export class MultiplayerModeService {
             if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
             else this.userService.realUser.turnToPlay = false;
         }
+        if (this.userService.exchangeLetters || this.userService.passTurn) {
+            console.log('shuila je vais emit pass turn');
+            this.socketManagementService.emit('passTurn', undefined, this.userService.gameName, undefined);
+        }
+        this.sendReserve();
     }
     getPlayedCommand(playedMethod: string) {
         this.socketManagementService.listen(playedMethod).subscribe((data) => {
@@ -46,6 +57,27 @@ export class MultiplayerModeService {
                 this.userService.realUser.turnToPlay = false;
             }
             this.userService.firstTurn = false;
+            this.updateReserve();
+        });
+    }
+    sendReserve() {
+        this.socketManagementService.emit('updateReserve', undefined, undefined, {
+            gameName: this.userService.gameName,
+            letters: this.reserveService.letters,
+        });
+    }
+    updateReserve() {
+        this.socketManagementService.emit('getReserve', undefined, this.userService.gameName);
+        this.socketManagementService.listen('updateReserve').subscribe((data) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const guestReserne: any = data;
+            this.reserveService.letters = guestReserne;
+            this.reserveService.reserveSize = this.reserveService.letters.length;
+            if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
+                this.first = false;
+                this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
+                this.sendReserve();
+            }
         });
     }
 }

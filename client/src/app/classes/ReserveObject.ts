@@ -31,7 +31,7 @@ import {
     W,
     X,
     Y,
-    Z,
+    Z
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 
@@ -79,10 +79,7 @@ export class ReserveService {
             this.letters.push(U);
             this.reserveSize += 6;
         }
-        for (let i = 0; i < NB_TILES; i++) {
-            this.letters.push(E);
-            this.reserveSize++;
-        }
+       
         this.letters.push(J);
         this.letters.push(K);
         this.letters.push(Q);

@@ -35,7 +35,6 @@ export class TimeService {
                         this.timeUser = { min: 0, sec: MINUTE_TURN };
                         clearInterval(intervalId);
                     }
-                    console.log('shui dans le timer ');
                 }, ONE_SECOND_MS);
                 break;
             }
@@ -63,15 +62,12 @@ export class TimeService {
         }
     }
     startMultiplayerTimer() {
-        console.log(this.userService.joinedUser.guestPlayer,'userjoiner guestPlayer')
         if (this.userService.joinedUser.guestPlayer && !this.timeStarted) {
-            console.log('je suis dans start game');
             this.socketManagementService.emit('startTimer', undefined, this.userService.gameName);
             this.timeStarted = true;
         }
         this.socketManagementService.listen('updateTime').subscribe((timer) => {
             const time: any = timer;
-            console.log(timer); 
             if (time.creatorTurn) {
                 this.timeUser = { min: time.min, sec: time.sec };
                 this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };
