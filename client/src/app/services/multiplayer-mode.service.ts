@@ -31,7 +31,12 @@ export class MultiplayerModeService {
     play(playMethod: string, place: boolean): void {
         if (place) {
             if (this.userService.chatCommandToSend) {
-                this.socketManagementService.emit(playMethod, { command: this.userService.chatCommandToSend, gameName: this.userService.gameName });
+                this.socketManagementService.emit(playMethod, {
+                    command: this.userService.chatCommandToSend,
+                    gameName: this.userService.gameName,
+                    user: { name: this.userService.realUser.name, score: this.userService.realUser.score },
+                    guestPlayer: { name: this.userService.joinedUser.name, score: this.userService.joinedUser.score },
+                });
                 if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
                 else this.userService.realUser.turnToPlay = false;
             }
@@ -48,8 +53,10 @@ export class MultiplayerModeService {
             this.lettersService.placeLettersWithDirection(this.guestCommand);
             if (playedMethod === 'guestUserPlayed') {
                 this.userService.realUser.turnToPlay = true;
+                this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
             } else {
                 this.userService.realUser.turnToPlay = false;
+                this.userService.realUser.score = data.user?.score ?? 0;
             }
             this.userService.firstTurn = false;
             this.updateReserve();

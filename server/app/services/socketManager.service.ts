@@ -52,10 +52,12 @@ export class SocketManagerService {
                 this.sio.to(game.gameName).emit('beginGame', game);
             });
             socket.on('creatorPlayed', (command: MessageClient) => {
+                this.games.get(command.gameName).creatorPlayer.score = command.user?.score ?? 0;
                 this.sio.to(command.gameName).emit('creatorPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
             });
             socket.on('guestUserPlayed', (command: MessageClient) => {
+                this.games.get(command.gameName).guestPlayer.score = command.guestPlayer?.score ?? 0;
                 this.sio.to(command.gameName).emit('guestUserPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
             });

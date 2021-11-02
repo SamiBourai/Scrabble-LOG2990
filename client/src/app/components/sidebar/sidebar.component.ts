@@ -223,16 +223,16 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
     updateUserVariables(points: number) {
         this.userService.chatCommandToSend = this.messageService.command;
-        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.userService.realUser.score += points;
+        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.isImpossible = false;
         this.virtualPlayerService.first = false;
         if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
     }
     updateGuestVariables(points: number) {
         this.userService.chatCommandToSend = this.messageService.command;
-        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.userService.joinedUser.score += points;
+        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.isImpossible = false;
         if (this.lettersService.usedAllEaselLetters) this.userService.joinedUser.score += BONUS_POINTS_50;
     }
