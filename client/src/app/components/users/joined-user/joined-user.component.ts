@@ -11,11 +11,13 @@ import { UserService } from '@app/services/user.service';
 })
 export class JoinedUserComponent implements OnInit {
     constructor(public userService: UserService, public timeService: TimeService, private mutltiplayerModeService: MultiplayerModeService) {}
-
     ngOnInit() {
         this.timeService.startMultiplayerTimer();
-        this.userService.turnToPlayObs.subscribe(() => {
-            if (this.userService.joinedUser.guestPlayer) this.mutltiplayerModeService.play('guestUserPlayed');
+        this.userService.commandtoSendObs.subscribe(() => {
+            this.mutltiplayerModeService.play('guestUserPlayed', true);
+        });
+        this.userService.playedObs.subscribe(() => {
+            this.mutltiplayerModeService.play('guestUserPlayed', false);
         });
         this.mutltiplayerModeService.getPlayedCommand('creatorPlayed');
     }

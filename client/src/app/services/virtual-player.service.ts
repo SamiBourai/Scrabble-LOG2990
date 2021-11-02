@@ -19,7 +19,7 @@ import {
     TWELVE_POINTS,
     UNDEFINED_INDEX,
     WAIT_TIME_3_SEC,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';
@@ -83,7 +83,11 @@ export class VirtualPlayerService {
                                     word;
                                 this.commandObs.next(this.commandToSend);
                                 this.commandToSend = '';
-                                this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                                this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(
+                                    this.lettersService.tiles,
+                                    tempCommand,
+                                    'soloGame',
+                                );
                                 this.vrScoreObs.next(this.vrPoints);
                                 this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
                                 this.wordPlacedInScrable = true;
@@ -219,7 +223,7 @@ export class VirtualPlayerService {
                     else tempCommand = { word, position: { x: pos + 1, y: y + 1 }, direction };
 
                     if (this.lettersService.wordIsPlacable(tempCommand, this.easel)) {
-                        this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                        this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame');
                         if (this.vrPoints !== 0) {
                             this.commandToSend =
                                 '!placer ' +

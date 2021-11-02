@@ -55,16 +55,13 @@
     <mat-card class="game-Configuration-Card" >
         <mat-card-title>Configuration de la partie multijoueurs </mat-card-title>
     </mat-card>
-    <button mat-raised-button (click)="isOptional = !isOptional">
-  {{!isOptional ? 'Enable optional steps' : 'Disable optional steps'}}
-</button>
 <mat-stepper linear #stepper >
     <mat-step [stepControl]="firstFormGroup">
       <form [formGroup]="firstFormGroup">
         <ng-template matStepLabel>Remplissez votre nom</ng-template>
         <mat-form-field appearance="fill">
           <mat-label>Nom</mat-label>
-          <input matInput placeholder="entrez votre prenom"  formControlName="firstCtrl" [(ngModel)]="creatorName" required>
+          <input matInput placeholder="entrez votre prenom"  formControlName="firstCtrl" [(ngModel)]="playerName" required>
         </mat-form-field>
         <div>
           <button mat-button matStepperNext>Suivant</button>
@@ -87,8 +84,8 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Salle d'attente</ng-template>
-      <div *ngIf= "game; else elseBlock">
-        <p class="multiplayerP">vous allez jouer contre l'utilisateur {{game.joinedUserName}}</p>
+      <div *ngIf= "guestName; else elseBlock">
+        <p class="multiplayerP">vous allez jouer contre l'utilisateur {{guestName}}</p>
         <button mat-button (click)= 'beginGame(true)' routerLink="/game" mat-dialog-close >Démarer la partie</button>
         <button mat-button (click)= 'beginGame(false)' mat-dialog-close>Annuler</button>
       </div>
@@ -109,16 +106,13 @@
     <mat-card-title>Joindre une partie</mat-card-title>
     <!-- <button (click)= 'joinGame()'> joindre </button> -->
 </mat-card>
-<button mat-raised-button (click)="isOptional = !isOptional">
-{{!isOptional ? 'Enable optional steps' : 'Disable optional steps'}}
-</button>
 <mat-stepper linear #stepper >
 <mat-step [stepControl]="firstFormGroup">
   <form [formGroup]="firstFormGroup">
     <ng-template matStepLabel>Remplissez votre nom</ng-template>
     <mat-form-field appearance="fill">
       <mat-label>Nom</mat-label>
-      <input matInput placeholder="Last name, First name" formControlName="firstCtrl" [(ngModel)]="joinedUserName" required>
+      <input matInput placeholder="Last name, First name" formControlName="firstCtrl" [(ngModel)]="playerName" required>
     </mat-form-field>
     <div>
       <button mat-raised-button color="primary" mat-button matStepperNext>Suivant</button>
@@ -138,7 +132,7 @@
       </thead>     
         <tbody>
           <tr *ngFor="let room of rooms">
-            <td class="contentCell" (click)= "joinGame(room)"  >{{ room.clientName }}</td>
+            <td class="contentCell" (click)= "joinGame(room)"  >{{ room.user?.name ?? 'default' }}</td>
             <td class="contentCell" (click)= "joinGame(room)"  >{{ room.gameName }}</td>
           </tr>
         </tbody>

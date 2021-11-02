@@ -14,7 +14,6 @@ export class UserService {
     // alors ici on deux option : c'est soit on
     // Set strictNullChecks=false in tsconfig.json.
     //  ou Declare your variable type as any
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     playMode: string;
@@ -25,6 +24,10 @@ export class UserService {
     vrUser: VrUser;
     gameName: string;
     chatCommandToSend: ChatCommand;
+    commandtoSendObs: BehaviorSubject<ChatCommand> = new BehaviorSubject<ChatCommand>({} as ChatCommand);
+    observableCommandToSend: Observable<ChatCommand>;
+    playedObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
+    observablePlayed: Observable<boolean>;
     passTurn: boolean = false;
     exchangeLetters: boolean = false;
     intervalId = 0;
@@ -41,6 +44,8 @@ export class UserService {
     firstTurn: boolean = true;
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
+        this.observableCommandToSend = this.commandtoSendObs.asObservable();
+        this.observablePlayed = this.playedObs.asObservable();
         this.vrSkipingTurn = false;
         this.endOfGameObs = this.endOfGameBehaviorSubject.asObservable();
         const first = this.chooseFirstToPlay();
@@ -118,6 +123,7 @@ export class UserService {
             this.realUserTurnObs.next(this.realUser.turnToPlay);
             this.checkForSixthSkip();
         } else this.passTurn = true;
+        this.playedObs.next(this.passTurn);
         return true;
     }
     userPlayed() {

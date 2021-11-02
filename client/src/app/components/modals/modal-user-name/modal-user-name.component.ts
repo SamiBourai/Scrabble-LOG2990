@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Game } from '@app/classes/game';
+import { MessageServer } from '@app/classes/message-server';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 
@@ -21,13 +21,12 @@ export class ModalUserNameComponent implements OnInit {
     isOptional = false;
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
-    createdGame: Game;
     aleatoryBonus: boolean = false;
-    joinedUserName: string = '';
-    creatorName: string = '';
+    playerName: string = '';
+    guestName: string = '';
     gameName: string = '';
-    rooms: any;
-    game: any;
+    rooms: MessageServer[];
+    game: MessageServer;
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
     requestAccepted: boolean = false;
@@ -36,6 +35,7 @@ export class ModalUserNameComponent implements OnInit {
         private userService: UserService,
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
+        private multiplayerModeService: MultiplayerModeService,
     ) {}
     ngOnInit(): void {
         switch (this.userService.playMode) {
@@ -52,10 +52,8 @@ export class ModalUserNameComponent implements OnInit {
                     secondCtrl: new FormControl(''),
                 });
                 this.socketManagementService.listen('userJoined').subscribe((room) => {
-                    this.game = room;
-                    this.userService.initiliseUsers(this.soloMode);
-                    this.userService.joinedUser.name = this.game.joinedUserName;
-                    this.userService.joinedUser.guestPlayer = false;
+                    this.guestName = room.guestPlayer?.name ?? 'default';
+                    this.multiplayerModeService.setGuestPlayerInfromation(this.guestName);
                 });
                 break;
             case 'joinMultiplayerGame':
@@ -69,8 +67,7 @@ export class ModalUserNameComponent implements OnInit {
         }
     }
     beginGame(response: boolean): void {
-        const gamerResponse = { gameName: this.game.gameName, accepted: response };
-        this.socketManagementService.emit('acceptGame', undefined, undefined, gamerResponse);
+        this.socketManagementService.emit('acceptGame', { gameName: this.gameName, gameAccepted: response });
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -86,46 +83,34 @@ export class ModalUserNameComponent implements OnInit {
         this.disconnectUser();
     }
     createGame(): void {
-        this.createdGame = {
-            clientName: this.creatorName,
+        this.socketManagementService.emit('createGame', {
+            user: { name: this.playerName },
             gameName: this.gameName,
-            gameTime: { min: 0, sec: 59 },
+            timeConfig: { min: 0, sec: 59 },
             aleatoryBonus: this.aleatoryBonus,
-        };
-        this.socketManagementService.emit('createGame', this.createdGame);
-        this.userService.realUser.name = this.creatorName;
+        });
+        this.userService.realUser.name = this.playerName;
         this.userService.gameName = this.gameName;
     }
     generateRooms(): void {
         this.socketManagementService.emit('generateAllRooms');
-        this.socketManagementService.listen('createdGames').subscribe((data) => {
+        this.socketManagementService.getRooms().subscribe((data) => {
             this.rooms = data;
             if (this.rooms.length === 0) this.isEmptyRoom = true;
             else this.isEmptyRoom = false;
         });
     }
     disconnectUser(): void {
-        this.socketManagementService.emit('disconnect', undefined, 'user gave up the game');
+        this.socketManagementService.emit('disconnect', { gameName: this.gameName, reason: 'le joueur a refusé de jouer' });
     }
-    joinGame(room: Game): void {
-        const joinedUserInformations = {
-            gameName: room.gameName,
-            joinedUserName: this.joinedUserName,
-        };
-        this.socketManagementService.emit('joinRoom', undefined, undefined, joinedUserInformations);
-        this.userService.initiliseUsers(this.soloMode);
-        this.userService.realUser.name = room.clientName ?? 'default';
-        this.userService.joinedUser.name = this.joinedUserName;
-        this.userService.joinedUser.guestPlayer = true;
-        this.userService.gameName = room.gameName;
+    joinGame(room: MessageServer): void {
+        this.multiplayerModeService.setGameInformations(room, this.playerName);
         this.roomJoined = true;
         this.aleatoryBonus = room.aleatoryBonus ?? false;
     }
     gameAccepted(): void {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {
-            const acceptGame: any = data;
-            this.requestAccepted = acceptGame;
-            console.log('zebi', this.requestAccepted);
+            this.requestAccepted = data.gameAccepted ?? false;
         });
     }
 }

@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
-import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
@@ -15,7 +15,7 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 })
 export class GamePageComponent implements OnInit, AfterViewInit {
     remainingLetters: number = 0;
-    soloMode: boolean = false;
+    soloMode: boolean = true;
     playersInGamePage: boolean = false;
     constructor(
         public userService: UserService,
@@ -33,11 +33,15 @@ export class GamePageComponent implements OnInit, AfterViewInit {
         this.getLetter();
         switch (this.userService.playMode) {
             case 'createMultiplayerGame':
+                this.soloMode = false;
                 this.multiplayerModeService.beginGame();
+
                 break;
             case 'joinMultiplayerGame':
-                this.socketManagementService.emit('guestInGamePage', undefined, this.userService.gameName);
+                this.soloMode = false;
+                this.socketManagementService.emit('guestInGamePage', { gameName: this.userService.gameName });
                 this.multiplayerModeService.beginGame();
+
                 break;
         }
         this.isUserEaselEmpty();

@@ -12,12 +12,20 @@ import { UserService } from '@app/services/user.service';
 export class RealPlayerComponent implements OnInit {
     constructor(public userService: UserService, public timeService: TimeService, private mutltiplayerModeService: MultiplayerModeService) {}
     ngOnInit() {
-        this.mutltiplayerModeService.updateReserve();
-        this.userService.turnToPlayObs.subscribe(() => {
-            if (this.userService.realUser.turnToPlay && !this.userService.endOfGame && this.userService.playMode === 'soloGame')
-                this.timeService.startTime('user');
-            if (this.userService.playMode === 'createMultiplayerGame') this.mutltiplayerModeService.play('creatorPlayed');
-        });
+        if (this.userService.playMode === 'soloGame') {
+            this.userService.turnToPlayObs.subscribe(() => {
+                if (this.userService.realUser.turnToPlay && !this.userService.endOfGame && this.userService.playMode === 'soloGame')
+                    this.timeService.startTime('user');
+            });
+        }
+        if (this.userService.playMode === 'createMultiplayerGame') {
+            this.userService.commandtoSendObs.subscribe(() => {
+                this.mutltiplayerModeService.play('creatorPlayed', true);
+            });
+            this.userService.playedObs.subscribe(() => {
+                this.mutltiplayerModeService.play('creatorPlayed', false);
+            });
+        }
         this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
     }
 }

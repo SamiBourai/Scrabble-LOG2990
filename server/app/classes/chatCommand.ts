@@ -3,4 +3,5 @@ export interface ChatCommand {
     word: string;
     position: Vec2;
     direction: string;
+    gameName?: string;
 }

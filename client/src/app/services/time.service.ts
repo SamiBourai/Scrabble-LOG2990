@@ -63,17 +63,16 @@ export class TimeService {
     }
     startMultiplayerTimer() {
         if (this.userService.joinedUser.guestPlayer && !this.timeStarted) {
-            this.socketManagementService.emit('startTimer', undefined, this.userService.gameName);
+            this.socketManagementService.emit('startTimer', { gameName: this.userService.gameName });
             this.timeStarted = true;
         }
-        this.socketManagementService.listen('updateTime').subscribe((timer) => {
-            const time: any = timer;
-            if (time.creatorTurn) {
-                this.timeUser = { min: time.min, sec: time.sec };
+        this.socketManagementService.listen('updateTime').subscribe((data) => {
+            if (data.timer?.userTurn) {
+                this.timeUser = { min: data.timer?.min, sec: data.timer?.sec };
                 this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };
                 this.userService.realUser.turnToPlay = true;
             } else {
-                this.timeGuestPlayer = { min: time.min, sec: time.sec };
+                this.timeGuestPlayer = { min: data.timer?.min ?? 0, sec: data.timer?.sec ?? 0 };
                 this.timeUser = { min: 0, sec: MINUTE_TURN };
                 this.userService.realUser.turnToPlay = false;
             }

@@ -1,35 +1,34 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChatCommand } from '@app/classes/chatCommand';
-import { PARAMETERS_OF_SWAP } from '@app/classes/constants';
-import { Game } from '@app/classes/game';
 import { GameObject } from '@app/classes/gameObject';
+import { Letter } from '@app/classes/letters';
+import { MessageClient } from '@app/classes/MessageClient';
 import * as http from 'http';
 import * as io from 'socket.io';
+import { Service } from 'typedi';
+import { ValidWordService } from './validateWords.service';
+
+@Service()
 export class SocketManagerService {
     private sio: io.Server;
     private games = new Map();
-    private rooms = new Array<Game>();
-    constructor(server: http.Server) {
+    private rooms = new Array<MessageClient>();
+    constructor(private validWordService: ValidWordService) {}
+    initiliaseSocket(server: http.Server) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
     }
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
-            console.log(`Connexion par l'utilisateur avec id : ${socket.id}`);
-            // message initial
-            socket.emit('hello', `je suis ${socket.id}`);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            socket.on('createGame', (message: Game) => {
+            socket.on('createGame', (message: MessageClient) => {
                 const createdGame = new GameObject(
                     message.gameName,
-                    message.aleatoryBonus,
+                    message.aleatoryBonus ?? false,
                     {
-                        name: message.clientName,
+                        name: message.user?.name ?? 'default',
                         score: 0,
                         easelLetters: 7,
                         socketId: socket.id,
                     },
-                    message.gameTime.sec,
-                    message.gameTime.min,
+                    message.timeConfig?.sec ?? 0,
+                    message.timeConfig?.min ?? 0,
                 );
                 socket.join(message.gameName);
                 this.games.set(message.gameName, createdGame);
@@ -38,47 +37,48 @@ export class SocketManagerService {
             socket.on('generateAllRooms', () => {
                 socket.emit('createdGames', this.rooms);
             });
-            socket.on('joinRoom', (game: any) => {
+            socket.on('joinRoom', (game: MessageClient) => {
                 socket.join(game.gameName);
                 this.sio.to(game.gameName).emit('userJoined', game);
                 this.deleteRoom(game);
-                this.games.get(game.gameName).guestPlayer = { name: game.clientName, score: 0, easelLetters: 7 };
+                this.games.get(game.gameName).guestPlayer = { name: game.guestPlayer?.name, score: 0, easelLetters: 7 };
             });
-            socket.on('acceptGame', (game: any) => {
-                this.sio.to(game.gameName).emit('gameAccepted', game.accepted);
+            socket.on('acceptGame', (game: MessageClient) => {
+                this.sio.to(game.gameName).emit('gameAccepted', game);
             });
-            socket.on('guestInGamePage', (gameName) => {
-                this.games.get(gameName).setTimer(this.chooseFirstToPlay());
-                this.sio.to(gameName).emit('beginGame', true);
+            socket.on('guestInGamePage', (game: MessageClient) => {
+                this.games.get(game.gameName).setTimer();
+                game.gameStarted = true;
+                this.sio.to(game.gameName).emit('beginGame', game);
             });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            socket.on('creatorPlayed', (command: any) => {
-                const chatCommand: ChatCommand = { word: command.word, position: command.position, direction: command.direction };
-                this.sio.to(command.gameName).emit('creatorPlayed', chatCommand);
+            socket.on('creatorPlayed', (command: MessageClient) => {
+                this.sio.to(command.gameName).emit('creatorPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
             });
-            socket.on('guestUserPlayed', (command) => {
-                const chatCommand: ChatCommand = { word: command.word, position: command.position, direction: command.direction };
-                this.sio.to(command.gameName).emit('guestUserPlayed', chatCommand);
+            socket.on('guestUserPlayed', (command: MessageClient) => {
+                this.sio.to(command.gameName).emit('guestUserPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
             });
-            socket.on('startTimer', (gameName) => {
-                this.games.get(gameName).timer.timerObs.subscribe((value: any) => {
-                    const userTimer = { min: value.min, sec: value.sec, creatorTurn: this.games.get(gameName).timer.creatorTurn };
-                    this.sio.to(gameName).emit('updateTime', userTimer);
+            socket.on('startTimer', (game: MessageClient) => {
+                this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
+                    game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer.creatorTurn };
+                    this.sio.to(game.gameName).emit('updateTime', game);
                 });
             });
-            socket.on('passTurn', (gameName) => {
-                if (this.games.has(gameName)) this.games.get(gameName).timer.playerPlayed = true;
+            socket.on('passTurn', (game: MessageClient) => {
+                if (this.games.has(game.gameName)) this.games.get(game.gameName).timer.playerPlayed = true;
             });
-            socket.on('updateReserve', (reserve) => {
-                this.games.get(reserve.gameName).reserve.letters = reserve.letters;
-                this.games.get(reserve.gameName).lettersObs.next(this.games.get(reserve.gameName).reserve.letters);
+            socket.on('updateReserve', (message: MessageClient) => {
+                this.games.get(message.gameName).reserve.letters = message.reserve ?? this.games.get(message.gameName).reserve.letters;
             });
-            socket.on('getReserve', (gameName) => {
-                this.games.get(gameName).lettersObs.subscribe((value: any) => {
-                    this.sio.to(gameName).emit('updateReserve', value);
-                });
+            socket.on('getReserve', (game: MessageClient) => {
+                game.reserve = this.games.get(game.gameName).reserve.letters;
+                this.sio.to(game.gameName).emit('updateReserve', game);
+            });
+            socket.on('verifyWord', (message: MessageClient) => {
+                const word: Letter[] = [];
+                message.isValid = this.validWordService.verifyWord(message.word ?? word);
+                this.sio.to(message.gameName).emit('verifyWord', message);
             });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
@@ -89,7 +89,7 @@ export class SocketManagerService {
             this.emitTime();
         }, 1000);
     }
-    deleteRoom(game: Game) {
+    deleteRoom(game: MessageClient) {
         for (let i = 0; i < this.rooms.length; i++) {
             if (this.rooms[i].gameName === game.gameName) {
                 this.rooms.splice(i, 1);
@@ -98,13 +98,5 @@ export class SocketManagerService {
     }
     private emitTime() {
         this.sio.sockets.emit('clock', new Date().toLocaleTimeString());
-    }
-    private chooseFirstToPlay(): boolean {
-        const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);
-        if (randomIndex <= PARAMETERS_OF_SWAP / 2) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
