@@ -48,10 +48,10 @@ export class SocketManagerService {
                 const chatCommand: ChatCommand = { word: command.word, position: command.position, direction: command.direction };
                 this.sio.to(command.gameName).emit('creatorPlayed', chatCommand);
             });
-            socket.on('guestUserPlayed', (command) => {
-                const chatCommand: ChatCommand = { word: command.word, position: command.position, direction: command.direction };
-                this.sio.to(command.gameName).emit('guestUserPlayed', chatCommand);
-            });
+            // socket.on('guestUserPlayed', (command) => {
+            //     const chatCommand: ChatCommand = { word: command.word, position: command.position, direction: command.direction };
+            //     this.sio.to(command.gameName).emit('guestUserPlayed', chatCommand);
+            // });
             socket.on('creatorInGamePage', (gameName) => {
                 this.startGame(gameName);
             });
@@ -63,9 +63,9 @@ export class SocketManagerService {
                 console.log('randomBox', this.bonusRandomBox.get(gameName));
                 this.sio.to(gameName).emit('guestRandomBonusBox', this.bonusRandomBox.get(gameName));
             });
-            socket.on('randomBonusActivited', (bonusActivated) => {
-                this.sio.to(gameName).emit('guestRandomBonusBox', this.bonusRandomBox.get(gameName));
-            });
+            // socket.on('randomBonusActivited', (bonusActivated) => {
+            //     this.sio.to(gameName).emit('guestRandomBonusBox', this.bonusRandomBox.get(gameName));
+            // });
             socket.on('guestInGamePage', (gameName) => {
                 this.startGame(gameName);
             });
