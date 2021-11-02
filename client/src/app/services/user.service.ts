@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/EaselObject';
-import { GameTime } from '@app/classes/time';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { PARAMETERS_OF_SWAP, SIX_TURN } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -19,7 +18,7 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     playMode: string;
-    counter: GameTime = { min: 0, sec: 59 };
+    // counter: GameTime = { min: 0, sec: MINUTE_TURN };
     passesCounter: number = 0;
     realUser: RealUser;
     joinedUser: JoinedUser;
@@ -28,12 +27,13 @@ export class UserService {
     chatCommandToSend: ChatCommand;
     intervalId = 0;
     time: number;
-    isUserQuitGame:boolean;
+    isUserQuitGame: boolean;
     isBonusBox: boolean = false;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     observableTurnToPlay: Observable<boolean>;
+    reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
     endOfGameCounter: number = 0;
     endOfGame: boolean = false;
@@ -70,7 +70,7 @@ export class UserService {
             this.vrUser = {
                 name: this.chooseRandomName(),
                 level: 'Débutant',
-                round: '20 sec',
+                round: '1 min',
                 score: 0,
                 easel: new EaselObject(false),
             };
@@ -147,5 +147,8 @@ export class UserService {
         if (this.realUser.score > this.vrUser.score) return this.realUser.name;
         else if (this.realUser.score < this.vrUser.score) return this.vrUser.name;
         else return 'egale';
+    }
+    get initArrayMessage(): Observable<boolean> {
+        return this.reInit;
     }
 }

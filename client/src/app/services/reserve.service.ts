@@ -42,10 +42,11 @@ import { BehaviorSubject } from 'rxjs';
 export class ReserveService {
     letters = new Array<Letter>();
     reserveSize: number = 0;
-
     sizeObs = new BehaviorSubject(0);
-
     constructor() {
+        this.fillReserveWithLettersDefault();
+    }
+    fillReserveWithLettersDefault() {
         for (let i = 0; i < SWAP_LENGTH; i++) {
             this.letters.push(A);
             this.reserveSize++;

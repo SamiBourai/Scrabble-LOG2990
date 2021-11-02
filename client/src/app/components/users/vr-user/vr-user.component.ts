@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
+import { Subscription } from 'rxjs';
 // import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-vr-user',
     templateUrl: './vr-user.component.html',
     styleUrls: ['./vr-user.component.scss'],
 })
-export class VrUserComponent implements OnInit {
+export class VrUserComponent implements OnInit, OnDestroy {
     hasPlayed: boolean;
+    private scoreSubscription: Subscription;
+    private turnToPlaySubscription: Subscription;
 
     constructor(public userService: UserService, public virtualPlayerService: VirtualPlayerService, public timeService: TimeService) {}
 
@@ -19,17 +22,22 @@ export class VrUserComponent implements OnInit {
     }
 
     getScoreVrPlayer() {
-        this.virtualPlayerService.scoreVr.subscribe((score) => {
+        this.scoreSubscription = this.virtualPlayerService.scoreVr.subscribe((score) => {
             this.userService.vrUser.score += score;
         });
     }
 
     setVrTurnToPlay() {
-        this.userService.turnToPlayObs.subscribe(() => {
+        this.turnToPlaySubscription = this.userService.turnToPlayObs.subscribe(() => {
             if (!this.userService.realUser.turnToPlay && !this.userService.endOfGame) {
                 this.timeService.startTime('vrPlayer');
                 this.virtualPlayerService.manageVrPlayerActions();
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.scoreSubscription.unsubscribe();
+        this.turnToPlaySubscription.unsubscribe();
     }
 }

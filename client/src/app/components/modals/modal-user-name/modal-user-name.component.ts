@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Game } from '@app/classes/game';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
-import { DEFAULT_TIME, TIME_CHOICE } from '@app/constants/constants';
+import { DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, TIME_CHOICE } from '@app/constants/constants';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 
@@ -23,6 +23,9 @@ export class ModalUserNameComponent implements OnInit {
     secondFormGroup: FormGroup;
     isOptional = false;
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
+    userNameMutiplayer: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
+    joignerFormControl: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
+    gameNameMutiplayer: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
     createdGame: Game = { clientName: 'YAN', gameName: 'GAME1' };
     joinedUserName: string = '';
@@ -44,12 +47,44 @@ export class ModalUserNameComponent implements OnInit {
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
     ) {}
+    @HostListener('document:click.minusBtn', ['$eventX'])
+    onClickInMinusButton(event: Event) {
+        event.preventDefault();
+
+        if (this.timeCounter === 0) {
+            return;
+        } else if (this.timeCounter < 0) {
+            this.timeCounter = 0;
+        } else if (this.timeCounter > 0) {
+            this.timeCounter--;
+            this.time = TIME_CHOICE[this.timeCounter];
+        }
+    }
+    @HostListener('document:click.addBtn', ['$event'])
+    onClickInAddButton(event: Event) {
+        event.preventDefault();
+
+        if (this.timeCounter === TIME_CHOICE.length) {
+            return;
+        } else if (this.timeCounter > TIME_CHOICE.length) {
+            this.timeCounter = TIME_CHOICE.length;
+            return;
+        } else if (this.timeCounter < TIME_CHOICE.length) {
+            this.timeCounter++;
+            this.time = TIME_CHOICE[this.timeCounter];
+        }
+    }
     ngOnInit(): void {
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
                 this.userFormGroup = new FormGroup({
-                    userName: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                    userName: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
                 });
 
                 this.userService.initiliseUsers(this.soloMode);
@@ -57,13 +92,23 @@ export class ModalUserNameComponent implements OnInit {
             case 'createMultiplayerGame':
                 this.createMultiplayerGame = true;
                 this.userFormGroup = this.formBuilder.group({
-                    userName: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                    userName: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
                 });
                 this.firstFormGroup = this.formBuilder.group({
-                    firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                    userNameMutiplayer: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
                 });
                 this.secondFormGroup = this.formBuilder.group({
-                    secondCtrl: new FormControl(''),
+                    gameNameMutiplayer: new FormControl(''),
                 });
                 this.socketManagementService.listen('userJoined').subscribe((room) => {
                     this.game = room;
@@ -76,7 +121,12 @@ export class ModalUserNameComponent implements OnInit {
                 this.createMultiplayerGame = false;
                 this.joinMultiplayerGame = true;
                 this.firstFormGroup = this.formBuilder.group({
-                    firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                    joignerFormControl: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
                 });
                 this.generateRooms();
                 this.gameAccepted();
@@ -96,7 +146,7 @@ export class ModalUserNameComponent implements OnInit {
     }
 
     storeNameInLocalStorage(): void {
-        this.name = this.userName.value;
+        this.userService.realUser.name = this.name;
         localStorage.setItem('userName', this.name);
     }
     passInSoloMode(): void {
@@ -146,36 +196,9 @@ export class ModalUserNameComponent implements OnInit {
     // setMultiplayerGame() {
     //     this.timeService.timeMultiplayer(this.time);
     // }
-    @HostListener('document:click.minusBtn', ['$eventX'])
-    onClickInMinusButton(event: Event) {
-        event.preventDefault();
-
-        if (this.timeCounter === 0) {
-            return;
-        } else if (this.timeCounter < 0) {
-            this.timeCounter = 0;
-        } else if (this.timeCounter > 0) {
-            this.timeCounter--;
-            this.time = TIME_CHOICE[this.timeCounter];
-        }
-    }
-    @HostListener('document:click.addBtn', ['$event'])
-    onClickInAddButton(event: Event) {
-        event.preventDefault();
-
-        if (this.timeCounter === TIME_CHOICE.length) {
-            return;
-        } else if (this.timeCounter > TIME_CHOICE.length) {
-            this.timeCounter = TIME_CHOICE.length;
-            return;
-        } else if (this.timeCounter < TIME_CHOICE.length) {
-            this.timeCounter++;
-            this.time = TIME_CHOICE[this.timeCounter];
-        }
-    }
 
     onSubmitUserName(): void {
-        console.log('forme : ' + this.userName.value);
+        console.log('forme : ' + this.name);
         this.openDialogOfVrUser();
         this.storeNameInLocalStorage();
         console.log('salut mec');

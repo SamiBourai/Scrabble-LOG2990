@@ -10,9 +10,9 @@ import { VirtualPlayerService } from './virtual-player.service';
     providedIn: 'root',
 })
 export class TimeService {
-    timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
-    timeVrPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
-    timeGuestPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
+    timeUser: GameTime = { min: 0, sec: MINUTE_TURN };
+    timeVrPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
+    timeGuestPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
     timeStarted: boolean = false;
     constructor(
         private userService: UserService,
@@ -41,7 +41,6 @@ export class TimeService {
                         this.timeUser = { min: 0, sec: MINUTE_TURN };
                         clearInterval(intervalId);
                     }
-                    console.log('shui dans le timer ');
                 }, ONE_SECOND_MS);
                 break;
             }

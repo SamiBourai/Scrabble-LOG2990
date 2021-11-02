@@ -16,7 +16,7 @@ import { WordPointsService } from './word-points.service';
 export class ValidWordService {
     matchWords: string[] = [];
     concatWord: string = '';
-    private usedWords = new Map<string, Vec2[]>();
+    usedWords = new Map<string, Vec2[]>();
 
     private readonly utf8Decoder = new TextDecoder('UTF-8');
 
@@ -228,11 +228,9 @@ export class ValidWordService {
 
         return position;
     }
-
     private getCompressedWords(): Observable<ArrayBuffer> {
         return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
     }
-
     private getWords(): Observable<string[]> {
         const compressedWords = this.getCompressedWords();
         return compressedWords.pipe(
@@ -242,7 +240,6 @@ export class ValidWordService {
             map((data) => JSON.parse(data)),
         );
     }
-
     private checkSides(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
         let counter = 1;
         positions = JSON.parse(JSON.stringify(positions));
@@ -276,7 +273,6 @@ export class ValidWordService {
         }
         counter = 0;
     }
-
     private checkBottomTopSide(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
         // check bottom side
         positions = JSON.parse(JSON.stringify(positions));
@@ -295,8 +291,6 @@ export class ValidWordService {
             counter++;
         }
         counter = 0;
-
-        // check top side
         while (currentPosition !== undefined && currentPosition.y >= MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== NOT_A_LETTER) {
@@ -311,4 +305,7 @@ export class ValidWordService {
         }
         counter = 0;
     }
+    // resetUseWord(): void {
+    //     this.usedWords.clear();
+    // }
 }

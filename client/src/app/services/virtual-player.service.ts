@@ -97,6 +97,8 @@ export class VirtualPlayerService {
                         if (!this.wordPlacedInScrable) this.getLetterForRange('v', this.lettersService.tiles);
                     }
                     if (!this.wordPlacedInScrable) {
+                        console.log("j'arrive pas a jouer");
+
                         this.passTurnSteps();
                     } else {
                         this.wordPlacedInScrable = false;
@@ -287,4 +289,5 @@ export class VirtualPlayerService {
     get scoreVr(): BehaviorSubject<number> {
         return this.vrScoreObs;
     }
+    resetDicFil() {}
 }

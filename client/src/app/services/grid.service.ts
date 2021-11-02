@@ -153,7 +153,6 @@ export class GridService {
         }
         this.gridContext.fillStyle = 'black';
     }
-
     drawCentralTile() {
         const img = new Image();
         img.src = '../../../assets/black-star.png';
@@ -172,7 +171,6 @@ export class GridService {
     get width(): number {
         return this.canvasSize.x;
     }
-
     get height(): number {
         return this.canvasSize.y;
     }
@@ -196,7 +194,6 @@ export class GridService {
         if (this.letterService.tiles[this.previousTile.y - 1][this.previousTile.x - 1] === NOT_A_LETTER) this.drawTileFocus(this.previousTile);
         this.tempWord += lett.charac;
     }
-
     addLetterFromGrid(letter: string) {
         this.tempWord += letter;
         this.drawRedFocus(this.previousTile, this.tempContext);
@@ -235,7 +232,6 @@ export class GridService {
         this.drawRedFocus(pos, this.focusContext);
         this.previousTile = pos;
     }
-
     clearLayers(): void {
         this.focusContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);
         this.tempContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);

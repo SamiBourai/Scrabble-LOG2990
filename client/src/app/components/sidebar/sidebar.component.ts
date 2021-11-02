@@ -1,4 +1,4 @@
-import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
@@ -10,13 +10,14 @@ import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnInit, AfterViewChecked {
+export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     arrayOfMessages: string[] = [];
     arrayOfVrCommands: string[] = [];
     arrayOfReserveLetters: string[] = [];
@@ -34,6 +35,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     nameVr: string;
     word: string = 'mot';
     errorMessage: string = '';
+    commandToSendSubscription: Subscription;
+    commandSubscription: Subscription;
 
     score: number = 0;
 
@@ -53,13 +56,20 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private mouseHandelingService: MouseHandelingService,
     ) {}
     ngOnInit(): void {
-        this.virtualPlayerService.commandToSendVr.subscribe((res) => {
+        this.userService.initArrayMessage.subscribe((res) => {
+            setTimeout(() => {
+                if (res) {
+                    this.arrayOfMessages.splice(0, this.arrayOfMessages.length - 1);
+                }
+            }, 0);
+        });
+        this.commandToSendSubscription = this.virtualPlayerService.commandToSendVr.subscribe((res) => {
             setTimeout(() => {
                 this.arrayOfVrCommands.push(res);
             }, 0);
         });
 
-        this.mouseHandelingService.commandObs.subscribe((res) => {
+        this.commandSubscription = this.mouseHandelingService.commandObs.subscribe((res) => {
             setTimeout(() => {
                 this.typeArea = res;
                 this.logMessage();
@@ -67,6 +77,10 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         });
 
         // this.chatService.connect();
+    }
+    ngOnDestroy(): void {
+        this.commandToSendSubscription.unsubscribe();
+        this.commandSubscription.unsubscribe();
     }
 
     ngAfterViewChecked(): void {

@@ -35,7 +35,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public mousHandelingService: MouseHandelingService,
         private readonly lettersService: LettersService,
         readonly easelLogisticsService: EaselLogiscticsService,
-
         public userService: UserService,
         private readonly pvs: ValidWordService,
         private dialogRef: MatDialog,

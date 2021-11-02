@@ -36,7 +36,7 @@ import {
     W,
     X,
     Y,
-    Z
+    Z,
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
@@ -50,11 +50,7 @@ export class LettersService {
 
     tiles = new Array<Letter[]>(NB_TILES);
 
-    constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {
-        for (let i = 0; i < this.tiles.length; ++i) {
-            this.tiles[i] = new Array<Letter>(NB_TILES).fill(NOT_A_LETTER);
-        }
-    }
+    constructor(private easelLogisticsService: EaselLogiscticsService, private reserveService: ReserveService) {}
 
     placeLetter(lett: Letter, pos: Vec2): void {
         if (this.tiles[pos.y - 1][pos.x - 1].charac === NOT_A_LETTER.charac) {
@@ -118,7 +114,6 @@ export class LettersService {
             }
         }
     }
-
     wordIsPlacable(command: ChatCommand, easel: EaselObject): boolean {
         let saveLetter = '';
         let letterFromEasel = '';

@@ -6,30 +6,33 @@
     <div class="play-area">
         <app-play-area></app-play-area>
     </div>
-    <div class="right-div-information" fxLayout="column" fxLayoutAlign="center center">
+    <div class="right-div-information" fxLayout="col" fxLayoutAlign="center center">
         <div>
             <p class="chronometer-title">{{ 'Lettre restante : ' + this.remainingLetters }}</p>
         </div>
 
-        <div fxLayout="row">
+        <div fxLayout="col">
             <div>
                 <app-real-player></app-real-player>
             </div>
-            <div *ngIf = "soloMode; else elseBlock">
+            <div *ngIf="soloMode; else elseBlock">
                 <app-vr-user></app-vr-user>
             </div>
             <ng-template #elseBlock>
                 <app-joined-user></app-joined-user>
             </ng-template>
             <div>
-                <mat-card class="card-not-playing" fxLayout="row" *ngIf="this.userService.endOfGame">
+                <mat-card class="card-not-playing" fxLayout="col" *ngIf="this.userService.endOfGame">
                     <mat-card-header>
-                        <mat-card-title class="score-time" *ngIf="this.userService.getWinnerName() !== 'egal'; elseBlock">
-                            {{ 'GAGNANT: ' + this.userService.getWinnerName() }}</mat-card-title
-                        >
-                        <ng-template #elseBlock> {{ this.userService.realUser.name + ' **EGALITE** ' + this.userService.vrUser.name }}</ng-template>
-                        <mat-card-subtitle class="score-time"> {{ 'CHEVALET JV: ' + this.virtualPlayerService.easel.toString() }}</mat-card-subtitle>
-                        <mat-card-subtitle class="score-time"> {{ 'CHEVALET Joueur: ' + this.userService.realUser.easel.toString() }}</mat-card-subtitle>
+                        <mat-card-title class="score-time"
+                            *ngIf="this.userService.getWinnerName() !== 'egal'; elseBlock">
+                            {{ 'GAGNANT: ' + this.userService.getWinnerName() }}</mat-card-title>
+                        <ng-template #elseBlock> {{ this.userService.realUser.name + ' **EGALITE** ' +
+                            this.userService.vrUser.name }}</ng-template>
+                        <mat-card-subtitle class="score-time"> {{ 'CHEVALET JV: ' +
+                            this.virtualPlayerService.easel.toString() }}</mat-card-subtitle>
+                        <mat-card-subtitle class="score-time"> {{ 'CHEVALET Joueur: ' +
+                            this.userService.realUser.easel.toString() }}</mat-card-subtitle>
                     </mat-card-header>
                 </mat-card>
             </div>
