@@ -62,7 +62,7 @@ export class TimeService {
         }
     }
     startMultiplayerTimer() {
-        if (this.userService.joinedUser.guestPlayer && !this.timeStarted) {
+        if (!this.timeStarted && this.userService.playMode === 'joinMultiplayerGame') {
             this.socketManagementService.emit('startTimer', undefined, this.userService.gameName);
             this.timeStarted = true;
         }

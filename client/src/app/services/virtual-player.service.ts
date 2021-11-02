@@ -62,7 +62,7 @@ export class VirtualPlayerService {
         ];
         if (!this.isDicFille) {
             this.isDicFille = true;
-            this.easelLogic.fillEasel(this.easel, false);
+            // this.easelLogic.fillEasel(this.easel, false);
         }
         const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         this.played = false;

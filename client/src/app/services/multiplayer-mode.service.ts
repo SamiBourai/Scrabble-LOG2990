@@ -41,7 +41,6 @@ export class MultiplayerModeService {
             else this.userService.realUser.turnToPlay = false;
         }
         if (this.userService.exchangeLetters || this.userService.passTurn) {
-            console.log('shuila je vais emit pass turn');
             this.socketManagementService.emit('passTurn', undefined, this.userService.gameName, undefined);
         }
         this.sendReserve();

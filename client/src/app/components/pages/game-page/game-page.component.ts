@@ -17,7 +17,7 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 })
 export class GamePageComponent implements OnInit, AfterViewInit {
     remainingLetters: number = 0;
-    soloMode: boolean = false;
+    soloMode: boolean = true;
     playersInGamePage: boolean = false;
     constructor(
         public userService: UserService,
@@ -36,9 +36,11 @@ export class GamePageComponent implements OnInit, AfterViewInit {
         this.getLetter();
         switch (this.userService.playMode) {
             case 'createMultiplayerGame':
+                this.soloMode = false;
                 this.multiplayerModeService.beginGame();
                 break;
             case 'joinMultiplayerGame':
+                this.soloMode = false;
                 this.socketManagementService.emit('guestInGamePage', undefined, this.userService.gameName);
                 this.multiplayerModeService.beginGame();
                 break;

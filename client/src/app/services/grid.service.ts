@@ -20,7 +20,6 @@ import {
     LEFTSPACE,
     NB_LETTER_HAND,
     NB_TILES,
-    NOT_A_LETTER,
     PARAMETERS_OF_SWAP,
     PINK_BOX,
     RED_BOX,
@@ -151,44 +150,50 @@ export class GridService {
     placeTempLetter(lett: Letter): void {
         const imgLetter = new Image();
         imgLetter.src = lett.img;
-        const x = this.previousTile.x;
-        const y = this.previousTile.y;
-        imgLetter.onload = () => {
-            this.tempContext.drawImage(
-                imgLetter,
-                LEFTSPACE + ((x - 1) * BOARD_WIDTH) / NB_TILES,
-                TOPSPACE + ((y - 1) * BOARD_WIDTH) / NB_TILES,
-                BOARD_WIDTH / NB_TILES,
-                BOARD_HEIGHT / NB_TILES,
-            );
-        };
-        this.drawRedFocus(this.previousTile, this.tempContext);
-        this.incrementDirection();
-        if (this.letterService.tiles[this.previousTile.y - 1][this.previousTile.x - 1] === NOT_A_LETTER) this.drawTileFocus(this.previousTile);
-        this.tempWord += lett.charac;
+
+        if (this.findNextEmptyTile()) {
+            this.tempWord += lett.charac;
+            const x = this.previousTile.x;
+            const y = this.previousTile.y;
+            imgLetter.onload = () => {
+                this.tempContext.drawImage(
+                    imgLetter,
+                    LEFTSPACE + ((x - 1) * BOARD_WIDTH) / NB_TILES,
+                    TOPSPACE + ((y - 1) * BOARD_WIDTH) / NB_TILES,
+                    BOARD_WIDTH / NB_TILES,
+                    BOARD_HEIGHT / NB_TILES,
+                );
+            };
+            this.drawRedFocus(this.previousTile, this.tempContext);
+            this.incrementDirection();
+            this.drawTileFocus(this.previousTile);
+        }
     }
     addLetterFromGrid(letter: string) {
         this.tempWord += letter;
         this.drawRedFocus(this.previousTile, this.tempContext);
         this.incrementDirection();
-        if (this.letterService.tiles[this.previousTile.y - 1][this.previousTile.x - 1] === NOT_A_LETTER) this.drawTileFocus(this.previousTile);
     }
     removeLastLetter() {
-        this.tempContext.clearRect(
-            LEFTSPACE + ((this.previousTile.x + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
-            TOPSPACE + ((this.previousTile.y + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
-            BOARD_WIDTH / NB_TILES + 1,
-            BOARD_HEIGHT / NB_TILES + 1,
-        );
-        this.decrementDirection();
-        this.tempContext.clearRect(
-            LEFTSPACE + ((this.previousTile.x + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
-            TOPSPACE + ((this.previousTile.y + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
-            BOARD_WIDTH / NB_TILES + 1,
-            BOARD_HEIGHT / NB_TILES + 1,
-        );
+        do {
+            this.tempContext.clearRect(
+                LEFTSPACE + ((this.previousTile.x + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + ((this.previousTile.y + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
+                BOARD_WIDTH / NB_TILES + 1,
+                BOARD_HEIGHT / NB_TILES + 1,
+            );
+
+            this.decrementDirection();
+            this.tempContext.clearRect(
+                LEFTSPACE + ((this.previousTile.x + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + ((this.previousTile.y + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
+                BOARD_WIDTH / NB_TILES + 1,
+                BOARD_HEIGHT / NB_TILES + 1,
+            );
+
+            this.tempWord = this.tempWord.slice(0, UNDEFINED_INDEX);
+        } while (!this.letterService.tileIsEmpty(this.previousTile) && this.tempWord !== '');
         this.drawTileFocus(this.previousTile);
-        this.tempWord = this.tempWord.slice(0, UNDEFINED_INDEX);
     }
     decrementDirection() {
         if (this.direction === H_ARROW && this.previousTile.x <= NB_TILES) this.previousTile.x--;
@@ -199,11 +204,20 @@ export class GridService {
         else if (this.direction === V_ARROW && this.previousTile.y < NB_TILES) this.previousTile.y++;
     }
     drawTileFocus(pos: Vec2): void {
+        this.previousTile = { x: pos.x, y: pos.y };
         this.focusContext.font = 'bold 40px system-ui';
         this.focusContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);
-        this.drawArrow(pos);
-        this.drawRedFocus(pos, this.focusContext);
-        this.previousTile = pos;
+        if (this.findNextEmptyTile()) {
+            this.drawArrow(this.previousTile);
+            this.drawRedFocus(this.previousTile, this.focusContext);
+        }
+    }
+    findNextEmptyTile(): boolean {
+        while (!this.letterService.tileIsEmpty(this.previousTile)) {
+            this.addLetterFromGrid(this.letterService.tiles[this.previousTile.y - 1][this.previousTile.x - 1].charac);
+            if (this.previousTile.x === NB_TILES || this.previousTile.y === NB_TILES) return false;
+        }
+        return true;
     }
     clearLayers(): void {
         this.focusContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);

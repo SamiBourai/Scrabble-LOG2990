@@ -75,11 +75,6 @@ export class MouseHandelingService {
             this.gridService.placeTempLetter(letter);
         }
     }
-    checkLetterInGrid(key: string, letter: Letter) {
-        if (key === letter.charac) {
-            this.gridService.addLetterFromGrid(letter.charac);
-        }
-    }
     mouseHitDetect(event: MouseEvent) {
         if (
             this.userService.isPlayerTurn() &&
@@ -183,7 +178,6 @@ export class MouseHandelingService {
         return true;
     }
     moveLeft() {
-        console.log('moveLeft');
         if (!this.lastWasLeftClick) {
             this.easelLogic.moveLeft(this.userService.getPlayerEasel());
             this.cancelByClick();
@@ -192,7 +186,6 @@ export class MouseHandelingService {
         }
     }
     moveRight() {
-        console.log('moveRight');
         if (!this.lastWasLeftClick) {
             this.easelLogic.moveRight(this.userService.getPlayerEasel());
             this.cancelByClick();
