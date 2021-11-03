@@ -31,17 +31,6 @@ export class EaselLogiscticsService {
         return coords1;
     }
 
-    rightClick(e: MouseEvent) {
-        switch (e.button) {
-            case 1:
-                alert('Left Mouse button pressed.');
-                break;
-            case 2:
-                alert('ntm1');
-                break;
-        }
-    }
-
     isBetween(pair: Pair, number: number) {
         if (number >= pair.min && number <= pair.max) return true;
         return false;

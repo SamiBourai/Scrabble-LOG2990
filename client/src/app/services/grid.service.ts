@@ -9,6 +9,10 @@ import {
     BOARD_WIDTH,
     CLEAR_RECT_FIX,
     CTX_PX,
+    DEFAULT_AZUR_BOX,
+    DEFAULT_BLUE_BOX,
+    DEFAULT_PINK_BOX,
+    DEFAULT_RED_BOX,
     EASEL_LENGTH,
     FOURTY,
     HAND_POSITION_END,
@@ -158,6 +162,21 @@ export class GridService {
             PINK_BOX[i] = ALL_BONUS_BOX[randomBonusIndex];
             ALL_BONUS_BOX.splice(randomBonusIndex, 1);
             this.allBonusQuantity--;
+        }
+    }
+
+    resetBonusesToDefault(): void {
+        for (let i = 0; i < RED_BOX.length; i++) {
+            RED_BOX[i] = DEFAULT_RED_BOX[i];
+        }
+        for (let i = 0; i < AZUR_BOX.length; i++) {
+            AZUR_BOX[i] = DEFAULT_AZUR_BOX[i];
+        }
+        for (let i = 0; i < BLUE_BOX.length; i++) {
+            BLUE_BOX[i] = DEFAULT_BLUE_BOX[i];
+        }
+        for (let i = 0; i < PINK_BOX.length; i++) {
+            PINK_BOX[i] = DEFAULT_PINK_BOX[i];
         }
     }
 
