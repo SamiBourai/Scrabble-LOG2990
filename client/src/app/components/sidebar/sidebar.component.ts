@@ -67,8 +67,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.logMessage();
             }, 0);
         });
-
-        // this.chatService.connect();
+        if (this.userService.playMode !== 'soloGame') {
+            this.messageService.newTextMessageObs.subscribe(() => {
+                this.arrayOfMessages = this.messageService.textMessage;
+                this.messageService.newTextMessage = false;
+            });
+        }
     }
 
     ngAfterViewChecked(): void {
@@ -123,7 +127,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.isDebug = !this.isDebug;
         } else if (this.messageService.isCommand(this.typeArea) && !this.messageService.isValid(this.typeArea)) {
             this.errorMessage = 'commande invalide';
-        } else this.arrayOfMessages.push(this.typeArea);
+        } else this.updateMessageArray(this.typeArea);
     }
 
     isSkipButtonClicked() {
@@ -131,7 +135,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.active = true;
             this.errorMessage = '';
-            this.arrayOfMessages.push('!passer');
+            this.updateMessageArray('!passer');
             return true;
         }
         return false;
@@ -171,11 +175,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.errorMessage = 'les lettres a placer ne constituent pas un mot';
                     return;
                 }
-            } else {
-                this.isImpossible = true;
-                this.errorMessage = 'votre mot dois etre contenue dans la grille!';
-                return;
             }
+        } else {
+            this.isImpossible = true;
+            this.errorMessage = 'votre mot dois etre contenue dans la grille!';
+            return;
         }
     }
 
@@ -262,7 +266,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 ) {
                     this.isImpossible = false;
                     this.errorMessage = '';
-                    this.arrayOfMessages.push(this.typeArea);
+                    this.updateMessageArray(this.typeArea);
                     this.userService.endOfGameCounter = 0;
                 } else {
                     this.isImpossible = true;
@@ -299,10 +303,14 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private verifyWord() {
         if (this.userService.playMode === 'soloGame') this.getLettersFromChat();
         else {
-            this.socketManagementService.emit('verifyWord', {
-                gameName: this.userService.gameName,
-                word: this.lettersService.fromWordToLetters(this.messageService.command.word),
-            });
+            if (
+                (this.userService.realUser.turnToPlay && this.userService.playMode === 'createMultiplayerGame') ||
+                (!this.userService.realUser.turnToPlay && this.userService.playMode === 'joinMultiplayerGame')
+            )
+                this.socketManagementService.emit('verifyWord', {
+                    gameName: this.userService.gameName,
+                    word: this.lettersService.fromWordToLetters(this.messageService.command.word),
+                });
             this.socketManagementService.listen('verifyWord').subscribe((data) => {
                 this.valideWordService.isWordValid = data.isValid ?? false;
                 this.getLettersFromChat();
@@ -313,7 +321,19 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.userService.userPlayed();
             this.errorMessage = '';
             this.userService.endOfGameCounter = 0;
-            this.arrayOfMessages.push(this.typeArea);
+            this.updateMessageArray(this.typeArea);
+        }
+    }
+    private updateMessageArray(command: string): void {
+        if (command !== '') {
+            if (this.userService.playMode === 'soloGame') this.arrayOfMessages.push(command);
+            else {
+                if (this.userService.playMode === 'joinMultiplayerGame') command = this.userService.joinedUser.name + ' : ' + command;
+                if (this.userService.playMode === 'createMultiplayerGame') command = this.userService.realUser.name + ' : ' + command;
+                this.arrayOfMessages.push(command);
+                this.messageService.textMessage = this.arrayOfMessages;
+                this.messageService.textMessageObs.next(this.messageService.textMessage);
+            }
         }
     }
 }

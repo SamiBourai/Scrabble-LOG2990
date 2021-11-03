@@ -9,7 +9,7 @@ export interface MessageServer {
     timeConfig?: { sec: number; min: number };
     aleatoryBonus?: boolean;
     gameAccepted?: boolean;
-    message?: string;
+    message?: string[];
     reason?: string;
     command?: ChatCommand;
     word?: Letter[];

@@ -82,6 +82,9 @@ export class SocketManagerService {
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
                 this.sio.to(message.gameName).emit('verifyWord', message);
             });
+            socket.on('sendMessage', (message: MessageClient) => {
+                this.sio.to(message.gameName).emit('getMessage', message);
+            });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);

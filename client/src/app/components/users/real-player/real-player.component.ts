@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
+import { MessageService } from '@app/services/message.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
@@ -10,7 +11,12 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./real-player.component.scss'],
 })
 export class RealPlayerComponent implements OnInit {
-    constructor(public userService: UserService, public timeService: TimeService, private mutltiplayerModeService: MultiplayerModeService) {}
+    constructor(
+        public userService: UserService,
+        public timeService: TimeService,
+        private mutltiplayerModeService: MultiplayerModeService,
+        private messageService: MessageService,
+    ) {}
     ngOnInit() {
         if (this.userService.playMode === 'soloGame') {
             this.userService.turnToPlayObs.subscribe(() => {
@@ -25,7 +31,11 @@ export class RealPlayerComponent implements OnInit {
             this.userService.playedObs.subscribe(() => {
                 this.mutltiplayerModeService.play('creatorPlayed', false);
             });
+            this.messageService.textMessageObs.subscribe(() => {
+                this.mutltiplayerModeService.sendMessage('sendMessage');
+            });
         }
         this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
+        this.mutltiplayerModeService.getMessageSend('getMessage');
     }
 }

@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { MessageServer } from '@app/classes/message-server';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
+import { MessageService } from './message.service';
 import { ReserveService } from './reserve.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
@@ -21,6 +21,7 @@ export class MultiplayerModeService {
         private lettersService: LettersService,
         private easelLogic: EaselLogiscticsService,
         private reserveService: ReserveService,
+        private messageService: MessageService,
     ) {}
 
     beginGame(): void {
@@ -92,5 +93,15 @@ export class MultiplayerModeService {
         this.userService.joinedUser.name = playerName;
         this.userService.joinedUser.guestPlayer = true;
         this.userService.gameName = room.gameName;
+    }
+    getMessageSend(method: string) {
+        this.socketManagementService.listen(method).subscribe((data) => {
+            this.messageService.textMessage = data.message ?? this.messageService.textMessage;
+            this.messageService.newTextMessage = true;
+            this.messageService.newTextMessageObs.next(this.messageService.newTextMessage);
+        });
+    }
+    sendMessage(method: string) {
+        this.socketManagementService.emit(method, { gameName: this.userService.gameName, message: this.messageService.textMessage });
     }
 }
