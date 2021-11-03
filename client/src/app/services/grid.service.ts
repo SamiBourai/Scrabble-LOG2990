@@ -27,9 +27,10 @@ import {
     SIX,
     TOPSPACE,
     UNDEFINED_INDEX,
-    V_ARROW,
+    V_ARROW
 } from '@app/constants/constants';
 import { LettersService } from './letters.service';
+import { SocketManagementService } from './socket-management.service';
 
 @Injectable({
     providedIn: 'root',
@@ -49,7 +50,7 @@ export class GridService {
     private direction: string = H_ARROW;
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
-    constructor(private letterService: LettersService) {}
+    constructor(private letterService: LettersService, private socketManagementService: SocketManagementService) {}
 
     drawGrid() {
         this.gridContext.beginPath();
@@ -104,31 +105,23 @@ export class GridService {
         }
     }
 
-    drawBox(_isBonusBox: boolean): void {
-        if (_isBonusBox) this.randomizeBonuses();
-
-        this.gridContext.font = 'bold 15px system-ui';
-        for (const v of this.arrayOfBonusBox[0]) {
-            this.gridContext.fillStyle = 'red';
-            this.drawBonus(v, 'MOT  X3');
-        }
-        // triple letter score
-        for (const v of this.arrayOfBonusBox[1]) {
-            this.gridContext.fillStyle = 'pink';
-            this.drawBonus(v, 'MOT  X2');
-        }
-        // triple letter score
-        for (const v of this.arrayOfBonusBox[2]) {
-            this.gridContext.fillStyle = 'blue';
-            this.drawBonus(v, 'L.  X3');
-        }
-        // triple letter score
-        for (const v of this.arrayOfBonusBox[3]) {
-            this.gridContext.fillStyle = 'cyan';
-            this.drawBonus(v, 'L.  X2');
-        }
-        this.gridContext.fillStyle = 'black';
+    drawBox(isBonusBox: boolean, playMode: string, gameName: string): void {
+        if (isBonusBox) {
+            if (playMode === 'joinMultiplayerGame') {
+                this.socketManagementService.emit('getAleatoryBonus', { gameName });
+                this.socketManagementService.listen('getAleatoryBonus').subscribe((data) => {
+                    this.arrayOfBonusBox = data.arrayOfBonusBox ?? this.arrayOfBonusBox;
+                    this.drawBonusBox();
+                });
+            } else {
+                this.randomizeBonuses();
+                this.drawBonusBox();
+                if (playMode === 'createMultiplayerGame')
+                    this.socketManagementService.emit('setAleatoryBonusBox', { gameName, arrayOfBonusBox: this.arrayOfBonusBox });
+            }
+        } else this.drawBonusBox();
     }
+
     drawCentralTile() {
         const img = new Image();
         img.src = '../../../assets/black-star.png';
@@ -324,7 +317,29 @@ export class GridService {
         );
         ctx.stroke();
     }
-
+    private drawBonusBox(): void {
+        this.gridContext.font = 'bold 15px system-ui';
+        for (const v of this.arrayOfBonusBox[0]) {
+            this.gridContext.fillStyle = 'red';
+            this.drawBonus(v, 'MOT  X3');
+        }
+        // triple letter score
+        for (const v of this.arrayOfBonusBox[1]) {
+            this.gridContext.fillStyle = 'pink';
+            this.drawBonus(v, 'MOT  X2');
+        }
+        // triple letter score
+        for (const v of this.arrayOfBonusBox[2]) {
+            this.gridContext.fillStyle = 'blue';
+            this.drawBonus(v, 'L.  X3');
+        }
+        // triple letter score
+        for (const v of this.arrayOfBonusBox[3]) {
+            this.gridContext.fillStyle = 'cyan';
+            this.drawBonus(v, 'L.  X2');
+        }
+        this.gridContext.fillStyle = 'black';
+    }
     private drawBonus(v: Vec2, str: string) {
         this.gridContext.fillRect(
             LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES,

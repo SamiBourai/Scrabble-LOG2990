@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { MessageServer } from '@app/classes/message-server';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
 import { MessageService } from './message.service';
@@ -15,6 +16,9 @@ export class MultiplayerModeService {
     gameStarted: boolean = false;
     guestCommand: ChatCommand;
     first: boolean = true;
+    gotWinner: boolean = false;
+    winnerObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    observableWinner: Observable<boolean>;
     constructor(
         private socketManagementService: SocketManagementService,
         private userService: UserService,
@@ -22,7 +26,12 @@ export class MultiplayerModeService {
         private easelLogic: EaselLogiscticsService,
         private reserveService: ReserveService,
         private messageService: MessageService,
-    ) {}
+    ) {
+        this.observableWinner = this.winnerObs.asObservable();
+    }
+    get winnerOfGame(): Observable<boolean> {
+        return this.winnerObs;
+    }
 
     beginGame(): void {
         this.socketManagementService.listen('beginGame').subscribe((data) => {
@@ -72,11 +81,13 @@ export class MultiplayerModeService {
     updateReserve() {
         this.socketManagementService.emit('getReserve', { gameName: this.userService.gameName });
         this.socketManagementService.listen('updateReserve').subscribe((data) => {
-            this.reserveService.letters = data.reserve ?? this.reserveService.letters;
+            this.reserveService.letters = data.reserve?.slice() ?? this.reserveService.letters;
             this.reserveService.reserveSize = this.reserveService.letters.length;
+            this.reserveService.sizeObs.next(this.reserveService.reserveSize);
             if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
                 this.first = false;
-                this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
+                this.easelLogic.fillEasel(this.userService.joinedUser.easel, true, false);
+                this.sendReserve();
             }
         });
     }
@@ -102,5 +113,11 @@ export class MultiplayerModeService {
     }
     sendMessage(method: string) {
         this.socketManagementService.emit(method, { gameName: this.userService.gameName, message: this.messageService.textMessage });
+    }
+    playersLeftGamge() {
+        this.socketManagementService.listen('getWinner').subscribe(() => {
+            this.gotWinner = true;
+            this.winnerObs.next(this.gotWinner);
+        });
     }
 }

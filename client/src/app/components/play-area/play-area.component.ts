@@ -42,7 +42,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private multiplayer: MultiplayerModeService,
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') {
-            this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
+            if (this.userService.playMode !== 'soloGame') this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true, false);
+            else this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true, true);
         } else {
             this.multiplayer.updateReserve();
         }
@@ -89,7 +90,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.easelContext = this.easelCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.drawCentralTile();
         this.gridService.drawCoor();
-        this.gridService.drawBox(this.userService.isBonusBox);
+        this.gridService.drawBox(this.userService.isBonusBox, this.userService.playMode, this.userService.gameName);
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();

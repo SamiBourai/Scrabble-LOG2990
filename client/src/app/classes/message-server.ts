@@ -1,5 +1,6 @@
 import { ChatCommand } from './chat-command';
 import { Letter } from './letter';
+import { Vec2 } from './vec2';
 
 export interface MessageServer {
     gameName: string;
@@ -16,4 +17,6 @@ export interface MessageServer {
     isValid?: boolean;
     gameStarted?: boolean;
     timer?: { sec: number; min: number; userTurn: boolean };
+    arrayOfBonusBox?: Vec2[][];
+    winner?: string;
 }

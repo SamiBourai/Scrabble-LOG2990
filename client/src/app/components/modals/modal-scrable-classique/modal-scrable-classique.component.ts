@@ -12,18 +12,6 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./modal-scrable-classique.component.scss'],
 })
 export class ModalScrableClassiqueComponent {
-    // mainPageComponent: MainPageComponent;
-    // @ViewChild('button', { static: false }) button: ElementRef<HTMLElement>;
-    // constructor(button: HTMLElement) {
-    //     t
-    // }
-    // ngOnInit() {}
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
-    // ngAfterViewInit() {
-    //     setTimeout(() => {this.button.nativeElement.click();
-    //         console.log(this.abc.nativeElement.innerText);
-    //     }, 1000);
-    // }
     constructor(private dialogRef: MatDialog, private userService: UserService) {}
 
     openDialog(gameMode: string) {

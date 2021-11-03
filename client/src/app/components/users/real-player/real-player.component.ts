@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
 import { MessageService } from '@app/services/message.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
@@ -17,7 +19,8 @@ export class RealPlayerComponent implements OnInit {
         public timeService: TimeService,
         private mutltiplayerModeService: MultiplayerModeService,
         private messageService: MessageService,
-        private reserveService: ReserveService, 
+        private reserveService: ReserveService,
+        private dialogRef: MatDialog,
     ) {}
     ngOnInit() {
         if (this.userService.playMode === 'soloGame') {
@@ -36,12 +39,17 @@ export class RealPlayerComponent implements OnInit {
             this.messageService.textMessageObs.subscribe(() => {
                 this.mutltiplayerModeService.sendMessage('sendMessage');
             });
-            this.reserveService.size.subscribe(() => {
+            this.reserveService.reserveObs.subscribe(() => {
                 this.mutltiplayerModeService.sendReserve();
+                this.reserveService.reserveChanged = false;
             });
         }
         this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
         this.mutltiplayerModeService.getMessageSend('getMessage');
         this.mutltiplayerModeService.updateReserve();
+        this.mutltiplayerModeService.playersLeftGamge();
+        this.mutltiplayerModeService.winnerObs.subscribe((response) => {
+            if (response) this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+        });
     }
 }

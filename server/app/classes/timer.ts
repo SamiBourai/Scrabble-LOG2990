@@ -2,7 +2,7 @@ import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/classes
 import { Subject } from 'rxjs';
 export class Timer {
     timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
-    timerConfig: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
+    timerConfig: { min: number; sec: number };
     timerObs: Subject<{ min: number; sec: number }> = new Subject<{ min: number; sec: number }>();
     creatorTurn: boolean;
     playerPlayed: boolean = false;
@@ -19,7 +19,7 @@ export class Timer {
                 this.timeUser.sec = MINUTE_TURN;
             } else this.timeUser.sec -= ONE_SECOND;
             if ((this.timeUser.sec === 0 && this.timeUser.min === 0) || this.playerPlayed) {
-                this.timeUser = this.timerConfig;
+                this.timeUser = { min: this.timerConfig.min, sec: this.timerConfig.sec };
                 this.playerPlayed = false;
                 if (this.creatorTurn) this.creatorTurn = false;
                 else this.creatorTurn = true;

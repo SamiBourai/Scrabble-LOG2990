@@ -75,6 +75,8 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.mouseHandlingService.previousClick = { x: -1, y: -1 };
                 this.mouseHandlingService.resetSteps();
                 this.mouseHandlingService.cancelByClick();
+                this.reserverService.reserveChanged = true;
+                this.reserverService.reserveObs.next(this.reserverService.reserveChanged);
                 if (
                     this.remainingLetters === 0 &&
                     (this.userService.realUser.easel.getEaselSize() === 0 || this.virtualPlayerService.easel.getEaselSize() === 0)

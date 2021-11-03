@@ -81,8 +81,6 @@ export class TimeService {
                 this.timeUser = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = false;
             }
-            console.log(this.timeUser);
-            console.log(this.timeGuestPlayer);
         });
     }
     setGameTime(gameTime: GameTime) {

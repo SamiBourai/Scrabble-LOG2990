@@ -12,7 +12,7 @@ import {
     LEFTSPACE,
     NB_TILES,
     NOT_A_LETTER,
-    TOPSPACE,
+    TOPSPACE
 } from '@app/constants/constants';
 import { ReserveService } from './reserve.service';
 @Injectable({
@@ -95,11 +95,15 @@ export class EaselLogiscticsService {
 
         if (user) this.placeEaselLetters(easel);
     }
-    fillEasel(easel: EaselObject, user: boolean): void {
+    fillEasel(easel: EaselObject, user: boolean, soloMode: boolean): void {
         for (let i = 0; i < EASEL_LENGTH; i++) {
             if (!this.reserveService.isReserveEmpty()) easel.add(this.reserveService.getRandomLetter(), i);
         }
         if (user) this.placeEaselLetters(easel);
+        if (!soloMode) {
+            this.reserveService.reserveChanged = true;
+            this.reserveService.reserveObs.next(this.reserveService.reserveChanged);
+        }
     }
     tempGetLetter(letter: string, easel: EaselObject): Letter {
         let counter = 0;

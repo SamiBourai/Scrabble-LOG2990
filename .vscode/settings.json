@@ -10,5 +10,10 @@
     "eslint.workingDirectories": ["./client", "./server"],
     "eslint.probe": ["javascript", "typescript", "html", "vue", "markdown"],
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
-    "cSpell.words": ["Idictionnary"]
+    "cSpell.words": [
+        "Idictionnary"
+    ],
+    "[html]": {
+        "editor.defaultFormatter": "remimarsal.prettier-now"
+    }
 }

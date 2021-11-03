@@ -42,6 +42,8 @@ import { BehaviorSubject } from 'rxjs';
 export class ReserveService {
     letters = new Array<Letter>();
     reserveSize: number = 0;
+    reserveChanged: boolean = false;
+    reserveObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     sizeObs = new BehaviorSubject(0);
     constructor() {
         this.fillReserveWithLettersDefault();

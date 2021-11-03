@@ -1,10 +1,10 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
-import { MessageServer } from '@app/classes/message-server';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
@@ -28,7 +28,6 @@ export class ModalUserNameComponent implements OnInit {
     guestFormControl: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     gameNameMutiplayer: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
-    aleatoryBonus: boolean = false;
     playerName: string = '';
     guestName: string = '';
     gameName: string = '';
@@ -156,7 +155,7 @@ export class ModalUserNameComponent implements OnInit {
             user: { name: this.playerName },
             gameName: this.gameName,
             timeConfig: { min: this.time.min, sec: this.time.sec },
-            aleatoryBonus: this.aleatoryBonus,
+            aleatoryBonus: this.userService.isBonusBox,
         });
         this.userService.realUser.name = this.playerName;
         this.userService.gameName = this.gameName;
@@ -175,7 +174,7 @@ export class ModalUserNameComponent implements OnInit {
     joinGame(room: MessageServer): void {
         this.multiplayerModeService.setGameInformations(room, this.playerName);
         this.roomJoined = true;
-        this.aleatoryBonus = room.aleatoryBonus ?? false;
+        this.userService.isBonusBox = room.aleatoryBonus ?? false;
     }
     gameAccepted(): void {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {
