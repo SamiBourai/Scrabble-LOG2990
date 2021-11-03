@@ -1,12 +1,12 @@
 <div class="container" fxLayout="row">
     <div class="side-bar">
-        <app-sidebar id="sideBar"></app-sidebar>
+        <app-sidebar id="sideBar" (click)="this.mouseHandlingService.clearAll()"></app-sidebar>
     </div>
 
     <div class="play-area">
         <app-play-area></app-play-area>
     </div>
-    <div class="right-div-information" fxLayout="column" fxLayoutAlign="center center">
+    <div class="right-div-information" (click)="this.mouseHandlingService.clearAll()" fxLayout="column" fxLayoutAlign="center center">
         <div>
             <p class="chronometer-title">{{ 'Lettre restante : ' + this.remainingLetters }}</p>
         </div>

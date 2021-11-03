@@ -5,6 +5,7 @@ import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -31,8 +32,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
 
     constructor(
+        private tempCanvasService: TemporaryCanvasService,
         private readonly gridService: GridService,
-        public mousHandelingService: MouseHandelingService,
+        public mouseHandlingService: MouseHandelingService,
         private readonly lettersService: LettersService,
         readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
@@ -55,20 +57,20 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
     @HostListener('window:keydown', ['$event'])
     spaceEvent(event: KeyboardEvent) {
-        if (this.mousHandelingService.previousClick.x !== UNDEFINED_INDEX) {
+        if (this.mouseHandlingService.previousClick.x !== UNDEFINED_INDEX) {
             switch (event.key) {
                 case 'Backspace':
-                    this.mousHandelingService.deletPreviousLetter();
+                    this.mouseHandlingService.deletPreviousLetter();
                     break;
                 case 'Enter':
-                    this.mousHandelingService.placeTempWord();
+                    this.mouseHandlingService.placeTempWord();
                     break;
                 case 'Escape':
-                    this.mousHandelingService.resetSteps();
-                    this.mousHandelingService.previousClick = { x: -1, y: -1 };
+                    this.mouseHandlingService.resetSteps();
+                    this.mouseHandlingService.previousClick = { x: -1, y: -1 };
                     break;
                 default:
-                    this.mousHandelingService.keyBoardEntryManage(event.key);
+                    this.mouseHandlingService.keyBoardEntryManage(event.key);
 
                     break;
             }
@@ -76,12 +78,10 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         if (this.userService.getPlayerEasel().indexToMove !== UNDEFINED_INDEX)
             switch (event.key) {
                 case 'ArrowLeft':
-                    console.log('Left');
-                    this.mousHandelingService.moveLeft();
+                    this.mouseHandlingService.moveLeft();
                     break;
                 case 'ArrowRight':
-                    console.log('right');
-                    this.mousHandelingService.moveRight();
+                    this.mouseHandlingService.moveRight();
                     break;
             }
     }
@@ -95,10 +95,11 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.lettersService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridService.tempContext = this.tempCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridService.focusContext = this.focusCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.tempCanvasService.tempContext = this.tempCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.tempCanvasService.focusContext = this.focusCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.tempCanvasService.easelContext = this.easelCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.easelLogisticsService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridService.easelContext = this.easelCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+
         this.gridService.drawCentralTile();
         this.gridService.drawCoor();
         this.gridService.drawBonusBox();
@@ -116,11 +117,15 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     disableButton(event: string): boolean {
         if (event !== 'passTurn') {
             if (this.userService.playMode !== 'joinMultiplayerGame') {
-                return !this.userService.realUser.turnToPlay || this.mousHandelingService.isLettersArrayEmpty();
-            } else return this.userService.realUser.turnToPlay || this.mousHandelingService.isLettersArrayEmpty();
+                return !this.userService.realUser.turnToPlay || this.mouseHandlingService.isLettersArrayEmpty();
+            } else return this.userService.realUser.turnToPlay || this.mouseHandlingService.isLettersArrayEmpty();
         } else {
             if (this.userService.playMode !== 'joinMultiplayerGame') return !this.userService.realUser.turnToPlay;
             else return this.userService.realUser.turnToPlay;
         }
+    }
+
+    quitGame() {
+        window.location.assign('/home');
     }
 }

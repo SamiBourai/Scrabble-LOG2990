@@ -1,31 +1,24 @@
 <div
-    (contextmenu)="mousHandelingService.easelClicked($event)"
-    (click)="mousHandelingService.easelClicked($event)"
+    (contextmenu)="mouseHandlingService.easelClicked($event)"
+    (click)="mouseHandlingService.easelClicked($event)"
     oncontextmenu="return false"
     class="grid-container"
     fxLayout="column"
 >
-    <div class="button-up" fxLayout="row">
+    <div class="button-up" (click)="this.mouseHandlingService.clearAll()" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
         </div>
         <div class="div">
-            <button
-                #skipTurn
-                id="btn"
-                mat-raised-button
-                color="primary"
-                [disabled]="disableButton('passTurn')"
-                (click)="detectSkipTurnBtn()"
-            >
+            <button #skipTurn id="btn" mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">
                 Passer son tour
             </button>
-            <button mat-fab color="accent" [disabled]="!userService.isPlayerTurn()" (click)="mousHandelingService.placeTempWord()">
+            <button mat-fab color="accent" [disabled]="!userService.isPlayerTurn()" (click)="mouseHandlingService.placeTempWord()">
                 <mat-icon>play_circle_outline</mat-icon>
             </button>
         </div>
         <div class="div">
-            <button mat-raised-button color="accent" routerLink="/home">Abandonner</button>
+            <button mat-raised-button color="accent" (click)="quitGame()">Abandonner</button>
         </div>
     </div>
 
@@ -37,7 +30,7 @@
             id="easelCanvas"
             class="easelLayer"
             #easelCanvas
-            (click)="this.mousHandelingService.mouseHitDetect($event)"
+            (click)="this.mouseHandlingService.mouseHitDetect($event)"
             [attr.width]="width"
             [attr.height]="height"
         ></canvas>
@@ -45,24 +38,12 @@
 </div>
 
 <div class="swapSection">
-    <button
-        mat-raised-button
-        color="primary"
-        id="swapButton"
-        [disabled]="disableButton('exchange')"
-        (click)="mousHandelingService.swapByClick($event)"
-    >
+    <button mat-raised-button color="primary" id="swapButton" [disabled]="disableButton('exchange')" (click)="mouseHandlingService.swapByClick()">
         echanger
     </button>
 </div>
 <div class="cancelSection">
-    <button
-        mat-raised-button
-        color="primary"
-        id="cancelButton"
-        [disabled]="disableButton('cancel')"
-        (click)="mousHandelingService.cancelByClick()"
-    >
+    <button mat-raised-button color="primary" id="cancelButton" [disabled]="disableButton('cancel')" (click)="mouseHandlingService.cancelByClick()">
         annuler
     </button>
 </div>

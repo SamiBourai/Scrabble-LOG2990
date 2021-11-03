@@ -20,7 +20,7 @@ import {
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
-import { GridService } from './grid.service';
+import { TemporaryCanvasService } from './temporary-canvas.service';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -43,36 +43,41 @@ export class MouseHandelingService {
 
     lettersToSwapByClick: Letter[] = [];
     commandObs = new BehaviorSubject<string>('');
-    constructor(private readonly gridService: GridService, private easelLogic: EaselLogiscticsService, private userService: UserService) {}
+    constructor(
+        private readonly tempCanvasService: TemporaryCanvasService,
+        private easelLogic: EaselLogiscticsService,
+        private userService: UserService,
+    ) {}
     placeTempWord() {
-        if (this.gridService.tempWord !== '') {
+        if (this.tempCanvasService.tempWord !== '') {
             this.placeTempCommand =
                 '!placer ' +
                 String.fromCharCode(ASCI_CODE_A + (this.previousClick.y - 1)) +
                 this.previousClick.x +
-                this.gridService.getCommandDirection() +
+                this.tempCanvasService.getCommandDirection() +
                 ' ' +
-                this.gridService.tempWord;
+                this.tempCanvasService.tempWord;
             this.commandObs.next(this.placeTempCommand);
             this.resetSteps();
-            this.gridService.resetArrow();
+            this.tempCanvasService.resetArrow();
         }
     }
     deletPreviousLetter() {
-        if (this.gridService.tempWord !== '') {
-            this.gridService.removeLastLetter();
+        if (this.tempCanvasService.tempWord !== '') {
+            this.tempCanvasService.removeLastLetter();
             this.easelLogic.replaceTempInEasel(this.userService.getPlayerEasel());
         }
     }
     keyBoardEntryManage(key: string) {
         let letter: Letter = NOT_A_LETTER;
 
-        if ((this.gridService.previousTile.x !== NB_TILES && this.gridService.previousTile.y !== NB_TILES) || this.firstBorderLetter) {
+        if ((this.tempCanvasService.previousTile.x !== NB_TILES && this.tempCanvasService.previousTile.y !== NB_TILES) || this.firstBorderLetter) {
             letter = this.easelLogic.tempGetLetter(key, this.userService.getPlayerEasel());
-            if (this.gridService.previousTile.x === NB_TILES || this.gridService.previousTile.y === NB_TILES) this.firstBorderLetter = false;
+            if (this.tempCanvasService.previousTile.x === NB_TILES || this.tempCanvasService.previousTile.y === NB_TILES)
+                this.firstBorderLetter = false;
         }
         if (letter !== NOT_A_LETTER) {
-            this.gridService.placeTempLetter(letter);
+            this.tempCanvasService.placeTempLetter(letter);
         }
     }
     mouseHitDetect(event: MouseEvent) {
@@ -90,75 +95,76 @@ export class MouseHandelingService {
             };
             if (this.mousePosition.x !== this.previousClick.x || this.mousePosition.y !== this.previousClick.y) {
                 this.resetSteps();
-                this.gridService.resetArrow();
+                this.tempCanvasService.resetArrow();
             }
             if (this.mousePosition.x === this.previousClick.x && this.mousePosition.y === this.previousClick.y) {
                 this.resetSteps();
-                this.gridService.switchArrow();
+                this.tempCanvasService.switchArrow();
             }
-            this.gridService.drawTileFocus(this.mousePosition);
+            this.tempCanvasService.drawTileFocus(this.mousePosition);
             this.previousClick = { x: this.mousePosition.x, y: this.mousePosition.y };
         } else {
             this.resetSteps();
-            this.gridService.resetArrow();
+            this.tempCanvasService.resetArrow();
             this.previousClick = { x: -1, y: -1 };
         }
     }
     resetSteps() {
         this.firstBorderLetter = true;
         this.userService.getPlayerEasel().resetTempIndex();
-        this.gridService.clearLayers();
+        this.tempCanvasService.clearLayers();
         this.easelLogic.placeEaselLetters(this.userService.getPlayerEasel());
-        this.gridService.tempWord = '';
+        this.tempCanvasService.tempWord = '';
     }
     easelClicked(event: MouseEvent) {
         const vec = this.easelLogic.showCoords(event);
         const rangeEasleValid = this.easelLogic.isBetween(RANGE_Y, vec.y) && this.easelLogic.isBetween({ min: 264, max: 637 }, vec.x);
         const rangeSwapButtonValid = this.easelLogic.isBetween(SWAP_BUTTON_RANGE_X, vec.x) && this.easelLogic.isBetween(SWAP_BUTTON_RANGE_Y, vec.y);
-        if (this.userService.isPlayerTurn())
-            if (rangeEasleValid || rangeSwapButtonValid) {
-                this.isGood = true;
-                let easelIndex = 0;
-                for (const easelPosition of EASEL_POSITIONS) {
-                    // For each intervalle de lettre du chevalet
-                    const indexCounter = easelIndex;
-                    if (this.easelLogic.isBetween(easelPosition.letterRange, vec.x)) {
+        let easelIndex = 0;
+        if (rangeEasleValid || rangeSwapButtonValid) {
+            this.isGood = true;
+
+            for (const easelPosition of EASEL_POSITIONS) {
+                // For each intervalle de lettre du chevalet
+                const indexCounter = easelIndex;
+                if (this.easelLogic.isBetween(easelPosition.letterRange, vec.x)) {
+                    if (event.button === 0) {
+                        this.lastWasLeftClick = false;
                         if (!easelPosition.isClicked) {
-                            if (event.button === 0) {
-                                this.userService.getPlayerEasel().indexToMove = UNDEFINED_INDEX;
-                                if (!this.lastWasLeftClick) {
-                                    this.cancelByClick();
-                                    this.lastWasLeftClick = true;
-                                }
-                                this.gridService.setLetterClicked(indexCounter);
-                                this.lettersToSwapByClick.push(this.userService.getPlayerEasel().easelLetters[easelPosition.index]);
-                                easelPosition.isClicked = true;
-                            } else {
-                                this.cancelByClick();
-                                this.lastWasLeftClick = false;
-                                this.gridService.letterEaselToMove(indexCounter);
-                                this.userService.getPlayerEasel().indexToMove = indexCounter;
-                                easelPosition.isClicked = true;
-                            }
-                        } else if (event.button === 0 && this.lastWasLeftClick) {
-                            const index = this.lettersToSwapByClick.indexOf(this.userService.getPlayerEasel().easelLetters[easelPosition.index]);
-                            this.lettersToSwapByClick.splice(index, 1);
-                            this.gridService.unclickLetter(indexCounter);
-                            easelPosition.isClicked = false;
-                        } else if (event.button === 2 && !this.lastWasLeftClick) {
+                            this.cancelByClick();
+                            this.tempCanvasService.letterEaselToMove(indexCounter);
+                            this.userService.getPlayerEasel().indexToMove = indexCounter;
+                            easelPosition.isClicked = true;
+                        } else {
                             this.cancelByClick();
                             this.userService.getPlayerEasel().indexToMove = UNDEFINED_INDEX;
                         }
+                    } else if (event.button === 2 && this.userService.isPlayerTurn()) {
+                        if (!this.lastWasLeftClick) {
+                            this.userService.getPlayerEasel().indexToMove = UNDEFINED_INDEX;
+                            this.cancelByClick();
+                            this.lastWasLeftClick = true;
+                        }
+                        if (!easelPosition.isClicked) {
+                            this.tempCanvasService.setLetterClicked(indexCounter);
+                            this.lettersToSwapByClick.push(this.userService.getPlayerEasel().easelLetters[easelPosition.index]);
+                            easelPosition.isClicked = true;
+                        } else {
+                            const index = this.lettersToSwapByClick.indexOf(this.userService.getPlayerEasel().easelLetters[easelPosition.index]);
+                            this.lettersToSwapByClick.splice(index, 1);
+                            this.tempCanvasService.unclickLetter(indexCounter);
+                            easelPosition.isClicked = false;
+                        }
                     }
-                    easelIndex++;
                 }
-            } else {
-                this.cancelByClick();
+                easelIndex++;
             }
-        return this.lettersToSwapByClick;
+        } else {
+            this.cancelByClick();
+        }
     }
-    swapByClick(event: MouseEvent) {
-        const letters = this.easelClicked(event);
+    swapByClick() {
+        const letters = this.lettersToSwapByClick;
         this.placeTempCommand = '!echanger ';
         for (const lett of letters) {
             this.placeTempCommand += lett.charac;
@@ -171,7 +177,7 @@ export class MouseHandelingService {
     cancelByClick() {
         this.lettersToSwapByClick = [];
         this.allIsClickedToFalse();
-        this.gridService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_HEIGHT);
+        this.tempCanvasService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_HEIGHT);
     }
     isLettersArrayEmpty() {
         if (this.lettersToSwapByClick.length > 0) return false;
@@ -182,7 +188,7 @@ export class MouseHandelingService {
             this.easelLogic.moveLeft(this.userService.getPlayerEasel());
             this.cancelByClick();
             this.lastWasLeftClick = false;
-            this.gridService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
+            this.tempCanvasService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
         }
     }
     moveRight() {
@@ -190,8 +196,15 @@ export class MouseHandelingService {
             this.easelLogic.moveRight(this.userService.getPlayerEasel());
             this.cancelByClick();
             this.lastWasLeftClick = false;
-            this.gridService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
+            this.tempCanvasService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
         }
+    }
+
+    clearAll() {
+        this.previousClick = { x: -1, y: -1 };
+        this.resetSteps();
+        this.cancelByClick();
+        this.tempCanvasService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);
     }
     private allIsClickedToFalse() {
         for (const easelPosition of EASEL_POSITIONS) {
