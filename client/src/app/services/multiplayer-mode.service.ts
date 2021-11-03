@@ -77,7 +77,6 @@ export class MultiplayerModeService {
             if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
                 this.first = false;
                 this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
-                this.sendReserve();
             }
         });
     }

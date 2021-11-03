@@ -43,10 +43,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') {
             this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
-            if (this.userService.playMode === 'createMultiplayerGame') {
-                this.multiplayer.sendReserve();
-                this.multiplayer.updateReserve();
-            }
         } else {
             this.multiplayer.updateReserve();
         }

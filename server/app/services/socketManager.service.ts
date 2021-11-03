@@ -63,6 +63,7 @@ export class SocketManagerService {
             });
             socket.on('startTimer', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
+                    game.timeConfig = this.games.get(game.gameName).timeConfig;
                     game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer.creatorTurn };
                     this.sio.to(game.gameName).emit('updateTime', game);
                 });

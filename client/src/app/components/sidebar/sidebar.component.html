@@ -12,7 +12,7 @@
                     </div>
                     <ng-container>
                         <div *ngFor="let message of arrayOfMessages">
-                            <p [class.myMessage]="message[0] === '('" [class.otherMessage]="message[0] !== ''">{{ message }}</p>
+                            <p [class.myMessage]="message[0] === ' '" [class.otherMessage]="message[0] !== ' '">{{ message }}</p>
                         </div>
                     </ng-container>
 

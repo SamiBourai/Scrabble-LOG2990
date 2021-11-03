@@ -74,13 +74,15 @@ export class TimeService {
         this.socketManagementService.listen('updateTime').subscribe((data) => {
             if (data.timer?.userTurn) {
                 this.timeUser = { min: data.timer?.min, sec: data.timer?.sec };
-                this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };
+                this.timeGuestPlayer = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = true;
             } else {
                 this.timeGuestPlayer = { min: data.timer?.min ?? 0, sec: data.timer?.sec ?? 0 };
-                this.timeUser = { min: 0, sec: MINUTE_TURN };
+                this.timeUser = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = false;
             }
+            console.log(this.timeUser);
+            console.log(this.timeGuestPlayer);
         });
     }
     setGameTime(gameTime: GameTime) {

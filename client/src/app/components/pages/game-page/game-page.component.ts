@@ -50,7 +50,6 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
                 break;
         }
         this.isUserEaselEmpty();
-        // this.onWindowClose(event);
     }
     ngAfterViewInit() {
         this.openDialog();

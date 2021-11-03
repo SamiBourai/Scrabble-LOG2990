@@ -49,7 +49,6 @@ export class ValidWordService {
     }
 
     private async getWords(): Promise<string[]> {
-        // TODO: use pipe operator
         const a = await this.getCompressedWords();
         const b = decompress(a);
         const c = this.utf8Decoder.decode(b);

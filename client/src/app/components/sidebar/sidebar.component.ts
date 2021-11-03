@@ -327,7 +327,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             if (this.userService.playMode === 'soloGame') this.arrayOfMessages.push(command);
             else {
                 if (this.userService.playMode === 'joinMultiplayerGame') command = this.userService.joinedUser.name + ' : ' + command;
-                if (this.userService.playMode === 'createMultiplayerGame') command = '' + this.userService.realUser.name + ' : ' + command;
+                if (this.userService.playMode === 'createMultiplayerGame') command = ' ' + this.userService.realUser.name + ' : ' + command;
                 this.arrayOfMessages.push(command);
                 this.messageService.textMessage = this.arrayOfMessages;
                 this.messageService.textMessageObs.next(this.messageService.textMessage);
