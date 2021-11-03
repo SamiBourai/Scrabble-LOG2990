@@ -5,6 +5,7 @@ import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { ReserveService } from '@app/services/reserve.service';
 import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
@@ -41,6 +42,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private readonly pvs: ValidWordService,
         private multiplayer: MultiplayerModeService,
         private virtualPlayer: VirtualPlayerService,
+        public reserveService: ReserveService,
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') {
             if (this.userService.playMode === 'soloGame') {

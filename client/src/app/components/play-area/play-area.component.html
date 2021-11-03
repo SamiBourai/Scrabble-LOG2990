@@ -38,7 +38,13 @@
 </div>
 
 <div class="swapSection">
-    <button mat-raised-button color="primary" id="swapButton" [disabled]="disableButton('exchange')" (click)="mouseHandlingService.swapByClick()">
+    <button
+        mat-raised-button
+        color="primary"
+        id="swapButton"
+        [disabled]="disableButton('exchange') || this.reserveService.reserveSize < 7"
+        (click)="mouseHandlingService.swapByClick()"
+    >
         echanger
     </button>
 </div>

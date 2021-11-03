@@ -32,7 +32,7 @@ import {
     W,
     X,
     Y,
-    Z
+    Z,
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 
@@ -100,7 +100,6 @@ export class ReserveService {
             this.letters.push(L);
             this.reserveSize++;
         }
-
         this.sizeObs.next(this.reserveSize);
     }
 
