@@ -23,6 +23,12 @@ export class UserService {
     vrUser: VrUser;
     gameName: string;
     chatCommandToSend: ChatCommand;
+    commandtoSendObs: BehaviorSubject<ChatCommand> = new BehaviorSubject<ChatCommand>({} as ChatCommand);
+    observableCommandToSend: Observable<ChatCommand>;
+    playedObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
+    observablePlayed: Observable<boolean>;
+    passTurn: boolean = false;
+    exchangeLetters: boolean = false;
     intervalId: number = 0;
     time: number;
     isUserQuitGame: boolean;
@@ -41,6 +47,8 @@ export class UserService {
 
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
+        this.observableCommandToSend = this.commandtoSendObs.asObservable();
+        this.observablePlayed = this.playedObs.asObservable();
         this.vrSkipingTurn = false;
         this.endOfGameObs = this.endOfGameBehaviorSubject.asObservable();
         const first = this.chooseFirstToPlay();
@@ -112,10 +120,13 @@ export class UserService {
         else return !this.realUser.turnToPlay;
     }
     detectSkipTurnBtn(): boolean {
-        this.messageService.skipTurnIsPressed = true;
-        this.realUser.turnToPlay = false;
-        this.realUserTurnObs.next(this.realUser.turnToPlay);
-        this.checkForSixthSkip();
+        if (this.playMode === 'soloGame') {
+            this.messageService.skipTurnIsPressed = true;
+            this.realUser.turnToPlay = false;
+            this.realUserTurnObs.next(this.realUser.turnToPlay);
+            this.checkForSixthSkip();
+        } else this.passTurn = true;
+        this.playedObs.next(this.passTurn);
         return true;
     }
     userPlayed() {

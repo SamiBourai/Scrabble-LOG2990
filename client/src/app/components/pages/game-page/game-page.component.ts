@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 })
 export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     remainingLetters: number = 0;
-    soloMode: boolean = false;
+    soloMode: boolean = true;
     playersInGamePage: boolean = false;
     event: unknown;
     private numberOfLetterSubscription: Subscription;
@@ -37,16 +37,16 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit() {
         this.getLetter();
         switch (this.userService.playMode) {
-            case 'soloGame':
-                this.soloMode = true;
-                break;
             case 'createMultiplayerGame':
-                this.socketManagementService.emit('creatorInGamePage', undefined, this.userService.gameName);
+                this.soloMode = false;
                 this.multiplayerModeService.beginGame();
+
                 break;
             case 'joinMultiplayerGame':
-                this.socketManagementService.emit('guestInGamePage', undefined, this.userService.gameName);
+                this.soloMode = false;
+                this.socketManagementService.emit('guestInGamePage', { gameName: this.userService.gameName });
                 this.multiplayerModeService.beginGame();
+
                 break;
         }
         this.isUserEaselEmpty();

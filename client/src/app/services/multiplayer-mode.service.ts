@@ -1,8 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
-import { Vec2 } from '@app/classes/vec2';
+import { MessageServer } from '@app/classes/message-server';
+import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
+import { MessageService } from './message.service';
+import { ReserveService } from './reserve.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
 
@@ -12,60 +14,94 @@ import { UserService } from './user.service';
 export class MultiplayerModeService {
     gameStarted: boolean = false;
     guestCommand: ChatCommand;
-    constructor(private socketManagementService: SocketManagementService, private userService: UserService, private lettersService: LettersService) {}
+    first: boolean = true;
+    constructor(
+        private socketManagementService: SocketManagementService,
+        private userService: UserService,
+        private lettersService: LettersService,
+        private easelLogic: EaselLogiscticsService,
+        private reserveService: ReserveService,
+        private messageService: MessageService,
+    ) {}
 
     beginGame(): void {
         this.socketManagementService.listen('beginGame').subscribe((data) => {
-            const begin: any = data;
-            this.gameStarted = begin;
-            if (!this.userService.joinedUser.guestPlayer) {
-                this.socketManagementService.emit('chooseFirstToPlay', undefined, this.userService.gameName);
-            }
+            this.gameStarted = data.gameStarted ?? false;
         });
     }
-    play(playMethod: string): void {
-        if (this.userService.chatCommandToSend && this.userService.playMode !== 'soloGame') {
-            const command = {
-                word: this.userService.chatCommandToSend.word,
-                position: this.userService.chatCommandToSend.position,
-                direction: this.userService.chatCommandToSend.direction,
-                gameName: this.userService.gameName,
-            };
-            this.socketManagementService.emit(playMethod, undefined, undefined, command);
-            if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
-            else this.userService.realUser.turnToPlay = false;
+    play(playMethod: string, place: boolean): void {
+        if (place) {
+            if (this.userService.chatCommandToSend) {
+                this.socketManagementService.emit(playMethod, {
+                    command: this.userService.chatCommandToSend,
+                    gameName: this.userService.gameName,
+                    user: { name: this.userService.realUser.name, score: this.userService.realUser.score },
+                    guestPlayer: { name: this.userService.joinedUser.name, score: this.userService.joinedUser.score },
+                });
+                if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
+                else this.userService.realUser.turnToPlay = false;
+            }
+        } else if (this.userService.exchangeLetters || this.userService.passTurn) {
+            this.socketManagementService.emit('passTurn', { gameName: this.userService.gameName });
+            this.userService.exchangeLetters = false;
+            this.userService.passTurn = false;
         }
+        this.sendReserve();
     }
     getPlayedCommand(playedMethod: string) {
         this.socketManagementService.listen(playedMethod).subscribe((data) => {
-            const command: any = data;
-            this.guestCommand = command;
+            this.guestCommand = data.command ?? { word: 'errorServer', position: { x: 1, y: 1 }, direction: 'h' };
             this.lettersService.placeLettersWithDirection(this.guestCommand);
             if (playedMethod === 'guestUserPlayed') {
                 this.userService.realUser.turnToPlay = true;
+                this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
             } else {
                 this.userService.realUser.turnToPlay = false;
+                this.userService.realUser.score = data.user?.score ?? 0;
             }
             this.userService.firstTurn = false;
+            this.updateReserve();
         });
     }
-    sendGridToJoiner(arrayOfBonusBox: Vec2[][]): void {
-        console.log('shuidans send');
-        const bonusArray = { gameName: this.userService.gameName, arrayOfBonusBox };
-        this.socketManagementService.emit('randomBonusActivated', undefined, undefined, bonusArray);
-    }
-    receiveGridFromCreator(): Vec2[][] {
-        console.log('shui dans receive');
-        let bonusBoxArray = new Array<Vec2[]>();
-        this.socketManagementService.emit('guestRandomBonusBox', undefined, this.userService.gameName, undefined);
-        this.socketManagementService.listen('guestRandomBonusBox').subscribe((data) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const arrayRecieved: any = data;
-            bonusBoxArray = arrayRecieved;
-            console.log('mon array', bonusBoxArray);
-            console.log('data', data);
-            return bonusBoxArray;
+    sendReserve() {
+        this.socketManagementService.emit('updateReserve', {
+            gameName: this.userService.gameName,
+            reserve: this.reserveService.letters,
         });
-        return bonusBoxArray;
+    }
+    updateReserve() {
+        this.socketManagementService.emit('getReserve', { gameName: this.userService.gameName });
+        this.socketManagementService.listen('updateReserve').subscribe((data) => {
+            this.reserveService.letters = data.reserve ?? this.reserveService.letters;
+            this.reserveService.reserveSize = this.reserveService.letters.length;
+            if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
+                this.first = false;
+                this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
+                this.sendReserve();
+            }
+        });
+    }
+    setGuestPlayerInfromation(guestUserName: string) {
+        this.userService.initiliseUsers(false);
+        this.userService.joinedUser.name = guestUserName;
+        this.userService.joinedUser.guestPlayer = false;
+    }
+    setGameInformations(room: MessageServer, playerName: string) {
+        this.socketManagementService.emit('joinRoom', { gameName: room.gameName, guestPlayer: { name: playerName } });
+        this.userService.initiliseUsers(false);
+        this.userService.realUser.name = room.user?.name ?? 'default';
+        this.userService.joinedUser.name = playerName;
+        this.userService.joinedUser.guestPlayer = true;
+        this.userService.gameName = room.gameName;
+    }
+    getMessageSend(method: string) {
+        this.socketManagementService.listen(method).subscribe((data) => {
+            this.messageService.textMessage = data.message ?? this.messageService.textMessage;
+            this.messageService.newTextMessage = true;
+            this.messageService.newTextMessageObs.next(this.messageService.newTextMessage);
+        });
+    }
+    sendMessage(method: string) {
+        this.socketManagementService.emit(method, { gameName: this.userService.gameName, message: this.messageService.textMessage });
     }
 }

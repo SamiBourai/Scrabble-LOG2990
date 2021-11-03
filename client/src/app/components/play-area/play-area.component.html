@@ -1,17 +1,23 @@
-<!-- <div [hidden]="!isGameOver()" *ngIf="isGameOver()">
-    <mat-card-title>La partie est fini</mat-card-title>
-    <mat-card-subtitle>Feliciation nanak </mat-card-subtitle>
-</div> -->
-
-<div (contextmenu)="mousHandelingService.easelClicked($event)" (click)="mousHandelingService.easelClicked($event)"
-    oncontextmenu="return false" class="grid-container" fxLayout="column">
+<div
+    (contextmenu)="mousHandelingService.easelClicked($event)"
+    (click)="mousHandelingService.easelClicked($event)"
+    oncontextmenu="return false"
+    class="grid-container"
+    fxLayout="column"
+>
     <div class="button-up" fxLayout="row">
         <div class="div">
             <button mat-raised-button color="accent" (click)="quitGame()">Quitter la partie</button>
         </div>
         <div class="div">
-            <button #skipTurn id="btn" mat-raised-button color="primary"
-                [disabled]="userService.realUser.turnToPlay === false" (click)="detectSkipTurnBtn()">
+            <button
+                #skipTurn
+                id="btn"
+                mat-raised-button
+                color="primary"
+                [disabled]="disableButton('passTurn')"
+                (click)="detectSkipTurnBtn()"
+            >
                 Passer son tour
             </button>
             <button mat-fab color="accent" [disabled]="userService.realUser.turnToPlay === false"
@@ -36,16 +42,24 @@
 </div>
 
 <div class="swapSection">
-    <button mat-raised-button color="primary" id="swapButton"
-        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
-        (click)="mousHandelingService.swapByClick($event)">
+    <button
+        mat-raised-button
+        color="primary"
+        id="swapButton"
+        [disabled]="disableButton('exchange')"
+        (click)="mousHandelingService.swapByClick($event)"
+    >
         echanger
     </button>
 </div>
 <div class="cancelSection">
-    <button mat-raised-button color="primary" id="cancelButton"
-        [disabled]="!userService.realUser.turnToPlay || mousHandelingService.isLettersArrayEmpty()"
-        (click)="mousHandelingService.cancelByClick()">
+    <button
+        mat-raised-button
+        color="primary"
+        id="cancelButton"
+        [disabled]="disableButton('cancel')"
+        (click)="mousHandelingService.cancelByClick()"
+    >
         annuler
     </button>
 </div>

@@ -91,9 +91,6 @@
     <mat-card class="game-Configuration-Card">
         <mat-card-title>Configuration de la partie multijoueurs </mat-card-title>
     </mat-card>
-    <button mat-raised-button (click)="isOptional = !isOptional">
-        {{ !isOptional ? 'Enable optional steps' : 'Disable optional steps' }}
-    </button>
     <mat-stepper linear #stepper>
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
@@ -101,7 +98,7 @@
                 <mat-form-field appearance="fill">
                     <mat-label>Nom</mat-label>
                     <input #message2 matInput placeholder="entrez votre prenom" formControlName="userNameMutiplayer"
-                        [(ngModel)]="creatorName" required maxlength="15" />
+                        [(ngModel)]="playerName" required maxlength="15" />
                     <mat-hint align="end"> {{ message2.value?.length }} / 15</mat-hint>
                     <mat-hint class="no-error-hint" align="start"
                         *ngIf="firstFormGroup.controls.userNameMutiplayer.valid; else invalidInput">
@@ -187,8 +184,8 @@
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>Salle d'attente</ng-template>
-            <div *ngIf="game; else elseBlock">
-                <p class="multiplayerP">vous allez jouer contre l'utilisateur {{ game.joinedUserName }}</p>
+            <div *ngIf="guestName; else elseBlock">
+                <p class="multiplayerP">vous allez jouer contre l'utilisateur {{ guestName}}</p>
                 <button mat-button (click)="beginGame(true)" routerLink="/game" mat-dialog-close>Démarer la
                     partie</button>
                 <button mat-button (click)="beginGame(false)" mat-dialog-close>Annuler</button>
@@ -215,24 +212,21 @@
     <mat-card class="game-Configuration-Card">
         <mat-card-title>Joindre une partie</mat-card-title>
     </mat-card>
-    <button mat-raised-button (click)="isOptional = !isOptional">
-        {{ !isOptional ? 'Enable optional steps' : 'Disable optional steps' }}
-    </button>
     <mat-stepper linear #stepper>
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
                 <ng-template matStepLabel>Remplissez votre nom</ng-template>
                 <mat-form-field appearance="fill">
                     <mat-label>Nom</mat-label>
-                    <input #messagejoigner matInput placeholder="Last name, First name"
-                        formControlName="joignerFormControl" [(ngModel)]="joinedUserName" required />
-                    <mat-hint align="end"> {{ messagejoigner.value?.length }} / 15</mat-hint>
+                    <input #messageGuest matInput placeholder="Last name, First name"
+                        formControlName="guestFormControl" [(ngModel)]="playerName" required />
+                    <mat-hint align="end"> {{ messageGuest.value?.length }} / 15</mat-hint>
 
                     <mat-hint class="no-error-hint" align="start"
-                        *ngIf="firstFormGroup.controls.joignerFormControl.valid; else joignerInputInvalid">
+                        *ngIf="firstFormGroup.controls.guestFormControl.valid; else guestInputInvalid">
                         &#9679; Le nom entré est valide !!! <br />
                     </mat-hint>
-                    <ng-template #joignerInputInvalid>
+                    <ng-template #guestInputInvalid>
                         <mat-hint align="start" class="error-hint">
                             &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
                             &#9679; Le nom ne doit pas contenir d'espace <br />
@@ -261,7 +255,7 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let room of rooms">
-                                <td class="contentCell" (click)="joinGame(room)">{{ room.clientName }}</td>
+                                <td class="contentCell" (click)="joinGame(room)">{{ room.user?.name ?? 'default'}}</td>
                                 <td class="contentCell" (click)="joinGame(room)">{{ room.gameName }}</td>
                             </tr>
                         </tbody>

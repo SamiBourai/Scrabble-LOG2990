@@ -5,6 +5,7 @@ import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { ModalUserVsPlayerComponent } from '../modals/modal-user-vs-player/modal-user-vs-player.component';
@@ -38,9 +39,17 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         public userService: UserService,
         private readonly pvs: ValidWordService,
         private dialogRef: MatDialog,
+        private multiplayer: MultiplayerModeService,
     ) {
-        if (this.userService.playMode !== 'joinMultiplayerGame') this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
-        else this.easelLogisticsService.fillEasel(this.userService.joinedUser.easel, true);
+        if (this.userService.playMode !== 'joinMultiplayerGame') {
+            this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
+            if (this.userService.playMode === 'createMultiplayerGame') {
+                this.multiplayer.sendReserve();
+                this.multiplayer.updateReserve();
+            }
+        } else {
+            this.multiplayer.updateReserve();
+        }
     }
     @HostListener('window:keydown', ['$event'])
     spaceEvent(event: KeyboardEvent) {
@@ -56,13 +65,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     this.mousHandelingService.resetSteps();
                     this.mousHandelingService.previousClick = { x: -1, y: -1 };
                     break;
-                // case 'left arrow':
-                //     this.mousHandelingService.moveLeft();
-                //     break;
-                // case 'right arrow':
-                //     console.log('right');
-                //     this.mousHandelingService.moveRight();
-                //     break;
                 default:
                     if (this.lettersService.tiles[this.gridService.previousTile.y - 1][this.gridService.previousTile.x - 1] === NOT_A_LETTER) {
                         this.mousHandelingService.keyBoardEntryManage(event.key);
@@ -114,5 +116,15 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     quitGame() {
         window.location.assign('/home');
+    }
+    disableButton(event: string): boolean {
+        if (event !== 'passTurn') {
+            if (this.userService.playMode !== 'joinMultiplayerGame') {
+                return !this.userService.realUser.turnToPlay || this.mousHandelingService.isLettersArrayEmpty();
+            } else return this.userService.realUser.turnToPlay || this.mousHandelingService.isLettersArrayEmpty();
+        } else {
+            if (this.userService.playMode !== 'joinMultiplayerGame') return !this.userService.realUser.turnToPlay;
+            else return this.userService.realUser.turnToPlay;
+        }
     }
 }

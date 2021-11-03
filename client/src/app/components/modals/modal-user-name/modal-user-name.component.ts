@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Game } from '@app/classes/game';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
+import { MessageServer } from '@app/classes/message-server';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
@@ -25,18 +25,18 @@ export class ModalUserNameComponent implements OnInit {
     isOptional = false;
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     userNameMutiplayer: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
-    joignerFormControl: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
+    guestFormControl: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     gameNameMutiplayer: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
-    createdGame: Game = { clientName: 'YAN', gameName: 'GAME1' };
-    joinedUserName: string = '';
-    creatorName: string = '';
+    aleatoryBonus: boolean = false;
+    playerName: string = '';
+    guestName: string = '';
     gameName: string = '';
-    rooms: any;
-    game: any;
     timeCounter: number = DEFAULT_TIME;
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     isRandom = false;
+    rooms: MessageServer[];
+    game: MessageServer;
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
     requestAccepted: boolean = false;
@@ -48,6 +48,7 @@ export class ModalUserNameComponent implements OnInit {
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
         private timeService: TimeService,
+        private multiplayerModeService: MultiplayerModeService,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
@@ -113,17 +114,14 @@ export class ModalUserNameComponent implements OnInit {
                     gameNameMutiplayer: new FormControl(''),
                 });
                 this.socketManagementService.listen('userJoined').subscribe((room) => {
-                    this.game = room;
-                    this.userService.initiliseUsers(this.soloMode);
-                    this.userService.joinedUser.name = this.game.joinedUserName;
-                    this.userService.joinedUser.guestPlayer = false;
+                    this.guestName = room.guestPlayer?.name ?? 'default';
+                    this.multiplayerModeService.setGuestPlayerInfromation(this.guestName);
                 });
                 break;
             case 'joinMultiplayerGame':
-                this.createMultiplayerGame = false;
                 this.joinMultiplayerGame = true;
                 this.firstFormGroup = this.formBuilder.group({
-                    joignerFormControl: new FormControl('', [
+                    guestFormControl: new FormControl('', [
                         Validators.pattern('^[A-Za-z0-9]+$'),
                         Validators.required,
                         Validators.minLength(MIN_LENGTH),
@@ -132,16 +130,11 @@ export class ModalUserNameComponent implements OnInit {
                 });
                 this.generateRooms();
                 this.gameAccepted();
-                this.socketManagementService.listen('randomBonusActivited').subscribe((data) => {
-                    const bonus: any = data;
-                    this.userService.isBonusBox = bonus;
-                });
                 break;
         }
     }
     beginGame(response: boolean): void {
-        const gamerResponse = { gameName: this.game.gameName, accepted: response };
-        this.socketManagementService.emit('acceptGame', undefined, undefined, gamerResponse);
+        this.socketManagementService.emit('acceptGame', { gameName: this.gameName, gameAccepted: response });
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -157,56 +150,46 @@ export class ModalUserNameComponent implements OnInit {
         this.disconnectUser();
         this.name = this.userNameMutiplayer.value;
         this.openDialogOfVrUser();
-        // this.timeService.timeMultiplayer(this.time);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createGame(): void {
-        this.createdGame = { clientName: this.creatorName, gameName: this.gameName };
-        const gameCongif = { clientName: this.creatorName, gameName: this.gameName, bonusBox: this.userService.isBonusBox };
-        this.socketManagementService.emit('createGame', undefined, undefined, gameCongif);
-        this.userService.realUser.name = this.createdGame.clientName;
+        this.socketManagementService.emit('createGame', {
+            user: { name: this.playerName },
+            gameName: this.gameName,
+            timeConfig: { min: this.time.min, sec: this.time.sec },
+            aleatoryBonus: this.aleatoryBonus,
+        });
+        this.userService.realUser.name = this.playerName;
         this.userService.gameName = this.gameName;
     }
     generateRooms(): void {
         this.socketManagementService.emit('generateAllRooms');
-        this.socketManagementService.listen('createdGames').subscribe((data) => {
+        this.socketManagementService.getRooms().subscribe((data) => {
             this.rooms = data;
             if (this.rooms.length === 0) this.isEmptyRoom = true;
             else this.isEmptyRoom = false;
         });
     }
     disconnectUser(): void {
-        this.socketManagementService.emit('disconnect', undefined, 'user gave up the game');
+        this.socketManagementService.emit('disconnect', { gameName: this.gameName, reason: 'le joueur a refusé de jouer' });
     }
-    joinGame(room: Game): void {
-        room = { clientName: room.clientName, gameName: room.gameName, joinedUserName: this.joinedUserName, bonus: room.bonus };
-        this.socketManagementService.emit('joinRoom', room);
-        this.userService.initiliseUsers(this.soloMode);
-        this.userService.realUser.name = room.clientName;
-        this.userService.joinedUser.name = this.joinedUserName;
-        this.userService.joinedUser.guestPlayer = true;
-        this.userService.gameName = room.gameName;
-        this.userService.isBonusBox = room.bonus ?? false;
+    joinGame(room: MessageServer): void {
+        this.multiplayerModeService.setGameInformations(room, this.playerName);
         this.roomJoined = true;
+        this.aleatoryBonus = room.aleatoryBonus ?? false;
     }
     gameAccepted(): void {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {
-            const acceptGame: any = data;
-            this.requestAccepted = acceptGame;
-            console.log('zebi', this.requestAccepted);
+            this.requestAccepted = data.gameAccepted ?? false;
         });
     }
-
-    // setMultiplayerGame() {
-    //     this.timeService.timeMultiplayer(this.time);
-    // }
-
     onSubmitUserName(): void {
         this.openDialogOfVrUser();
         this.storeNameInLocalStorage();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     randomBonusActivated(event: any): void {
+        // type event essaye avec bool;
         this.chosenMode = event.target.value;
         if (this.chosenMode === this.modes[0]) {
             this.userService.isBonusBox = true;
@@ -216,12 +199,3 @@ export class ModalUserNameComponent implements OnInit {
         this.userService.isBonusBox = false;
     }
 }
-// chooseFirstPlayer(): void {
-//     this.socketManagementService.listen('chooseFirstToPlay').subscribe((data) => {
-//         const firstPlayer: any = data;
-//         this.userService.realUser.firstToPlay = firstPlayer;
-//         this.userService.realUser.turnToPlay = firstPlayer;
-//         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
-//         this.firstPlayerChoosed = true;
-//     });
-// }
