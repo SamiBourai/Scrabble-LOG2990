@@ -72,10 +72,12 @@ export class SocketManagerService {
                 if (this.games.has(game.gameName)) this.games.get(game.gameName).timer.playerPlayed = true;
             });
             socket.on('updateReserve', (message: MessageClient) => {
+                console.log(message.reserve?.length, 'reserve dans get');
                 this.games.get(message.gameName).reserve.letters = message.reserve ?? this.games.get(message.gameName).reserve.letters;
             });
             socket.on('getReserve', (game: MessageClient) => {
-                game.reserve = this.games.get(game.gameName).reserve.letters;
+                game.reserve = this.games.get(game.gameName).reserve.letters.slice();
+                console.log(game.reserve?.length, 'reserve dans get');
                 this.sio.to(game.gameName).emit('updateReserve', game);
             });
             socket.on('verifyWord', (message: MessageClient) => {
