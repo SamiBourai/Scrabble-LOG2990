@@ -85,4 +85,8 @@ export class TimeService {
             }
         });
     }
+    setGameTime(gameTime: GameTime) {
+        this.timeUser = { min: gameTime.min, sec: gameTime.sec };
+        this.timeVrPlayer = { min: gameTime.min, sec: gameTime.sec };
+    }
 }

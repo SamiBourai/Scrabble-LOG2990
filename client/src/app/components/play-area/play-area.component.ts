@@ -91,9 +91,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.easelContext = this.easelCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.drawCentralTile();
         this.gridService.drawCoor();
-        if (this.userService.isBonusBox) {
-            this.gridService.drawBonusBox();
-        } else this.gridService.drawBox();
+        this.gridService.drawBox(this.userService.isBonusBox);
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
@@ -112,5 +110,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent, { disableClose: true });
+    }
+
+    quitGame() {
+        window.location.assign('/home');
     }
 }

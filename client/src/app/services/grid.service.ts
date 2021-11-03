@@ -30,9 +30,6 @@ import {
     V_ARROW,
 } from '@app/constants/constants';
 import { LettersService } from './letters.service';
-import { MultiplayerModeService } from './multiplayer-mode.service';
-import { SocketManagementService } from './socket-management.service';
-import { UserService } from './user.service';
 
 @Injectable({
     providedIn: 'root',
@@ -52,12 +49,7 @@ export class GridService {
     private direction: string = H_ARROW;
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
-    constructor(
-        private letterService: LettersService,
-        private userService: UserService,
-        private multiplayerService: MultiplayerModeService,
-        private socketManagementService: SocketManagementService,
-    ) {}
+    constructor(private letterService: LettersService) {}
 
     drawGrid() {
         this.gridContext.beginPath();
@@ -112,25 +104,9 @@ export class GridService {
         }
     }
 
-    drawBonusBox() {
-        // triple letter score&& this.userService.playMode === 'createMultiplayerGame'
-        if (this.userService.playMode === 'createMultiplayerGame') {
-            this.randomizeBonuses();
-            this.multiplayerService.sendGridToJoiner(this.arrayOfBonusBox);
-            this.drawBox();
-        } else this.drawBonusGuestUser();
-    }
-    drawBonusGuestUser(): void {
-        this.socketManagementService.emit('guestRandomBonusBox', undefined, this.userService.gameName, undefined);
-        this.socketManagementService.listen('guestRandomBonusBox').subscribe((data) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const arrayRecieved: any = data;
-            this.arrayOfBonusBox = arrayRecieved;
-            console.log('data', data);
-            this.drawBox();
-        });
-    }
-    drawBox(): void {
+    drawBox(_isBonusBox: boolean): void {
+        if (_isBonusBox) this.randomizeBonuses();
+
         this.gridContext.font = 'bold 15px system-ui';
         for (const v of this.arrayOfBonusBox[0]) {
             this.gridContext.fillStyle = 'red';

@@ -27,18 +27,66 @@
                     <mat-icon matSuffix mat-icon-button color="primary">info</mat-icon>
                 </mat-form-field>
             </div>
+            <br />
+            <hr>
+            <div class="container">
+                <div fxLayout="row">
+                    <div>
+                        <p class="multiplayerP-btn">Temps par tour :</p>
+                    </div>
+
+                    <div class="time-config">
+                        <button #minusBtn class="btn btn-primary" [disabled]="this.timeCounter === 0"
+                            (click)="onClickInMinusButton($event)">
+                            -
+                        </button>
+                    </div>
+                    <div class="time-config">
+                        <p class="form-control">{{ this.time.min | number: '2.0-0' }}</p>
+                    </div>
+
+                    <div class="time-config">
+                        <p class="form-control">{{ ':' }}</p>
+                    </div>
+                    <div>
+                        <p class="form-control">{{ this.time.sec | number: '2.0-0' }}</p>
+                    </div>
+                    <div class="time-config">
+                        <button #addBtn class="btn btn-primary" [disabled]="this.timeCounter === 9"
+                            (click)="onClickInAddButton($event)">
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <p><span class="multiplayerP">Mode de jeu :</span></p>
+            <div class="radio" *ngFor="let mode of modes">
+                <label>
+                    <input type="radio" name="gameMode" [value]="mode" checked
+                        (change)="randomBonusActivated($event)" />
+                    {{ mode }}
+                </label>
+            </div>
+            <p>
+                <span class="multiplayerP">Vous avez séléctionner le mode de jeu </span> <b
+                    class="multiplayerP-chosen">{{ chosenMode }}</b>
+            </p>
+            <hr />
             <mat-card-actions>
                 <div class="play-btn">
-                    <button mat-raised-button mat-dialog-close>Annuler</button>
+                    <button mat-raised-button mat-dialog-close
+                        (click)="this.userService.isBonusBox=false">Annuler</button>
                     <button mat-raised-button color="primary" [disabled]="userFormGroup.controls.userName.invalid"
                         mat-dialog-close type="submit">
                         Suivant
                     </button>
                 </div>
             </mat-card-actions>
+
         </form>
     </mat-card>
 </div>
+<!-- ----------------------------Multiplayer game--------------------- -->
 <div class="div" *ngIf="createMultiplayerGame">
     <mat-card class="game-Configuration-Card">
         <mat-card-title>Configuration de la partie multijoueurs </mat-card-title>
@@ -112,11 +160,13 @@
                     <span class="multiplayerP">Vous avez séléctionner le mode de jeu </span> <b
                         class="multiplayerP-chosen">{{ chosenMode }}</b>
                 </p>
-                <!-- <mat-slide-toggle [(ngModel)]="isRandom" #switchBon (change)="(isRandom)">Bonus Aléatoire!</mat-slide-toggle> <br /> -->
                 <hr />
 
                 <div>
-                    <button mat-raised-button color="primary" matStepperNext type="submit">Suivant</button>
+                    <button mat-raised-button mat-dialog-close
+                        (click)="this.userService.isBonusBox=false">Annuler</button>
+                    <button mat-raised-button color="primary" matStepperNext type="submit"
+                        [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid">Suivant</button>
                 </div>
             </form>
         </mat-step>
@@ -129,7 +179,8 @@
                         [(ngModel)]="gameName" required />
                 </mat-form-field>
                 <div>
-                    <button mat-button matStepperPrevious mat-raised-button color="accent">Retour</button>
+                    <button mat-button matStepperPrevious mat-raised-button (click)="this.chosenMode = this.modes[1]"
+                        color="accent">Retour</button>
                     <button mat-raised-button color="primary" matStepperNext (click)="createGame()">Suivant</button>
                 </div>
             </form>
@@ -158,6 +209,7 @@
         </mat-step>
     </mat-stepper>
 </div>
+<!-- ----------------------------joiner game--------------------- -->
 
 <div class="div" *ngIf="joinMultiplayerGame">
     <mat-card class="game-Configuration-Card">
@@ -189,6 +241,8 @@
                     </ng-template>
 
                 </mat-form-field>
+                <br><br>
+                <hr>
                 <div>
                     <button mat-raised-button color="primary" matStepperNext>Suivant</button>
                 </div>

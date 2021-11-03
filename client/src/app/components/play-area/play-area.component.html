@@ -7,7 +7,7 @@
     oncontextmenu="return false" class="grid-container" fxLayout="column">
     <div class="button-up" fxLayout="row">
         <div class="div">
-            <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
+            <button mat-raised-button color="accent" (click)="quitGame()">Quitter la partie</button>
         </div>
         <div class="div">
             <button #skipTurn id="btn" mat-raised-button color="primary"

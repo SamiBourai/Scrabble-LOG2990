@@ -18,8 +18,14 @@ export const TIME_CHOICE: GameTime[] = [
     { min: 4, sec: 30 },
     { min: 5, sec: 0 },
 ];
+export const MODES: string[] = ['Aléatoire', 'Normal'];
 export const DEFAULT_TIME = 1;
+export const DEFAULT_MODE = 1;
 // user-service
+export const FIRST_NAME = 'Bobby1234';
+export const SECOND_NAME = 'Martin1234';
+export const THIRD_NAME = 'VirtualPlayer1234';
+export const MAX_PLAYER = 3;
 export const NUMBER_COMPARED = 20;
 export const NUMBER_TO_COMPARE = 10;
 export const MINUTE_TURN = 59;

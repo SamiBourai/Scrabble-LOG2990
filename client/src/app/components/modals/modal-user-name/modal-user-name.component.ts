@@ -5,8 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Game } from '@app/classes/game';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
-import { DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, TIME_CHOICE } from '@app/constants/constants';
+import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
 import { SocketManagementService } from '@app/services/socket-management.service';
+import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -34,23 +35,23 @@ export class ModalUserNameComponent implements OnInit {
     rooms: any;
     game: any;
     timeCounter: number = DEFAULT_TIME;
-    time: GameTime = TIME_CHOICE[this.timeCounter];
+    time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     isRandom = false;
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
     requestAccepted: boolean = false;
-    modes: string[] = ['Aléatoire', 'Normal'];
-    chosenMode: string = this.modes[1];
+    modes: string[] = MODES;
+    chosenMode: string = MODES[DEFAULT_MODE];
     constructor(
         private dialogRef: MatDialog,
-        private userService: UserService,
+        public userService: UserService,
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
+        private timeService: TimeService,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
         event.preventDefault();
-
         if (this.timeCounter === 0) {
             return;
         } else if (this.timeCounter < 0) {
@@ -59,11 +60,11 @@ export class ModalUserNameComponent implements OnInit {
             this.timeCounter--;
             this.time = TIME_CHOICE[this.timeCounter];
         }
+        this.timeService.setGameTime(this.time);
     }
     @HostListener('document:click.addBtn', ['$event'])
     onClickInAddButton(event: Event) {
         event.preventDefault();
-
         if (this.timeCounter === TIME_CHOICE.length) {
             return;
         } else if (this.timeCounter > TIME_CHOICE.length) {
@@ -73,6 +74,7 @@ export class ModalUserNameComponent implements OnInit {
             this.timeCounter++;
             this.time = TIME_CHOICE[this.timeCounter];
         }
+        this.timeService.setGameTime(this.time);
     }
     ngOnInit(): void {
         switch (this.userService.playMode) {
@@ -153,6 +155,8 @@ export class ModalUserNameComponent implements OnInit {
         this.soloMode = true;
         this.createMultiplayerGame = false;
         this.disconnectUser();
+        this.name = this.userNameMutiplayer.value;
+        this.openDialogOfVrUser();
         // this.timeService.timeMultiplayer(this.time);
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -198,17 +202,18 @@ export class ModalUserNameComponent implements OnInit {
     // }
 
     onSubmitUserName(): void {
-        console.log('forme : ' + this.name);
         this.openDialogOfVrUser();
         this.storeNameInLocalStorage();
-        console.log('salut mec');
     }
 
     randomBonusActivated(event: any): void {
         this.chosenMode = event.target.value;
         if (this.chosenMode === this.modes[0]) {
             this.userService.isBonusBox = true;
+            return;
         }
+        this.chosenMode = this.modes[DEFAULT_MODE];
+        this.userService.isBonusBox = false;
     }
 }
 // chooseFirstPlayer(): void {

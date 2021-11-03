@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/EaselObject';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
-import { PARAMETERS_OF_SWAP, SIX_TURN } from '@app/constants/constants';
+import { FIRST_NAME, MAX_PLAYER, PARAMETERS_OF_SWAP, SECOND_NAME, SIX_TURN, THIRD_NAME } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
 import { VirtualPlayerService } from './virtual-player.service';
@@ -14,32 +14,31 @@ export class UserService {
     // alors ici on deux option : c'est soit on
     // Set strictNullChecks=false in tsconfig.json.
     //  ou Declare your variable type as any
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     playMode: string;
-    // counter: GameTime = { min: 0, sec: MINUTE_TURN };
     passesCounter: number = 0;
     realUser: RealUser;
     joinedUser: JoinedUser;
     vrUser: VrUser;
     gameName: string;
     chatCommandToSend: ChatCommand;
-    intervalId = 0;
+    intervalId: number = 0;
     time: number;
     isUserQuitGame: boolean;
-    isBonusBox: boolean = false;
+    isBonusBox: boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     observableTurnToPlay: Observable<boolean>;
     reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    vrPlayerNames: string[] = ['Bobby1234', 'Martin1234', 'Momo1234'];
+    vrPlayerNames: string[] = [FIRST_NAME, SECOND_NAME, THIRD_NAME];
     endOfGameCounter: number = 0;
-    endOfGame: boolean = false;
+    endOfGame: boolean;
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     endOfGameObs: Observable<boolean>;
     firstTurn: boolean = true;
+
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
         this.vrSkipingTurn = false;
@@ -87,9 +86,9 @@ export class UserService {
         return Math.floor(Math.random() * max);
     }
     chooseRandomName(): string {
-        let randomInteger = 0;
+        let randomInteger = this.getRandomInt(MAX_PLAYER);
         for (;;) {
-            randomInteger = this.getRandomInt(3);
+            randomInteger = this.getRandomInt(MAX_PLAYER);
             if (this.vrPlayerNames[randomInteger] === localStorage.getItem('userName')) {
                 continue;
             } else break;
