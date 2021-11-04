@@ -60,22 +60,24 @@ export class MultiplayerModeService {
         });
     }
     sendReserve() {
-        this.socketManagementService.emit('updateReserve', undefined, undefined, {
+        this.socketManagementService.emit('updateReserveInServer', undefined, undefined, {
             gameName: this.userService.gameName,
-            letters: this.reserveService.letters,
+            reserveObject: { letters: this.reserveService.letters, size: this.reserveService.size },
         });
     }
     updateReserve() {
-        this.socketManagementService.emit('getReserve', undefined, this.userService.gameName);
-        this.socketManagementService.listen('updateReserve').subscribe((data) => {
+        setTimeout(() => {
+            console.log('nous la');
+        }, 5000);
+        this.socketManagementService.emit('getReserveFromServer', undefined, this.userService.gameName);
+        this.socketManagementService.listen('updateReserveInClient').subscribe((data) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const guestReserne: any = data;
-            this.reserveService.letters = guestReserne;
-            this.reserveService.reserveSize = this.reserveService.letters.length;
+            const guestReserve: any = data;
+            console.log('client newReserve=: ' + guestReserve.size);
+            this.reserveService.redefineReserve(guestReserve.letters, guestReserve.size);
             if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
                 this.first = false;
                 this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
-                this.sendReserve();
             }
         });
     }

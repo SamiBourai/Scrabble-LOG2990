@@ -29,6 +29,7 @@ export class UserService {
     exchangeLetters: boolean = false;
     intervalId = 0;
     time: number;
+
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);

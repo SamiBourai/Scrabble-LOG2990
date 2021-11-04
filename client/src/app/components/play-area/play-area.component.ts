@@ -51,10 +51,11 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
             if (this.userService.playMode === 'createMultiplayerGame') {
                 this.multiplayer.sendReserve();
+                setTimeout(() => {
+                    console.log('nous la');
+                }, 8000);
                 this.multiplayer.updateReserve();
             }
-        } else {
-            this.multiplayer.updateReserve();
         }
     }
     @HostListener('window:keydown', ['$event'])

@@ -70,14 +70,16 @@ export class SocketManagerService {
             socket.on('passTurn', (gameName) => {
                 if (this.games.has(gameName)) this.games.get(gameName).timer.playerPlayed = true;
             });
-            socket.on('updateReserve', (reserve) => {
-                this.games.get(reserve.gameName).reserve.letters = reserve.letters;
-                this.games.get(reserve.gameName).lettersObs.next(this.games.get(reserve.gameName).reserve.letters);
+            socket.on('updateReserveInServer', (reserve) => {
+                this.games.get(reserve.gameName).reserveServer = {
+                    letters: reserve.reserveObject.letters,
+                    size: reserve.reserveObject.size,
+                };
+                console.log(this.games.get(reserve.gameName).reserveServer);
+                // this.games.get(reserve.gameName).lettersObs.next(this.games.get(reserve.gameName).reserve.letters);
             });
-            socket.on('getReserve', (gameName) => {
-                this.games.get(gameName).lettersObs.subscribe((value: any) => {
-                    this.sio.to(gameName).emit('updateReserve', value);
-                });
+            socket.on('getReserveFromServer', (gameName) => {
+                this.sio.to(gameName).emit('updateReserveInClient', this.games.get(gameName).reserveServer);
             });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);

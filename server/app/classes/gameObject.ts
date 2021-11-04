@@ -1,12 +1,14 @@
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
 import { Subject } from 'rxjs';
+import { LETTERS_RESERVE_QTY } from './constants';
 import { Letter } from './letters';
+import { ReserveObject } from './ReserveObject';
 export class GameObject {
     timeConfig = { min: 0, sec: 0 };
     gameName: string = '';
     timer: Timer;
-    reserve: Letter[] = [];
+    reserveServer: ReserveObject = { letters: new Map<Letter, number>(LETTERS_RESERVE_QTY), size: 100 };
     lettersObs: Subject<Letter[]> = new Subject<Letter[]>();
     aleatoryBonus: boolean = false;
     readyToPlay: boolean = false;
@@ -17,9 +19,9 @@ export class GameObject {
         this.aleatoryBonus = aleatoryBonus;
         this.creatorPlayer = { name: creatorPlayer.name, score: creatorPlayer.score, easelLetters: creatorPlayer.score };
         this.timeConfig = { min, sec };
-        this.lettersObs.subscribe((letters) => {
-            this.reserve = letters;
-        });
+        // this.lettersObs.subscribe((letters) => {
+        //     this.reserve = letters.slice();
+        // });
     }
     setTimer(creatorTurn: boolean) {
         this.timer = new Timer();

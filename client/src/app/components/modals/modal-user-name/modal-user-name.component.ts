@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialog } from '@angular/material/dialog';
 import { Game } from '@app/classes/game';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 
@@ -36,6 +37,7 @@ export class ModalUserNameComponent implements OnInit {
         private userService: UserService,
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
+        private multiplayerService: MultiplayerModeService,
     ) {}
     ngOnInit(): void {
         switch (this.userService.playMode) {
@@ -106,6 +108,10 @@ export class ModalUserNameComponent implements OnInit {
     }
     disconnectUser(): void {
         this.socketManagementService.emit('disconnect', undefined, 'user gave up the game');
+    }
+    getReserveToFillEasel() {
+        this.multiplayerService.updateReserve();
+        this.multiplayerService.sendReserve();
     }
     joinGame(room: Game): void {
         const joinedUserInformations = {

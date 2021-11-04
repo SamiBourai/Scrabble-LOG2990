@@ -2,7 +2,7 @@ import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
-import { BONUS_POINTS_50, EASEL_LENGTH, LETTERS_RESERVE_QTY } from '@app/constants/constants';
+import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
@@ -233,7 +233,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
     reserveLettersQuantity() {
         let s: string;
-        LETTERS_RESERVE_QTY.forEach((value: number, key: Letter) => {
+        this.reserveService.letters.forEach((value: number, key: Letter) => {
             s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
         });
