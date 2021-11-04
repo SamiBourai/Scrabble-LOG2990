@@ -109,6 +109,13 @@ export class SocketManagerService {
                 message.winner = this.games.get(message.gameName).guestPlayer.name;
                 this.sio.to(message.gameName).emit('getWinner', message);
             });
+            socket.on('userPassedInSoloMode', (message: MessageClient) => {
+                console.log('shui dans passse')
+                this.deleteRoom(message);
+                this.games.delete(message.gameName);
+                console.log(this.rooms)
+                socket.emit('createdGames', this.rooms);
+            });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);
