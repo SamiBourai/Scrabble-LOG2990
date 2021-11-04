@@ -7,7 +7,7 @@ import { MouseButton } from '@app/components/play-area/play-area.component';
 import { A, EASEL_POSITIONS } from '@app/constants/constants';
 import { MouseHandelingService } from './mouse-handeling.service';
 
-fdescribe('MouseHandelingService', () => {
+describe('MouseHandelingService', () => {
     let service: MouseHandelingService;
 
     beforeEach(() => {
@@ -99,7 +99,7 @@ fdescribe('MouseHandelingService', () => {
         // if (mouseEvent.button === 2) console.log("9awed");
         const spy = spyOn<any>(service, 'cancelByClick');
         const spy1 = spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
-        //const spy2 = spyOn<any>(service['userService'], 'getPlayerEasel');
+        // const spy2 = spyOn<any>(service['userService'], 'getPlayerEasel');
         service.easelClicked(mouseEvent);
         expect(spy).toHaveBeenCalled();
         expect(spy1).toHaveBeenCalled();
@@ -114,7 +114,7 @@ fdescribe('MouseHandelingService', () => {
         spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
         // if (mouseEvent.button === 2) console.log("9awed");
         const spy = spyOn<any>(service, 'cancelByClick');
-        //const spy2 = spyOn<any>(service['userService'], 'getPlayerEasel');
+        // const spy2 = spyOn<any>(service['userService'], 'getPlayerEasel');
         service.easelClicked(mouseEvent);
         expect(spy).toHaveBeenCalled();
         EASEL_POSITIONS[0].isClicked = false;

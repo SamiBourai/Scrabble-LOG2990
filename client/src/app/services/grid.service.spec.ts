@@ -51,7 +51,7 @@ describe('GridService', () => {
 
     it(' drawBonus', () => {
         const spy = spyOn(service.gridContext, 'fillRect');
-        service.drawBonusBox();
+        service['drawBonusBox']();
 
         expect(spy).toHaveBeenCalled();
     });
@@ -69,5 +69,4 @@ describe('GridService', () => {
         expect(spy).toHaveBeenCalled();
         service.resetBonusesToDefault();
     });
-
 });
