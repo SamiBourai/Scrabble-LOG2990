@@ -93,13 +93,13 @@ export class MouseHandelingService {
                 x: Math.ceil((event.offsetX - LEFTSPACE) / (BOARD_WIDTH / NB_TILES)),
                 y: Math.ceil((event.offsetY - TOPSPACE) / (BOARD_HEIGHT / NB_TILES)),
             };
-            if (this.mousePosition.x !== this.previousClick.x || this.mousePosition.y !== this.previousClick.y) {
-                this.resetSteps();
-                this.tempCanvasService.resetArrow();
-            }
+
             if (this.mousePosition.x === this.previousClick.x && this.mousePosition.y === this.previousClick.y) {
                 this.resetSteps();
                 this.tempCanvasService.switchArrow();
+            } else {
+                this.resetSteps();
+                this.tempCanvasService.resetArrow();
             }
             this.tempCanvasService.drawTileFocus(this.mousePosition);
             this.previousClick = { x: this.mousePosition.x, y: this.mousePosition.y };

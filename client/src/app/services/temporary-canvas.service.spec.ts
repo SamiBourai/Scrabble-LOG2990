@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { C, H_ARROW,  V_ARROW } from '@app/constants/constants';
+import { C, H_ARROW, V_ARROW } from '@app/constants/constants';
 
 import { TemporaryCanvasService } from './temporary-canvas.service';
 
@@ -20,6 +20,7 @@ describe('TemporaryCanvasService', () => {
         service.tempContext = ctxStub;
         service.focusContext = ctxStub;
         service.easelContext = ctxStub;
+        jasmine.getEnv().allowRespy(true);
     });
 
     it('should be created', () => {
@@ -122,16 +123,29 @@ describe('TemporaryCanvasService', () => {
         const pos: Vec2 = { x: 2, y: 4 };
         const s = 'bold 40px system-ui';
         service.focusContext.font = s;
+        spyOn<any>(service, 'findNextEmptyTile').and.returnValue(true);
         const spy = spyOn<any>(service, 'drawArrow');
         service.drawTileFocus(pos);
         expect(spy).toHaveBeenCalled();
     });
 
+    it('drawTileFocus if', () => {
+        const pos: Vec2 = { x: 2, y: 4 };
+        const s = 'bold 40px system-ui';
+        service.focusContext.font = s;
+        spyOn<any>(service, 'findNextEmptyTile').and.returnValue(false);
+        const spy = spyOn<any>(service, 'drawArrow');
+        service.drawTileFocus(pos);
+        expect(spy).not.toHaveBeenCalled();
+    });
+
     it('removeLastLetter', () => {
-        spyOn(service.tempContext, 'clearRect').and.callThrough();
+        //spyOn(service.tempContext, 'clearRect').and.callThrough();
+        service.previousTile = {x:10,y:10};
         const spy1 = spyOn<any>(service.tempContext, 'clearRect');
         service.removeLastLetter();
         expect(spy1).toHaveBeenCalled();
+        service.previousTile = {x:-1,y:-1}
     });
 
     it('removeLastLetter while', () => {
@@ -141,23 +155,30 @@ describe('TemporaryCanvasService', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    // it('findNextEmptyTile', () => {
-    //     spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(false);
-      
-    //     const spy = spyOn(service, 'addLetterFromGrid');
-        
-    //     service.findNextEmptyTile();
-        
-    //     expect(spy).toHaveBeenCalled()
-    // });
+    it('findNextEmptyTile', () => {
+        spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(false);
+        service.previousTile = {x:15,y:15}
+        const a = service.findNextEmptyTile();
+        expect(a).toBe(false);
+    });
 
-    //   it('findNextEmptyTile if', () => {
-    //     spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(false);
-    //     service.previousTile.x = 15;
-    //     const s = service.findNextEmptyTile();
-    //     expect(s).toBeFalse();
+    it('findNextEmptyTile', () => {
+        spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(false);
+        service.previousTile = {x:12,y:11};
+        let x = 2;
+         service.findNextEmptyTile();
+        expect(x).toBe(2);
+    });
 
-    // });
+    
+
+      it('findNextEmptyTile if', () => {
+        spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(true);
+        service.previousTile.x = 15;
+        const s = service.findNextEmptyTile();
+        expect(s).toBeTrue();
+
+    });
 
     it('addletterFromGrid', () => {
         const letter = 'c';
@@ -177,6 +198,16 @@ describe('TemporaryCanvasService', () => {
         const spy = spyOn<any>(service, 'drawRedFocus');
         service.placeTempLetter(letter);
         expect(spy).toHaveBeenCalled();
+    });
+
+    it('placetempLetter if', () => {
+        const letter: Letter = C;
+        const pos: Vec2 = { x: 2, y: 4 };
+        service.previousTile = pos;
+        spyOn<any>(service, 'findNextEmptyTile').and.returnValue(false);
+        const spy = spyOn<any>(service.tempContext, 'drawImage');
+        service.placeTempLetter(letter);
+        expect(spy).not.toHaveBeenCalled();
     });
 
     it('previousTile', () => {
