@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
-import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
+import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, ONE_SECOND_MS, TIME_CHOICE } from '@app/constants/constants';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
@@ -41,6 +41,7 @@ export class ModalUserNameComponent implements OnInit {
     requestAccepted: boolean = false;
     modes: string[] = MODES;
     chosenMode: string = MODES[DEFAULT_MODE];
+    chooseSoloMode: boolean = false;
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,
@@ -77,7 +78,8 @@ export class ModalUserNameComponent implements OnInit {
         this.timeService.setGameTime(this.time);
     }
     ngOnInit(): void {
-        switch (this.userService.playMode) {
+        this.userService.playMode = this.userService.firstMode;
+        switch (this.userService.firstMode) {
             case 'soloGame':
                 this.soloMode = true;
                 this.userFormGroup = new FormGroup({
@@ -90,6 +92,7 @@ export class ModalUserNameComponent implements OnInit {
                 });
 
                 this.userService.initiliseUsers(this.soloMode);
+
                 break;
             case 'createMultiplayerGame':
                 this.createMultiplayerGame = true;
@@ -134,6 +137,9 @@ export class ModalUserNameComponent implements OnInit {
     }
     beginGame(response: boolean): void {
         this.socketManagementService.emit('acceptGame', { gameName: this.gameName, gameAccepted: response });
+        if (!response) {
+            this.disconnectUser();
+        }
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -144,10 +150,13 @@ export class ModalUserNameComponent implements OnInit {
         localStorage.setItem('userName', this.name);
     }
     passInSoloMode(): void {
+        this.socketManagementService.emit('userPassedInSoloMode', { gameName: this.gameName });
         this.soloMode = true;
         this.createMultiplayerGame = false;
-        this.disconnectUser();
         this.name = this.userNameMutiplayer.value;
+        this.chooseSoloMode = true;
+        this.userService.playMode = 'soloGame';
+        this.userService.initiliseUsers(true);
         this.openDialogOfVrUser();
     }
     createGame(): void {
@@ -161,15 +170,19 @@ export class ModalUserNameComponent implements OnInit {
         this.userService.gameName = this.gameName;
     }
     generateRooms(): void {
-        this.socketManagementService.emit('generateAllRooms');
-        this.socketManagementService.getRooms().subscribe((data) => {
-            this.rooms = data;
-            if (this.rooms.length === 0) this.isEmptyRoom = true;
-            else this.isEmptyRoom = false;
-        });
+        const intervalId = setInterval(() => {
+            if (this.roomJoined) clearInterval(intervalId);
+            else this.socketManagementService.emit('generateAllRooms');
+            this.socketManagementService.getRooms().subscribe((data) => {
+                this.rooms = data;
+                if (this.rooms.length === 0) this.isEmptyRoom = true;
+                else this.isEmptyRoom = false;
+                console.log(this.rooms);
+            });
+        }, ONE_SECOND_MS);
     }
     disconnectUser(): void {
-        this.socketManagementService.emit('disconnect', { gameName: this.gameName, reason: 'le joueur a refusé de jouer' });
+        this.socketManagementService.emit('userCanceled', { gameName: this.gameName });
     }
     joinGame(room: MessageServer): void {
         this.multiplayerModeService.setGameInformations(room, this.playerName);

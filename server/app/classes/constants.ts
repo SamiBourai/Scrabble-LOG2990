@@ -8,6 +8,8 @@ export const NUMBER_COMPARED = 20;
 export const NUMBER_TO_COMPARE = 10;
 export const MINUTE_TURN = 59;
 export const VR_TIME_PASS_TURN = 20;
+
+export const PARAMETERS_OF_SWAP = 10;
 export const ONE_SECOND_MS = 1000;
 export const TIME_OF_VR = 17;
 export const ONE_MINUTE = 1;
@@ -264,7 +266,7 @@ export const LAST_INDEX_ORIENTATION = 3;
 // to be sure that the command !echanger is not given without parameters
 export const MIN_SWAP_LENGTH = 8;
 // for get the parametre of the command !echanger. ex: !echanger as => as
-export const PARAMETERS_OF_SWAP = 10;
+
 export const FOURTY = 40;
 
 // reserve
@@ -296,3 +298,6 @@ export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
     [Y, 1],
     [Z, 1],
 ]);
+
+export const RESERVE_SIZE = 100;
+export const FIVE_SEC_MS = 5000;

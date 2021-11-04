@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { MessageServer } from '@app/classes/message-server';
+import { Vec2 } from '@app/classes/vec2';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
@@ -59,7 +60,6 @@ export class MultiplayerModeService {
             this.userService.exchangeLetters = false;
             this.userService.passTurn = false;
         }
-        this.sendReserve();
     }
     getPlayedCommand(playedMethod: string) {
         this.socketManagementService.listen(playedMethod).subscribe((data) => {
@@ -74,7 +74,6 @@ export class MultiplayerModeService {
                 this.userService.realUser.score = data.user?.score ?? 0;
             }
             this.userService.firstTurn = false;
-            this.updateReserve();
         });
     }
     sendReserve() {
@@ -123,5 +122,15 @@ export class MultiplayerModeService {
             this.gotWinner = true;
             this.winnerObs.next(this.gotWinner);
         });
+    }
+    fillUsedWords(command: ChatCommand): Vec2[] {
+        const positions: Vec2[] = [];
+        if (command.direction === 'h') {
+            for (let i = command.position.x; i < command.position.x + command.word.length; i++) positions.push({ x: i, y: command.position.y });
+        }
+        if (command.direction === 'v') {
+            for (let i = command.position.y; i < command.position.y + command.word.length; i++) positions.push({ y: i, x: command.position.x });
+        }
+        return positions;
     }
 }

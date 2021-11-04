@@ -1,3 +1,4 @@
+import { FIVE_SEC_MS } from '@app/classes/constants';
 import { GameObject } from '@app/classes/gameObject';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/MessageClient';
@@ -51,7 +52,6 @@ export class SocketManagerService {
             socket.on('setAleatoryBonusBox', (message: MessageClient) => {
                 this.games.get(message.gameName).arrayOfBonusBox = message.arrayOfBonusBox ?? this.games.get(message.gameName).arrayOfBonusBox;
             });
-
             socket.on('acceptGame', (game: MessageClient) => {
                 this.sio.to(game.gameName).emit('gameAccepted', game);
             });
@@ -109,18 +109,21 @@ export class SocketManagerService {
             });
             socket.on('guestLeftGame', (message: MessageClient) => {
                 message.winner = this.games.get(message.gameName).creatorPlayer.name;
-                this.sio.to(message.gameName).emit('getWinner', message);
+                setTimeout(() => {
+                    this.sio.to(message.gameName).emit('getWinner', message);
+                }, FIVE_SEC_MS);
             });
             socket.on('userLeftGame', (message: MessageClient) => {
                 message.winner = this.games.get(message.gameName).guestPlayer.name;
-                this.sio.to(message.gameName).emit('getWinner', message);
+                setTimeout(() => {
+                    this.sio.to(message.gameName).emit('getWinner', message);
+                }, FIVE_SEC_MS);
             });
             socket.on('userPassedInSoloMode', (message: MessageClient) => {
-                console.log('shui dans passse');
-                this.deleteRoom(message);
-                this.games.delete(message.gameName);
-                console.log(this.rooms);
-                socket.emit('createdGames', this.rooms);
+                this.updateDeletedGames(message);
+            });
+            socket.on('userCanceled', (message: MessageClient) => {
+                this.updateDeletedGames(message);
             });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
@@ -138,6 +141,10 @@ export class SocketManagerService {
                 this.rooms.splice(i, 1);
             }
         }
+    }
+    updateDeletedGames(message: MessageClient) {
+        this.deleteRoom(message);
+        this.games.delete(message.gameName);
     }
     private emitTime() {
         this.sio.sockets.emit('clock', new Date().toLocaleTimeString());

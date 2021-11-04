@@ -18,7 +18,6 @@ export class ValidWordService {
     concatWord: string = '';
     isWordValid: boolean = false;
     usedWords = new Map<string, Vec2[]>();
-
     private readonly utf8Decoder = new TextDecoder('UTF-8');
 
     private dictionary?: Set<string>[];

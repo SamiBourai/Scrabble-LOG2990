@@ -39,6 +39,7 @@ export class ModalUserVsPlayerComponent {
                 break;
             case 'joinMultiplayerGame':
                 this.socketManagementService.emit('guestLeftGame', { gameName: this.userService.gameName });
+
                 break;
             case 'createMultiplayerGame':
                 this.socketManagementService.emit('userLeftGame', { gameName: this.userService.gameName });

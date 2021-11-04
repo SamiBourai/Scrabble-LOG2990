@@ -36,6 +36,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     ngOnInit() {
         this.getLetter();
+        console.log(this.userService.playMode);
         switch (this.userService.playMode) {
             case 'createMultiplayerGame':
                 this.soloMode = false;

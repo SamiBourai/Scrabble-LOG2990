@@ -15,7 +15,7 @@ export class ModalScrableClassiqueComponent {
     constructor(private dialogRef: MatDialog, private userService: UserService) {}
 
     openDialog(gameMode: string) {
-        this.userService.playMode = gameMode;
+        this.userService.firstMode = gameMode;
         this.dialogRef.open(ModalUserNameComponent);
     }
 }

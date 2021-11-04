@@ -1,4 +1,4 @@
-<div *ngIf="soloMode">
+<div *ngIf="soloMode && !chooseSoloMode">
     <mat-card class="game-Configuration-Card">
         <mat-card-title>Configuration de la partie en Solo</mat-card-title>
 
@@ -198,8 +198,8 @@
                 <mat-spinner></mat-spinner>
                 <div>
                     <button mat-button (click)="disconnectUser()" matStepperPrevious mat-raised-button
-                        color="accent">Retour</button>
-                    <button mat-button (click)="passInSoloMode()" mat-raised-button color="primary">Jouer une partie
+                        color="accent" mat-dialog-close>Annuler</button>
+                    <button mat-button (click)="passInSoloMode()" mat-raised-button color="primary" mat-dialog-close>Jouer une partie
                         classique</button>
                 </div>
             </ng-template>

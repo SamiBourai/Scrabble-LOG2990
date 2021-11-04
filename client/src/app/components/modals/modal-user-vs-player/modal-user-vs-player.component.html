@@ -50,7 +50,7 @@
             </div>
             <ng-template #elseBlock>  
                 <button  mat-raised-button color="primary" (click)="isUserReturnToMenu = true"
-                (click)="isUserAcceptQuit = true">
+                (click)="isUserAcceptQuit = true" (click)="setIsUserQuitGame()">
                 Abandonner la partie
                 <div class="content" #hpopUpWinner *ngIf="isUserReturnToMenu">
                     <header class="header-user-vs-player">Le gagnant est {{this.userService.vrUser.name}} car vous avez abandonner!
