@@ -16,7 +16,7 @@ import {
     SWAP_BUTTON_RANGE_X,
     SWAP_BUTTON_RANGE_Y,
     TOPSPACE,
-    UNDEFINED_INDEX
+    UNDEFINED_INDEX,
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
@@ -96,8 +96,7 @@ export class MouseHandelingService {
             if (this.mousePosition.x !== this.previousClick.x || this.mousePosition.y !== this.previousClick.y) {
                 this.resetSteps();
                 this.tempCanvasService.resetArrow();
-            }
-            if (this.mousePosition.x === this.previousClick.x && this.mousePosition.y === this.previousClick.y) {
+            } else {
                 this.resetSteps();
                 this.tempCanvasService.switchArrow();
             }
