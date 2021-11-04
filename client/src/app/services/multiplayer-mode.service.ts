@@ -8,6 +8,7 @@ import { MessageService } from './message.service';
 import { ReserveService } from './reserve.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
+import { ValidWordService } from './valid-world.service';
 
 @Injectable({
     providedIn: 'root',
@@ -27,6 +28,7 @@ export class MultiplayerModeService {
         private reserveService: ReserveService,
         private messageService: MessageService,
         private easelLogic: EaselLogiscticsService,
+        private validWordService: ValidWordService,
     ) {
         this.observableWinner = this.winnerObs.asObservable();
     }
@@ -47,6 +49,7 @@ export class MultiplayerModeService {
                     gameName: this.userService.gameName,
                     user: { name: this.userService.realUser.name, score: this.userService.realUser.score },
                     guestPlayer: { name: this.userService.joinedUser.name, score: this.userService.joinedUser.score },
+                    usedWords: JSON.stringify(Array.from(this.validWordService.usedWords)),
                 });
                 if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
                 else this.userService.realUser.turnToPlay = false;
@@ -62,6 +65,7 @@ export class MultiplayerModeService {
         this.socketManagementService.listen(playedMethod).subscribe((data) => {
             this.guestCommand = data.command ?? { word: 'errorServer', position: { x: 1, y: 1 }, direction: 'h' };
             this.lettersService.placeLettersWithDirection(this.guestCommand);
+            this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
             if (playedMethod === 'guestUserPlayed') {
                 this.userService.realUser.turnToPlay = true;
                 this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
