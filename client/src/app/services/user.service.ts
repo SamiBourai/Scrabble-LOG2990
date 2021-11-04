@@ -44,6 +44,7 @@ export class UserService {
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     endOfGameObs: Observable<boolean>;
     firstTurn: boolean = true;
+    firstMode: string = '';
 
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableTurnToPlay = this.realUserTurnObs.asObservable();
@@ -81,6 +82,7 @@ export class UserService {
                 score: 0,
                 easel: new EaselObject(false),
             };
+        console.log(this.vrUser);
     }
     chooseFirstToPlay(): boolean {
         const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);

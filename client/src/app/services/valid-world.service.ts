@@ -17,8 +17,7 @@ export class ValidWordService {
     matchWords: string[] = [];
     concatWord: string = '';
     isWordValid: boolean = false;
-    private usedWords = new Map<string, Vec2[]>();
-
+    usedWords = new Map<string, Vec2[]>();
     private readonly utf8Decoder = new TextDecoder('UTF-8');
 
     private dictionary?: Set<string>[];

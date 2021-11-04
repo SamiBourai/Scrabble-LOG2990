@@ -18,4 +18,5 @@ export interface MessageClient {
     timer?: { sec: number; min: number; userTurn: boolean };
     arrayOfBonusBox?: Vec2[][];
     winner?: string;
+    usedWords?: Map<string, Vec2[]>;
 }

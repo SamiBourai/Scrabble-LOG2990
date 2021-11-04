@@ -1,4 +1,4 @@
-import { PARAMETERS_OF_SWAP } from '@app/classes/constants';
+import { NOT_A_LETTER, PARAMETERS_OF_SWAP, RESERVE_SIZE } from '@app/classes/constants';
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
 import { Letter } from './letters';
@@ -7,7 +7,7 @@ export class GameObject {
     timeConfig = { min: 0, sec: 0 };
     gameName: string = '';
     timer: Timer;
-    reserve: Letter[] = [];
+    reserve = new Array<Letter>(RESERVE_SIZE);
     endOfGame: boolean = false;
     aleatoryBonus: boolean = false;
     passTurn: number = 0;
@@ -19,6 +19,7 @@ export class GameObject {
         this.aleatoryBonus = aleatoryBonus;
         this.creatorPlayer = { name: creatorPlayer.name, score: creatorPlayer.score, easelLetters: creatorPlayer.score };
         this.timeConfig = { min, sec };
+        this.reserve.fill(NOT_A_LETTER);
     }
     setTimer() {
         this.timer = new Timer();
