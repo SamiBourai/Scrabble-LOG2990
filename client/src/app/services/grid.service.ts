@@ -9,6 +9,10 @@ import {
     BOARD_WIDTH,
     CLEAR_RECT_FIX,
     CTX_PX,
+    DEFAULT_AZUR_BOX,
+    DEFAULT_BLUE_BOX,
+    DEFAULT_PINK_BOX,
+    DEFAULT_RED_BOX,
     EASEL_LENGTH,
     FOURTY,
     HAND_POSITION_END,
@@ -158,7 +162,20 @@ export class GridService {
         this.arrayOfBonusBox.push(BLUE_BOX);
         this.arrayOfBonusBox.push(PINK_BOX);
     }
-
+    resetBonusesToDefault(): void {
+        for (let i = 0; i < RED_BOX.length; i++) {
+            RED_BOX[i] = DEFAULT_RED_BOX[i];
+        }
+        for (let i = 0; i < AZUR_BOX.length; i++) {
+            AZUR_BOX[i] = DEFAULT_AZUR_BOX[i];
+        }
+        for (let i = 0; i < BLUE_BOX.length; i++) {
+            BLUE_BOX[i] = DEFAULT_BLUE_BOX[i];
+        }
+        for (let i = 0; i < PINK_BOX.length; i++) {
+            PINK_BOX[i] = DEFAULT_PINK_BOX[i];
+        }
+    }
     private drawBonusBox(): void {
         this.gridContext.font = 'bold 15px system-ui';
         for (const v of this.arrayOfBonusBox[0]) {
@@ -182,6 +199,7 @@ export class GridService {
         }
         this.gridContext.fillStyle = 'black';
     }
+
     private drawBonus(v: Vec2, str: string) {
         this.gridContext.fillRect(
             LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES,

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
-import { AppComponent } from '@app/pages/app/app.component';
+import { AppComponent } from './app.component';
+
 
 describe('AppComponent', () => {
     beforeEach(async () => {
