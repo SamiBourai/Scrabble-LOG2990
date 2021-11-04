@@ -59,6 +59,13 @@ export class SocketManagerService {
                 this.games.get(game.gameName).setTimer();
                 game.gameStarted = true;
                 this.sio.to(game.gameName).emit('beginGame', game);
+                this.sio
+                    .to(game.gameName)
+                    .emit(
+                        'updateReserveInClient',
+                        JSON.stringify(Array.from(this.games.get(game.gameName).reserveServer)),
+                        this.games.get(game.gameName).reserverServerSize,
+                    );
             });
             socket.on('creatorPlayed', (command: MessageClient) => {
                 this.games.get(command.gameName).creatorPlayer.score = command.user?.score ?? 0;
@@ -86,12 +93,11 @@ export class SocketManagerService {
                     this.sio.to(game.gameName).emit('getWinner', game);
                 }
             });
-            socket.on('updateReserve', (message: MessageClient) => {
-                this.games.get(message.gameName).reserve.letters = message.reserve ?? this.games.get(message.gameName).reserve.letters;
-            });
-            socket.on('getReserve', (game: MessageClient) => {
-                game.reserve = this.games.get(game.gameName).reserve.letters.slice();
-                this.sio.to(game.gameName).emit('updateReserve', game);
+            socket.on('updateReserveInServer', (gameName: string, map: string, size: number) => {
+                this.games.get(gameName).reserveServer = new Map(JSON.parse(map));
+                console.log(this.games.get(gameName).reserveServer);
+                this.games.get(gameName).reserverServerSize = size;
+                // this.sio.to(gameName).emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size);
             });
             socket.on('verifyWord', (message: MessageClient) => {
                 const word: Letter[] = [];
@@ -110,10 +116,10 @@ export class SocketManagerService {
                 this.sio.to(message.gameName).emit('getWinner', message);
             });
             socket.on('userPassedInSoloMode', (message: MessageClient) => {
-                console.log('shui dans passse')
+                console.log('shui dans passse');
                 this.deleteRoom(message);
                 this.games.delete(message.gameName);
-                console.log(this.rooms)
+                console.log(this.rooms);
                 socket.emit('createdGames', this.rooms);
             });
             socket.on('disconnect', (reason) => {

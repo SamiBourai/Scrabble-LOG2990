@@ -19,13 +19,14 @@ export class MultiplayerModeService {
     gotWinner: boolean = false;
     winnerObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     observableWinner: Observable<boolean>;
+
     constructor(
         private socketManagementService: SocketManagementService,
         private userService: UserService,
         private lettersService: LettersService,
-        private easelLogic: EaselLogiscticsService,
         private reserveService: ReserveService,
         private messageService: MessageService,
+        private easelLogic: EaselLogiscticsService,
     ) {
         this.observableWinner = this.winnerObs.asObservable();
     }
@@ -73,22 +74,22 @@ export class MultiplayerModeService {
         });
     }
     sendReserve() {
-        this.socketManagementService.emit('updateReserve', {
-            gameName: this.userService.gameName,
-        });
+        this.socketManagementService.reserveToserver(
+            'updateReserveInServer',
+            this.userService.gameName,
+            this.reserveService.letters,
+            this.reserveService.reserveSize,
+        );
     }
     updateReserve() {
-        this.socketManagementService.emit('getReserve', { gameName: this.userService.gameName });
-        this.socketManagementService.listen('updateReserve').subscribe((data) => {
-            // this.reserveService.letters = data.reserve?.slice() ?? this.reserveService.letters;
-            // this.reserveService.reserveSize = this.reserveService.letters.length;
-            this.reserveService.sizeObs.next(this.reserveService.reserveSize);
-            if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
-                this.first = false;
-                this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
-                this.sendReserve();
-            }
-        });
+        this.socketManagementService.reserveToClient();
+        if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
+            this.first = false;
+            this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
+            setTimeout(() => {
+                console.log('joined And Fill easel');
+            }, 3000);
+        }
     }
     setGuestPlayerInfromation(guestUserName: string) {
         this.userService.initiliseUsers(false);

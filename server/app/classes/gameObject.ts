@@ -1,19 +1,16 @@
 import { PARAMETERS_OF_SWAP } from '@app/classes/constants';
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
-import { Subject } from 'rxjs';
 import { LETTERS_RESERVE_QTY } from './constants';
 import { Letter } from './letters';
-import { ReserveObject } from './ReserveObject';
 import { Vec2 } from './vec2';
 
 export class GameObject {
     timeConfig = { min: 0, sec: 0 };
     gameName: string = '';
     timer: Timer;
-    reserveServer: ReserveObject = { letters: new Map<Letter, number>(LETTERS_RESERVE_QTY), size: 100 };
-    lettersObs: Subject<Letter[]> = new Subject<Letter[]>();
-
+    reserveServer = new Map<Letter, number>(LETTERS_RESERVE_QTY);
+    reserverServerSize: number = 100;
     endOfGame: boolean = false;
     aleatoryBonus: boolean = false;
     passTurn: number = 0;

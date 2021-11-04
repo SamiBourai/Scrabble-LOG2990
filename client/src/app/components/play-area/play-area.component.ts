@@ -54,10 +54,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             this.easelLogisticsService.fillEasel(this.userService.realUser.easel, true);
             if (this.userService.playMode === 'createMultiplayerGame') {
                 this.multiplayer.sendReserve();
-                setTimeout(() => {
-                    console.log('nous la');
-                }, 8000);
-                this.multiplayer.updateReserve();
             }
         }
     }
@@ -97,6 +93,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     ngOnInit() {
         this.pvs.loadDictionary().then(() => {});
+        this.multiplayer.updateReserve();
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

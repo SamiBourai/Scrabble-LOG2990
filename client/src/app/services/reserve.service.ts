@@ -45,9 +45,11 @@ export class ReserveService {
     isReserveEmpty(): boolean {
         return this.reserveSize === 0;
     }
-    redefineReserve(letters: Map<Letter, number>, size: number) {
-        this.letters = letters;
+    redefineReserve(map: string, size: number) {
+        this.letters = new Map(JSON.parse(map));
+
         this.reserveSize = size;
+        console.log(this.reserveSize);
         this.sizeObs.next(this.reserveSize);
     }
 }

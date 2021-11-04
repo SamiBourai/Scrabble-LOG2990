@@ -5,7 +5,8 @@ export interface MessageClient {
     gameName: string;
     guestPlayer?: { name: string; score?: number; easelLetters?: number };
     user?: { name: string; score?: number; easelLetters?: number };
-    reserve?: Letter[];
+    reserveMap?: Map<unknown, unknown>;
+    reserveSize?: number;
     timeConfig?: { sec: number; min: number };
     aleatoryBonus?: boolean;
     gameAccepted?: boolean;
