@@ -36,7 +36,7 @@ import {
     W,
     X,
     Y,
-    Z
+    Z,
 } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
@@ -118,7 +118,6 @@ export class LettersService {
             }
         }
     }
-
     wordIsPlacable(command: ChatCommand, easel: EaselObject): boolean {
         let saveLetter = '';
         let letterFromEasel = '';

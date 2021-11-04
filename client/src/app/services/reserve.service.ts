@@ -8,7 +8,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ReserveService {
     reserveSize: number = 0;
-
+    reserveChanged: boolean = false;
+    reserveObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     sizeObs = new BehaviorSubject(0);
     letters = new Map<Letter, number>(LETTERS_RESERVE_QTY);
 

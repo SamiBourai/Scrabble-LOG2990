@@ -7,6 +7,7 @@ import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { ReserveService } from '@app/services/reserve.service';
+import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -51,6 +52,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
+        private socketManagementService: SocketManagementService,
     ) {}
     ngOnInit(): void {
         this.virtualPlayerService.commandToSendVr.subscribe((res) => {
@@ -65,8 +67,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.logMessage();
             }, 0);
         });
-
-        // this.chatService.connect();
+        if (this.userService.playMode !== 'soloGame') {
+            this.messageService.newTextMessageObs.subscribe(() => {
+                this.arrayOfMessages = this.messageService.textMessage;
+                this.messageService.newTextMessage = false;
+            });
+        }
     }
 
     ngAfterViewChecked(): void {
@@ -89,6 +95,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
+        this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
         const validPlayAndYourTurn = this.isYourTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
         const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
         if (validPlayAndYourTurn && !this.isTheGameDone()) {
@@ -101,9 +108,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             }
         } else {
             this.skipTurnCommand();
-            if (!this.messageService.isCommand(this.typeArea)) {
-                this.messageService.removeDuplicate(this.arrayOfMessages, this.typeArea);
-            }
         }
 
         this.name = this.getNameCurrentPlayer();
@@ -121,7 +125,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.isDebug = !this.isDebug;
         } else if (this.messageService.isCommand(this.typeArea) && !this.messageService.isValid(this.typeArea)) {
             this.errorMessage = 'commande invalide';
-        } else this.arrayOfMessages.push(this.typeArea);
+        } else this.updateMessageArray(this.typeArea);
     }
 
     isSkipButtonClicked() {
@@ -129,7 +133,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.active = true;
             this.errorMessage = '';
-            this.arrayOfMessages.push('!passer');
+            this.updateMessageArray('!passer');
             return true;
         }
         return false;
@@ -140,9 +144,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     getLettersFromChat(): void {
-        const points: number = this.valideWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, this.messageService.command);
+        const points: number = this.valideWordService.readWordsAndGivePointsIfValid(
+            this.lettersService.tiles,
+            this.messageService.command,
+            this.userService.playMode,
+        );
         if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
-            if (this.valideWordService.verifyWord(this.lettersService.fromWordToLetters(this.messageService.command.word))) {
+            if (points !== 0) {
                 if (this.firstTurn && this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
                     if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
                         if (!this.playFirstTurn(points)) {
@@ -165,11 +173,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.errorMessage = 'les lettres a placer ne constituent pas un mot';
                     return;
                 }
-            } else {
-                this.isImpossible = true;
-                this.errorMessage = 'votre mot dois etre contenue dans la grille!';
-                return;
             }
+        } else {
+            this.isImpossible = true;
+            this.errorMessage = 'votre mot dois etre contenue dans la grille!';
+            return;
         }
     }
 
@@ -218,6 +226,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     updateUserVariables(points: number) {
         this.userService.chatCommandToSend = this.messageService.command;
         this.userService.realUser.score += points;
+        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.isImpossible = false;
         this.virtualPlayerService.first = false;
         if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
@@ -225,6 +234,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     updateGuestVariables(points: number) {
         this.userService.chatCommandToSend = this.messageService.command;
         this.userService.joinedUser.score += points;
+        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.isImpossible = false;
         if (this.lettersService.usedAllEaselLetters) this.userService.joinedUser.score += BONUS_POINTS_50;
     }
@@ -243,15 +253,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         switch (this.typeArea.split(' ', 1)[0]) {
             case '!placer':
                 this.checkIfFirstPlay();
-                this.getLettersFromChat();
-                this.messageService.skipTurnIsPressed = false;
-
-                if (!this.isImpossible) {
-                    this.userService.userPlayed();
-                    this.errorMessage = '';
-                    this.userService.endOfGameCounter = 0;
-                    this.arrayOfMessages.push(this.typeArea);
-                }
+                this.verifyWord();
                 break;
             case '!echanger':
                 if (this.reserveService.reserveSize < EASEL_LENGTH) {
@@ -262,7 +264,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 ) {
                     this.isImpossible = false;
                     this.errorMessage = '';
-                    this.arrayOfMessages.push(this.typeArea);
+                    this.updateMessageArray(this.typeArea);
                     this.userService.endOfGameCounter = 0;
                 } else {
                     this.isImpossible = true;
@@ -271,6 +273,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 if (!this.isImpossible) {
                     this.userService.userPlayed();
                     this.userService.exchangeLetters = true;
+                    this.userService.playedObs.next(this.userService.exchangeLetters);
                 }
                 break;
             case '!debug':
@@ -293,6 +296,42 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.errorMessage = 'vous n etes pas en mode debogage';
                 }
             // FIN CODE SPRINT 2 ABDEL POUR !RESERVE
+        }
+    }
+    private verifyWord() {
+        if (this.userService.playMode === 'soloGame') this.getLettersFromChat();
+        else {
+            if (
+                (this.userService.realUser.turnToPlay && this.userService.playMode === 'createMultiplayerGame') ||
+                (!this.userService.realUser.turnToPlay && this.userService.playMode === 'joinMultiplayerGame')
+            )
+                this.socketManagementService.emit('verifyWord', {
+                    gameName: this.userService.gameName,
+                    word: this.lettersService.fromWordToLetters(this.messageService.command.word),
+                });
+            this.socketManagementService.listen('verifyWord').subscribe((data) => {
+                this.valideWordService.isWordValid = data.isValid ?? false;
+                this.getLettersFromChat();
+            });
+        }
+        this.messageService.skipTurnIsPressed = false;
+        if (!this.isImpossible) {
+            this.userService.userPlayed();
+            this.errorMessage = '';
+            this.userService.endOfGameCounter = 0;
+            this.updateMessageArray(this.typeArea);
+        }
+    }
+    private updateMessageArray(command: string): void {
+        if (command !== '') {
+            if (this.userService.playMode === 'soloGame') this.arrayOfMessages.push(command);
+            else {
+                if (this.userService.playMode === 'joinMultiplayerGame') command = this.userService.joinedUser.name + ' : ' + command;
+                if (this.userService.playMode === 'createMultiplayerGame') command = ' ' + this.userService.realUser.name + ' : ' + command;
+                this.arrayOfMessages.push(command);
+                this.messageService.textMessage = this.arrayOfMessages;
+                this.messageService.textMessageObs.next(this.messageService.textMessage);
+            }
         }
     }
 }

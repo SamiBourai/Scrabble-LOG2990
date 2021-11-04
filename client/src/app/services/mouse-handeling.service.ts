@@ -16,7 +16,7 @@ import {
     SWAP_BUTTON_RANGE_X,
     SWAP_BUTTON_RANGE_Y,
     TOPSPACE,
-    UNDEFINED_INDEX,
+    UNDEFINED_INDEX
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
@@ -172,6 +172,7 @@ export class MouseHandelingService {
         this.commandObs.next(this.placeTempCommand);
         this.cancelByClick();
         this.userService.exchangeLetters = true;
+        this.userService.playedObs.next(this.userService.exchangeLetters);
     }
 
     cancelByClick() {

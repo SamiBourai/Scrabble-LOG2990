@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
+import { GameTime } from '@app/classes/time';
 import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/constants/constants';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
@@ -9,20 +9,25 @@ import { VirtualPlayerService } from './virtual-player.service';
     providedIn: 'root',
 })
 export class TimeService {
-    timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
-    timeVrPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
-    timeGuestPlayer: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
+    timeUser: GameTime = { min: 0, sec: MINUTE_TURN };
+    timeVrPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
+    timeGuestPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
     timeStarted: boolean = false;
     constructor(
         private userService: UserService,
         private virtualPlayerService: VirtualPlayerService,
         private socketManagementService: SocketManagementService,
     ) {}
+
+    timeMultiplayer(gameTime: GameTime): void {
+        this.timeUser = gameTime;
+    }
+
     startTime(playerTurn: string) {
         switch (playerTurn) {
             case 'user': {
                 const intervalId = setInterval(() => {
-                    if (this.timeUser.sec === 0) {
+                    if (this.timeUser.sec - ONE_SECOND === -ONE_SECOND) {
                         this.timeUser.min -= ONE_MINUTE;
                         this.timeUser.sec = MINUTE_TURN;
                     } else this.timeUser.sec -= ONE_SECOND;
@@ -62,21 +67,24 @@ export class TimeService {
         }
     }
     startMultiplayerTimer() {
-        if (!this.timeStarted && this.userService.playMode === 'joinMultiplayerGame') {
-            this.socketManagementService.emit('startTimer', undefined, this.userService.gameName);
+        if (this.userService.joinedUser.guestPlayer && !this.timeStarted) {
+            this.socketManagementService.emit('startTimer', { gameName: this.userService.gameName });
             this.timeStarted = true;
         }
-        this.socketManagementService.listen('updateTime').subscribe((timer) => {
-            const time: any = timer;
-            if (time.creatorTurn) {
-                this.timeUser = { min: time.min, sec: time.sec };
-                this.timeGuestPlayer = { min: 0, sec: MINUTE_TURN };
+        this.socketManagementService.listen('updateTime').subscribe((data) => {
+            if (data.timer?.userTurn) {
+                this.timeUser = { min: data.timer?.min, sec: data.timer?.sec };
+                this.timeGuestPlayer = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = true;
             } else {
-                this.timeGuestPlayer = { min: time.min, sec: time.sec };
-                this.timeUser = { min: 0, sec: MINUTE_TURN };
+                this.timeGuestPlayer = { min: data.timer?.min ?? 0, sec: data.timer?.sec ?? 0 };
+                this.timeUser = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = false;
             }
         });
+    }
+    setGameTime(gameTime: GameTime) {
+        this.timeUser = { min: gameTime.min, sec: gameTime.sec };
+        this.timeVrPlayer = { min: gameTime.min, sec: gameTime.sec };
     }
 }

@@ -4,38 +4,28 @@
         <mat-card-subtitle>{{ userService.vrUser.level }}</mat-card-subtitle>
         <mat-card-subtitle class="score-time"> Temps par tour : {{ userService.vrUser.round }} </mat-card-subtitle>
         <mat-card-subtitle class="score-time"> Score : {{ userService.vrUser.score }} </mat-card-subtitle>
-        <mat-card-subtitle class="score-time" *ngIf="this.virtualPlayerService.easel.getEaselSize() < 7"
-            >lettre dans chevalet : {{ this.virtualPlayerService.easel.getEaselSize() }}</mat-card-subtitle
-        >
-        <mat-card-subtitle class="score-time"
-            >temps : {{ this.timeService.timeVrPlayer.min }}:{{ this.timeService.timeVrPlayer.sec }}</mat-card-subtitle
-        >
+        <mat-card-subtitle class="score-time" *ngIf="this.virtualPlayerService.easel.getEaselSize() < 7">lettre dans
+            chevalet : {{ this.virtualPlayerService.easel.getEaselSize() }}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeVrPlayer.min }}:{{
+            this.timeService.timeVrPlayer.sec }}</mat-card-subtitle>
     </mat-card-header>
-    <ngx-avatar
-        class="avatar"
-        size="50"
-        name="{{ userService.vrUser.name }}"
-        src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
-    ></ngx-avatar>
+    <ngx-avatar class="avatar" size="50" name="{{ userService.vrUser.name }}"
+        src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg">
+    </ngx-avatar>
 </mat-card>
 
-<mat-card class="card-playing" *ngIf="userService.realUser.turnToPlay === false">
+<mat-card class="card-playing" *ngIf="!userService.realUser.turnToPlay">
     <mat-card-header>
-        <ngx-avatar
-            class="avatar"
-            size="50"
-            name="{{ userService.vrUser.name }}"
-            src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg"
-        ></ngx-avatar>
+        <ngx-avatar class="avatar" size="50" name="{{ userService.vrUser.name }}"
+            src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg">
+        </ngx-avatar>
         <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
         <mat-card-subtitle>{{ userService.vrUser.level }}</mat-card-subtitle>
         <mat-card-subtitle class="score-time"> Temps par tour : {{ userService.vrUser.round }} </mat-card-subtitle>
         <mat-card-subtitle class="score-time"> Score : {{ userService.vrUser.score }} </mat-card-subtitle>
-        <mat-card-subtitle class="score-time" *ngIf="this.virtualPlayerService.easel.getEaselSize() < 7"
-            >lettre dans chevalet : {{ this.virtualPlayerService.easel.getEaselSize() }}</mat-card-subtitle
-        >
-        <mat-card-subtitle class="score-time"
-            >temps : {{ this.timeService.timeVrPlayer.min }}:{{ this.timeService.timeVrPlayer.sec }}</mat-card-subtitle
-        >
+        <mat-card-subtitle class="score-time" *ngIf="this.virtualPlayerService.easel.getEaselSize() <7;">lettre dans
+            chevalet : {{ this.virtualPlayerService.easel.getEaselSize() }}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeVrPlayer.min }}:{{
+            this.timeService.timeVrPlayer.sec }}</mat-card-subtitle>
     </mat-card-header>
 </mat-card>

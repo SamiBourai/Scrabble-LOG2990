@@ -7,7 +7,7 @@
 >
     <div class="button-up" (click)="this.mouseHandlingService.clearAll()" fxLayout="row">
         <div class="div">
-            <button mat-raised-button color="accent" routerLink="/home">Quitter la partie</button>
+            <button mat-raised-button color="accent" (click)="quitGame()">Quitter la partie</button>
         </div>
         <div class="div">
             <button #skipTurn id="btn" mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">
@@ -18,7 +18,8 @@
             </button>
         </div>
         <div class="div">
-            <button mat-raised-button color="accent" (click)="quitGame()">Abandonner</button>
+            <button mat-raised-button color="accent" (click)="detectGameQuit()"
+                (click)="openDialogOfVrUser()">Abandonner</button>
         </div>
     </div>
 

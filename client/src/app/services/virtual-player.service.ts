@@ -83,7 +83,11 @@ export class VirtualPlayerService {
                                     word;
                                 this.commandObs.next(this.commandToSend);
                                 this.commandToSend = '';
-                                this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                                this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(
+                                    this.lettersService.tiles,
+                                    tempCommand,
+                                    'soloGame',
+                                );
                                 this.vrScoreObs.next(this.vrPoints);
                                 this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
                                 this.wordPlacedInScrable = true;
@@ -97,6 +101,8 @@ export class VirtualPlayerService {
                         if (!this.wordPlacedInScrable) this.getLetterForRange('v', this.lettersService.tiles);
                     }
                     if (!this.wordPlacedInScrable) {
+                        console.log("j'arrive pas a jouer");
+
                         this.passTurnSteps();
                     } else {
                         this.wordPlacedInScrable = false;
@@ -219,7 +225,7 @@ export class VirtualPlayerService {
                     else tempCommand = { word, position: { x: pos + 1, y: y + 1 }, direction };
 
                     if (this.lettersService.wordIsPlacable(tempCommand, this.easel)) {
-                        this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand);
+                        this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame');
                         if (this.vrPoints !== 0) {
                             this.commandToSend =
                                 '!placer ' +

@@ -16,17 +16,13 @@ import { WordPointsService } from './word-points.service';
 export class ValidWordService {
     matchWords: string[] = [];
     concatWord: string = '';
+    isWordValid: boolean = false;
     private usedWords = new Map<string, Vec2[]>();
 
     private readonly utf8Decoder = new TextDecoder('UTF-8');
 
     private dictionary?: Set<string>[];
-    constructor(
-        private http: HttpClient,
-        private wps: WordPointsService,
-
-        private letterService: LettersService,
-    ) {}
+    constructor(private http: HttpClient, private wps: WordPointsService, private letterService: LettersService) {}
     async loadDictionary() {
         const wordsObs = this.getWords();
         const words = await wordsObs.toPromise();
@@ -125,7 +121,7 @@ export class ValidWordService {
         return this.matchWords;
     }
 
-    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand): number {
+    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand, playMode: string): number {
         // create copy of board
         const usedPositionLocal = new Array<Letter[]>(NB_TILES);
         for (let i = 0; i < usedPositionLocal.length; i++) {
@@ -150,9 +146,8 @@ export class ValidWordService {
             if (array.length === 1) {
                 // only one letter
                 totalPointsSum += 0;
-            } else if (this.verifyWord(array)) {
+            } else if (this.verifyWord(array, playMode)) {
                 // word exists in the dictionnary
-
                 // check if this exact word was used before
                 const exists = this.checkIfWordIsUsed(array, arrayPosition);
                 if (exists) {
@@ -168,7 +163,7 @@ export class ValidWordService {
             }
         }
 
-        if (this.verifyWord(this.letterService.fromWordToLetters(command.word))) {
+        if (this.verifyWord(this.letterService.fromWordToLetters(command.word), playMode)) {
             this.usedWords.set(command.word, positionsWordCommand);
             const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand);
             totalPointsSum += wordItselfPoints;
@@ -180,21 +175,25 @@ export class ValidWordService {
         }
     }
 
-    verifyWord(word: Letter[]) {
-        let concatWord = '';
-        if (this.dictionary === undefined) {
-            return;
-        }
-        if (word.length === 0) {
-            return;
-        }
-        for (const i of word) {
-            const letter = i.charac;
-            concatWord += letter;
-        }
+    verifyWord(word: Letter[], playMode: string) {
+        if (playMode !== 'soloGame') {
+            return this.isWordValid;
+        } else {
+            let concatWord = '';
+            if (this.dictionary === undefined) {
+                return;
+            }
+            if (word.length === 0) {
+                return;
+            }
+            for (const i of word) {
+                const letter = i.charac;
+                concatWord += letter;
+            }
 
-        const letterIndexInput = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
-        return this.dictionary[letterIndexInput].has(concatWord);
+            const letterIndexInput = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
+            return this.dictionary[letterIndexInput].has(concatWord);
+        }
     }
 
     private fromLettersToString(word: Letter[]) {

@@ -1,11 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Game } from '@app/classes/game';
+import { MessageServer } from '@app/classes/message-server';
+import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
+import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -17,53 +19,113 @@ export class ModalUserNameComponent implements OnInit {
     soloMode: boolean = false;
     createMultiplayerGame: boolean = false;
     joinMultiplayerGame: boolean = false;
+    userFormGroup: FormGroup;
     firstFormGroup: FormGroup;
     secondFormGroup: FormGroup;
     isOptional = false;
     userName: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
+    userNameMutiplayer: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
+    guestFormControl: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
+    gameNameMutiplayer: FormControl = new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]);
     name: string;
-    createdGame: Game;
-    aleatoryBonus: boolean = false;
-    joinedUserName: string = '';
-    creatorName: string = '';
+    playerName: string = '';
+    guestName: string = '';
     gameName: string = '';
-    rooms: any;
-    game: any;
+    timeCounter: number = DEFAULT_TIME;
+    time: GameTime = TIME_CHOICE[DEFAULT_TIME];
+    isRandom = false;
+    rooms: MessageServer[];
+    game: MessageServer;
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
     requestAccepted: boolean = false;
+    modes: string[] = MODES;
+    chosenMode: string = MODES[DEFAULT_MODE];
     constructor(
         private dialogRef: MatDialog,
-        private userService: UserService,
+        public userService: UserService,
         private formBuilder: FormBuilder,
         private socketManagementService: SocketManagementService,
-        private multiplayerService: MultiplayerModeService,
+        private timeService: TimeService,
+        private multiplayerModeService: MultiplayerModeService,
     ) {}
+    @HostListener('document:click.minusBtn', ['$eventX'])
+    onClickInMinusButton(event: Event) {
+        event.preventDefault();
+        if (this.timeCounter === 0) {
+            return;
+        } else if (this.timeCounter < 0) {
+            this.timeCounter = 0;
+        } else if (this.timeCounter > 0) {
+            this.timeCounter--;
+            this.time = TIME_CHOICE[this.timeCounter];
+        }
+        this.timeService.setGameTime(this.time);
+    }
+    @HostListener('document:click.addBtn', ['$event'])
+    onClickInAddButton(event: Event) {
+        event.preventDefault();
+        if (this.timeCounter === TIME_CHOICE.length) {
+            return;
+        } else if (this.timeCounter > TIME_CHOICE.length) {
+            this.timeCounter = TIME_CHOICE.length;
+            return;
+        } else if (this.timeCounter < TIME_CHOICE.length) {
+            this.timeCounter++;
+            this.time = TIME_CHOICE[this.timeCounter];
+        }
+        this.timeService.setGameTime(this.time);
+    }
     ngOnInit(): void {
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
+                this.userFormGroup = new FormGroup({
+                    userName: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
+                });
+
                 this.userService.initiliseUsers(this.soloMode);
                 break;
             case 'createMultiplayerGame':
                 this.createMultiplayerGame = true;
+                this.userFormGroup = this.formBuilder.group({
+                    userName: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
+                });
                 this.firstFormGroup = this.formBuilder.group({
-                    firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                    userNameMutiplayer: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
                 });
                 this.secondFormGroup = this.formBuilder.group({
-                    secondCtrl: new FormControl(''),
+                    gameNameMutiplayer: new FormControl(''),
                 });
                 this.socketManagementService.listen('userJoined').subscribe((room) => {
-                    this.game = room;
-                    this.userService.initiliseUsers(this.soloMode);
-                    this.userService.joinedUser.name = this.game.joinedUserName;
-                    this.userService.joinedUser.guestPlayer = false;
+                    this.guestName = room.guestPlayer?.name ?? 'default';
+                    this.multiplayerModeService.setGuestPlayerInfromation(this.guestName);
                 });
                 break;
             case 'joinMultiplayerGame':
                 this.joinMultiplayerGame = true;
                 this.firstFormGroup = this.formBuilder.group({
-                    firstCtrl: new FormControl('', [Validators.pattern('^[A-Za-z0-9]+$'), Validators.required]),
+                    guestFormControl: new FormControl('', [
+                        Validators.pattern('^[A-Za-z0-9]+$'),
+                        Validators.required,
+                        Validators.minLength(MIN_LENGTH),
+                        Validators.maxLength(MAX_LENGTH),
+                    ]),
                 });
                 this.generateRooms();
                 this.gameAccepted();
@@ -71,66 +133,68 @@ export class ModalUserNameComponent implements OnInit {
         }
     }
     beginGame(response: boolean): void {
-        const gamerResponse = { gameName: this.game.gameName, accepted: response };
-        this.socketManagementService.emit('acceptGame', undefined, undefined, gamerResponse);
+        this.socketManagementService.emit('acceptGame', { gameName: this.gameName, gameAccepted: response });
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
     }
 
     storeNameInLocalStorage(): void {
-        this.name = this.userName.value;
+        this.userService.realUser.name = this.name;
         localStorage.setItem('userName', this.name);
     }
     passInSoloMode(): void {
         this.soloMode = true;
         this.createMultiplayerGame = false;
         this.disconnectUser();
+        this.name = this.userNameMutiplayer.value;
+        this.openDialogOfVrUser();
     }
     createGame(): void {
-        this.createdGame = {
-            clientName: this.creatorName,
+        this.socketManagementService.emit('createGame', {
+            user: { name: this.playerName },
             gameName: this.gameName,
-            gameTime: { min: 0, sec: 59 },
-            aleatoryBonus: this.aleatoryBonus,
-        };
-        this.socketManagementService.emit('createGame', this.createdGame);
-        this.userService.realUser.name = this.creatorName;
+            timeConfig: { min: this.time.min, sec: this.time.sec },
+            aleatoryBonus: this.userService.isBonusBox,
+        });
+        this.userService.realUser.name = this.playerName;
         this.userService.gameName = this.gameName;
     }
     generateRooms(): void {
         this.socketManagementService.emit('generateAllRooms');
-        this.socketManagementService.listen('createdGames').subscribe((data) => {
+        this.socketManagementService.getRooms().subscribe((data) => {
             this.rooms = data;
             if (this.rooms.length === 0) this.isEmptyRoom = true;
             else this.isEmptyRoom = false;
         });
     }
     disconnectUser(): void {
-        this.socketManagementService.emit('disconnect', undefined, 'user gave up the game');
+        this.socketManagementService.emit('disconnect', { gameName: this.gameName, reason: 'le joueur a refusé de jouer' });
     }
-    getReserveToFillEasel() {
-        this.multiplayerService.updateReserve();
-        this.multiplayerService.sendReserve();
-    }
-    joinGame(room: Game): void {
-        const joinedUserInformations = {
-            gameName: room.gameName,
-            joinedUserName: this.joinedUserName,
-        };
-        this.socketManagementService.emit('joinRoom', undefined, undefined, joinedUserInformations);
-        this.userService.initiliseUsers(this.soloMode);
-        this.userService.realUser.name = room.clientName ?? 'default';
-        this.userService.joinedUser.name = this.joinedUserName;
-        this.userService.joinedUser.guestPlayer = true;
-        this.userService.gameName = room.gameName;
+    joinGame(room: MessageServer): void {
+        this.multiplayerModeService.setGameInformations(room, this.playerName);
         this.roomJoined = true;
-        this.aleatoryBonus = room.aleatoryBonus ?? false;
+        this.userService.isBonusBox = room.aleatoryBonus ?? false;
     }
     gameAccepted(): void {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {
-            const acceptGame: any = data;
-            this.requestAccepted = acceptGame;
+            this.requestAccepted = data.gameAccepted ?? false;
         });
+    }
+    onSubmitUserName(): void {
+        this.openDialogOfVrUser();
+        this.storeNameInLocalStorage();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    randomBonusActivated(event: any): void {
+        // type event essaye avec bool;
+        this.chosenMode = event.target.value;
+        if (this.chosenMode === this.modes[0]) {
+            this.userService.isBonusBox = true;
+            return;
+        }
+        this.chosenMode = this.modes[DEFAULT_MODE];
+        this.userService.isBonusBox = false;
     }
 }

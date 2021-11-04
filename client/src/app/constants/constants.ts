@@ -1,11 +1,31 @@
 import { Letter } from '@app/classes/letter';
 import { MousePosition } from '@app/classes/MousePosition';
+import { GameTime } from '@app/classes/time';
 import { Vec2 } from '@app/classes/vec2';
 import { Pair } from './../classes/pair';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
-
+// modal user-component
+export const TIME_CHOICE: GameTime[] = [
+    { min: 0, sec: 30 },
+    { min: 1, sec: 0 },
+    { min: 1, sec: 30 },
+    { min: 2, sec: 0 },
+    { min: 2, sec: 30 },
+    { min: 3, sec: 0 },
+    { min: 3, sec: 30 },
+    { min: 4, sec: 0 },
+    { min: 4, sec: 30 },
+    { min: 5, sec: 0 },
+];
+export const MODES: string[] = ['Aléatoire', 'Normal'];
+export const DEFAULT_TIME = 1;
+export const DEFAULT_MODE = 1;
 // user-service
+export const FIRST_NAME = 'Bobby1234';
+export const SECOND_NAME = 'Martin1234';
+export const THIRD_NAME = 'VirtualPlayer1234';
+export const MAX_PLAYER = 3;
 export const NUMBER_COMPARED = 20;
 export const NUMBER_TO_COMPARE = 10;
 export const MINUTE_TURN = 59;
@@ -31,14 +51,12 @@ export const CTX_PX = 15;
 export const ADJUSTEMENT_TOPSPACE = 5;
 export const H_ARROW = '→';
 export const V_ARROW = '↓';
-
 // play-area-comp
 export const CANEVAS_WIDTH = 900;
 export const CANEVAS_HEIGHT = 900;
 export const NB_TILES = 15;
 export const TOPSPACE = 25;
 export const LEFTSPACE = 50;
-
 // LETTERS
 export const NOT_A_LETTER: Letter = { score: 0, charac: '1', img: 'no-image' };
 export const A: Letter = { score: 1, charac: 'a', img: '../../assets/letter-A.png' };
@@ -133,11 +151,8 @@ export const ALL_BONUS_BOX: Vec2[] = [
 // easel
 export const EASEL_LENGTH = 7;
 export const CLEAR_RECT_FIX = 5;
-
 // userService
 export const intervalId = 0;
-// play-area
-
 // virtual-player- service
 export const MAX_INDEX_NUMBER_EASEL = 6;
 export const MAX_INDEX_NUMBER_PROBABILITY_ARRAY = 9;
@@ -224,7 +239,6 @@ export const PINK_BOX: Vec2[] = [
     { x: 11, y: 11 },
     { x: 10, y: 10 },
 ];
-
 export const EASEL_POSITIONS: MousePosition[] = [
     { letterRange: { min: 264, max: 313 }, index: 0, isClicked: false },
     { letterRange: { min: 315, max: 371 }, index: 1, isClicked: false },
@@ -246,6 +260,7 @@ export const COLUMN_RANGE = 16;
 export const PLACE_LENGTH = 7;
 export const SWAP_LENGTH = 9;
 export const SIX = 6;
+export const SIX_LETTERS = 6;
 
 // the index for cut the (!placer) and only keep the parameters
 export const INDEX_OF_PLACE_PARAMETERS = 8;
@@ -285,6 +300,10 @@ export const PARAMETERS_OF_SWAP = 10;
 export const FOURTY = 40;
 
 // reserve
+export const ONE_LETTER = 1;
+export const TWO_LETTER = 2;
+export const THREE_LETTER = 3;
+
 export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
     [A, SWAP_LENGTH],
     [B, 2],
@@ -313,3 +332,6 @@ export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
     [Y, 1],
     [Z, 1],
 ]);
+// modal user name validator
+export const MAX_LENGTH = 15;
+export const MIN_LENGTH = 8;

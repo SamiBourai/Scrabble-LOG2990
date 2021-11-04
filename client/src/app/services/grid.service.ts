@@ -22,6 +22,7 @@ import {
     RED_BOX,
     TOPSPACE,
 } from '@app/constants/constants';
+import { SocketManagementService } from './socket-management.service';
 
 @Injectable({
     providedIn: 'root',
@@ -29,8 +30,12 @@ import {
 export class GridService {
     gridContext: CanvasRenderingContext2D;
     allBonusQuantity: number = ALL_BONUS_BOX.length;
+    isBonusRandom: boolean = true;
+    arrayOfBonusBox = new Array<Vec2[]>(RED_BOX, PINK_BOX, BLUE_BOX, AZUR_BOX);
     private alpha: string = 'abcdefghijklmno';
     private canvasSize: Vec2 = { x: BOARD_WIDTH, y: BOARD_HEIGHT };
+
+    constructor(private socketManagementService: SocketManagementService) {}
 
     drawGrid() {
         this.gridContext.beginPath();
@@ -85,29 +90,21 @@ export class GridService {
         }
     }
 
-    drawBonusBox() {
-        // triple letter score
-        this.gridContext.font = 'bold 15px system-ui';
-        for (const v of RED_BOX) {
-            this.gridContext.fillStyle = 'red';
-            this.drawBonus(v, 'MOT  X3');
-        }
-        // triple letter score
-        for (const v of PINK_BOX) {
-            this.gridContext.fillStyle = 'pink';
-            this.drawBonus(v, 'MOT  X2');
-        }
-        // triple letter score
-        for (const v of BLUE_BOX) {
-            this.gridContext.fillStyle = 'blue';
-            this.drawBonus(v, 'L.  X3');
-        }
-        // triple letter score
-        for (const v of AZUR_BOX) {
-            this.gridContext.fillStyle = 'cyan';
-            this.drawBonus(v, 'L.  X2');
-        }
-        this.gridContext.fillStyle = 'black';
+    drawBox(isBonusBox: boolean, playMode: string, gameName: string): void {
+        if (isBonusBox) {
+            if (playMode === 'joinMultiplayerGame') {
+                this.socketManagementService.emit('getAleatoryBonus', { gameName });
+                this.socketManagementService.listen('getAleatoryBonus').subscribe((data) => {
+                    this.arrayOfBonusBox = data.arrayOfBonusBox ?? this.arrayOfBonusBox;
+                    this.drawBonusBox();
+                });
+            } else {
+                this.randomizeBonuses();
+                this.drawBonusBox();
+                if (playMode === 'createMultiplayerGame')
+                    this.socketManagementService.emit('setAleatoryBonusBox', { gameName, arrayOfBonusBox: this.arrayOfBonusBox });
+            }
+        } else this.drawBonusBox();
     }
 
     drawCentralTile() {
@@ -125,15 +122,12 @@ export class GridService {
         };
         return img;
     }
-
     get width(): number {
         return this.canvasSize.x;
     }
-
     get height(): number {
         return this.canvasSize.y;
     }
-
     randomizeBonuses(): void {
         for (let i = 0; i < RED_BOX.length; i++) {
             const randomBonusIndex = Math.floor(Math.random() * this.allBonusQuantity + 0);
@@ -159,8 +153,35 @@ export class GridService {
             ALL_BONUS_BOX.splice(randomBonusIndex, 1);
             this.allBonusQuantity--;
         }
+        this.arrayOfBonusBox.push(RED_BOX);
+        this.arrayOfBonusBox.push(AZUR_BOX);
+        this.arrayOfBonusBox.push(BLUE_BOX);
+        this.arrayOfBonusBox.push(PINK_BOX);
     }
 
+    private drawBonusBox(): void {
+        this.gridContext.font = 'bold 15px system-ui';
+        for (const v of this.arrayOfBonusBox[0]) {
+            this.gridContext.fillStyle = 'red';
+            this.drawBonus(v, 'MOT  X3');
+        }
+        // triple letter score
+        for (const v of this.arrayOfBonusBox[1]) {
+            this.gridContext.fillStyle = 'pink';
+            this.drawBonus(v, 'MOT  X2');
+        }
+        // triple letter score
+        for (const v of this.arrayOfBonusBox[2]) {
+            this.gridContext.fillStyle = 'blue';
+            this.drawBonus(v, 'L.  X3');
+        }
+        // triple letter score
+        for (const v of this.arrayOfBonusBox[3]) {
+            this.gridContext.fillStyle = 'cyan';
+            this.drawBonus(v, 'L.  X2');
+        }
+        this.gridContext.fillStyle = 'black';
+    }
     private drawBonus(v: Vec2, str: string) {
         this.gridContext.fillRect(
             LEFTSPACE + (v.x * BOARD_WIDTH) / NB_TILES,

@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, UNDEFINED_INDEX } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -10,6 +11,7 @@ import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
+import { ModalUserVsPlayerComponent } from '../modals/modal-user-vs-player/modal-user-vs-player.component';
 
 export enum MouseButton {
     Left = 0,
@@ -40,6 +42,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
         private readonly pvs: ValidWordService,
+        private dialogRef: MatDialog,
         private multiplayer: MultiplayerModeService,
         private virtualPlayer: VirtualPlayerService,
         public reserveService: ReserveService,
@@ -105,7 +108,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
         this.gridService.drawCentralTile();
         this.gridService.drawCoor();
-        this.gridService.drawBonusBox();
+        this.gridService.drawBox(this.userService.isBonusBox, this.userService.playMode, this.userService.gameName);
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
@@ -117,6 +120,18 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     get height(): number {
         return this.canvasSize.y;
     }
+
+    detectGameQuit(): void {
+        this.userService.isUserQuitGame = true;
+    }
+
+    openDialogOfVrUser(): void {
+        this.dialogRef.open(ModalUserVsPlayerComponent, { disableClose: true });
+    }
+
+    quitGame() {
+        window.location.assign('/home');
+    }
     disableButton(event: string): boolean {
         if (event !== 'passTurn') {
             if (this.userService.playMode !== 'joinMultiplayerGame') {
@@ -126,9 +141,5 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             if (this.userService.playMode !== 'joinMultiplayerGame') return !this.userService.realUser.turnToPlay;
             else return this.userService.realUser.turnToPlay;
         }
-    }
-
-    quitGame() {
-        window.location.assign('/home');
     }
 }

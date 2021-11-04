@@ -1,6 +1,8 @@
-import { ChatCommand } from './../classes/chat-command';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ChatCommand } from './../classes/chat-command';
 import {
+    COLUMN_RANGE,
     FIRST_INDEX_2COLUMN,
     FIRST_INDEX_2ORIENTATION,
     FIRST_INDEX_COLUMN,
@@ -17,7 +19,6 @@ import {
     PARAMETERS_OF_SWAP,
     PLACE_LENGTH,
     SWAP_LENGTH,
-    COLUMN_RANGE,
 } from './../constants/constants';
 
 @Injectable({
@@ -29,6 +30,12 @@ export class MessageService {
     command: ChatCommand = { word: '', position: { x: 0, y: 0 }, direction: 'h' };
     arrayOfSpecialChars: string[] = ['ç', 'é', 'è', 'ë'];
     skipTurnIsPressed: boolean = false;
+    textMessage: string[] = [];
+    textMessageObs: BehaviorSubject<string[]> = new BehaviorSubject<string[]>({} as string[]);
+    observableTextMessage: Observable<string[]>;
+    newTextMessage: boolean = false;
+    newTextMessageObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
+    observableNewTextMessage: Observable<boolean>;
     private line: string;
     private column: number;
     private orientation: string;
@@ -39,6 +46,8 @@ export class MessageService {
 
     constructor() {
         this.fillColumnValues(this.possibleColumnValues);
+        this.observableTextMessage = this.textMessageObs.asObservable();
+        this.observableNewTextMessage = this.newTextMessageObs.asObservable();
     }
 
     isCommand(input: string): boolean {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
@@ -7,16 +7,21 @@ import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-game-page',
     templateUrl: './game-page.component.html',
     styleUrls: ['./game-page.component.scss'],
 })
-export class GamePageComponent implements OnInit, AfterViewInit {
+export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     remainingLetters: number = 0;
     soloMode: boolean = true;
     playersInGamePage: boolean = false;
+    event: unknown;
+    private numberOfLetterSubscription: Subscription;
+    private endOfGameSubscription: Subscription;
+    private turnToPlaySubscription: Subscription;
     constructor(
         public userService: UserService,
         private reserverService: ReserveService,
@@ -35,11 +40,13 @@ export class GamePageComponent implements OnInit, AfterViewInit {
             case 'createMultiplayerGame':
                 this.soloMode = false;
                 this.multiplayerModeService.beginGame();
+
                 break;
             case 'joinMultiplayerGame':
                 this.soloMode = false;
-                this.socketManagementService.emit('guestInGamePage', undefined, this.userService.gameName);
+                this.socketManagementService.emit('guestInGamePage', { gameName: this.userService.gameName });
                 this.multiplayerModeService.beginGame();
+
                 break;
         }
         this.isUserEaselEmpty();
@@ -48,14 +55,14 @@ export class GamePageComponent implements OnInit, AfterViewInit {
         this.openDialog();
     }
     openDialog() {
-        this.userService.isEndOfGame.subscribe((response) => {
+        this.endOfGameSubscription = this.userService.isEndOfGame.subscribe((response) => {
             if (response) {
                 this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
             }
         });
     }
     getLetter() {
-        this.reserverService.size.subscribe((res) => {
+        this.numberOfLetterSubscription = this.reserverService.size.subscribe((res) => {
             setTimeout(() => {
                 this.remainingLetters = res;
             }, 0);
@@ -63,7 +70,7 @@ export class GamePageComponent implements OnInit, AfterViewInit {
     }
 
     isUserEaselEmpty() {
-        this.userService.turnToPlayObs.subscribe(() => {
+        this.turnToPlaySubscription = this.userService.turnToPlayObs.subscribe(() => {
             setTimeout(() => {
                 this.mouseHandlingService.clearAll();
                 if (
@@ -80,5 +87,10 @@ export class GamePageComponent implements OnInit, AfterViewInit {
                 }
             }, 0);
         });
+    }
+    ngOnDestroy(): void {
+        this.numberOfLetterSubscription.unsubscribe();
+        this.endOfGameSubscription.unsubscribe();
+        this.turnToPlaySubscription.unsubscribe();
     }
 }

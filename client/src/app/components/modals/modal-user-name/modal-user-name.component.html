@@ -3,70 +3,167 @@
         <mat-card-title>Configuration de la partie en Solo</mat-card-title>
 
         <mat-card-subtitle>Entrez votre nom d'utilisateur afin de commencer la partie ! </mat-card-subtitle>
-        <form>
+        <form [formGroup]="userFormGroup" (ngSubmit)="onSubmitUserName()">
             <div>
                 <!-- nom entre par l'utilisateur -->
                 <mat-form-field class="example-full-width">
                     <mat-label>Name </mat-label>
-                    <input
-                        class="user-name-input"
-                        matInput
-                        placeholder="Name"
-                        #message
-                        maxlength="15"
-                        [formControl]="userName"
-                        placeholder="Ex. Sami1234"
-                        required
-                    />
+                    <input class="user-name-input" matInput placeholder="Name" #message maxlength="15"
+                        [(ngModel)]="name" formControlName="userName" placeholder="Ex. Sami1234" required />
                     <mat-hint align="end"> {{ message.value?.length }} / 15</mat-hint>
 
-                    <mat-hint align="start" class="error-hint" *ngIf="userName.value.length < 8 || userName.invalid">
-                        &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
-                        &#9679; Le nom ne doit pas contenir d'espace <br />
-                        &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
-                    </mat-hint>
-                    <mat-hint class="no-error-hint" align="start" *ngIf="userName.value.length >= 8 && userName.valid">
+                    <mat-hint class="no-error-hint" align="start"
+                        *ngIf="userFormGroup.controls.userName.valid; else userNameInputInvalid">
                         &#9679; Le nom entré est valide !!! <br />
                     </mat-hint>
+                    <ng-template #userNameInputInvalid>
+                        <mat-hint align="start" class="error-hint">
+                            &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
+                            &#9679; Le nom ne doit pas contenir d'espace <br />
+                            &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
+                        </mat-hint>
+                    </ng-template>
                     <!-- <p>{{userName.value}}xx</p> -->
                     <mat-icon matSuffix mat-icon-button color="primary">info</mat-icon>
                 </mat-form-field>
             </div>
-        </form>
-        <mat-card-actions>
-            <div class="play-btn">
-                <button mat-raised-button mat-dialog-close>Annuler</button>
-                <button
-                    mat-raised-button
-                    color="primary"
-                    [disabled]="userName.value.length < 8 || userName.invalid"
-                    mat-dialog-close
-                    (click)="openDialogOfVrUser()"
-                    (click)="storeNameInLocalStorage()"
-                >
-                    Suivant
-                </button>
+            <br />
+            <hr>
+            <div class="container">
+                <div fxLayout="row">
+                    <div>
+                        <p class="multiplayerP-btn">Temps par tour :</p>
+                    </div>
+
+                    <div class="time-config">
+                        <button #minusBtn class="btn btn-primary" [disabled]="this.timeCounter === 0"
+                            (click)="onClickInMinusButton($event)">
+                            -
+                        </button>
+                    </div>
+                    <div class="time-config">
+                        <p class="form-control">{{ this.time.min | number: '2.0-0' }}</p>
+                    </div>
+
+                    <div class="time-config">
+                        <p class="form-control">{{ ':' }}</p>
+                    </div>
+                    <div>
+                        <p class="form-control">{{ this.time.sec | number: '2.0-0' }}</p>
+                    </div>
+                    <div class="time-config">
+                        <button #addBtn class="btn btn-primary" [disabled]="this.timeCounter === 9"
+                            (click)="onClickInAddButton($event)">
+                            +
+                        </button>
+                    </div>
+                </div>
             </div>
-        </mat-card-actions>
+            <p><span class="multiplayerP">Mode de jeu :</span></p>
+            <div class="radio" *ngFor="let mode of modes">
+                <label>
+                    <input type="radio" name="gameMode" [value]="mode" checked
+                        (change)="randomBonusActivated($event)" />
+                    {{ mode }}
+                </label>
+            </div>
+            <p>
+                <span class="multiplayerP">Vous avez séléctionner le mode de jeu </span> <b
+                    class="multiplayerP-chosen">{{ chosenMode }}</b>
+            </p>
+            <hr />
+            <mat-card-actions>
+                <div class="play-btn">
+                    <button mat-raised-button mat-dialog-close
+                        (click)="this.userService.isBonusBox=false">Annuler</button>
+                    <button mat-raised-button color="primary" [disabled]="userFormGroup.controls.userName.invalid"
+                        mat-dialog-close type="submit">
+                        Suivant
+                    </button>
+                </div>
+            </mat-card-actions>
+
+        </form>
     </mat-card>
 </div>
+<!-- ----------------------------Multiplayer game--------------------- -->
 <div class="div" *ngIf="createMultiplayerGame">
     <mat-card class="game-Configuration-Card">
         <mat-card-title>Configuration de la partie multijoueurs </mat-card-title>
     </mat-card>
-    <button mat-raised-button (click)="isOptional = !isOptional">
-        {{ !isOptional ? 'Enable optional steps' : 'Disable optional steps' }}
-    </button>
     <mat-stepper linear #stepper>
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
                 <ng-template matStepLabel>Remplissez votre nom</ng-template>
                 <mat-form-field appearance="fill">
                     <mat-label>Nom</mat-label>
-                    <input matInput placeholder="entrez votre prenom" formControlName="firstCtrl" [(ngModel)]="creatorName" required />
+                    <input #message2 matInput placeholder="entrez votre prenom" formControlName="userNameMutiplayer"
+                        [(ngModel)]="playerName" required maxlength="15" />
+                    <mat-hint align="end"> {{ message2.value?.length }} / 15</mat-hint>
+                    <mat-hint class="no-error-hint" align="start"
+                        *ngIf="firstFormGroup.controls.userNameMutiplayer.valid; else invalidInput">
+                        &#9679; Le nom entré est valide !!! <br />
+                    </mat-hint>
+                    <ng-template #invalidInput>
+                        <mat-hint align="start" class="error-hint">
+                            &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
+                            &#9679; Le nom ne doit pas contenir d'espace <br />
+                            &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
+                        </mat-hint>
+                    </ng-template>
                 </mat-form-field>
+                <br><br>
+                <hr>
+                <div class="container">
+                    <div fxLayout="row">
+                        <div>
+                            <p class="multiplayerP-btn">Temps par tour :</p>
+                        </div>
+
+                        <div class="time-config">
+                            <button #minusBtn class="btn btn-primary" [disabled]="this.timeCounter === 0"
+                                (click)="onClickInMinusButton($event)">
+                                -
+                            </button>
+                        </div>
+                        <div class="time-config">
+                            <p class="form-control">{{ this.time.min | number: '2.0-0' }}</p>
+                        </div>
+
+                        <div class="time-config">
+                            <p class="form-control">{{ ':' }}</p>
+                        </div>
+                        <div>
+                            <p class="form-control">{{ this.time.sec | number: '2.0-0' }}</p>
+                        </div>
+                        <div class="time-config">
+                            <button #addBtn class="btn btn-primary" [disabled]="this.timeCounter === 9"
+                                (click)="onClickInAddButton($event)">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <p><span class="multiplayerP">Mode de jeu :</span></p>
+                <div class="radio" *ngFor="let mode of modes">
+                    <label>
+                        <input type="radio" name="gameMode" [value]="mode" checked
+                            (change)="randomBonusActivated($event)" />
+                        {{ mode }}
+                    </label>
+                </div>
+                <p>
+                    <span class="multiplayerP">Vous avez séléctionner le mode de jeu </span> <b
+                        class="multiplayerP-chosen">{{ chosenMode }}</b>
+                </p>
+                <hr />
+
                 <div>
-                    <button mat-button matStepperNext>Suivant</button>
+                    <button mat-raised-button mat-dialog-close
+                        (click)="this.userService.isBonusBox=false">Annuler</button>
+                    <button mat-raised-button color="primary" matStepperNext type="submit"
+                        [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid">Suivant</button>
                 </div>
             </form>
         </mat-step>
@@ -75,19 +172,22 @@
                 <ng-template matStepLabel>Créez une partie</ng-template>
                 <mat-form-field appearance="fill">
                     <mat-label>Nom de la partie</mat-label>
-                    <input matInput formControlName="secondCtrl" placeholder="nom de la partie" [(ngModel)]="gameName" required />
+                    <input matInput formControlName="gameNameMutiplayer" placeholder="nom de la partie"
+                        [(ngModel)]="gameName" required />
                 </mat-form-field>
                 <div>
-                    <button mat-button matStepperPrevious mat-raised-button color="accent">Retour</button>
-                    <button mat-button (click)="createGame()" matStepperNext mat-raised-button color="primary">Suivant</button>
+                    <button mat-button matStepperPrevious mat-raised-button (click)="this.chosenMode = this.modes[1]"
+                        color="accent">Retour</button>
+                    <button mat-raised-button color="primary" matStepperNext (click)="createGame()">Suivant</button>
                 </div>
             </form>
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>Salle d'attente</ng-template>
-            <div *ngIf="game; else elseBlock">
-                <p class="multiplayerP">vous allez jouer contre l'utilisateur {{ game.joinedUserName }}</p>
-                <button mat-button (click)="beginGame(true)" routerLink="/game" mat-dialog-close>Démarer la partie</button>
+            <div *ngIf="guestName; else elseBlock">
+                <p class="multiplayerP">vous allez jouer contre l'utilisateur {{ guestName}}</p>
+                <button mat-button (click)="beginGame(true)" routerLink="/game" mat-dialog-close>Démarer la
+                    partie</button>
                 <button mat-button (click)="beginGame(false)" mat-dialog-close>Annuler</button>
             </div>
             <ng-template #elseBlock>
@@ -97,32 +197,48 @@
                 <hr />
                 <mat-spinner></mat-spinner>
                 <div>
-                    <button mat-button (click)="disconnectUser()" matStepperPrevious mat-raised-button color="accent">Retour</button>
-                    <button mat-button (click)="passInSoloMode()" mat-raised-button color="primary">Jouer une partie classique</button>
+                    <button mat-button (click)="disconnectUser()" matStepperPrevious mat-raised-button
+                        color="accent">Retour</button>
+                    <button mat-button (click)="passInSoloMode()" mat-raised-button color="primary">Jouer une partie
+                        classique</button>
                 </div>
             </ng-template>
         </mat-step>
     </mat-stepper>
 </div>
+<!-- ----------------------------joiner game--------------------- -->
 
 <div class="div" *ngIf="joinMultiplayerGame">
     <mat-card class="game-Configuration-Card">
         <mat-card-title>Joindre une partie</mat-card-title>
-        <!-- <button (click)= 'joinGame()'> joindre </button> -->
     </mat-card>
-    <button mat-raised-button (click)="isOptional = !isOptional">
-        {{ !isOptional ? 'Enable optional steps' : 'Disable optional steps' }}
-    </button>
     <mat-stepper linear #stepper>
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
                 <ng-template matStepLabel>Remplissez votre nom</ng-template>
                 <mat-form-field appearance="fill">
                     <mat-label>Nom</mat-label>
-                    <input matInput placeholder="Last name, First name" formControlName="firstCtrl" [(ngModel)]="joinedUserName" required />
+                    <input #messageGuest matInput placeholder="Last name, First name"
+                        formControlName="guestFormControl" [(ngModel)]="playerName" required />
+                    <mat-hint align="end"> {{ messageGuest.value?.length }} / 15</mat-hint>
+
+                    <mat-hint class="no-error-hint" align="start"
+                        *ngIf="firstFormGroup.controls.guestFormControl.valid; else guestInputInvalid">
+                        &#9679; Le nom entré est valide !!! <br />
+                    </mat-hint>
+                    <ng-template #guestInputInvalid>
+                        <mat-hint align="start" class="error-hint">
+                            &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
+                            &#9679; Le nom ne doit pas contenir d'espace <br />
+                            &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
+                        </mat-hint>
+                    </ng-template>
+
                 </mat-form-field>
+                <br><br>
+                <hr>
                 <div>
-                    <button mat-raised-button color="primary" mat-button matStepperNext>Suivant</button>
+                    <button mat-raised-button color="primary" matStepperNext>Suivant</button>
                 </div>
             </form>
         </mat-step>
@@ -139,7 +255,7 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let room of rooms">
-                                <td class="contentCell" (click)="joinGame(room)">{{ room.clientName }}</td>
+                                <td class="contentCell" (click)="joinGame(room)">{{ room.user?.name ?? 'default'}}</td>
                                 <td class="contentCell" (click)="joinGame(room)">{{ room.gameName }}</td>
                             </tr>
                         </tbody>
@@ -148,9 +264,8 @@
                 <ng-template #elseBlock>
                     <div *ngIf="!requestAccepted; else elseBlock">Le joueur n'a pas encore démarer la partie!</div>
                     <ng-template #elseBlock>
-                        <button mat-raised-button color="primary" (click)="getReserveToFillEasel()" routerLink="/game" mat-dialog-close>
-                            Rejoindre la partie
-                        </button>
+                        <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Rejoindre la
+                            partie</button>
                     </ng-template>
                 </ng-template>
             </div>
