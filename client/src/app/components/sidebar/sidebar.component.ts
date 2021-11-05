@@ -52,24 +52,28 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private socketManagementService: SocketManagementService,
     ) {}
     ngOnInit(): void {
-        this.reserveService.sizeObs.subscribe(() => {
-            setTimeout(() => {
-                this.reserveLettersQuantity();
-            }, 0);
-        });
-        this.virtualPlayerService.commandObs.subscribe((res) => {
-            setTimeout(() => {
-                this.arrayOfVrCommands.push(res);
-            }, 0);
-        });
-
-        this.timeService.commandObs.subscribe((res) => {
-            setTimeout(() => {
-                this.typeArea = res;
-                this.logMessage();
-            }, 0);
-        });
-
+        if (this.reserveService.sizeObs) {
+            this.reserveService.sizeObs.subscribe(() => {
+                setTimeout(() => {
+                    this.reserveLettersQuantity();
+                }, 0);
+            });
+        }
+        if (this.virtualPlayerService.commandObs) {
+            this.virtualPlayerService.commandObs.subscribe((res) => {
+                setTimeout(() => {
+                    this.arrayOfVrCommands.push(res);
+                }, 0);
+            });
+        }
+        if (this.timeService.commandObs) {
+            this.timeService.commandObs.subscribe((res) => {
+                setTimeout(() => {
+                    this.typeArea = res;
+                    this.logMessage();
+                }, 0);
+            });
+        }
         this.mouseHandelingService.commandObs.subscribe((res) => {
             setTimeout(() => {
                 this.typeArea = res;
@@ -77,13 +81,14 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             }, 0);
         });
         if (this.userService.playMode !== 'soloGame') {
-            this.messageService.newTextMessageObs.subscribe(() => {
-                this.arrayOfMessages = this.messageService.textMessage;
-                this.messageService.newTextMessage = false;
-            });
+            if (this.messageService.newTextMessageObs !== undefined) {
+                this.messageService.newTextMessageObs.subscribe(() => {
+                    this.arrayOfMessages = this.messageService.textMessage;
+                    this.messageService.newTextMessage = false;
+                });
+            }
         }
     }
-
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }
