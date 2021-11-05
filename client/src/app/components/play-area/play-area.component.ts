@@ -55,6 +55,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             if (this.userService.playMode === 'createMultiplayerGame') {
                 this.multiplayer.sendReserve();
             }
+        } else {
+            this.multiplayer.getJoinReserve();
         }
     }
     @HostListener('window:keydown', ['$event'])
@@ -73,7 +75,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     break;
                 default:
                     this.mouseHandlingService.keyBoardEntryManage(event.key);
-
                     break;
             }
         }
@@ -93,7 +94,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     ngOnInit() {
         this.pvs.loadDictionary().then(() => {});
-        this.multiplayer.updateReserve();
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

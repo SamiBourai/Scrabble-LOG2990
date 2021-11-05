@@ -2,7 +2,7 @@ import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
-import { BONUS_POINTS_50, EASEL_LENGTH } from '@app/constants/constants';
+import { EASEL_LENGTH } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
@@ -23,7 +23,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     arrayOfReserveLetters: string[] = [];
     typeArea: string = '';
     isValid: boolean = true;
-    isImpossible: boolean = false;
+    invalidCommand: boolean = false;
     isCommand: boolean = false;
     inEasel: boolean = true;
     command: ChatCommand[] = [];
@@ -78,11 +78,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }
-
-    isYourTurn() {
-        return this.userService.isUserTurn();
-    }
-
     getNameCurrentPlayer() {
         return this.userService.getUserName();
     }
@@ -96,13 +91,14 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
     logMessage() {
         this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
-        const validPlayAndYourTurn = this.isYourTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
+        const validPlayAndYourTurn =
+            this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
         const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
         if (validPlayAndYourTurn && !this.isTheGameDone()) {
             this.switchCaseCommands();
         } else if (validPlay && !this.isTheGameDone() && this.isDebug) {
             if (this.typeArea === '!reserve') {
-                this.isImpossible = false;
+                this.invalidCommand = false;
                 this.errorMessage = '';
                 this.reserveLettersQuantity();
             }
@@ -119,7 +115,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     skipTurnCommand() {
         if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
             this.skipTurn = true;
-            this.isImpossible = true;
+            this.invalidCommand = true;
             this.errorMessage = 'ce n est pas votre tour';
         } else if (this.typeArea === '!debug') {
             this.isDebug = !this.isDebug;
@@ -154,28 +150,28 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 if (this.firstTurn && this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
                     if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
                         if (!this.playFirstTurn(points)) {
-                            this.isImpossible = true;
+                            this.invalidCommand = true;
                             return;
                         }
                     } else {
-                        this.isImpossible = true;
+                        this.invalidCommand = true;
                         this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
                         return;
                     }
                 } else if (this.lettersService.wordIsAttached(this.messageService.command) && points !== 0) {
                     if (!this.placeOtherTurns(points)) {
-                        this.isImpossible = true;
+                        this.invalidCommand = true;
                         this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
                         return;
                     }
                 } else {
-                    this.isImpossible = true;
+                    this.invalidCommand = true;
                     this.errorMessage = 'les lettres a placer ne constituent pas un mot';
                     return;
                 }
             }
         } else {
-            this.isImpossible = true;
+            this.invalidCommand = true;
             this.errorMessage = 'votre mot dois etre contenue dans la grille!';
             return;
         }
@@ -184,59 +180,37 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     impossibleAndValid() {
         this.isCommand = this.messageService.isCommand(this.typeArea);
 
-        if (!this.isYourTurn() && this.messageService.isCommand(this.typeArea)) {
-            this.isImpossible = true;
+        if (!this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea)) {
+            this.invalidCommand = true;
         }
         this.isValid = this.messageService.isValid(this.typeArea);
     }
     playFirstTurn(points: number): boolean {
         let lettersplaced = false;
 
-        if (this.userService.playMode === 'joinMultiplayerGame') {
-            if (this.userService.joinedUser.easel.contains(this.messageService.command.word)) {
-                this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.joinedUser.easel, true);
-                this.updateGuestVariables(points);
-                lettersplaced = true;
-                this.firstTurn = false;
-            }
-        } else {
-            if (this.userService.realUser.easel.contains(this.messageService.command.word)) {
-                this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel, true);
-                this.updateUserVariables(points);
-                lettersplaced = true;
-                this.firstTurn = false;
-            }
+        if (this.userService.getPlayerEasel().contains(this.messageService.command.word)) {
+            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
+            this.updatePlayerVariables(points);
+            lettersplaced = true;
+            this.firstTurn = false;
         }
         return lettersplaced;
     }
     placeOtherTurns(points: number): boolean {
-        if (this.userService.playMode === 'joinMultiplayerGame') {
-            if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.joinedUser.easel)) {
-                this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.joinedUser.easel, true);
-                this.updateGuestVariables(points);
-                return true;
-            }
-        } else if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.realUser.easel)) {
-            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.realUser.easel, true);
-            this.updateUserVariables(points);
+        if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.getPlayerEasel())) {
+            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
+            this.updatePlayerVariables(points);
+            console.log('faux place othernr tu');
             return true;
         }
+        console.log('faux place other tunr');
         return false;
     }
-    updateUserVariables(points: number) {
+    updatePlayerVariables(points: number) {
         this.userService.chatCommandToSend = this.messageService.command;
-        this.userService.realUser.score += points;
+        this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
         this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
-        this.isImpossible = false;
-        this.virtualPlayerService.first = false;
-        if (this.lettersService.usedAllEaselLetters) this.userService.realUser.score += BONUS_POINTS_50;
-    }
-    updateGuestVariables(points: number) {
-        this.userService.chatCommandToSend = this.messageService.command;
-        this.userService.joinedUser.score += points;
-        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
-        this.isImpossible = false;
-        if (this.lettersService.usedAllEaselLetters) this.userService.joinedUser.score += BONUS_POINTS_50;
+        this.invalidCommand = false;
     }
     isTheGameDone(): boolean {
         return this.userService.endOfGame;
@@ -249,73 +223,30 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         });
     }
 
-    private switchCaseCommands() {
-        switch (this.typeArea.split(' ', 1)[0]) {
-            case '!placer':
-                this.checkIfFirstPlay();
-                this.verifyWord();
-                break;
-            case '!echanger':
-                if (this.reserveService.reserveSize < EASEL_LENGTH) {
-                    this.isImpossible = true;
-                    this.errorMessage = 'la reserve contient moins de 7 lettres';
-                } else if (
-                    this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.realUser.easel)
-                ) {
-                    this.isImpossible = false;
-                    this.errorMessage = '';
-                    this.updateMessageArray(this.typeArea);
-                    this.userService.endOfGameCounter = 0;
-                } else {
-                    this.isImpossible = true;
-                    this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
-                }
-                if (!this.isImpossible) {
-                    this.userService.userPlayed();
-                    this.userService.exchangeLetters = true;
-                    this.userService.playedObs.next(this.userService.exchangeLetters);
-                }
-                break;
-            case '!debug':
-                this.isImpossible = false;
-                this.isDebug = !this.isDebug;
-                break;
-            case '!passer':
-                this.isImpossible = false;
-                this.errorMessage = '';
-                this.userService.detectSkipTurnBtn();
-                break;
-            // CODE SPRINT 2 ABDEL POUR !RESERVE
-            case '!reserve':
-                this.isImpossible = false;
-                this.errorMessage = '';
-                if (this.isDebug) {
-                    this.reserveLettersQuantity();
-                } else {
-                    this.isImpossible = true;
-                    this.errorMessage = 'vous n etes pas en mode debogage';
-                }
-            // FIN CODE SPRINT 2 ABDEL POUR !RESERVE
-        }
-    }
     private verifyWord() {
-        if (this.userService.playMode === 'soloGame') this.getLettersFromChat();
-        else {
-            if (
-                (this.userService.realUser.turnToPlay && this.userService.playMode === 'createMultiplayerGame') ||
-                (!this.userService.realUser.turnToPlay && this.userService.playMode === 'joinMultiplayerGame')
-            )
+        if (this.userService.playMode === 'soloGame') {
+            this.getLettersFromChat();
+        } else {
+            if (this.userService.isPlayerTurn()) {
                 this.socketManagementService.emit('verifyWord', {
                     gameName: this.userService.gameName,
                     word: this.lettersService.fromWordToLetters(this.messageService.command.word),
                 });
-            this.socketManagementService.listen('verifyWord').subscribe((data) => {
-                this.valideWordService.isWordValid = data.isValid ?? false;
-                this.getLettersFromChat();
-            });
+
+                this.socketManagementService.listen('verifyWord').subscribe((data) => {
+                    this.valideWordService.isWordValid = data.isValid ?? false;
+                    console.log('shui laaaaaaa dans dans verify word');
+
+                    this.getLettersFromChat();
+                });
+            }
         }
+        this.endTurnValidCommand();
+    }
+
+    private endTurnValidCommand() {
         this.messageService.skipTurnIsPressed = false;
-        if (!this.isImpossible) {
+        if (!this.invalidCommand) {
             this.userService.userPlayed();
             this.errorMessage = '';
             this.userService.endOfGameCounter = 0;
@@ -329,9 +260,60 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 if (this.userService.playMode === 'joinMultiplayerGame') command = this.userService.joinedUser.name + ' : ' + command;
                 if (this.userService.playMode === 'createMultiplayerGame') command = ' ' + this.userService.realUser.name + ' : ' + command;
                 this.arrayOfMessages.push(command);
+                console.log('shuilaaaa');
                 this.messageService.textMessage = this.arrayOfMessages;
                 this.messageService.textMessageObs.next(this.messageService.textMessage);
             }
+        }
+    }
+    private switchCaseCommands() {
+        switch (this.typeArea.split(' ', 1)[0]) {
+            case '!placer':
+                this.checkIfFirstPlay();
+                this.verifyWord();
+                break;
+            case '!echanger':
+                if (this.reserveService.reserveSize < EASEL_LENGTH) {
+                    this.invalidCommand = true;
+                    this.errorMessage = 'la reserve contient moins de 7 lettres';
+                } else if (
+                    this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.getPlayerEasel())
+                ) {
+                    this.invalidCommand = false;
+                    this.errorMessage = '';
+                    this.updateMessageArray(this.typeArea);
+                    this.userService.endOfGameCounter = 0;
+                } else {
+                    this.invalidCommand = true;
+                    this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
+                }
+                if (!this.invalidCommand) {
+                    this.userService.userPlayed();
+                    this.userService.exchangeLetters = true;
+                    this.userService.playedObs.next(this.userService.exchangeLetters);
+                }
+                break;
+            case '!debug':
+                this.invalidCommand = false;
+                this.isDebug = !this.isDebug;
+                break;
+            case '!passer':
+                this.invalidCommand = false;
+                this.errorMessage = '';
+                this.userService.detectSkipTurnBtn();
+                break;
+            // CODE SPRINT 2 ABDEL POUR !RESERVE
+            case '!reserve':
+                this.invalidCommand = false;
+                this.errorMessage = '';
+                if (this.isDebug || this.userService.playMode !== 'soloGame') {
+                    this.reserveLettersQuantity();
+                } else {
+                    this.invalidCommand = true;
+                    this.errorMessage = 'vous n etes pas en mode debogage';
+                }
+                break;
+            // FIN CODE SPRINT 2 ABDEL POUR !RESERVE
         }
     }
 }

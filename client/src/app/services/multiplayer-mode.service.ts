@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { MessageServer } from '@app/classes/message-server';
-import { Vec2 } from '@app/classes/vec2';
+import { UNDEFINED_INDEX } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
 import { MessageService } from './message.service';
 import { ReserveService } from './reserve.service';
@@ -28,7 +27,7 @@ export class MultiplayerModeService {
         private lettersService: LettersService,
         private reserveService: ReserveService,
         private messageService: MessageService,
-        private easelLogic: EaselLogiscticsService,
+
         private validWordService: ValidWordService,
     ) {
         this.observableWinner = this.winnerObs.asObservable();
@@ -51,30 +50,39 @@ export class MultiplayerModeService {
                     user: { name: this.userService.realUser.name, score: this.userService.realUser.score },
                     guestPlayer: { name: this.userService.joinedUser.name, score: this.userService.joinedUser.score },
                     usedWords: JSON.stringify(Array.from(this.validWordService.usedWords)),
+                    reserve: JSON.stringify(Array.from(this.reserveService.letters)),
+                    reserveSize: this.reserveService.reserveSize,
                 });
                 if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
                 else this.userService.realUser.turnToPlay = false;
             }
         } else if (this.userService.exchangeLetters || this.userService.passTurn) {
-            this.socketManagementService.emit('passTurn', { gameName: this.userService.gameName });
+            this.socketManagementService.emit('passTurn', { gameName: this.userService.gameName, passTurn: this.userService.passTurn });
             this.userService.exchangeLetters = false;
             this.userService.passTurn = false;
         }
     }
     getPlayedCommand(playedMethod: string) {
-        this.socketManagementService.listen(playedMethod).subscribe((data) => {
-            this.guestCommand = data.command ?? { word: 'errorServer', position: { x: 1, y: 1 }, direction: 'h' };
-            this.lettersService.placeLettersWithDirection(this.guestCommand);
-            this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
-            if (playedMethod === 'guestUserPlayed') {
-                this.userService.realUser.turnToPlay = true;
-                this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
-            } else {
-                this.userService.realUser.turnToPlay = false;
-                this.userService.realUser.score = data.user?.score ?? 0;
-            }
-            this.userService.firstTurn = false;
-        });
+        if (!this.userService.isPlayerTurn()) {
+            this.socketManagementService.listen(playedMethod).subscribe((data) => {
+                this.guestCommand = data.command ?? { word: 'errorServer', position: { x: 1, y: 1 }, direction: 'h' };
+                this.reserveService.redefineReserve(
+                    data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
+                    data.reserveSize ?? UNDEFINED_INDEX,
+                );
+                this.lettersService.placeLettersWithDirection(this.guestCommand);
+                this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
+
+                if (playedMethod === 'guestUserPlayed') {
+                    this.userService.realUser.turnToPlay = true;
+                    this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
+                } else {
+                    this.userService.realUser.turnToPlay = false;
+                    this.userService.realUser.score = data.user?.score ?? 0;
+                }
+                this.userService.firstTurn = false;
+            });
+        }
     }
     sendReserve() {
         this.socketManagementService.reserveToserver(
@@ -86,13 +94,9 @@ export class MultiplayerModeService {
     }
     updateReserve() {
         this.socketManagementService.reserveToClient();
-        if (this.first && this.userService.playMode === 'joinMultiplayerGame') {
-            this.first = false;
-            this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
-            setTimeout(() => {
-                console.log('joined And Fill easel');
-            }, 3000);
-        }
+    }
+    getJoinReserve() {
+        this.socketManagementService.reserveToJoinOnfirstTurn(this.userService.gameName);
     }
     setGuestPlayerInfromation(guestUserName: string) {
         this.userService.initiliseUsers(false);
@@ -122,15 +126,5 @@ export class MultiplayerModeService {
             this.gotWinner = true;
             this.winnerObs.next(this.gotWinner);
         });
-    }
-    fillUsedWords(command: ChatCommand): Vec2[] {
-        const positions: Vec2[] = [];
-        if (command.direction === 'h') {
-            for (let i = command.position.x; i < command.position.x + command.word.length; i++) positions.push({ x: i, y: command.position.y });
-        }
-        if (command.direction === 'v') {
-            for (let i = command.position.y; i < command.position.y + command.word.length; i++) positions.push({ y: i, x: command.position.x });
-        }
-        return positions;
     }
 }

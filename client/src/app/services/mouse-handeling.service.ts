@@ -169,10 +169,9 @@ export class MouseHandelingService {
         for (const lett of letters) {
             this.placeTempCommand += lett.charac;
         }
-        this.commandObs.next(this.placeTempCommand);
         this.cancelByClick();
         this.userService.exchangeLetters = true;
-        this.userService.playedObs.next(this.userService.exchangeLetters);
+        this.commandObs.next(this.placeTempCommand);
     }
 
     cancelByClick() {

@@ -301,3 +301,4 @@ export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
 
 export const RESERVE_SIZE = 100;
 export const FIVE_SEC_MS = 5000;
+export const BOTH_EASEL_FILLED = 86;

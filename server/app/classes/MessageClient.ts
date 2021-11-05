@@ -18,4 +18,7 @@ export interface MessageClient {
     arrayOfBonusBox?: Vec2[][];
     winner?: string;
     usedWords?: string;
+    passTurn?: boolean;
+    reserve?: string;
+    reserveSize?: number;
 }

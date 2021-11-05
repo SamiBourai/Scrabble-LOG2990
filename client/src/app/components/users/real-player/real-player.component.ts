@@ -28,6 +28,7 @@ export class RealPlayerComponent implements OnInit {
             });
         }
         if (this.userService.playMode === 'createMultiplayerGame') {
+            this.mutltiplayerModeService.updateReserve();
             this.userService.commandtoSendObs.subscribe(() => {
                 this.mutltiplayerModeService.play('creatorPlayed', true);
             });
@@ -37,13 +38,13 @@ export class RealPlayerComponent implements OnInit {
             this.messageService.textMessageObs.subscribe(() => {
                 this.mutltiplayerModeService.sendMessage('sendMessage');
             });
+
+            this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
+            this.mutltiplayerModeService.getMessageSend('getMessage');
+            this.mutltiplayerModeService.playersLeftGamge();
+            this.mutltiplayerModeService.winnerObs.subscribe((response) => {
+                if (response) this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+            });
         }
-        this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
-        this.mutltiplayerModeService.getMessageSend('getMessage');
-        //this.mutltiplayerModeService.updateReserve();
-        this.mutltiplayerModeService.playersLeftGamge();
-        this.mutltiplayerModeService.winnerObs.subscribe((response) => {
-            if (response) this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
-        });
     }
 }

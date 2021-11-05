@@ -5,7 +5,9 @@ import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { io } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
+import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
+import { UserService } from './user.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,7 +15,7 @@ import { ReserveService } from './reserve.service';
 export class SocketManagementService {
     first: boolean = true;
     private socket: Socket;
-    constructor(private reserveService: ReserveService) {
+    constructor(private reserveService: ReserveService, private easelLogic: EaselLogiscticsService, private userService: UserService) {
         this.socket = io(environment.serverUrl) as unknown as Socket;
     }
 
@@ -41,6 +43,19 @@ export class SocketManagementService {
     reserveToClient() {
         this.socket.on('updateReserveInClient', (map: string, size: number) => {
             this.reserveService.redefineReserve(map, size);
+        });
+    }
+    reserveToJoinOnfirstTurn(gameName: string) {
+        this.socket.emit('sendReserveJoin', gameName);
+
+        this.socket.on('updateReserveInClient', (map: string, size: number) => {
+            if (this.first) {
+                this.first = false;
+                this.reserveService.redefineReserve(map, size);
+                this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
+
+                this.reserveToserver('updateReserveInServer', gameName, this.reserveService.letters, this.reserveService.reserveSize);
+            }
         });
     }
 }

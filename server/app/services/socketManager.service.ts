@@ -1,4 +1,4 @@
-import { FIVE_SEC_MS } from '@app/classes/constants';
+import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, SIX_TURN } from '@app/classes/constants';
 import { GameObject } from '@app/classes/gameObject';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/MessageClient';
@@ -42,7 +42,7 @@ export class SocketManagerService {
                 socket.join(game.gameName);
                 this.sio.to(game.gameName).emit('userJoined', game);
                 this.deleteRoom(game);
-                this.games.get(game.gameName).guestPlayer = { name: game.guestPlayer?.name, score: 0, easelLetters: 7 };
+                this.games.get(game.gameName).guestPlayer = { name: game.guestPlayer?.name, score: 0, easelLetters: EASEL_LENGTH };
             });
             socket.on('getAleatoryBonus', (message: MessageClient) => {
                 this.sio
@@ -59,25 +59,25 @@ export class SocketManagerService {
                 this.games.get(game.gameName).setTimer();
                 game.gameStarted = true;
                 this.sio.to(game.gameName).emit('beginGame', game);
-                this.sio
-                    .to(game.gameName)
-                    .emit(
-                        'updateReserveInClient',
-                        JSON.stringify(Array.from(this.games.get(game.gameName).reserveServer)),
-                        this.games.get(game.gameName).reserverServerSize,
-                    );
             });
             socket.on('creatorPlayed', (command: MessageClient) => {
+                const map = new Map(JSON.parse(command.usedWords ?? 'null'));
+                console.log(map);
                 this.games.get(command.gameName).creatorPlayer.score = command.user?.score ?? 0;
                 this.sio.to(command.gameName).emit('creatorPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
+
                 this.games.get(command.gameName).passTurn = 0;
+                console.log('passs: ' + this.games.get(command.gameName).passTurn);
             });
             socket.on('guestUserPlayed', (command: MessageClient) => {
+                const map = new Map(JSON.parse(command.usedWords ?? 'null'));
+                console.log(map);
                 this.games.get(command.gameName).guestPlayer.score = command.guestPlayer?.score ?? 0;
                 this.sio.to(command.gameName).emit('guestUserPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
                 this.games.get(command.gameName).passTurn = 0;
+                console.log('passs: ' + this.games.get(command.gameName).passTurn);
             });
             socket.on('startTimer', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
@@ -88,8 +88,10 @@ export class SocketManagerService {
             });
             socket.on('passTurn', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.playerPlayed = true;
-                this.games.get(game.gameName).passTurn++;
-                if (this.games.get(game.gameName).passTurn === 6) {
+                if (game.passTurn) this.games.get(game.gameName).passTurn++;
+                else this.games.get(game.gameName).passTurn = 0;
+                console.log('passs++: ' + this.games.get(game.gameName).passTurn);
+                if (this.games.get(game.gameName).passTurn === SIX_TURN) {
                     this.sio.to(game.gameName).emit('getWinner', game);
                 }
             });
@@ -97,13 +99,27 @@ export class SocketManagerService {
                 this.games.get(gameName).reserveServer = new Map(JSON.parse(map));
                 console.log(this.games.get(gameName).reserveServer);
                 this.games.get(gameName).reserverServerSize = size;
-                // this.sio.to(gameName).emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size);
+                if (size === BOTH_EASEL_FILLED)
+                    this.sio.to(gameName).emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size);
+            });
+
+            socket.on('sendReserveJoin', (gameName: string) => {
+                console.log(this.games.get(gameName).reserveServer);
+                this.sio
+                    .to(gameName)
+                    .emit(
+                        'updateReserveInClient',
+                        JSON.stringify(Array.from(this.games.get(gameName).reserveServer)),
+                        this.games.get(gameName).reserverServerSize,
+                    );
             });
             socket.on('verifyWord', (message: MessageClient) => {
                 const word: Letter[] = [];
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
                 this.sio.to(message.gameName).emit('verifyWord', message);
+                console.log('iouwhdiuwh ', message);
             });
+
             socket.on('sendMessage', (message: MessageClient) => {
                 this.sio.to(message.gameName).emit('getMessage', message);
             });

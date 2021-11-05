@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/EaselObject';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
-import { FIRST_NAME, MAX_PLAYER, PARAMETERS_OF_SWAP, SECOND_NAME, SIX_TURN, THIRD_NAME } from '@app/constants/constants';
+import { BONUS_POINTS_50, FIRST_NAME, MAX_PLAYER, PARAMETERS_OF_SWAP, SECOND_NAME, SIX_TURN, THIRD_NAME } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
 import { VirtualPlayerService } from './virtual-player.service';
@@ -128,13 +128,15 @@ export class UserService {
         else return !this.realUser.turnToPlay;
     }
     detectSkipTurnBtn(): boolean {
+        this.messageService.skipTurnIsPressed = true;
         if (this.playMode === 'soloGame') {
-            this.messageService.skipTurnIsPressed = true;
             this.realUser.turnToPlay = false;
             this.realUserTurnObs.next(this.realUser.turnToPlay);
             this.checkForSixthSkip();
-        } else this.passTurn = true;
-        this.playedObs.next(this.passTurn);
+        } else {
+            this.passTurn = true;
+            this.playedObs.next(this.passTurn);
+        }
         return true;
     }
     userPlayed() {
@@ -175,5 +177,14 @@ export class UserService {
     }
     get initArrayMessage(): Observable<boolean> {
         return this.reInit;
+    }
+    updateScore(points: number, bonus: boolean) {
+        if (this.playMode === 'joinMultiplayerGame') {
+            if (bonus) this.joinedUser.score += BONUS_POINTS_50;
+            this.joinedUser.score += points;
+        } else {
+            if (bonus) this.realUser.score += BONUS_POINTS_50;
+            this.realUser.score += points;
+        }
     }
 }

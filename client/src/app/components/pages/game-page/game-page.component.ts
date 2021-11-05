@@ -41,13 +41,11 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
             case 'createMultiplayerGame':
                 this.soloMode = false;
                 this.multiplayerModeService.beginGame();
-
                 break;
             case 'joinMultiplayerGame':
                 this.soloMode = false;
                 this.socketManagementService.emit('guestInGamePage', { gameName: this.userService.gameName });
                 this.multiplayerModeService.beginGame();
-
                 break;
         }
         this.isUserEaselEmpty();
