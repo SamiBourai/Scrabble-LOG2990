@@ -139,13 +139,6 @@ export class MessageService {
         return true;
     }
 
-    containsSpecialChar(input: string) {
-        for (const letter of input) {
-            if (this.arrayOfSpecialChars.includes(letter)) return true;
-        }
-        return false;
-    }
-
     replaceSpecialChar(input: string): string {
         for (const letter of input) {
             if (letter === 'ç') input = input.split(letter).join('c');

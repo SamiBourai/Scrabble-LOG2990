@@ -93,7 +93,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.pvs.loadDictionary();
+        this.pvs.loadDictionary().then(() => {
+            // promise to fill dictionnary
+        });
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

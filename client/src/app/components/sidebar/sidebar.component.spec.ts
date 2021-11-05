@@ -1,17 +1,22 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable max-len */
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { EaselObject } from '@app/classes/easel-object';
+import { Letter } from '@app/classes/letter';
+import { MessageServer } from '@app/classes/message-server';
+import { JoinedUser, RealUser } from '@app/classes/user';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { A, B } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
-import { RealUser } from './../../classes/user';
+import { BehaviorSubject, of } from 'rxjs';
+import { EaselObject } from './../../classes/easel-object';
 import { ValidWordService } from './../../services/valid-word.service';
 
 import SpyObj = jasmine.SpyObj;
@@ -50,6 +55,9 @@ describe('SidebarComponent', () => {
             'resetPassesCounter',
             'isUserTurn',
             'userPlayed',
+            'isPlayerTurn',
+            'getPlayerEasel',
+            'updateScore',
         ]);
         letterServiceSpy = jasmine.createSpyObj('letterServiceSpy', [
             'changeLetterFromReserve',
@@ -100,12 +108,12 @@ describe('SidebarComponent', () => {
     it('confirm that when logMessage is called, inpossiblAndValid is called', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        const spy = spyOn(component, 'impossibleAndValid');
+
         component.logMessage();
-        expect(spy).toHaveBeenCalled();
+        expect(component.invalidCommand).toBeFalse();
     });
 
-    it('should call the method getLetterFromChat and detectSkipTurnBtn when the command contains place and its your turn', () => {
+    it('should call the method switchCaseCommands', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
 
@@ -121,29 +129,15 @@ describe('SidebarComponent', () => {
             return true;
         });
 
-        spyOn(component, 'isYourTurn').and.callFake(() => {
+        spyOn<any>(component['userService'], 'isPlayerTurn').and.callFake(() => {
             return true;
         });
-
-        const spy = spyOn(component, 'getLettersFromChat');
-
-        component.logMessage();
-        expect(spy).toHaveBeenCalled();
-        expect(userServiceSpy.detectSkipTurnBtn).toHaveBeenCalled();
-    });
-
-    it('should call getNameCurrentPlayer when the command is invalid', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.isValid.and.callFake(() => {
+        spyOn<any>(component, 'isTheGameDone').and.callFake(() => {
             return false;
         });
 
-        const spy = spyOn(component, 'getNameCurrentPlayer');
+        const spy = spyOn<any>(component, 'switchCaseCommands');
+
         component.logMessage();
         expect(spy).toHaveBeenCalled();
     });
@@ -164,7 +158,7 @@ describe('SidebarComponent', () => {
         messageServiceSpy.containsPlaceCommand.and.callFake(() => {
             return false;
         });
-        spyOn(component, 'isYourTurn').and.callFake(() => {
+        spyOn<any>(component['userService'], 'isPlayerTurn').and.callFake(() => {
             return true;
         });
 
@@ -176,182 +170,209 @@ describe('SidebarComponent', () => {
     });
 
     it('should call the method changeLetterFromReserve', () => {
-        // component.typeArea = "!echanger ea"
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
+        component.typeArea = '!echanger ea';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
 
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
-        spyOn(component, 'isTheGameDone').and.callFake(() => {
-            return false;
-        });
+        component['reserveService'].reserveSize = 89;
 
         const spy = spyOn<any>(letterServiceSpy, 'changeLetterFromReserve');
-        component.logMessage();
+        component['switchCaseCommands']();
 
         expect(spy).toHaveBeenCalled();
     });
 
-    it('verify that when isImpossible is false, detectSkipTurnBtn is called', () => {
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
+    it('verify that when invalidCommand is false, userPlayed is called', () => {
+        component.typeArea = '!echanger ea';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component['reserveService'].reserveSize = 89;
+        spyOn<any>(letterServiceSpy, 'changeLetterFromReserve').and.returnValue(false);
         component.invalidCommand = false;
+        const spy = spyOn<any>(component['userService'], 'userPlayed');
+        component['switchCaseCommands']();
 
-        component.logMessage();
-        expect(userServiceSpy.userPlayed()).toBeFalse();
+        expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should verify that isImpossible is true when the reserveSize < 7', () => {
+    it('switchCaseCommands place', () => {
+        component.typeArea = '!placer h8h ami';
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        const spy = spyOn<any>(component, 'checkIfFirstPlay');
+        component['switchCaseCommands']();
+        expect(spy).toHaveBeenCalled();
+    });
 
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
+    it('placeOtherTurn', () => {
+        const p = 10;
+        spyOn<any>(letterServiceSpy, 'wordIsPlacable').and.returnValue(true);
+        const spy = spyOn(component['lettersService'], 'placeLettersInScrable');
+        spyOn(component, 'updatePlayerVariables');
+        component.placeOtherTurns(p);
+        expect(spy).toHaveBeenCalled();
+    });
 
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
+    it('updatePLayerVariables', () => {
+        const p = 10;
+        const spy = spyOn(component['userService'], 'updateScore');
+        component.updatePlayerVariables(p);
+        expect(spy).toHaveBeenCalled();
+    });
 
-        messageServiceSpy.containsSwapCommand.and.callFake(() => {
-            return true;
-        });
+    it('verifyWord', () => {
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        messageServiceSpy.command = cmd;
+        component['userService'].playMode = 'multi';
+        const data: MessageServer = { gameName: 'game000111', gameStarted: false };
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        userServiceSpy.realUser = userR;
+        component['userService'].playMode = 'solo';
+        component['userService'].playMode = 'joinMultiplayerGame';
+        spyOn<any>(component['socketManagementService'], 'listen').and.returnValue(of(data));
+        const spy = spyOn(component, 'getLettersFromChat');
+        component['valideWordService'].isWordValid = true;
+        component['verifyWord']();
+        expect(spy).not.toHaveBeenCalled();
+    });
 
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'changeLetterFromReserve').and.callFake(() => {
-            return false;
-        });
-
-        reserveServiceSpy.reserveSize = 6;
-        component.logMessage();
+    it('should verify that invalidCommand is true when the reserveSize < 7', () => {
+        component.typeArea = '!echanger ea';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component['reserveService'].reserveSize = 6;
+        spyOn<any>(letterServiceSpy, 'changeLetterFromReserve').and.returnValue(false);
+        component['switchCaseCommands']();
         expect(component.invalidCommand).toBeTrue();
     });
 
-    it('should verify that isImpossible is true when the reserveSize > 7', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.containsSwapCommand.and.callFake(() => {
-            return true;
-        });
-
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'changeLetterFromReserve').and.callFake(() => {
-            return true;
-        });
-
-        reserveServiceSpy.reserveSize = 8;
-        component.logMessage();
+    it('should verify that invalidCommand is false when changeLetter', () => {
+        component.typeArea = '!echanger ea';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component['reserveService'].reserveSize = 89;
+        spyOn<any>(letterServiceSpy, 'changeLetterFromReserve').and.returnValue(true);
+        component['switchCaseCommands']();
         expect(component.invalidCommand).toBeFalse();
     });
 
-    it('isImpossible is true when containsSwapCommad is true and changeLetterFromReserve', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-        reserveServiceSpy.reserveSize = 8;
-
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.containsSwapCommand.and.callFake(() => {
-            return true;
-        });
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
-        letterServiceSpy.changeLetterFromReserve.and.callFake(() => {
-            return false;
-        });
-
-        component.logMessage();
-        expect(component.invalidCommand).toBeTrue();
+    it('case debug', () => {
+        component.typeArea = '!debug';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component['switchCaseCommands']();
+        expect(component.invalidCommand).toBeFalse();
     });
 
-    it('should verify that getLettersFromChat', () => {
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
+    it('case passer', () => {
+        component.typeArea = '!passer';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component['switchCaseCommands']();
+        expect(component.invalidCommand).toBeFalse();
+    });
 
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-        messageServiceSpy.containsPlaceCommand.and.callFake(() => {
-            return true;
-        });
+    it('case reserve', () => {
+        component.typeArea = '!reserve';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component['switchCaseCommands']();
+        expect(component.invalidCommand).toBe(true);
+    });
 
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
-        const spy = spyOn<any>(component, 'getLettersFromChat');
-        component.logMessage();
-
+    it('case reserve debug', () => {
+        component.typeArea = '!reserve';
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component.isDebug = true;
+        const spy = spyOn<any>(component, 'reserveLettersQuantity');
+        component['switchCaseCommands']();
         expect(spy).toHaveBeenCalled();
     });
 
-    it('177', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        userServiceSpy.realUser = user;
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'tileIsEmpty').and.callFake(() => {
-            return true;
-        });
-        spyOn<any>(letterServiceSpy, 'wordInEasel').and.callFake(() => {
-            return true;
-        });
-
-        letterServiceSpy.usedAllEaselLetters = true;
-
-        component.getLettersFromChat();
-        expect(userServiceSpy.realUser.score).toBeDefined();
+    it('verifyWord solo', () => {
+        component['userService'].playMode = 'soloGame';
+        const spy = spyOn<any>(component, 'getLettersFromChat');
+        component['verifyWord']();
+        expect(spy).toHaveBeenCalled();
     });
 
-    it('195', () => {
+    it('verifyWord multi', () => {
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        messageServiceSpy.command = cmd;
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        component['userService'].playMode = 'joinMultiplayerGame';
+        spyOn<any>(component, 'endTurnValidCommand').and.callThrough();
+        component['verifyWord']();
+        expect(1).toBe(1);
+    });
+
+    it('ngOnInit', () => {
+        component['userService'].playMode = 'multi';
+        component['messageService'].newTextMessageObs = new BehaviorSubject<boolean>(true);
+        const spy = spyOn<any>(component['messageService'].newTextMessageObs, 'subscribe');
+        const spy1 = spyOn<any>(global, 'setTimeout');
+        component.ngOnInit();
+        expect(spy).toHaveBeenCalled();
+        expect(spy1).toHaveBeenCalled();
+    });
+
+    it('checkIfFirstPlay', () => {
+        component['userService'].playMode = 'multi';
+        component.checkIfFirstPlay();
+        expect(component.firstTurn).toEqual(component['userService'].firstTurn);
+    });
+
+    it('logMessage validPlay', () => {
+        spyOn<any>(component['messageService'], 'replaceSpecialChar');
+
+        messageServiceSpy.isCommand.and.returnValue(true);
+
+        messageServiceSpy.isValid.and.returnValue(true);
+        spyOn<any>(component['userService'], 'isPlayerTurn').and.returnValue(false);
+
+        spyOn<any>(component, 'isTheGameDone').and.returnValue(false);
+        spyOn<any>(component, 'invalidCommand');
+        component.isDebug = true;
+        component.typeArea = '!reserve';
+        // const spy = spyOn<any>(component,'reserveLettersQuantity');
+
+        component.logMessage();
+
+        expect(component.invalidCommand).toBeTrue();
+        expect(component.errorMessage).toEqual('');
+    });
+
+    it('skipTurnCommand', () => {
+        spyOn<any>(component['messageService'], 'isSubstring').and.returnValue(true);
+        component.skipTurnCommand();
+        expect(component.skipTurn).toBeTrue();
+    });
+
+    it('skipTurnCommand else if', () => {
+        spyOn<any>(component['messageService'], 'isSubstring').and.returnValue(false);
+        component.typeArea = '!debug';
+        component.isDebug = true;
+        component.skipTurnCommand();
+        expect(component.isDebug).toBeFalse();
+    });
+
+    it('isSkipButtonClicked', () => {
+        component['messageService'].skipTurnIsPressed = true;
+        component.isSkipButtonClicked();
+        expect(component['messageService'].skipTurnIsPressed).toBeFalse();
+    });
+
+    it('logDebug', () => {
+        const spy = spyOn<any>(component['messageService'], 'debugCommand');
+        component.logDebug();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('placeOtherTurns false in getLettersFromChat ', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
         const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
@@ -359,11 +380,6 @@ describe('SidebarComponent', () => {
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
         });
-
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
-            return true;
-        });
-
         spyOn<any>(letterServiceSpy, 'tileIsEmpty').and.callFake(() => {
             return false;
         });
@@ -371,205 +387,79 @@ describe('SidebarComponent', () => {
         spyOn<any>(letterServiceSpy, 'wordIsAttached').and.callFake(() => {
             return true;
         });
-        spyOn<any>(letterServiceSpy, 'wordIsPlacable').and.callFake(() => {
-            return true;
-        });
 
-        letterServiceSpy.usedAllEaselLetters = true;
+        spyOn<any>(component, 'placeOtherTurns').and.callFake(() => {
+            return false;
+        });
 
         component.getLettersFromChat();
-        expect(userServiceSpy.realUser.score).toBeDefined();
-    });
-
-    it('verify that getNameCurrentPlayer has been called ', () => {
-        component.arrayOfMessages = [];
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.containsSwapCommand.and.callFake(() => {
-            return true;
-        });
-
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return false;
-        });
-
-        messageServiceSpy.isSubstring.and.callFake(() => {
-            return true;
-        });
-
-        const spy = spyOn(component, 'getNameCurrentPlayer');
-
-        component.logMessage();
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('verify that boolean skipTurn isImpossible are set to true', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
-
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return false;
-        });
-        messageServiceSpy.isSubstring.and.callFake(() => {
-            return true;
-        });
-        component.logMessage();
-
-        expect(component.skipTurn).toBeTrue();
         expect(component.invalidCommand).toBeTrue();
     });
 
-    it('verify that arrayOfMessages is pushing', () => {
+    it('else of wordIsAttached in getLettersFromChat ', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        component.arrayOfMessages = [];
-
-        messageServiceSpy.isCommand.and.callFake(() => {
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        userServiceSpy.realUser = user;
+        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
             return true;
         });
-
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return false;
-        });
-        const spy = spyOn(component.arrayOfMessages, 'push');
-
-        messageServiceSpy.isSubstring.and.callFake(() => {
-            return true;
-        });
-        component.logMessage();
-
-        expect(spy.length).toBe(1);
-    });
-
-    it('verify that detectSkipTurnBtn has been called when typeArea = !passer', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-        component.typeArea = '!passer';
-
-        messageServiceSpy.isCommand.and.callFake(() => {
-            return true;
-        });
-        messageServiceSpy.isValid.and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-
-        component.logMessage();
-        expect(userServiceSpy.detectSkipTurnBtn).toHaveBeenCalled();
-    });
-
-    it('verify if the array has been spliced when index > -1', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-        component.typeArea = '!passer';
-        component.arrayOfMessages = ['abc', 'def'];
-        spyOn(component, 'isYourTurn').and.callFake(() => {
-            return true;
-        });
-        spyOn(component.arrayOfMessages, 'indexOf').and.returnValue(-1);
-        component.logMessage();
-        expect(component.arrayOfMessages.indexOf('!passer', 0)).toEqual(-1);
-    });
-
-    // test isSkipButtonClicked
-
-    it('verify that isSkipButtonClicked return true when the bouton is pressed', () => {
-        messageServiceSpy.skipTurnIsPressed = true;
-        expect(component.isSkipButtonClicked()).toBeTrue();
-    });
-
-    it('verify that isSkipButtonClicked return false when the bouton is not pressed', () => {
-        messageServiceSpy.skipTurnIsPressed = false;
-        expect(component.isSkipButtonClicked()).toBeFalse();
-    });
-
-    // test logDebug
-
-    it('verify that if the debugCommand method return true logDebug do the same', () => {
-        messageServiceSpy.debugCommand.and.callFake(() => {
-            return true;
-        });
-        expect(component.logDebug()).toBeTrue();
-    });
-
-    it('verify that if the debugCommand method return false logDebug do the same', () => {
-        messageServiceSpy.debugCommand.and.callFake(() => {
-            return false;
-        });
-        expect(component.logDebug()).toBeFalse();
-    });
-
-    // test for isYourTurn
-    it('verify that if the skipTurnValidUser return true isYourTurn do the same', () => {
-        userServiceSpy.isUserTurn.and.callFake(() => {
-            return true;
-        });
-
-        expect(component.isYourTurn()).toBeTrue();
-    });
-
-    it('verify that if the skipTurnValidUser return false isYourTurn do the same', () => {
-        userServiceSpy.isUserTurn.and.callFake(() => {
+        spyOn<any>(letterServiceSpy, 'tileIsEmpty').and.callFake(() => {
             return false;
         });
 
-        expect(component.isYourTurn()).toBeFalse();
+        spyOn<any>(letterServiceSpy, 'wordIsAttached').and.callFake(() => {
+            return false;
+        });
+        component.getLettersFromChat();
+        expect(component.invalidCommand).toBeTrue();
+    });
+
+    it('placeOtherTurns else', () => {
+        const points = 10;
+
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        userServiceSpy.realUser = userR;
+        const userJ: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: false,
+        };
+        userServiceSpy.joinedUser = userJ;
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        messageServiceSpy.command = cmd;
+
+        component['userService'].playMode = 'cala';
+        spyOn<any>(letterServiceSpy, 'wordIsPlacable').and.callFake(() => {
+            return false;
+        });
+
+        expect(component.placeOtherTurns(points)).toBeFalse();
+    });
+
+    it('reserveLettersQuantity', () => {
+        component['reserveService'].letters = new Map<Letter, number>([
+            [A, 2],
+            [B, 3],
+        ]);
+        const spy = spyOn<any>(component.arrayOfReserveLetters, 'push');
+        component.reserveLettersQuantity();
+        expect(spy).toHaveBeenCalled();
     });
 
     it('verify that readWordsAndGivePointsIfValid  has been called ', () => {
-        const spy = spyOn(validWordServiceSpy, 'readWordsAndGivePointsIfValid');
+        const spy = spyOn<any>(validWordServiceSpy, 'readWordsAndGivePointsIfValid');
         component.getLettersFromChat();
         expect(spy).toHaveBeenCalled();
     });
 
-    it('verify that wordInBoardLimits has been called ', () => {
+    it('verify that invalidCommand is true when playFirstTurn is false ', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        const spy1 = spyOn(letterServiceSpy, 'wordInBoardLimits');
-        const spy2 = spyOn(validWordServiceSpy, 'verifyWord');
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-        component.getLettersFromChat();
-        expect(spy1).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
-    });
-
-    it('verify that if firstTurn is false and the position is h8, firstTurn will be false and wordInEasel will be called', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        userServiceSpy.realUser = user;
-
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
             return true;
         });
 
@@ -577,65 +467,18 @@ describe('SidebarComponent', () => {
             return true;
         });
 
-        component.getLettersFromChat();
-
-        expect(component.firstTurn).toBe(false);
-    });
-
-    it('verify that placeLettersInScrabble will be called ', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        userServiceSpy.realUser = user;
-
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
+        spyOn<any>(component, 'playFirstTurn').and.callFake(() => {
+            return false;
         });
-
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'tileIsEmpty').and.callFake(() => {
-            return true;
-        });
-
-        // spyOn<any>(letterServiceSpy, 'wordInEasel').and.callFake(() => {
-        //     return true;
-        // });
-        spyOn<any>(userServiceSpy.realUser.easel, 'contains').and.callFake(() => {
-            return true;
-        });
-        const spy = spyOn<any>(letterServiceSpy, 'placeLettersInScrable');
 
         component.getLettersFromChat();
-
-        expect(component.firstTurn).toBe(false);
-        expect(spy).toHaveBeenCalled();
+        expect(component.invalidCommand).toBe(true);
     });
 
-    it('167', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-        const spy = spyOn<any>(validWordServiceSpy, 'verifyWord');
-
-        component.getLettersFromChat();
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('verify that when wordInEasel is false , isImpossible is true', () => {
+    it('verify errorMessage = votre mot dois etre placer à la position central(h8)!  ', () => {
         const cmd = { word: 'mot', position: { x: 9, y: 9 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        component.firstTurn = true;
         spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
             return true;
         });
 
@@ -643,132 +486,7 @@ describe('SidebarComponent', () => {
             return true;
         });
 
-        spyOn<any>(letterServiceSpy, 'wordIsAttached').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'wordIsPlacable').and.callFake(() => {
-            return false;
-        });
-
-        // let spy = spyOn<any>(component,'isImpossible');
         component.getLettersFromChat();
-        expect(component.invalidCommand).toBeTrue();
+        expect(component.errorMessage).toEqual('votre mot dois etre placer à la position central(h8)!');
     });
-
-    it('verify that when wordIsAttached and wordIsPlacable, placeLettersInScrabble is called', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        userServiceSpy.realUser = user;
-
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
-            return true;
-        });
-
-        component.firstTurn = false;
-        spyOn<any>(letterServiceSpy, 'wordIsAttached').and.callFake(() => {
-            return true;
-        });
-        spyOn<any>(letterServiceSpy, 'wordIsPlacable').and.callFake(() => {
-            return true;
-        });
-
-        const spy = spyOn<any>(letterServiceSpy, 'placeLettersInScrable');
-        component.getLettersFromChat();
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('verify that when wordIsAthached and wordIsPlacable return false, isImpossible is true', () => {
-        const cmd = { word: 'mot', position: { x: 9, y: 9 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-        component.firstTurn = true;
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        userServiceSpy.realUser = user;
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'wordInEasel').and.callFake(() => {
-            return true;
-        });
-        spyOn<any>(letterServiceSpy, 'wordIsAttached').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'wordIsPlacable').and.callFake(() => {
-            return false;
-        });
-
-        component.getLettersFromChat();
-        expect(component.invalidCommand).toBeTrue();
-    });
-
-    it('verify that when verifyWord is false  , the window alert should be called', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
-            return false;
-        });
-
-        component.getLettersFromChat();
-        expect(component.errorMessage).toBeDefined();
-    });
-
-    it('verify that when wordIsAttached is true and wordIsPlacable is false, the errorMessage is defined', () => {
-        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-        messageServiceSpy.command = cmd;
-
-        spyOn<any>(validWordServiceSpy, 'readWordsAndGivePointsIfValid').and.callFake(() => {
-            return 0;
-        });
-
-        spyOn<any>(letterServiceSpy, 'wordInBoardLimits').and.callFake(() => {
-            return true;
-        });
-        spyOn<any>(validWordServiceSpy, 'verifyWord').and.callFake(() => {
-            return true;
-        });
-        component.firstTurn = false;
-        spyOn<any>(letterServiceSpy, 'wordIsAttached').and.callFake(() => {
-            return true;
-        });
-
-        spyOn<any>(letterServiceSpy, 'wordIsPlacable').and.callFake(() => {
-            return false;
-        });
-
-        component.getLettersFromChat();
-        expect(component.errorMessage).toBeDefined();
-    });
-
-    // it('verify that logDebug is called', () => {
-    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-    //     messageServiceSpy.command = cmd;
-    //     spyOn<any>(messageServiceSpy, 'isCommand').and.callFake(() => {
-    //         return true;
-    //     });
-
-    //     spyOn<any>(messageServiceSpy, 'isValid').and.callFake(() => {
-    //         return true;
-    //     });
-
-    //     spyOn<any>(component, 'logDebug').and.callFake(() => {
-    //         return true;
-    //     });
-    //     component.logMessage();
-    //     expect(component.isDebug).toBeTrue();
-    // });
 });

@@ -1,42 +1,53 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { MatDialog } from '@angular/material/dialog';
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-// import { ModalUserNameComponent } from '@app/modal-user-name/modal-user-name.component';
-// import { AppMaterialModule } from '@app/modules/material.module';
+/* eslint-disable prettier/prettier */
+/* eslint-disable max-len */
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
+import { HttpClientModule } from '@angular/common/http';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { EaselObject } from '@app/classes/easel-object';
+import { RealUser } from '@app/classes/user';
+import { TimeService } from '@app/services/time.service';
+import { UserService } from '@app/services/user.service';
+import { ModalUserVsPlayerComponent } from './modal-user-vs-player.component';
 
-// describe('ModalUserNameComponent', () => {
-//     let component: ModalUserNameComponent;
-//     let fixture: ComponentFixture<ModalUserNameComponent>;
-//     const mockDialogRef = {
-//         open: jasmine.createSpy('open'),
-//     };
+describe('ModalUserVsPlayerComponent', () => {
+    let component: ModalUserVsPlayerComponent;
+    let fixture: ComponentFixture<ModalUserVsPlayerComponent>;
+    let userServiceSpy: jasmine.SpyObj<UserService>;
+    let timeServiceSpy: jasmine.SpyObj<TimeService>;
 
-//     beforeEach(async () => {
-//         await TestBed.configureTestingModule({
-//             imports: [AppMaterialModule, BrowserAnimationsModule],
-//             declarations: [ModalUserNameComponent],
-//             providers: [{ provide: MatDialog, useValue: mockDialogRef }],
-//         }).compileComponents();
-//     });
+    beforeEach(() => {
+        userServiceSpy = jasmine.createSpyObj('UserService', ['isUserQuitGame']);
+        timeServiceSpy = jasmine.createSpyObj('TimeService', ['timeUser']);
+    });
 
-//     beforeEach(() => {
-//         fixture = TestBed.createComponent(ModalUserNameComponent);
-//         component = fixture.componentInstance;
-//         fixture.detectChanges();
-//     });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HttpClientModule],
+            declarations: [ModalUserVsPlayerComponent],
+            providers: [
+                { provide: UserService, useValue: userServiceSpy },
+                { provide: TimeService, useValue: timeServiceSpy },
+            ],
+        }).compileComponents();
+    });
 
-//     it('should create', () => {
-//         expect(component).toBeTruthy();
-//     });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(ModalUserVsPlayerComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-//     it('should open on openDialogOfVrUser', () => {
-//         component.openDialogOfVrUser();
-//         expect(mockDialogRef.open).toHaveBeenCalled();
-//     });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-//     it('should pass on storeNameInLocalStorage', () => {
-//         const storeNameInLocalStorageSpy = spyOn(component, 'storeNameInLocalStorage').and.callThrough();
-//         component.storeNameInLocalStorage();
-//         expect(storeNameInLocalStorageSpy).toHaveBeenCalled();
-//     });
-// });
+    it('should return username on getNameFromLocalStorage', () => {
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        const name = component.getNameFromLocalStorage();
+        expect(name).toBe(component['userService'].realUser.name);
+    });
+});

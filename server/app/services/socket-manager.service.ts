@@ -9,7 +9,7 @@ import { ValidWordService } from './validate-words.service';
 
 @Service()
 export class SocketManagerService {
-    private sio: io.Server;
+    sio: io.Server;
     private games = new Map();
     private rooms = new Array<MessageClient>();
     constructor(private validWordService: ValidWordService) {}

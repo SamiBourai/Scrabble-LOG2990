@@ -29,7 +29,7 @@ export class GameObject {
         this.timer.timerConfig = { sec: this.timeConfig.sec, min: this.timeConfig.min };
         this.timer.timeUser = { sec: this.timeConfig.sec, min: this.timeConfig.min };
     }
-    private chooseFirstToPlay(): boolean {
+    chooseFirstToPlay(): boolean {
         const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);
         if (randomIndex <= PARAMETERS_OF_SWAP / 2) {
             return true;

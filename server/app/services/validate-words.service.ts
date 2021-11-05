@@ -7,7 +7,7 @@ import { Service } from 'typedi';
 export class ValidWordService {
     matchWords: string[] = [];
     concatWord: string = '';
-    private readonly utf8Decoder = new TextDecoder('UTF-8');
+    readonly utf8Decoder = new TextDecoder('UTF-8');
     private dictionary?: Set<string>[];
     constructor() {
         this.loadDictionary();
@@ -48,7 +48,7 @@ export class ValidWordService {
         return fs.readFile('./assets/dictionary_min.json.zst');
     }
 
-    private async getWords(): Promise<string[]> {
+    async getWords(): Promise<string[]> {
         const a = await this.getCompressedWords();
         const b = decompress(a);
         const c = this.utf8Decoder.decode(b);

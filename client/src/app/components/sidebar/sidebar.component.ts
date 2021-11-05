@@ -51,6 +51,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private timeService: TimeService,
         private socketManagementService: SocketManagementService,
     ) {}
+
     ngOnInit(): void {
         if (this.reserveService.sizeObs) {
             this.reserveService.sizeObs.subscribe(() => {
@@ -194,7 +195,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
     impossibleAndValid() {
         this.isCommand = this.messageService.isCommand(this.typeArea);
-
         if (!this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea)) {
             this.invalidCommand = true;
         }
@@ -202,7 +202,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
     playFirstTurn(points: number): boolean {
         let lettersplaced = false;
-
         if (this.userService.getPlayerEasel().contains(this.messageService.command.word)) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
             this.updatePlayerVariables(points);
@@ -217,7 +216,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.getPlayerEasel())) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
             this.updatePlayerVariables(points);
-
             return true;
         }
         return false;
@@ -225,9 +223,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     updatePlayerVariables(points: number) {
         this.userService.chatCommandToSend = this.messageService.command;
         this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
-        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+        if (this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.invalidCommand = false;
-
         this.endTurnValidCommand();
     }
     isTheGameDone(): boolean {
@@ -290,59 +287,60 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.arrayOfMessages.push(command);
 
                 this.messageService.textMessage = this.arrayOfMessages;
-                this.messageService.textMessageObs.next(this.messageService.textMessage);
+                if (this.messageService.textMessageObs) this.messageService.textMessageObs.next(this.messageService.textMessage);
             }
             this.typeArea = '';
             this.errorMessage = '';
         }
     }
     private switchCaseCommands() {
-        switch (this.typeArea.split(' ', 1)[0]) {
-            case '!placer':
-                this.checkIfFirstPlay();
-                this.verifyWord();
-                break;
-            case '!echanger':
-                if (this.reserveService.reserveSize < EASEL_LENGTH) {
-                    this.invalidCommand = true;
-                    this.errorMessage = 'la reserve contient moins de 7 lettres';
-                } else if (
-                    this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.getPlayerEasel())
-                ) {
+        if (this.typeArea) {
+            switch (this.typeArea.split(' ', 1)[0]) {
+                case '!placer':
+                    this.checkIfFirstPlay();
+                    this.verifyWord();
+                    break;
+                case '!echanger':
+                    if (this.reserveService.reserveSize < EASEL_LENGTH) {
+                        this.invalidCommand = true;
+                        this.errorMessage = 'la reserve contient moins de 7 lettres';
+                    } else if (
+                        this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.getPlayerEasel())
+                    ) {
+                        this.invalidCommand = false;
+                        this.errorMessage = '';
+                        this.updateMessageArray(this.typeArea);
+                        this.userService.endOfGameCounter = 0;
+                    } else {
+                        this.invalidCommand = true;
+                        this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
+                    }
+                    if (!this.invalidCommand) {
+                        if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
+                        this.userService.exchangeLetters = true;
+                        if (this.userService.playedObs) this.userService.playedObs.next(this.userService.exchangeLetters);
+                    }
+                    break;
+                case '!debug':
+                    this.invalidCommand = false;
+                    this.isDebug = !this.isDebug;
+                    break;
+                case '!passer':
                     this.invalidCommand = false;
                     this.errorMessage = '';
-                    this.updateMessageArray(this.typeArea);
-                    this.userService.endOfGameCounter = 0;
-                } else {
-                    this.invalidCommand = true;
-                    this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
-                }
-                if (!this.invalidCommand) {
-                    if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
-                    this.userService.exchangeLetters = true;
-                    this.userService.playedObs.next(this.userService.exchangeLetters);
-                }
-                break;
-            case '!debug':
-                this.invalidCommand = false;
-                this.isDebug = !this.isDebug;
-                break;
-            case '!passer':
-                this.invalidCommand = false;
-                this.errorMessage = '';
-                this.userService.detectSkipTurnBtn();
-                break;
-
-            case '!reserve':
-                this.invalidCommand = false;
-                this.errorMessage = '';
-                if (this.isDebug) {
-                    this.reserveLettersQuantity();
-                } else {
-                    this.invalidCommand = true;
-                    this.errorMessage = 'vous n etes pas en mode debogage';
-                }
-                break;
+                    this.userService.detectSkipTurnBtn();
+                    break;
+                case '!reserve':
+                    this.invalidCommand = false;
+                    this.errorMessage = '';
+                    if (this.isDebug) {
+                        this.reserveLettersQuantity();
+                    } else {
+                        this.invalidCommand = true;
+                        this.errorMessage = 'vous n etes pas en mode debogage';
+                    }
+                    break;
+            }
         }
     }
 }

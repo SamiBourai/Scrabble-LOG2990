@@ -3,12 +3,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MouseButton } from '@app/components/play-area/play-area.component';
-import { A, EASEL_POSITIONS } from '@app/constants/constants';
+import { EASEL_POSITIONS } from '@app/constants/array-constant';
+import { A } from '@app/constants/constants';
 import { MouseHandelingService } from './mouse-handeling.service';
-
 describe('MouseHandelingService', () => {
     let service: MouseHandelingService;
+    let ctxStub: CanvasRenderingContext2D;
+    const CANVAS_WIDTH = 600;
+    const CANVAS_HEIGHT = 600;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -20,7 +24,12 @@ describe('MouseHandelingService', () => {
         service.previousClick.y = -1;
         service.mousePosition.x = -1;
         service.mousePosition.y = -1;
+        service.lettersToSwapByClick = [];
+
+        EASEL_POSITIONS[0].isClicked = false;
         jasmine.getEnv().allowRespy(true);
+        ctxStub = CanvasTestHelper.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
+        service['tempCanvasService'].easelContext = ctxStub;
     });
 
     it('should be created', () => {
@@ -71,7 +80,7 @@ describe('MouseHandelingService', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('109-111', () => {
+    it('mouseHitDetect else', () => {
         const mouseEvent2 = { offsetX: 54, offsetY: 30, button: MouseButton.Right } as MouseEvent;
         const spy = spyOn(service, 'resetSteps');
         const spy2 = spyOn<any>(service['tempCanvasService'], 'resetArrow');
@@ -96,14 +105,11 @@ describe('MouseHandelingService', () => {
         const mouseEvent = { offsetX: 100, offsetY: 300, button: MouseButton.Left, x: 100, y: 100 } as MouseEvent;
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
         spyOn<any>(service['easelLogic'], 'isBetween').and.returnValue(true);
-        // if (mouseEvent.button === 2) console.log("9awed");
         const spy = spyOn<any>(service, 'cancelByClick');
         const spy1 = spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
-        // const spy2 = spyOn<any>(service['userService'], 'getPlayerEasel');
         service.easelClicked(mouseEvent);
         expect(spy).toHaveBeenCalled();
         expect(spy1).toHaveBeenCalled();
-        // expect(spy1).toHaveBeenCalled();
     });
 
     it('easelClicked 2', () => {
@@ -112,13 +118,10 @@ describe('MouseHandelingService', () => {
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
         spyOn<any>(service['easelLogic'], 'isBetween').and.returnValue(true);
         spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
-        // if (mouseEvent.button === 2) console.log("9awed");
         const spy = spyOn<any>(service, 'cancelByClick');
-        // const spy2 = spyOn<any>(service['userService'], 'getPlayerEasel');
         service.easelClicked(mouseEvent);
         expect(spy).toHaveBeenCalled();
         EASEL_POSITIONS[0].isClicked = false;
-        // expect(spy1).toHaveBeenCalled();
     });
 
     it('easelClicked 3', () => {
@@ -145,7 +148,6 @@ describe('MouseHandelingService', () => {
         const spy2 = spyOn<any>(service['tempCanvasService'], 'unclickLetter');
         service.easelClicked(mouseEvent);
         expect(spy2).toHaveBeenCalled();
-        EASEL_POSITIONS[0].isClicked = false;
     });
 
     it('easelClicked else', () => {
@@ -165,18 +167,67 @@ describe('MouseHandelingService', () => {
         spyOn<any>(service, 'cancelByClick');
         service.swapByClick();
         expect(spy).toHaveBeenCalled();
-        service.lettersToSwapByClick = [];
     });
 
     it('cancelByClick', () => {
         service.lettersToSwapByClick = [A];
-        let x = true;
+        // let x = true;
+        const spy = spyOn<any>(service, 'allIsClickedToFalse');
         spyOn<any>(service['tempCanvasService'].easelContext, 'clearRect');
         service.cancelByClick();
-        for (const i of EASEL_POSITIONS) {
-            if (i.isClicked === true) x = false;
-        }
-        expect(x).toBeTrue();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('isLettersArrayEmpty', () => {
+        service.lettersToSwapByClick = [A];
+
+        expect(service.isLettersArrayEmpty()).toBe(false);
+    });
+
+    it('isLettersArrayEmpty length = 0', () => {
         service.lettersToSwapByClick = [];
+
+        expect(service.isLettersArrayEmpty()).toBe(true);
+    });
+
+    it('moveLeft', () => {
+        service.lastWasRightClick = false;
+        const spy = spyOn<any>(service['easelLogic'], 'moveLeft');
+        const spy1 = spyOn<any>(service, 'cancelByClick');
+        const spy2 = spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
+        service.moveLeft();
+        expect(spy).toHaveBeenCalled();
+        expect(spy1).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+    });
+
+    it('moveRight', () => {
+        service.lastWasRightClick = false;
+        const spy = spyOn<any>(service['easelLogic'], 'moveRight');
+        const spy1 = spyOn<any>(service, 'cancelByClick');
+        const spy2 = spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
+        service.moveRight();
+        expect(spy).toHaveBeenCalled();
+        expect(spy1).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+    });
+
+    it('clearAll', () => {
+        const spy = spyOn<any>(service, 'resetSteps');
+        const spy1 = spyOn<any>(service, 'cancelByClick');
+        const spy3 = spyOn(service['tempCanvasService'].easelContext, 'clearRect');
+        service.clearAll();
+        expect(spy).toHaveBeenCalled();
+        expect(spy1).toHaveBeenCalled();
+        expect(spy3).toHaveBeenCalled();
+    });
+
+    it('allIsClickedToFalse', () => {
+        let x = false;
+        service['allIsClickedToFalse']();
+        for (const i of EASEL_POSITIONS) {
+            if (i.isClicked === true) x = true;
+        }
+        expect(x).toBeFalse();
     });
 });

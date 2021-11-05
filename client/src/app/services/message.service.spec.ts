@@ -187,19 +187,6 @@ describe('MessageService', () => {
         expect(service.debugCommand(command)).toBeFalse();
     });
 
-    // test containsSpecialChar
-    it('confirm that the input contains a special char', () => {
-        const command1 = 'çava';
-        const command2 = 'élève';
-        expect(service.containsSpecialChar(command1)).toBeTrue();
-        expect(service.containsSpecialChar(command2)).toBeTrue();
-    });
-
-    it('confirm that the input do not contains a special char', () => {
-        const command = 'cava';
-        expect(service.containsSpecialChar(command)).toBeFalse();
-    });
-
     // test for remplaceSpecialChar
 
     it('confirm that the special char has been changed to a normal char', () => {
