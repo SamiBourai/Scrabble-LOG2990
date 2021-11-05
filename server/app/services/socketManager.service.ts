@@ -66,9 +66,7 @@ export class SocketManagerService {
                 this.games.get(command.gameName).creatorPlayer.score = command.user?.score ?? 0;
                 this.sio.to(command.gameName).emit('creatorPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
-
                 this.games.get(command.gameName).passTurn = 0;
-                console.log('passs: ' + this.games.get(command.gameName).passTurn);
             });
             socket.on('guestUserPlayed', (command: MessageClient) => {
                 const map = new Map(JSON.parse(command.usedWords ?? 'null'));
@@ -77,7 +75,6 @@ export class SocketManagerService {
                 this.sio.to(command.gameName).emit('guestUserPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
                 this.games.get(command.gameName).passTurn = 0;
-                console.log('passs: ' + this.games.get(command.gameName).passTurn);
             });
             socket.on('startTimer', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
@@ -88,23 +85,23 @@ export class SocketManagerService {
             });
             socket.on('passTurn', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.playerPlayed = true;
-                if (game.passTurn) this.games.get(game.gameName).passTurn++;
-                else this.games.get(game.gameName).passTurn = 0;
-                console.log('passs++: ' + this.games.get(game.gameName).passTurn);
-                if (this.games.get(game.gameName).passTurn === SIX_TURN) {
-                    this.sio.to(game.gameName).emit('getWinner', game);
-                }
+                this.checkIfEndGame(game);
             });
+            socket.on('changeLetter', (game: MessageClient) => {
+                this.games.get(game.gameName).timer.playerPlayed = true;
+                this.games.get(game.gameName).passTurn = 0;
+                this.sio.to(game.gameName).emit('updateAfterChange', game);
+            });
+
             socket.on('updateReserveInServer', (gameName: string, map: string, size: number) => {
                 this.games.get(gameName).reserveServer = new Map(JSON.parse(map));
-                console.log(this.games.get(gameName).reserveServer);
+
                 this.games.get(gameName).reserverServerSize = size;
                 if (size === BOTH_EASEL_FILLED)
                     this.sio.to(gameName).emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size);
             });
 
             socket.on('sendReserveJoin', (gameName: string) => {
-                console.log(this.games.get(gameName).reserveServer);
                 this.sio
                     .to(gameName)
                     .emit(
@@ -113,14 +110,8 @@ export class SocketManagerService {
                         this.games.get(gameName).reserverServerSize,
                     );
             });
-            socket.on('verifyWord', (message: MessageClient) => {
-                const word: Letter[] = [];
-                message.isValid = this.validWordService.verifyWord(message.word ?? word);
-                this.sio.to(message.gameName).emit('verifyWord', message);
-                console.log('iouwhdiuwh ', message);
-            });
-
             socket.on('sendMessage', (message: MessageClient) => {
+                this.games.get(message.gameName).arrayOfMessage = message.message ?? this.games.get(message.gameName).arrayOfMessage;
                 this.sio.to(message.gameName).emit('getMessage', message);
             });
             socket.on('guestLeftGame', (message: MessageClient) => {
@@ -140,6 +131,16 @@ export class SocketManagerService {
             });
             socket.on('userCanceled', (message: MessageClient) => {
                 this.updateDeletedGames(message);
+            });
+            socket.on('verifyWordGuest', (message: MessageClient) => {
+                const word: Letter[] = [];
+                message.isValid = this.validWordService.verifyWord(message.word ?? word);
+                this.sio.to(message.gameName).emit('verifyWordGuest', message);
+            });
+            socket.on('verifyWordCreator', (message: MessageClient) => {
+                const word: Letter[] = [];
+                message.isValid = this.validWordService.verifyWord(message.word ?? word);
+                this.sio.to(message.gameName).emit('verifyWordCreator', message);
             });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
@@ -164,5 +165,11 @@ export class SocketManagerService {
     }
     private emitTime() {
         this.sio.sockets.emit('clock', new Date().toLocaleTimeString());
+    }
+    private checkIfEndGame(game: MessageClient) {
+        this.games.get(game.gameName).passTurn++;
+        if (this.games.get(game.gameName).passTurn === SIX_TURN) {
+            this.sio.to(game.gameName).emit('getWinner', game);
+        }
     }
 }

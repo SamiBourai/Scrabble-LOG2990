@@ -27,8 +27,8 @@ import { UserService } from './user.service';
     providedIn: 'root',
 })
 export class MouseHandelingService {
-    mousePosition: Vec2 = { x: -1, y: -1 };
-    previousClick: Vec2 = { x: -1, y: -1 };
+    mousePosition: Vec2 = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
+    previousClick: Vec2 = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
     firstBorderLetter: boolean = true;
     placeTempCommand: string;
     lastWasLeftClick: boolean = false;
@@ -52,7 +52,7 @@ export class MouseHandelingService {
         if (this.tempCanvasService.tempWord !== '') {
             this.placeTempCommand =
                 '!placer ' +
-                String.fromCharCode(ASCI_CODE_A + (this.previousClick.y - 1)) +
+                String.fromCharCode(ASCI_CODE_A + (this.previousClick.y + UNDEFINED_INDEX)) +
                 this.previousClick.x +
                 this.tempCanvasService.getCommandDirection() +
                 ' ' +
@@ -106,7 +106,7 @@ export class MouseHandelingService {
         } else {
             this.resetSteps();
             this.tempCanvasService.resetArrow();
-            this.previousClick = { x: -1, y: -1 };
+            this.previousClick = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
         }
     }
     resetSteps() {
@@ -201,7 +201,7 @@ export class MouseHandelingService {
     }
 
     clearAll() {
-        this.previousClick = { x: -1, y: -1 };
+        this.previousClick = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
         this.resetSteps();
         this.cancelByClick();
         this.tempCanvasService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);

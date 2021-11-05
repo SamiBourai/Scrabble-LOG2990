@@ -1,4 +1,4 @@
-import { PARAMETERS_OF_SWAP } from '@app/classes/constants';
+import { EASEL_LENGTH, PARAMETERS_OF_SWAP, RESERVE_SIZE } from '@app/classes/constants';
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
 import { LETTERS_RESERVE_QTY } from './constants';
@@ -10,12 +10,13 @@ export class GameObject {
     gameName: string = '';
     timer: Timer;
     reserveServer = new Map<Letter, number>(LETTERS_RESERVE_QTY);
-    reserverServerSize: number = 100;
+    reserverServerSize: number = RESERVE_SIZE;
     endOfGame: boolean = false;
     aleatoryBonus: boolean = false;
+    arrayOfMessage: string[];
     passTurn: number = 0;
-    guestPlayer: Player = { name: 'default', score: 0, easelLetters: 7 };
-    creatorPlayer: Player = { name: 'default', score: 0, easelLetters: 7 };
+    guestPlayer: Player = { name: 'default', score: 0, easelLetters: EASEL_LENGTH };
+    creatorPlayer: Player = { name: 'default', score: 0, easelLetters: EASEL_LENGTH };
     arrayOfBonusBox = new Array<Vec2[]>();
     constructor(gameName: string, aleatoryBonus: boolean, creatorPlayer: Player, sec: number, min: number) {
         this.gameName = gameName;

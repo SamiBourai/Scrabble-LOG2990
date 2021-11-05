@@ -27,7 +27,6 @@ export class MultiplayerModeService {
         private lettersService: LettersService,
         private reserveService: ReserveService,
         private messageService: MessageService,
-
         private validWordService: ValidWordService,
     ) {
         this.observableWinner = this.winnerObs.asObservable();
@@ -56,33 +55,51 @@ export class MultiplayerModeService {
                 if (playMethod === 'guestUserPlayed') this.userService.realUser.turnToPlay = true;
                 else this.userService.realUser.turnToPlay = false;
             }
-        } else if (this.userService.exchangeLetters || this.userService.passTurn) {
-            this.socketManagementService.emit('passTurn', { gameName: this.userService.gameName, passTurn: this.userService.passTurn });
-            this.userService.exchangeLetters = false;
+        } else if (this.userService.passTurn) {
+            this.socketManagementService.emit('passTurn', {
+                gameName: this.userService.gameName,
+                passTurn: this.userService.passTurn,
+            });
+
             this.userService.passTurn = false;
+        } else if (this.userService.exchangeLetters) {
+            this.socketManagementService.emit('changeLetter', {
+                gameName: this.userService.gameName,
+                reserve: JSON.stringify(Array.from(this.reserveService.letters)),
+                reserveSize: this.reserveService.reserveSize,
+            });
+
+            this.userService.exchangeLetters = false;
         }
     }
-    getPlayedCommand(playedMethod: string) {
-        if (!this.userService.isPlayerTurn()) {
-            this.socketManagementService.listen(playedMethod).subscribe((data) => {
-                this.guestCommand = data.command ?? { word: 'errorServer', position: { x: 1, y: 1 }, direction: 'h' };
-                this.reserveService.redefineReserve(
-                    data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
-                    data.reserveSize ?? UNDEFINED_INDEX,
-                );
-                this.lettersService.placeLettersWithDirection(this.guestCommand);
-                this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
 
-                if (playedMethod === 'guestUserPlayed') {
-                    this.userService.realUser.turnToPlay = true;
-                    this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
-                } else {
-                    this.userService.realUser.turnToPlay = false;
-                    this.userService.realUser.score = data.user?.score ?? 0;
-                }
-                this.userService.firstTurn = false;
-            });
-        }
+    updateReserveChangeLetters() {
+        this.socketManagementService.listen('updateAfterChange').subscribe((data) => {
+            this.reserveService.redefineReserve(
+                data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
+                data.reserveSize ?? UNDEFINED_INDEX,
+            );
+        });
+    }
+    getPlayedCommand(playedMethod: string) {
+        this.socketManagementService.listen(playedMethod).subscribe((data) => {
+            this.guestCommand = data.command ?? { word: 'errorServer', position: { x: 1, y: 1 }, direction: 'h' };
+            this.reserveService.redefineReserve(
+                data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
+                data.reserveSize ?? UNDEFINED_INDEX,
+            );
+            this.lettersService.placeLettersWithDirection(this.guestCommand);
+            this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
+
+            if (playedMethod === 'guestUserPlayed') {
+                this.userService.realUser.turnToPlay = true;
+                this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
+            } else {
+                this.userService.realUser.turnToPlay = false;
+                this.userService.realUser.score = data.user?.score ?? 0;
+            }
+            this.userService.firstTurn = false;
+        });
     }
     sendReserve() {
         this.socketManagementService.reserveToserver(

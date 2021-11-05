@@ -86,6 +86,7 @@ export const X: Letter = { score: 10, charac: 'x', img: '../../assets/letter-x.p
 export const Y: Letter = { score: 10, charac: 'y', img: '../../assets/letter-y.png' };
 export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.png' };
 
+export const RESERVE_SIZE = 100;
 export const ALL_BONUS_BOX: Vec2[] = [
     { x: 0, y: 0 },
     { x: 7, y: 0 },
@@ -405,4 +406,4 @@ export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
 // modal user name validator
 export const MAX_LENGTH = 15;
 export const MIN_LENGTH = 8;
-export const FIVE_SEC_MS =  5000;
+export const FIVE_SEC_MS = 5000;

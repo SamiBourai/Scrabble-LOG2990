@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
-import { LETTERS_RESERVE_QTY } from '@app/constants/constants';
+import { LETTERS_RESERVE_QTY, RESERVE_SIZE } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class ReserveService {
     letters = new Map<Letter, number>(LETTERS_RESERVE_QTY);
 
     constructor() {
-        this.reserveSize = 100;
+        this.reserveSize = RESERVE_SIZE;
         this.sizeObs.next(this.reserveSize);
     }
 
@@ -27,7 +27,11 @@ export class ReserveService {
     }
     getRandomKey(map: Map<Letter, number>) {
         const keys = Array.from(map.keys());
-        return keys[Math.floor(Math.random() * keys.length)];
+        let random = keys[Math.floor(Math.random() * keys.length)];
+        while ((this.letters.get(random) as number) === 0) {
+            random = keys[Math.floor(Math.random() * keys.length)];
+        }
+        return random;
     }
 
     get size(): BehaviorSubject<number> {
@@ -35,8 +39,8 @@ export class ReserveService {
     }
 
     reFillReserve(lett: Letter) {
-        let qty = this.letters.get(lett) as number;
-        this.letters.set(lett, ++qty);
+        const qty = (this.letters.get(lett) as number) + 1;
+        this.letters.set(lett, qty);
         this.reserveSize++;
         this.sizeObs.next(this.reserveSize);
     }

@@ -82,7 +82,6 @@ export class UserService {
                 score: 0,
                 easel: new EaselObject(false),
             };
-        console.log(this.vrUser);
     }
     chooseFirstToPlay(): boolean {
         const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);

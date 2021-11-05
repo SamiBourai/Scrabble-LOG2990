@@ -18,7 +18,7 @@ export class Timer {
                 this.timeUser.min -= ONE_MINUTE;
                 this.timeUser.sec = MINUTE_TURN;
             } else this.timeUser.sec -= ONE_SECOND;
-            if ((this.timeUser.sec === 0 && this.timeUser.min === 0) || this.playerPlayed) {
+            if (this.playerPlayed) {
                 this.timeUser = { min: this.timerConfig.min, sec: this.timerConfig.sec };
                 this.playerPlayed = false;
                 if (this.creatorTurn) this.creatorTurn = false;

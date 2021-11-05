@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GameTime } from '@app/classes/time';
-import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/constants/constants';
+import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS, UNDEFINED_INDEX } from '@app/constants/constants';
+import { BehaviorSubject } from 'rxjs';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
 import { VirtualPlayerService } from './virtual-player.service';
@@ -13,6 +14,8 @@ export class TimeService {
     timeVrPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
     timeGuestPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
     timeStarted: boolean = false;
+    command: string = '';
+    commandObs = new BehaviorSubject<string>('');
     constructor(
         private userService: UserService,
         private virtualPlayerService: VirtualPlayerService,
@@ -76,15 +79,23 @@ export class TimeService {
                 this.timeUser = { min: data.timer?.min, sec: data.timer?.sec };
                 this.timeGuestPlayer = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = true;
+                this.trigerPassCommand(this.timeUser);
             } else {
-                this.timeGuestPlayer = { min: data.timer?.min ?? 0, sec: data.timer?.sec ?? 0 };
+                this.timeGuestPlayer = { min: data.timer?.min ?? UNDEFINED_INDEX, sec: data.timer?.sec ?? UNDEFINED_INDEX };
                 this.timeUser = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = false;
+                this.trigerPassCommand(this.timeGuestPlayer);
             }
         });
     }
     setGameTime(gameTime: GameTime) {
         this.timeUser = { min: gameTime.min, sec: gameTime.sec };
         this.timeVrPlayer = { min: gameTime.min, sec: gameTime.sec };
+    }
+    trigerPassCommand(time: GameTime) {
+        if (time.sec === 0 && time.min === 0) {
+            this.command = '!passer';
+            this.commandObs.next(this.command);
+        }
     }
 }

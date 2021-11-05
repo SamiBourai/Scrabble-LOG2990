@@ -8,6 +8,7 @@ import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
+import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-world.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -52,12 +53,25 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
+        private timeService: TimeService,
         private socketManagementService: SocketManagementService,
     ) {}
     ngOnInit(): void {
+        this.reserveService.sizeObs.subscribe(() => {
+            setTimeout(() => {
+                this.reserveLettersQuantity();
+            }, 0);
+        });
         this.virtualPlayerService.commandToSendVr.subscribe((res) => {
             setTimeout(() => {
                 this.arrayOfVrCommands.push(res);
+            }, 0);
+        });
+
+        this.timeService.commandObs.subscribe((res) => {
+            setTimeout(() => {
+                this.typeArea = res;
+                this.logMessage();
             }, 0);
         });
 
@@ -106,10 +120,10 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.skipTurnCommand();
         }
 
+        this.invalidCommand = false;
         this.name = this.getNameCurrentPlayer();
         this.nameVr = this.getNameVrPlayer();
         this.impossibleAndValid();
-        this.typeArea = '';
     }
 
     skipTurnCommand() {
@@ -151,31 +165,38 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
                         if (!this.playFirstTurn(points)) {
                             this.invalidCommand = true;
+                            this.typeArea = '';
                             return;
                         }
                     } else {
                         this.invalidCommand = true;
                         this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
+                        this.typeArea = '';
                         return;
                     }
                 } else if (this.lettersService.wordIsAttached(this.messageService.command)) {
                     if (!this.placeOtherTurns(points)) {
                         this.invalidCommand = true;
                         this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
+                        this.typeArea = '';
                         return;
                     }
                 } else {
                     this.invalidCommand = true;
                     this.errorMessage = 'les lettres a placer ne constituent pas un mot';
+                    this.typeArea = '';
                     return;
                 }
             } else {
                 this.invalidCommand = true;
                 this.errorMessage = 'le mot est invalide';
+                this.typeArea = '';
+                return;
             }
         } else {
             this.invalidCommand = true;
             this.errorMessage = 'votre mot dois etre contenue dans la grille!';
+            this.typeArea = '';
             return;
         }
     }
@@ -205,6 +226,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.getPlayerEasel())) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
             this.updatePlayerVariables(points);
+
             return true;
         }
         return false;
@@ -214,40 +236,55 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
         this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.invalidCommand = false;
+
+        this.endTurnValidCommand();
     }
     isTheGameDone(): boolean {
         return this.userService.endOfGame;
     }
     reserveLettersQuantity() {
         let s: string;
+        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length - 1);
         this.reserveService.letters.forEach((value: number, key: Letter) => {
             s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
         });
     }
-
     private verifyWord() {
         if (this.userService.playMode === 'soloGame') {
             this.getLettersFromChat();
+            this.endTurnValidCommand();
         } else {
-            if (this.userService.isPlayerTurn()) {
-                this.socketManagementService.emit('verifyWord', {
+            if (this.userService.playMode === 'joinMultiplayerGame') {
+                this.socketManagementService.emit('verifyWordGuest', {
                     gameName: this.userService.gameName,
                     word: this.lettersService.fromWordToLetters(this.messageService.command.word),
                 });
-                this.socketManagementService.listen('verifyWord').subscribe((data) => {
+                this.socketManagementService.listen('verifyWordGuest').subscribe((data) => {
                     this.valideWordService.isWordValid = data.isValid ?? false;
-                    this.getLettersFromChat();
+                    if (this.valideWordService.isWordValid) {
+                        this.getLettersFromChat();
+                    } else this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
+                });
+            } else {
+                this.socketManagementService.emit('verifyWordCreator', {
+                    gameName: this.userService.gameName,
+                    word: this.lettersService.fromWordToLetters(this.messageService.command.word),
+                });
+                this.socketManagementService.listen('verifyWordCreator').subscribe((data) => {
+                    this.valideWordService.isWordValid = data.isValid ?? false;
+                    if (this.valideWordService.isWordValid) {
+                        this.getLettersFromChat();
+                    } else this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
                 });
             }
         }
-        this.endTurnValidCommand();
+        this.messageService.skipTurnIsPressed = false;
     }
 
     private endTurnValidCommand() {
-        this.messageService.skipTurnIsPressed = false;
         if (!this.invalidCommand) {
-            this.userService.userPlayed();
+            if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
             this.errorMessage = '';
             this.userService.endOfGameCounter = 0;
             this.updateMessageArray(this.typeArea);
@@ -264,6 +301,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.messageService.textMessage = this.arrayOfMessages;
                 this.messageService.textMessageObs.next(this.messageService.textMessage);
             }
+            this.typeArea = '';
+            this.errorMessage = '';
         }
     }
     private switchCaseCommands() {
@@ -288,7 +327,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
                 }
                 if (!this.invalidCommand) {
-                    this.userService.userPlayed();
+                    if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
                     this.userService.exchangeLetters = true;
                     this.userService.playedObs.next(this.userService.exchangeLetters);
                 }
@@ -302,8 +341,17 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.errorMessage = '';
                 this.userService.detectSkipTurnBtn();
                 break;
-            // CODE SPRINT 2 ABDEL POUR !RESERVE
-            // FIN CODE SPRINT 2 ABDEL POUR !RESERVE
+
+            case '!reserve':
+                this.invalidCommand = false;
+                this.errorMessage = '';
+                if (this.isDebug) {
+                    this.reserveLettersQuantity();
+                } else {
+                    this.invalidCommand = true;
+                    this.errorMessage = 'vous n etes pas en mode debogage';
+                }
+                break;
         }
     }
 }
