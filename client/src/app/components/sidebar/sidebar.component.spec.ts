@@ -113,7 +113,7 @@ fdescribe('SidebarComponent', () => {
     it('confirm that when logMessage is called, inpossiblAndValid is called', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
         messageServiceSpy.command = cmd;
-        const spy = spyOn<any>(component, 'impossibleAndValid');
+        const spy = spyOn<any>(component, 'invalidCommand');
         component.logMessage();
         expect(spy).toHaveBeenCalled();
     });
@@ -359,7 +359,7 @@ fdescribe('SidebarComponent', () => {
         spyOn<any>(component, 'isYourTurn').and.returnValue(false);
         
         spyOn<any>(component, 'isTheGameDone').and.returnValue(false);
-        spyOn<any>(component,'impossibleAndValid')
+        spyOn<any>(component,'invalidCommand')
         component.isDebug = true;
         component.typeArea = '!reserve';
         //const spy = spyOn<any>(component,'reserveLettersQuantity');
