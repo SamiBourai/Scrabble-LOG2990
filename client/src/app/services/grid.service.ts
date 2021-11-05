@@ -1,18 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import {
-    ADJUSTEMENT_TOPSPACE,
     ALL_BONUS_BOX,
     AZUR_BOX,
     BLUE_BOX,
-    BOARD_HEIGHT,
-    BOARD_WIDTH,
-    CLEAR_RECT_FIX,
-    CTX_PX,
     DEFAULT_AZUR_BOX,
     DEFAULT_BLUE_BOX,
     DEFAULT_PINK_BOX,
     DEFAULT_RED_BOX,
+    PINK_BOX,
+    RED_BOX,
+} from '@app/constants/array-constant';
+import {
+    ADJUSTEMENT_TOPSPACE,
+    BOARD_HEIGHT,
+    BOARD_WIDTH,
+    CLEAR_RECT_FIX,
+    CTX_PX,
     EASEL_LENGTH,
     FOURTY,
     HAND_POSITION_END,
@@ -22,8 +26,6 @@ import {
     NB_LETTER_HAND,
     NB_TILES,
     PARAMETERS_OF_SWAP,
-    PINK_BOX,
-    RED_BOX,
     TOPSPACE,
 } from '@app/constants/constants';
 import { SocketManagementService } from './socket-management.service';

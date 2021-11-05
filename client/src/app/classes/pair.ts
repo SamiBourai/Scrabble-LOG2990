@@ -1,4 +1,4 @@
-export interface Pair{
+export interface Pair {
     min: number;
     max: number;
 }

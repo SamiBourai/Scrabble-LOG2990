@@ -177,7 +177,6 @@ export class ModalUserNameComponent implements OnInit {
                 this.rooms = data;
                 if (this.rooms.length === 0) this.isEmptyRoom = true;
                 else this.isEmptyRoom = false;
-                console.log(this.rooms);
             });
         }, ONE_SECOND_MS);
     }

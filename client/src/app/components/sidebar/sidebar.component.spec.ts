@@ -5,7 +5,7 @@
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { EaselObject } from '@app/classes/EaselObject';
+import { EaselObject } from '@app/classes/easel-object';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';

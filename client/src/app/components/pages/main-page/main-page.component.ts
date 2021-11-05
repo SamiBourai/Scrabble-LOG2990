@@ -33,8 +33,6 @@ export class MainPageComponent {
             // Cette étape transforme l'objet Message en un seul string
             .pipe(
                 map((message: Message) => {
-                    // console.log(message);
-
                     return `${message.title} ${message.body}`;
                 }),
             )

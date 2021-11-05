@@ -1,43 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
-import { EaselObject } from '@app/classes/EaselObject';
+import { EaselObject } from '@app/classes/easel-object';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import {
-    A,
-    B,
-    BOARD_HEIGHT,
-    BOARD_WIDTH,
-    C,
-    D,
-    E,
-    EASEL_LENGTH,
-    F,
-    G,
-    H,
-    I,
-    J,
-    K,
-    L,
-    LEFTSPACE,
-    M,
-    N,
-    NB_TILES,
-    NOT_A_LETTER,
-    O,
-    P,
-    Q,
-    R,
-    S,
-    T,
-    TOPSPACE,
-    U,
-    V,
-    W,
-    X,
-    Y,
-    Z,
-} from '@app/constants/constants';
+import { BOARD_HEIGHT, BOARD_WIDTH, EASEL_LENGTH, LEFTSPACE, LETTERS_OBJECT, NB_TILES, NOT_A_LETTER, TOPSPACE } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
 
@@ -146,106 +112,14 @@ export class LettersService {
         }
         return letters;
     }
-    // eslint-disable-next-line complexity
+
     getTheLetter(char: string): Letter {
-        switch (char) {
-            case 'a': {
-                return A;
-            }
-            case 'b': {
-                return B;
-            }
-            case 'c': {
-                return C;
-            }
-            case 'd': {
-                return D;
-            }
-            case 'e': {
-                return E;
-            }
-            case 'f': {
-                return F;
-            }
-            case 'g': {
-                return G;
-            }
-            case 'h': {
-                return H;
-            }
-            case 'i': {
-                return I;
-            }
-            case 'j': {
-                return J;
-            }
-            case 'k': {
-                return K;
-            }
-            case 'l': {
-                return L;
-            }
-            case 'm': {
-                return M;
-            }
-            case 'n': {
-                return N;
-            }
-            case 'o': {
-                return O;
-            }
-            case 'p': {
-                return P;
-            }
-            case 'q': {
-                return Q;
-            }
-            case 'r': {
-                return R;
-            }
-            case 's': {
-                return S;
-            }
-            case 't': {
-                return T;
-            }
-            case 'u': {
-                return U;
-            }
-            case 'v': {
-                return V;
-            }
-            case 'w': {
-                return W;
-            }
-            case 'x': {
-                return X;
-            }
-            case 'y': {
-                return Y;
-            }
-            case 'z': {
-                return Z;
-            }
-        }
-        return NOT_A_LETTER;
+        const letter = LETTERS_OBJECT.get(char) ?? NOT_A_LETTER;
+        return letter;
     }
 
-    // eslint-disable-next-line complexity
     wordIsAttached(command: ChatCommand): boolean {
-        if (
-            command.direction === 'h' &&
-            (this.tiles[command.position.y - 1][command.position.x - 2].charac !== NOT_A_LETTER.charac ||
-                this.tiles[command.position.y - 1][command.position.x - 1 + command.word.length].charac !== NOT_A_LETTER.charac)
-        )
-            return false;
-
-        if (
-            command.direction === 'v' &&
-            (this.tiles[command.position.y - 2][command.position.x - 1].charac !== NOT_A_LETTER.charac ||
-                this.tiles[command.position.y - 1 + command.word.length][command.position.x - 1].charac !== NOT_A_LETTER.charac)
-        )
-            return false;
+        if (!this.isWordStickedToAnother(command)) return false;
 
         for (let i = 0; i < command.word.length; i++) {
             if (
@@ -265,6 +139,23 @@ export class LettersService {
         }
 
         return false;
+    }
+    isWordStickedToAnother(command: ChatCommand): boolean {
+        if (
+            command.direction === 'h' &&
+            (this.tiles[command.position.y - 1][command.position.x - 2].charac !== NOT_A_LETTER.charac ||
+                this.tiles[command.position.y - 1][command.position.x - 1 + command.word.length].charac !== NOT_A_LETTER.charac)
+        )
+            return false;
+
+        if (
+            command.direction === 'v' &&
+            (this.tiles[command.position.y - 2][command.position.x - 1].charac !== NOT_A_LETTER.charac ||
+                this.tiles[command.position.y - 1 + command.word.length][command.position.x - 1].charac !== NOT_A_LETTER.charac)
+        )
+            return false;
+
+        return true;
     }
     wordInBoardLimits(command: ChatCommand): boolean {
         if (

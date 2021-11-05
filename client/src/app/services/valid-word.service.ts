@@ -20,7 +20,7 @@ export class ValidWordService {
     usedWords = new Map<string, Vec2[]>();
     private readonly utf8Decoder = new TextDecoder('UTF-8');
 
-    private dictionary?: Set<string>[];
+    private dictionary: Set<string>[];
     constructor(private http: HttpClient, private wps: WordPointsService, private letterService: LettersService) {}
     async loadDictionary() {
         const wordsObs = this.getWords();
@@ -104,8 +104,7 @@ export class ValidWordService {
         for (let i = this.concatWord.length; i >= 1; i--) {
             const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
 
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            for (const words of this.dictionary!) {
+            for (const words of this.dictionary) {
                 for (const dictionaryWord of words) {
                     if (i === dictionaryWord.length) {
                         const match = regex.test(dictionaryWord);

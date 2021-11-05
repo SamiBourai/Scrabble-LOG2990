@@ -16,14 +16,14 @@ import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AvatarModule } from 'ngx-avatar';
+import { JoinedUserComponent } from './components/users/joined-user/joined-user.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
+import { ModalEndOfGameComponent } from './modal-end-of-game/modal-end-of-game.component';
 // import { CommandService } from './services/command.service';
 import { MessageService } from './services/message.service';
-import { ValidWordService } from './services/valid-world.service';
+import { ValidWordService } from './services/valid-word.service';
 import { WordPointsService } from './services/word-points.service';
-import { JoinedUserComponent } from './components/users/joined-user/joined-user.component';
-import { ModalEndOfGameComponent } from './modal-end-of-game/modal-end-of-game.component';
 
 /**
  * Main module that is used in main.ts.

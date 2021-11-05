@@ -19,6 +19,7 @@ import {
     PARAMETERS_OF_SWAP,
     PLACE_LENGTH,
     SWAP_LENGTH,
+    UNDEFINED_INDEX,
 } from './../constants/constants';
 
 @Injectable({
@@ -162,6 +163,6 @@ export class MessageService {
 
     removeDuplicate(array: string[], element: string) {
         const index = array.indexOf(element, 0);
-        if (index > -1) array.splice(index, 1);
+        if (index > UNDEFINED_INDEX) array.splice(index, 1);
     }
 }

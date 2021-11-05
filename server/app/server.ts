@@ -2,15 +2,15 @@ import { Application } from '@app/app';
 import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Service } from 'typedi';
+import { NUMBER_TO_COMPARE } from './classes/constants';
 import { SocketManagerService } from './services/socketManager.service';
-//import { ValidWordService } from './services/validateWords.service';
+
 @Service()
 export class Server {
     private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || '5020');
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    private static readonly baseDix: number = 10;
+    private static readonly baseDix: number = NUMBER_TO_COMPARE;
     private server: http.Server;
-    //private validWordService: ValidWordService;
+
     constructor(private readonly application: Application, private socketManager: SocketManagerService) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -28,7 +28,7 @@ export class Server {
 
         this.server = http.createServer(this.application.app);
         this.socketManager.initiliaseSocket(this.server);
-        // this.socketManager = new SocketManagerService(this.server, this.validWordService);
+
         this.socketManager.handleSockets();
 
         this.server.listen(Server.appPort);

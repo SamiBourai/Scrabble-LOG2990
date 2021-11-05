@@ -10,7 +10,7 @@ import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
-import { ValidWordService } from '@app/services/valid-world.service';
+import { ValidWordService } from '@app/services/valid-word.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 @Component({
@@ -26,9 +26,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     isValid: boolean = true;
     invalidCommand: boolean = false;
     isCommand: boolean = false;
-    inEasel: boolean = true;
     command: ChatCommand[] = [];
-    containsAllChars: boolean = true;
     firstTurn: boolean = true;
     skipTurn: boolean = false;
     active: boolean = false;
@@ -36,14 +34,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     nameVr: string;
     word: string = 'mot';
     errorMessage: string = '';
-
     score: number = 0;
-
     form = new FormGroup({
         message: new FormControl(''),
     });
     isDebug: boolean = false;
-
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
@@ -92,13 +87,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }
-    getNameCurrentPlayer() {
-        return this.userService.getUserName();
-    }
 
-    getNameVrPlayer() {
-        return this.userService.getVrUserName();
-    }
     checkIfFirstPlay() {
         if (this.userService.playMode !== 'soloGame') this.firstTurn = this.userService.firstTurn;
     }
@@ -119,10 +108,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         } else {
             this.skipTurnCommand();
         }
-
         this.invalidCommand = false;
-        this.name = this.getNameCurrentPlayer();
-        this.nameVr = this.getNameVrPlayer();
+        this.name = this.userService.getUserName();
+        this.nameVr = this.userService.getVrUserName();
         this.impossibleAndValid();
     }
 
@@ -148,11 +136,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         }
         return false;
     }
-
     logDebug() {
         return this.messageService.debugCommand(this.typeArea);
     }
-
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(
             this.lettersService.tiles,

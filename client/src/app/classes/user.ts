@@ -1,4 +1,4 @@
-import { EaselObject } from './EaselObject';
+import { EaselObject } from './easel-object';
 
 export interface VrUser {
     name: string;

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { AZUR_BOX, BLUE_BOX, comparePositions, PINK_BOX, RED_BOX } from '@app/constants/constants';
+import { AZUR_BOX, BLUE_BOX, PINK_BOX, RED_BOX } from '@app/constants/array-constant';
+import { comparePositions } from '@app/constants/constants';
 
 @Injectable({
     providedIn: 'root',

@@ -8,7 +8,7 @@ import { MessageService } from './message.service';
 import { ReserveService } from './reserve.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
-import { ValidWordService } from './valid-world.service';
+import { ValidWordService } from './valid-word.service';
 
 @Injectable({
     providedIn: 'root',

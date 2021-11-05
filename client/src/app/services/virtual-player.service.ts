@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
-import { EaselObject } from '@app/classes/EaselObject';
+import { EaselObject } from '@app/classes/easel-object';
 import { Letter } from '@app/classes/letter';
 import {
     ASCI_CODE_A,
@@ -25,7 +25,7 @@ import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
-import { ValidWordService } from './valid-world.service';
+import { ValidWordService } from './valid-word.service';
 @Injectable({ providedIn: 'root' })
 export class VirtualPlayerService {
     first: boolean = true;
@@ -101,8 +101,6 @@ export class VirtualPlayerService {
                         if (!this.wordPlacedInScrable) this.getLetterForRange('v', this.lettersService.tiles);
                     }
                     if (!this.wordPlacedInScrable) {
-                        console.log("j'arrive pas a jouer");
-
                         this.passTurnSteps();
                     } else {
                         this.wordPlacedInScrable = false;

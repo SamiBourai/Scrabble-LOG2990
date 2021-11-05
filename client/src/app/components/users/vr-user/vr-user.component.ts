@@ -3,7 +3,7 @@ import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 import { Subscription } from 'rxjs';
-// import { Subscription } from 'rxjs';
+
 @Component({
     selector: 'app-vr-user',
     templateUrl: './vr-user.component.html',

@@ -1,12 +1,11 @@
-import { EaselObject } from '@app/classes/EaselObject';
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ChatCommand } from '@app/classes/chat-command';
+import { EaselObject } from '@app/classes/easel-object';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, NOT_A_LETTER, O, P, Q, R, S, T, U, V, W, X, Y, Z } from '@app/constants/constants';
@@ -56,7 +55,7 @@ describe('LettersService', () => {
     it('place letter else', () => {
         const vector: Vec2 = { x: 1, y: 1 };
         service.tiles[0][0] = A;
-        let x = 1;
+        const x = 1;
         service.placeLetter(A, vector);
         expect(x).toBe(1);
     });
@@ -188,7 +187,7 @@ describe('LettersService', () => {
     it('placeLettersWithDirection undef', () => {
         const vec2: Vec2 = { x: 1, y: 1 };
         const command: ChatCommand = { word: 'sa', position: vec2, direction: 'g' };
-        let x = 2;
+        const x = 2;
         service.placeLettersWithDirection(command);
         expect(x).toBe(2);
     });
@@ -493,7 +492,7 @@ describe('LettersService', () => {
         const command: ChatCommand = { word: 'sas', position: vec2, direction: 'h' };
 
         spyOn<any>(service, 'tileIsEmpty').and.returnValue(true);
-        let x = 2;
+        const x = 2;
         service.wordIsAttached(command);
         expect(x).toBe(2);
     });
@@ -503,7 +502,7 @@ describe('LettersService', () => {
         const command: ChatCommand = { word: 'sas', position: vec2, direction: 'v' };
 
         spyOn<any>(service, 'tileIsEmpty').and.returnValue(true);
-        let x = 2;
+        const x = 2;
         service.wordIsAttached(command);
         expect(x).toBe(2);
     });

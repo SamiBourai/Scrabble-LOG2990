@@ -10,6 +10,7 @@ import { VirtualPlayerService } from './virtual-player.service';
     providedIn: 'root',
 })
 export class TimeService {
+    timeSave: GameTime = { min: 0, sec: MINUTE_TURN };
     timeUser: GameTime = { min: 0, sec: MINUTE_TURN };
     timeVrPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
     timeGuestPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
@@ -37,10 +38,10 @@ export class TimeService {
 
                     if (this.timeUser.min === 0 && this.timeUser.sec === 0) {
                         this.userService.detectSkipTurnBtn();
-                        this.timeUser = { min: 0, sec: MINUTE_TURN };
+                        this.timeUser = { min: this.timeSave.min, sec: this.timeSave.sec };
                         clearInterval(intervalId);
                     } else if (!this.userService.realUser.turnToPlay) {
-                        this.timeUser = { min: 0, sec: MINUTE_TURN };
+                        this.timeUser = { min: this.timeSave.min, sec: this.timeSave.sec };
                         clearInterval(intervalId);
                     }
                 }, ONE_SECOND_MS);
@@ -48,7 +49,7 @@ export class TimeService {
             }
             case 'vrPlayer': {
                 const intervalId = setInterval(() => {
-                    if (this.timeVrPlayer.sec === 0) {
+                    if (this.timeVrPlayer.sec - ONE_SECOND === -ONE_SECOND) {
                         this.timeVrPlayer.min -= ONE_MINUTE;
                         this.timeVrPlayer.sec = MINUTE_TURN;
                     } else this.timeVrPlayer.sec -= ONE_SECOND;
@@ -61,7 +62,7 @@ export class TimeService {
                         }
                         this.userService.realUser.turnToPlay = true;
                         this.userService.realUserTurnObs.next(this.userService.realUser.turnToPlay);
-                        this.timeVrPlayer = { min: 0, sec: MINUTE_TURN };
+                        this.timeVrPlayer = { min: this.timeSave.min, sec: this.timeSave.sec };
                         clearInterval(intervalId);
                     }
                 }, ONE_SECOND_MS);
@@ -91,6 +92,7 @@ export class TimeService {
     setGameTime(gameTime: GameTime) {
         this.timeUser = { min: gameTime.min, sec: gameTime.sec };
         this.timeVrPlayer = { min: gameTime.min, sec: gameTime.sec };
+        this.timeSave = { min: gameTime.min, sec: gameTime.sec };
     }
     trigerPassCommand(time: GameTime) {
         if (time.sec === 0 && time.min === 0) {

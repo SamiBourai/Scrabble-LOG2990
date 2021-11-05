@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-
 import { HttpClientModule } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ChatCommand } from '@app/classes/chat-command';
@@ -12,6 +11,7 @@ import { A, B, C, D, E, I, J, L, M, N, NOT_A_LETTER, O, R, S, U, Z } from '@app/
 import { decode as b64_decode } from 'base64-arraybuffer';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+// eslint-disable-next-line import/no-unresolved
 import { ValidWordService } from './valid-world.service';
 
 describe('ValidWorldService', () => {

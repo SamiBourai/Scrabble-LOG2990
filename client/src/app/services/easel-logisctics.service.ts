@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EaselObject } from '@app/classes/EaselObject';
+import { EaselObject } from '@app/classes/easel-object';
 import { Letter } from '@app/classes/letter';
 import { Pair } from '@app/classes/pair';
 import { Vec2 } from '@app/classes/vec2';
@@ -8,6 +8,7 @@ import {
     BOARD_WIDTH,
     CLEAR_RECT_FIX,
     EASEL_LENGTH,
+    FIVE,
     HAND_POSITION_START,
     LEFTSPACE,
     NB_TILES,
@@ -141,7 +142,7 @@ export class EaselLogiscticsService {
             easel.easelLetters[easel.indexToMove] = easel.easelLetters[0];
             for (let i = 0; i < SIX; i++) {
                 easel.easelLetters[i] = easel.easelLetters[i + 1];
-                if (i === 5) easel.easelLetters[i] = save;
+                if (i === FIVE) easel.easelLetters[i] = save;
             }
         }
 

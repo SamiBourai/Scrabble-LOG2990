@@ -1,5 +1,4 @@
-export interface GameTime
-{
-    min:number;
-    sec:number;
+export interface GameTime {
+    min: number;
+    sec: number;
 }

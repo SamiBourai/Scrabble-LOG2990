@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
-import { EaselObject } from '@app/classes/EaselObject';
+import { EaselObject } from '@app/classes/easel-object';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { BONUS_POINTS_50, FIRST_NAME, MAX_PLAYER, PARAMETERS_OF_SWAP, SECOND_NAME, SIX_TURN, THIRD_NAME } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -31,7 +31,8 @@ export class UserService {
     exchangeLetters: boolean = false;
     intervalId: number = 0;
     time: number;
-    isUserQuitGame: boolean;
+    isUserQuitGame: boolean = false;
+    userQuit = new BehaviorSubject<boolean>(false);
     isBonusBox: boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;

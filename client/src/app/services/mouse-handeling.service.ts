@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/components/play-area/play-area.component';
+import { EASEL_POSITIONS } from '@app/constants/array-constant';
 import {
     ASCI_CODE_A,
     BOARD_HEIGHT,
     BOARD_WIDTH,
     CANEVAS_HEIGHT,
     CANEVAS_WIDTH,
-    EASEL_POSITIONS,
     LEFTSPACE,
     NB_TILES,
     NOT_A_LETTER,

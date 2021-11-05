@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
@@ -5,7 +7,6 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { C, H_ARROW, V_ARROW } from '@app/constants/constants';
-
 import { TemporaryCanvasService } from './temporary-canvas.service';
 
 describe('TemporaryCanvasService', () => {
@@ -36,7 +37,7 @@ describe('TemporaryCanvasService', () => {
 
     it('decrementDirection else', () => {
         service['direction'] = V_ARROW;
-        //service.previousTile.x = 18;
+        // service.previousTile.x = 18;
         service.previousTile.y = 13;
         service.decrementDirection();
         expect(service.previousTile.y).toBe(12);
@@ -140,12 +141,12 @@ describe('TemporaryCanvasService', () => {
     });
 
     it('removeLastLetter', () => {
-        //spyOn(service.tempContext, 'clearRect').and.callThrough();
-        service.previousTile = {x:10,y:10};
+        // spyOn(service.tempContext, 'clearRect').and.callThrough();
+        service.previousTile = { x: 10, y: 10 };
         const spy1 = spyOn<any>(service.tempContext, 'clearRect');
         service.removeLastLetter();
         expect(spy1).toHaveBeenCalled();
-        service.previousTile = {x:-1,y:-1}
+        service.previousTile = { x: -1, y: -1 };
     });
 
     it('removeLastLetter while', () => {
@@ -157,27 +158,23 @@ describe('TemporaryCanvasService', () => {
 
     it('findNextEmptyTile', () => {
         spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(false);
-        service.previousTile = {x:15,y:15}
+        service.previousTile = { x: 15, y: 15 };
         const a = service.findNextEmptyTile();
         expect(a).toBe(false);
     });
 
     it('findNextEmptyTile', () => {
         spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(false);
-        service.previousTile = {x:12,y:11};
-        let x = 2;
-         service.findNextEmptyTile();
+        service.previousTile = { x: 12, y: 11 };
+        const x = 2;
+        service.findNextEmptyTile();
         expect(x).toBe(2);
     });
-
-    
-
-      it('findNextEmptyTile if', () => {
+    it('findNextEmptyTile if', () => {
         spyOn(service['letterService'], 'tileIsEmpty').and.returnValue(true);
         service.previousTile.x = 15;
         const s = service.findNextEmptyTile();
         expect(s).toBeTrue();
-
     });
 
     it('addletterFromGrid', () => {

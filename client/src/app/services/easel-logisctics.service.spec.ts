@@ -1,22 +1,22 @@
-import { EaselObject } from '@app/classes/EaselObject';
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Pair } from '@app/classes/pair';
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { EaselObject } from '@app/classes/easel-object';
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+import { Pair } from '@app/classes/pair';
 import { A, C, F, NOT_A_LETTER } from '@app/constants/constants';
 import { EaselLogiscticsService } from './easel-logisctics.service';
-//import { ReserveService } from '@app/classes/ReserveObject';
-//import { ReserveService } from './reserve.service';
+// import { ReserveService } from '@app/classes/ReserveObject';
+// import { ReserveService } from './reserve.service';
 
 describe('EaselLogiscticsService', () => {
     let service: EaselLogiscticsService;
-    //let reserveService: jasmine.SpyObj<ReserveService>;
+    // let reserveService: jasmine.SpyObj<ReserveService>;
     beforeEach(() => {
-        //reserveService = jasmine.createSpyObj('ReserveService', ['getRandomLetter']);
+        // reserveService = jasmine.createSpyObj('ReserveService', ['getRandomLetter']);
         TestBed.configureTestingModule({});
 
         service = TestBed.inject(EaselLogiscticsService);
@@ -24,7 +24,7 @@ describe('EaselLogiscticsService', () => {
         const height = 25;
         // eslint-disable-next-line -- createCanvas is private and we need access for the test
         service.gridContext = CanvasTestHelper.createCanvas(width, height).getContext('2d') as CanvasRenderingContext2D;
-        //reserveService = jasmine.createSpyObj('reserveServiceSpy', ['reserveSize', 'isReserveEmpty', 'getRandomLetter']);
+        // reserveService = jasmine.createSpyObj('reserveServiceSpy', ['reserveSize', 'isReserveEmpty', 'getRandomLetter']);
         jasmine.getEnv().allowRespy(true);
     });
 
@@ -34,7 +34,7 @@ describe('EaselLogiscticsService', () => {
 
     it('showCoords', () => {
         const e = new MouseEvent('click');
-        //service.showCoords(e);
+        // service.showCoords(e);
         expect(service.showCoords(e)).toBeDefined();
     });
 
@@ -50,11 +50,11 @@ describe('EaselLogiscticsService', () => {
     it('placeEaselLetters', () => {
         const easel = new EaselObject(true);
         easel.easelLetters = [C, F];
-        //const spy = spyOn(service.gridContext, 'drawImage');
+        // const spy = spyOn(service.gridContext, 'drawImage');
         service.placeEaselLetters(easel);
 
         expect(easel.easelLetters[1].charac).toBe('f');
-        //expect(spy).toHaveBeenCalled()
+        // expect(spy).toHaveBeenCalled()
     });
 
     it('getLetterFromEasel', () => {
@@ -78,7 +78,7 @@ describe('EaselLogiscticsService', () => {
         easel.easelLetters = [A, A, A, A, A, A, A];
         const user = true;
         easel.indexOfEaselLetters = [0];
-        spyOn(service['reserveService'], 'isReserveEmpty').and.returnValue(true)
+        spyOn(service['reserveService'], 'isReserveEmpty').and.returnValue(true);
         service.refillEasel(easel, user);
 
         expect(easel.easelLetters[0]).toEqual(NOT_A_LETTER);
@@ -89,7 +89,7 @@ describe('EaselLogiscticsService', () => {
         easel.easelLetters = [A, A, A, A, A, A, A];
         const user = true;
         easel.indexOfEaselLetters = [0];
-        spyOn(service['reserveService'], 'isReserveEmpty').and.returnValue(false)
+        spyOn(service['reserveService'], 'isReserveEmpty').and.returnValue(false);
         service.refillEasel(easel, user);
 
         expect(easel.easelLetters[0]).not.toEqual(NOT_A_LETTER);
@@ -98,7 +98,7 @@ describe('EaselLogiscticsService', () => {
     it('fillEasel false', () => {
         const easel = new EaselObject(true);
         const user = true;
-        spyOn<any>(service['reserveService'], 'isReserveEmpty').and.returnValue(false)
+        spyOn<any>(service['reserveService'], 'isReserveEmpty').and.returnValue(false);
         const spy = spyOn(easel, 'add');
         service.fillEasel(easel, user);
         expect(spy).toHaveBeenCalled();
@@ -107,7 +107,7 @@ describe('EaselLogiscticsService', () => {
     it('fillEasel true', () => {
         const easel = new EaselObject(true);
         const user = true;
-        spyOn<any>(service['reserveService'], 'isReserveEmpty').and.returnValue(true)
+        spyOn<any>(service['reserveService'], 'isReserveEmpty').and.returnValue(true);
         const spy = spyOn(easel, 'add');
         service.fillEasel(easel, user);
         expect(spy).not.toHaveBeenCalled();
@@ -117,7 +117,7 @@ describe('EaselLogiscticsService', () => {
         const easel = new EaselObject(true);
         const user = true;
         easel.easelLetters = [A, A, A, A, A, A, A];
-        const spy = spyOn<any>(service, 'placeEaselLetters')
+        const spy = spyOn<any>(service, 'placeEaselLetters');
 
         service.refillEasel(easel, user);
         expect(spy).toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe('EaselLogiscticsService', () => {
         const easel = new EaselObject(true);
         const user = false;
         easel.easelLetters = [A, A, A, A, A, A, A];
-        const spy = spyOn<any>(service, 'placeEaselLetters')
+        const spy = spyOn<any>(service, 'placeEaselLetters');
 
         service.refillEasel(easel, user);
         expect(spy).not.toHaveBeenCalled();
@@ -137,7 +137,7 @@ describe('EaselLogiscticsService', () => {
         const easel = new EaselObject(true);
         const user = true;
         easel.easelLetters = [A, A, A, A, A, A, A];
-        const spy = spyOn<any>(service, 'placeEaselLetters')
+        const spy = spyOn<any>(service, 'placeEaselLetters');
 
         service.fillEasel(easel, user);
         expect(spy).toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe('EaselLogiscticsService', () => {
         const easel = new EaselObject(true);
         const user = false;
         easel.easelLetters = [A, A, A, A, A, A, A];
-        const spy = spyOn<any>(service, 'placeEaselLetters')
+        const spy = spyOn<any>(service, 'placeEaselLetters');
 
         service.fillEasel(easel, user);
         expect(spy).not.toHaveBeenCalled();
@@ -194,7 +194,7 @@ describe('EaselLogiscticsService', () => {
         easel.easelLetters = [C, F];
         easel.posTempLetters = [false, false, false, false, false, false, false];
         easel.indexTempLetters = [];
-        let x = 2;
+        const x = 2;
         service.replaceTempInEasel(easel);
         expect(x).toBe(2);
     });
@@ -202,7 +202,7 @@ describe('EaselLogiscticsService', () => {
     it('moveLeft', () => {
         const easel = new EaselObject(true);
         easel.indexToMove = 2;
-        let x = 2;
+        const x = 2;
         service.moveLeft(easel);
         expect(x).toBe(2);
     });
@@ -210,7 +210,7 @@ describe('EaselLogiscticsService', () => {
     it('moveLeft else', () => {
         const easel = new EaselObject(true);
         easel.indexToMove = 0;
-        let x = 2;
+        const x = 2;
         service.moveLeft(easel);
         expect(x).toBe(2);
     });
@@ -218,7 +218,7 @@ describe('EaselLogiscticsService', () => {
     it('moveRight', () => {
         const easel = new EaselObject(true);
         easel.indexToMove = 5;
-        let x = 2;
+        const x = 2;
         service.moveRight(easel);
         expect(x).toBe(2);
     });
@@ -226,11 +226,8 @@ describe('EaselLogiscticsService', () => {
     it('moveRight else', () => {
         const easel = new EaselObject(true);
         easel.indexToMove = 6;
-        let x = 2;
+        const x = 2;
         service.moveRight(easel);
         expect(x).toBe(2);
     });
-
 });
-
-    
