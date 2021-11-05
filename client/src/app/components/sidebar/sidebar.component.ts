@@ -158,7 +158,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
                         return;
                     }
-                } else if (this.lettersService.wordIsAttached(this.messageService.command) && points !== 0) {
+                } else if (this.lettersService.wordIsAttached(this.messageService.command)) {
                     if (!this.placeOtherTurns(points)) {
                         this.invalidCommand = true;
                         this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
@@ -169,6 +169,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.errorMessage = 'les lettres a placer ne constituent pas un mot';
                     return;
                 }
+            } else {
+                this.invalidCommand = true;
+                this.errorMessage = 'le mot est invalide';
             }
         } else {
             this.invalidCommand = true;
@@ -193,6 +196,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.updatePlayerVariables(points);
             lettersplaced = true;
             this.firstTurn = false;
+        } else {
+            this.errorMessage = 'Les lettres de votre mot ne sont pas dans le chevalet';
         }
         return lettersplaced;
     }
@@ -200,10 +205,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.getPlayerEasel())) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
             this.updatePlayerVariables(points);
-            console.log('faux place othernr tu');
             return true;
         }
-        console.log('faux place other tunr');
         return false;
     }
     updatePlayerVariables(points: number) {
@@ -232,11 +235,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     gameName: this.userService.gameName,
                     word: this.lettersService.fromWordToLetters(this.messageService.command.word),
                 });
-
                 this.socketManagementService.listen('verifyWord').subscribe((data) => {
                     this.valideWordService.isWordValid = data.isValid ?? false;
-                    console.log('shui laaaaaaa dans dans verify word');
-
                     this.getLettersFromChat();
                 });
             }
@@ -260,7 +260,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 if (this.userService.playMode === 'joinMultiplayerGame') command = this.userService.joinedUser.name + ' : ' + command;
                 if (this.userService.playMode === 'createMultiplayerGame') command = ' ' + this.userService.realUser.name + ' : ' + command;
                 this.arrayOfMessages.push(command);
-                console.log('shuilaaaa');
+
                 this.messageService.textMessage = this.arrayOfMessages;
                 this.messageService.textMessageObs.next(this.messageService.textMessage);
             }
@@ -303,16 +303,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.userService.detectSkipTurnBtn();
                 break;
             // CODE SPRINT 2 ABDEL POUR !RESERVE
-            case '!reserve':
-                this.invalidCommand = false;
-                this.errorMessage = '';
-                if (this.isDebug || this.userService.playMode !== 'soloGame') {
-                    this.reserveLettersQuantity();
-                } else {
-                    this.invalidCommand = true;
-                    this.errorMessage = 'vous n etes pas en mode debogage';
-                }
-                break;
             // FIN CODE SPRINT 2 ABDEL POUR !RESERVE
         }
     }

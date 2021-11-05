@@ -141,8 +141,10 @@ export class UserService {
     }
     userPlayed() {
         this.endOfGameCounter = 0;
-        this.realUser.turnToPlay = false;
-        this.realUserTurnObs.next(this.realUser.turnToPlay);
+        if (this.playMode !== 'joinMultiplayerGame') {
+            this.realUser.turnToPlay = false;
+            this.realUserTurnObs.next(this.realUser.turnToPlay);
+        }
     }
     get turnToPlayObs(): Observable<boolean> {
         return this.observableTurnToPlay;
