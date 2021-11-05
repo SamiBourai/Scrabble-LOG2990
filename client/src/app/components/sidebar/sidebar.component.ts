@@ -26,9 +26,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     isValid: boolean = true;
     invalidCommand: boolean = false;
     isCommand: boolean = false;
-    inEasel: boolean = true;
     command: ChatCommand[] = [];
-    containsAllChars: boolean = true;
     firstTurn: boolean = true;
     skipTurn: boolean = false;
     active: boolean = false;
@@ -36,14 +34,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     nameVr: string;
     word: string = 'mot';
     errorMessage: string = '';
-
     score: number = 0;
-
     form = new FormGroup({
         message: new FormControl(''),
     });
     isDebug: boolean = false;
-
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
@@ -56,6 +51,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private timeService: TimeService,
         private socketManagementService: SocketManagementService,
     ) {}
+
     ngOnInit(): void {
         if (this.reserveService.sizeObs) {
             this.reserveService.sizeObs.subscribe(() => {
@@ -101,13 +97,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }
-    getNameCurrentPlayer() {
-        return this.userService.getUserName();
-    }
 
-    getNameVrPlayer() {
-        return this.userService.getVrUserName();
-    }
     checkIfFirstPlay() {
         if (this.userService.playMode !== 'soloGame') this.firstTurn = this.userService.firstTurn;
     }
@@ -128,10 +118,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         } else {
             this.skipTurnCommand();
         }
-
         this.invalidCommand = false;
-        this.name = this.getNameCurrentPlayer();
-        this.nameVr = this.getNameVrPlayer();
+        this.name = this.userService.getUserName();
+        this.nameVr = this.userService.getVrUserName();
         this.impossibleAndValid();
     }
 
@@ -157,11 +146,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         }
         return false;
     }
-
     logDebug() {
         return this.messageService.debugCommand(this.typeArea);
     }
-
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(
             this.lettersService.tiles,
@@ -212,7 +199,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
     impossibleAndValid() {
         this.isCommand = this.messageService.isCommand(this.typeArea);
-
         if (!this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea)) {
             this.invalidCommand = true;
         }
@@ -220,7 +206,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
     playFirstTurn(points: number): boolean {
         let lettersplaced = false;
-
         if (this.userService.getPlayerEasel().contains(this.messageService.command.word)) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
             this.updatePlayerVariables(points);
@@ -235,7 +220,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.getPlayerEasel())) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
             this.updatePlayerVariables(points);
-
             return true;
         }
         return false;
@@ -243,10 +227,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     updatePlayerVariables(points: number) {
         this.userService.chatCommandToSend = this.messageService.command;
         this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
-        if(this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
-
+        if (this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
         this.invalidCommand = false;
-
         this.endTurnValidCommand();
     }
     isTheGameDone(): boolean {
@@ -340,7 +322,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     if (!this.invalidCommand) {
                         if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
                         this.userService.exchangeLetters = true;
-                        if(this.userService.playedObs) this.userService.playedObs.next(this.userService.exchangeLetters);
+                        if (this.userService.playedObs) this.userService.playedObs.next(this.userService.exchangeLetters);
                     }
                     break;
                 case '!debug':
@@ -352,7 +334,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.errorMessage = '';
                     this.userService.detectSkipTurnBtn();
                     break;
-    
                 case '!reserve':
                     this.invalidCommand = false;
                     this.errorMessage = '';
@@ -365,6 +346,5 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
             }
         }
-        
     }
 }

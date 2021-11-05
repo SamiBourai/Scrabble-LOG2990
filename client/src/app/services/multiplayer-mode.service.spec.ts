@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
@@ -7,6 +8,7 @@ import { MessageServer } from '@app/classes/message-server';
 import { JoinedUser, RealUser } from '@app/classes/user';
 import { of } from 'rxjs';
 import { MultiplayerModeService } from './multiplayer-mode.service';
+
 describe('MultiplayerModeService', () => {
     let service: MultiplayerModeService;
 
@@ -92,10 +94,8 @@ describe('MultiplayerModeService', () => {
         };
 
         const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(data);
-        const spy2 = spyOn<any>(service, 'sendReserve');
         service.play('guestUserPlayed', place);
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
         expect(service['userService'].realUser.turnToPlay).toBeTrue();
         service.play('soloGame', place);
         expect(service['userService'].realUser.turnToPlay).toBeFalse();
@@ -110,10 +110,22 @@ describe('MultiplayerModeService', () => {
             gameName: 'game4546',
         };
         const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(data);
-        const spy2 = spyOn<any>(service, 'sendReserve');
         service.play('soloGame', place);
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
+    });
+
+    it('play else if 1 true', () => {
+        service.setGuestPlayerInfromation('abdel1232');
+        const place = false;
+        service['userService'].exchangeLetters = false;
+        service['userService'].passTurn = true;
+        const data: MessageServer = {
+            gameName: 'game4546',
+            passTurn: true,
+        };
+        const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(data);
+        service.play('soloGame', place);
+        expect(spy).toHaveBeenCalled();
     });
 
     it('play if false', () => {
@@ -121,9 +133,7 @@ describe('MultiplayerModeService', () => {
         const place = true;
         service['userService'].exchangeLetters = false;
         service['userService'].passTurn = false;
-        const spy2 = spyOn<any>(service, 'sendReserve');
         service.play('guestUserPlayed', place);
-        expect(spy2).toHaveBeenCalled();
     });
 
     it('play else if false', () => {
@@ -131,8 +141,32 @@ describe('MultiplayerModeService', () => {
         const place = false;
         service['userService'].exchangeLetters = false;
         service['userService'].passTurn = false;
-        const spy2 = spyOn<any>(service, 'sendReserve');
         service.play('guestUserPlayed', place);
+    });
+
+    it('updateReserveChangeLetters', () => {
+        const data: MessageServer = {
+            gameName: 'game000111',
+            reserve: 'quel projet de plouc',
+            reserveSize: 5,
+        };
+        const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
+        const spy2 = spyOn<any>(service['reserveService'], 'redefineReserve');
+
+        service.updateReserveChangeLetters();
+        expect(spy).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+    });
+
+    it('updateReserveChangeLetters with undefined data', () => {
+        const data: MessageServer = {
+            gameName: 'game000111',
+        };
+        const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
+        const spy2 = spyOn<any>(service['reserveService'], 'redefineReserve');
+
+        service.updateReserveChangeLetters();
+        expect(spy).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
     });
 
@@ -150,12 +184,56 @@ describe('MultiplayerModeService', () => {
             guestPlayer: { name: 'marouane3234', score: 45 },
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
-        const spy2 = spyOn<any>(service, 'updateReserve');
         const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
         service.getPlayedCommand('soloGame');
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
+    });
+
+    it('getPlayedCommand undefined data', () => {
+        service.setGuestPlayerInfromation('abdel1232');
+        const data: MessageServer = {
+            command: {
+                word: 'azzz',
+                direction: 'p',
+                position: { x: 1, y: 1 },
+            },
+            gameName: 'game000111',
+            gameStarted: true,
+            user: { name: 'abdel3234', score: 0 },
+            guestPlayer: { name: 'marouane3234', score: 45 },
+            reserve: 'quel projet de plouc',
+            reserveSize: 5,
+            usedWords: 'hello',
+        };
+        const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
+        // const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
+        service.getPlayedCommand('guestUserPlayed');
+        expect(spy).toHaveBeenCalled();
+        // expect(spy3).toHaveBeenCalled();
+    });
+
+    it('getPlayedCommand undefined data', () => {
+        service.setGuestPlayerInfromation('abdel1232');
+        const data: MessageServer = {
+            command: {
+                word: 'azzz',
+                direction: 'p',
+                position: { x: 1, y: 1 },
+            },
+            gameName: 'game000111',
+            gameStarted: true,
+            user: { name: 'abdel3234', score: 0 },
+            guestPlayer: { name: 'marouane3234', score: 45 },
+            reserve: 'quel projet de plouc',
+            reserveSize: 5,
+            usedWords: 'hello',
+        };
+        const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
+        // const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
+        service.getPlayedCommand('guestUserPlayed');
+        expect(spy).toHaveBeenCalled();
+        // expect(spy3).toHaveBeenCalled();
     });
 
     it('getPlayedCommand', () => {
@@ -167,11 +245,9 @@ describe('MultiplayerModeService', () => {
             guestPlayer: { name: 'marouane3234', score: 45 },
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
-        const spy2 = spyOn<any>(service, 'updateReserve');
         const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
         service.getPlayedCommand('soloGame');
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
     });
 
@@ -184,16 +260,13 @@ describe('MultiplayerModeService', () => {
             guestPlayer: { name: 'marouane3234', score: 0 },
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
-        const spy2 = spyOn<any>(service, 'updateReserve');
         const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
         service.getPlayedCommand('guestUserPlayed');
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
         expect(service['userService'].realUser.turnToPlay).toBeTrue();
         service.getPlayedCommand('soloGame');
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
         expect(service['userService'].realUser.turnToPlay).toBeFalse();
     });
@@ -210,47 +283,28 @@ describe('MultiplayerModeService', () => {
             },
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
-        const spy2 = spyOn<any>(service, 'updateReserve');
         const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
         service.getPlayedCommand('guestUserPlayed');
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
     });
 
     it('sendReserve', () => {
-        const spy = spyOn<any>(service['socketManagementService'], 'emit');
+        const spy = spyOn<any>(service['socketManagementService'], 'reserveToserver');
         service.sendReserve();
         expect(spy).toHaveBeenCalled();
     });
 
-    // it('updateReserve', () => {
-    //     const spy = spyOn<any>(service['socketManagementService'], 'emit');
-    //     const data: MessageServer = {
-    //         gameName: 'game000111',
-    //     };
-    //     const spy2 = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
-    //     service.first = true;
-    //     service['userService'].playMode = 'joinMultiplayerGame';
-    //     spyOn<any>(service['easelLogic'], 'fillEasel');
-    //     spyOn<any>(service, 'sendReserve');
-    //     service.updateReserve();
-    //     expect(spy).toHaveBeenCalled();
-    //     expect(spy2).toHaveBeenCalled();
-    //     expect(service.first).toBeFalse();
-    // });
-
     it('updateReserve', () => {
-        const spy = spyOn<any>(service['socketManagementService'], 'emit');
-        const data: MessageServer = {
-            gameName: 'game000111',
-        };
-        const spy2 = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
-        service.first = true;
-        service['userService'].playMode = 'soloGame';
+        const spy = spyOn<any>(service['socketManagementService'], 'reserveToClient');
         service.updateReserve();
         expect(spy).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
+    });
+
+    it('getJoinReserve', () => {
+        const spy = spyOn<any>(service['socketManagementService'], 'reserveToJoinOnfirstTurn');
+        service.getJoinReserve();
+        expect(spy).toHaveBeenCalled();
     });
 
     it('setGuestPlayerInfromation', () => {
