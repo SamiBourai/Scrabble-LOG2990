@@ -48,25 +48,8 @@ export class VirtualPlayerService {
     ) {}
     manageVrPlayerActions(): void {
         this.skipTurn = false;
-        const probability: string[] = [
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'passTurn',
-            'exchangeLetters',
-        ];
-        if (!this.isDicFille) {
-            this.isDicFille = true;
-            // this.easelLogic.fillEasel(this.easel, false);
-        }
-        const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
         this.played = false;
-        switch (probability[randomIndex]) {
+        switch (this.playProbabilty()) {
             case 'placeWord':
                 setTimeout(() => {
                     if (this.first) {
@@ -127,6 +110,22 @@ export class VirtualPlayerService {
                 }, WAIT_TIME_3_SEC);
                 break;
         }
+    }
+    private playProbabilty(): string {
+        const probability: string[] = [
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'placeWord',
+            'passTurn',
+            'exchangeLetters',
+        ];
+        const randomIndex = Math.floor(Math.random() * MAX_INDEX_NUMBER_PROBABILITY_ARRAY);
+        return probability[randomIndex];
     }
     private passTurnSteps() {
         this.commandToSend = '!passer';

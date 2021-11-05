@@ -149,7 +149,7 @@ export class ValidWordService {
                 // check if this exact word was used before
                 const exists = this.checkIfWordIsUsed(array, arrayPosition);
                 if (exists) {
-                    totalPointsSum += 0;
+                    // do nothing
                 } else {
                     this.usedWords.set(this.fromLettersToString(array), arrayPosition);
                     totalPointsSum += this.wps.pointsWord(array, arrayPosition);
@@ -178,9 +178,6 @@ export class ValidWordService {
             return this.isWordValid;
         } else {
             let concatWord = '';
-            if (this.dictionary === undefined) {
-                return;
-            }
             if (word.length === 0) {
                 return;
             }

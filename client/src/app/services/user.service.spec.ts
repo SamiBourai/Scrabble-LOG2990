@@ -18,6 +18,7 @@ describe('UserService', () => {
             imports: [HttpClientModule],
         });
         service = TestBed.inject(UserService);
+        jasmine.getEnv().allowRespy(true);
     });
 
     it('should be created', () => {
@@ -58,6 +59,15 @@ describe('UserService', () => {
         service.playMode = 'soloGame';
         const x2 = service.getPlayerEasel();
         expect(x2).toEqual(service.realUser.easel);
+    });
+
+    it('chooseRandomName', () => {
+        spyOn<any>(service, 'getRandomInt').and.returnValue(1);
+        spyOn<any>(localStorage, 'getItem').and.returnValue('abdel124');
+        const x = 2;
+        const x2 = service.chooseRandomName();
+        expect(x2).toEqual('Martin1234');
+        expect(x).toEqual(2);
     });
 
     it('getVrUsername', () => {
@@ -260,5 +270,16 @@ describe('UserService', () => {
     it('initArrayMessage', () => {
         const i = service.initArrayMessage;
         expect(i).toEqual(service.reInit);
+    });
+
+    it('updateScore', () => {
+        service.playMode = 'joinMultiplayerGame';
+        const points = 50;
+        const bonus = true;
+        const userR: JoinedUser = { name: 'bob', level: '2', round: '3', score: 8, easel: new EaselObject(true), guestPlayer: true };
+        service.joinedUser = userR;
+        service.updateScore(points, bonus);
+        service.playMode = 'soloGame';
+        service.updateScore(points, bonus);
     });
 });

@@ -80,6 +80,22 @@ describe('MouseHandelingService', () => {
         expect(spy).toHaveBeenCalled();
     });
 
+    it(' mouseHitDetect', () => {
+        service.mousePosition.x = 1;
+        service.previousClick.y = 1;
+        service.mousePosition.y = 1;
+        service.previousClick.y = 1;
+        const mouseEvent = { offsetX: 54, offsetY: 30, button: MouseButton.Left } as MouseEvent;
+        spyOn(service['userService'], 'isPlayerTurn').and.returnValue(true);
+        const spy1 = spyOn(service, 'resetSteps');
+        const spy2 = spyOn(service['tempCanvasService'], 'drawTileFocus');
+        const spy = spyOn(Math, 'ceil');
+        service.mouseHitDetect(mouseEvent);
+        expect(spy1).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+    });
+
     it('mouseHitDetect else', () => {
         const mouseEvent2 = { offsetX: 54, offsetY: 30, button: MouseButton.Right } as MouseEvent;
         const spy = spyOn(service, 'resetSteps');
@@ -105,6 +121,10 @@ describe('MouseHandelingService', () => {
         const mouseEvent = { offsetX: 100, offsetY: 300, button: MouseButton.Left, x: 100, y: 100 } as MouseEvent;
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
         spyOn<any>(service['easelLogic'], 'isBetween').and.returnValue(true);
+        spyOn<any>(service, 'resetSteps');
+        spyOn<any>(service['tempCanvasService'], 'clearLayers');
+        // spyOn<any>(service['easelLogic'], 'placeEaselLetters ');
+
         const spy = spyOn<any>(service, 'cancelByClick');
         const spy1 = spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
         service.easelClicked(mouseEvent);
@@ -118,6 +138,8 @@ describe('MouseHandelingService', () => {
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
         spyOn<any>(service['easelLogic'], 'isBetween').and.returnValue(true);
         spyOn<any>(service['tempCanvasService'], 'letterEaselToMove');
+        spyOn<any>(service, 'resetSteps');
+        spyOn<any>(service['tempCanvasService'], 'clearLayers');
         const spy = spyOn<any>(service, 'cancelByClick');
         service.easelClicked(mouseEvent);
         expect(spy).toHaveBeenCalled();
@@ -132,6 +154,8 @@ describe('MouseHandelingService', () => {
         spyOn<any>(service['easelLogic'], 'isBetween').and.returnValue(true);
         spyOn<any>(service, 'cancelByClick');
         spyOn<any>(service['tempCanvasService'], 'unclickLetter');
+        spyOn<any>(service, 'resetSteps');
+        spyOn<any>(service['tempCanvasService'], 'clearLayers');
         const spy2 = spyOn<any>(service['tempCanvasService'], 'setLetterClicked');
         service.easelClicked(mouseEvent);
         expect(spy2).toHaveBeenCalled();
@@ -145,6 +169,8 @@ describe('MouseHandelingService', () => {
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
         spyOn<any>(service['easelLogic'], 'isBetween').and.returnValue(true);
         spyOn<any>(service['tempCanvasService'], 'setLetterClicked');
+        spyOn<any>(service, 'resetSteps');
+        spyOn<any>(service['tempCanvasService'], 'clearLayers');
         const spy2 = spyOn<any>(service['tempCanvasService'], 'unclickLetter');
         service.easelClicked(mouseEvent);
         expect(spy2).toHaveBeenCalled();
@@ -160,6 +186,22 @@ describe('MouseHandelingService', () => {
         service.easelClicked(mouseEvent);
         expect(spy).toHaveBeenCalled();
     });
+
+    // it('easelClicked else if', () => {
+    //     service.lastWasRightClick = false;
+    //     EASEL_POSITIONS[0].isClicked = false;
+    //     const mouseEvent = { offsetX: 100, offsetY: 300, button: MouseButton.Right, x: 100, y: 100 } as MouseEvent;
+    //     spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
+    //     spyOn<any>(service['easelLogic'], 'isBetween').and.returnValue(true);
+    //     spyOn<any>(service['userService'], 'isPlayerTurn').and.returnValue(true);
+    //     spyOn<any>(service, 'resetSteps');
+    //     spyOn<any>(service['tempCanvasService'], 'clearLayers');
+    //     const spy = spyOn<any>(service, 'cancelByClick');
+    //     const spy2 = spyOn<any>(service['userService'], 'getPlayerEasel');
+    //     service.easelClicked(mouseEvent);
+    //     expect(spy).toHaveBeenCalled();
+    //     expect(spy2).toHaveBeenCalled();
+    // });
 
     it('swapByClick', () => {
         service.lettersToSwapByClick = [A];

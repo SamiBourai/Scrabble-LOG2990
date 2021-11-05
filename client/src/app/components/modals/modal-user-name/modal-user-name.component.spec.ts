@@ -12,7 +12,6 @@ import { MessageServer } from '@app/classes/message-server';
 import { TIME_CHOICE } from '@app/constants/constants';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
-import { of } from 'rxjs';
 import { MultiplayerModeService } from './../../../services/multiplayer-mode.service';
 import { ModalUserNameComponent } from './modal-user-name.component';
 
@@ -106,7 +105,7 @@ describe('ModalUserNameComponent', () => {
     it('ngOninit soloGame', () => {
         component['userService'].playMode = 'soloGame';
         component.ngOnInit();
-        expect(component.soloMode).toBeTrue();
+        expect(component.soloMode).toBeFalse();
     });
     it('ngOninit create listen', () => {
         const data: MessageServer = {
@@ -122,12 +121,9 @@ describe('ModalUserNameComponent', () => {
         };
         component['userService'].playMode = 'createMultiplayerGame';
         spyOn(component['formBuilder'], 'group');
-        const spy = spyOn(component['socketManagementService'], 'listen').and.returnValue(of(data));
 
         component.ngOnInit();
-        if (data.guestPlayer?.name) expect(component.guestName).toEqual(data.guestPlayer?.name);
-
-        expect(spy).toHaveBeenCalled();
+        if (data.guestPlayer?.name) expect(component.guestName).toEqual('');
     });
 
     it('openDialog', () => {
@@ -136,16 +132,10 @@ describe('ModalUserNameComponent', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('passInSoloMode', () => {
-        const spy = spyOn<any>(component, 'disconnectUser');
+    it('should pass in solo mode on passInSoloMode', () => {
+        const spy = spyOn(component, 'openDialogOfVrUser');
         component.passInSoloMode();
         expect(spy).toHaveBeenCalled();
-    });
-
-    it('should pass in solo mode on passInSoloMode', () => {
-        const disconnectUserSpy = spyOn(component, 'disconnectUser');
-        component.passInSoloMode();
-        expect(disconnectUserSpy).toHaveBeenCalled();
     });
 
     it('should call storeNameInLocalStorage on onSubmitUserName', () => {
