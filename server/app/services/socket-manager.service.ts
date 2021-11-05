@@ -1,11 +1,11 @@
-import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, SIX_TURN } from '@app/classes/constants';
-import { GameObject } from '@app/classes/gameObject';
+import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, ONE_SECOND_MS, SIX_TURN } from '@app/classes/constants';
+import { GameObject } from '@app/classes/game-object';
 import { Letter } from '@app/classes/letters';
-import { MessageClient } from '@app/classes/MessageClient';
+import { MessageClient } from '@app/classes/message-client';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
-import { ValidWordService } from './validateWords.service';
+import { ValidWordService } from './validate-words.service';
 
 @Service()
 export class SocketManagerService {
@@ -138,15 +138,13 @@ export class SocketManagerService {
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
                 this.sio.to(message.gameName).emit('verifyWordCreator', message);
             });
-            socket.on('disconnect', (reason) => {
-                console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
-                console.log(`Raison de deconnexion : ${reason}`);
+            socket.on('disconnect', () => {
                 socket.disconnect();
             });
         });
         setInterval(() => {
             this.emitTime();
-        }, 1000);
+        }, ONE_SECOND_MS);
     }
     deleteRoom(game: MessageClient) {
         for (let i = 0; i < this.rooms.length; i++) {

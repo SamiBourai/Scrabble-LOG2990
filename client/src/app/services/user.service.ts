@@ -17,7 +17,7 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     playMode: string;
-    passesCounter: number = 0;
+
     realUser: RealUser;
     joinedUser: JoinedUser;
     vrUser: VrUser;
@@ -30,9 +30,9 @@ export class UserService {
     passTurn: boolean = false;
     exchangeLetters: boolean = false;
     intervalId: number = 0;
-    time: number;
+
     isUserQuitGame: boolean = false;
-    userQuit = new BehaviorSubject<boolean>(false);
+    userQuit: Observable<boolean>;
     isBonusBox: boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;

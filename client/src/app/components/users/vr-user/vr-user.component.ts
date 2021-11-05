@@ -22,7 +22,7 @@ export class VrUserComponent implements OnInit, OnDestroy {
     }
 
     getScoreVrPlayer() {
-        this.scoreSubscription = this.virtualPlayerService.scoreVr.subscribe((score) => {
+        this.scoreSubscription = this.virtualPlayerService.vrScoreObs.subscribe((score) => {
             this.userService.vrUser.score += score;
         });
     }

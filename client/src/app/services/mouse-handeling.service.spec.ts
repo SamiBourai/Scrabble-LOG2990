@@ -91,7 +91,7 @@ describe('MouseHandelingService', () => {
     });
 
     it('easelClicked', () => {
-        service.lastWasLeftClick = false;
+        service.lastWasRightClick = false;
         EASEL_POSITIONS[0].isClicked = false;
         const mouseEvent = { offsetX: 100, offsetY: 300, button: MouseButton.Left, x: 100, y: 100 } as MouseEvent;
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
@@ -122,7 +122,7 @@ describe('MouseHandelingService', () => {
     });
 
     it('easelClicked 3', () => {
-        service.lastWasLeftClick = true;
+        service.lastWasRightClick = true;
         const mouseEvent = { offsetX: 100, offsetY: 300, button: MouseButton.Right, x: 100, y: 100 } as MouseEvent;
         spyOn<any>(service['userService'], 'isPlayerTurn').and.returnValue(true);
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
@@ -136,7 +136,7 @@ describe('MouseHandelingService', () => {
 
     it('easelClicked 4', () => {
         EASEL_POSITIONS[0].isClicked = true;
-        service.lastWasLeftClick = true;
+        service.lastWasRightClick = true;
         const mouseEvent = { offsetX: 100, offsetY: 300, button: MouseButton.Right, x: 100, y: 100 } as MouseEvent;
         spyOn<any>(service['userService'], 'isPlayerTurn').and.returnValue(true);
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });
@@ -149,7 +149,7 @@ describe('MouseHandelingService', () => {
     });
 
     it('easelClicked else', () => {
-        service.lastWasLeftClick = false;
+        service.lastWasRightClick = false;
         EASEL_POSITIONS[0].isClicked = false;
         const mouseEvent = { offsetX: 100, offsetY: 300, button: MouseButton.Left, x: 100, y: 100 } as MouseEvent;
         spyOn<any>(service['easelLogic'], 'showCoords').and.returnValue({ x: 300, y: 800 });

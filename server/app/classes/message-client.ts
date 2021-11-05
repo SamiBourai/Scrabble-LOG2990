@@ -1,4 +1,4 @@
-import { ChatCommand } from './chatCommand';
+import { ChatCommand } from './chat-command';
 import { Letter } from './letters';
 import { Vec2 } from './vec2';
 export interface MessageClient {

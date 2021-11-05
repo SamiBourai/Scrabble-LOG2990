@@ -57,7 +57,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.reserveLettersQuantity();
             }, 0);
         });
-        this.virtualPlayerService.commandToSendVr.subscribe((res) => {
+        this.virtualPlayerService.commandObs.subscribe((res) => {
             setTimeout(() => {
                 this.arrayOfVrCommands.push(res);
             }, 0);

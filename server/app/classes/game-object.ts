@@ -1,7 +1,6 @@
-import { EASEL_LENGTH, PARAMETERS_OF_SWAP, RESERVE_SIZE } from '@app/classes/constants';
+import { EASEL_LENGTH, LETTERS_RESERVE_QTY, PARAMETERS_OF_SWAP, RESERVE_SIZE } from '@app/classes/constants';
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
-import { LETTERS_RESERVE_QTY } from './constants';
 import { Letter } from './letters';
 import { Vec2 } from './vec2';
 

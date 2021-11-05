@@ -12,7 +12,7 @@ import { MessageService } from '@app/services/message.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { RealUser } from './../../classes/user';
-import { ValidWordService } from './../../services/valid-world.service';
+import { ValidWordService } from './../../services/valid-word.service';
 
 import SpyObj = jasmine.SpyObj;
 

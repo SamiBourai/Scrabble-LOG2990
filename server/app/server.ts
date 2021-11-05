@@ -3,7 +3,7 @@ import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Service } from 'typedi';
 import { NUMBER_TO_COMPARE } from './classes/constants';
-import { SocketManagerService } from './services/socketManager.service';
+import { SocketManagerService } from './services/socket-manager.service';
 
 @Service()
 export class Server {

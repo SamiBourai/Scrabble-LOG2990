@@ -285,10 +285,4 @@ export class VirtualPlayerService {
         }
         return posInit;
     }
-    get commandToSendVr(): BehaviorSubject<string> {
-        return this.commandObs;
-    }
-    get scoreVr(): BehaviorSubject<number> {
-        return this.vrScoreObs;
-    }
 }

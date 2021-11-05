@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component } from '@angular/core';
 import { LettersService } from '@app/services/letters.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
@@ -14,7 +13,7 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
     templateUrl: './modal-user-vs-player.component.html',
     styleUrls: ['./modal-user-vs-player.component.scss'],
 })
-export class ModalUserVsPlayerComponent implements OnInit {
+export class ModalUserVsPlayerComponent {
     isUserReturnToMenu: boolean;
     isUserAcceptQuit: boolean;
     constructor(
@@ -25,16 +24,9 @@ export class ModalUserVsPlayerComponent implements OnInit {
         public virtualPlayerService: VirtualPlayerService,
         public reserveService: ReserveService,
         private socketManagementService: SocketManagementService,
-        private dialogRef: MatDialog,
         public multiplayerService: MultiplayerModeService,
     ) {}
-    ngOnInit() {
-        this.userService.userQuit.subscribe(() => {
-            setTimeout(() => {
-                this.dialogRef.open(ModalUserVsPlayerComponent, { disableClose: true });
-            }, 0);
-        });
-    }
+
     getNameFromLocalStorage() {
         return this.userService.realUser.name;
     }

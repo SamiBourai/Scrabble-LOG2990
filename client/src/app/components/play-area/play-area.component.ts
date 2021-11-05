@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, UNDEFINED_INDEX } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -40,7 +42,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
         private readonly pvs: ValidWordService,
-
+        private dialogRef: MatDialog,
         private multiplayer: MultiplayerModeService,
         private virtualPlayer: VirtualPlayerService,
         public reserveService: ReserveService,
@@ -91,7 +93,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.pvs.loadDictionary().then(() => {});
+        this.pvs.loadDictionary();
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -118,7 +120,10 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
 
     detectGameQuit(): void {
         this.userService.isUserQuitGame = true;
-        this.userService.userQuit.next(this.userService.isUserQuitGame);
+    }
+
+    openDialogOfVrUser(): void {
+        this.dialogRef.open(ModalUserVsPlayerComponent, { disableClose: true });
     }
 
     quitGame() {

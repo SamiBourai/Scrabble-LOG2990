@@ -31,7 +31,7 @@ export class MouseHandelingService {
     previousClick: Vec2 = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
     firstBorderLetter: boolean = true;
     placeTempCommand: string;
-    lastWasLeftClick: boolean = false;
+    lastWasRightClick: boolean = false;
     first = true;
     buttonPressed = '';
     containsAllChars: boolean = true;
@@ -125,11 +125,11 @@ export class MouseHandelingService {
             this.isGood = true;
 
             for (const easelPosition of EASEL_POSITIONS) {
-                // For each intervalle de lettre du chevalet
                 const indexCounter = easelIndex;
                 if (this.easelLogic.isBetween(easelPosition.letterRange, vec.x)) {
+                    this.resetSteps();
                     if (event.button === 0) {
-                        this.lastWasLeftClick = false;
+                        this.lastWasRightClick = false;
                         if (!easelPosition.isClicked) {
                             this.cancelByClick();
                             this.tempCanvasService.letterEaselToMove(indexCounter);
@@ -140,10 +140,10 @@ export class MouseHandelingService {
                             this.userService.getPlayerEasel().indexToMove = UNDEFINED_INDEX;
                         }
                     } else if (event.button === 2 && this.userService.isPlayerTurn()) {
-                        if (!this.lastWasLeftClick) {
+                        if (!this.lastWasRightClick) {
                             this.userService.getPlayerEasel().indexToMove = UNDEFINED_INDEX;
                             this.cancelByClick();
-                            this.lastWasLeftClick = true;
+                            this.lastWasRightClick = true;
                         }
                         if (!easelPosition.isClicked) {
                             this.tempCanvasService.setLetterClicked(indexCounter);
@@ -184,18 +184,18 @@ export class MouseHandelingService {
         return true;
     }
     moveLeft() {
-        if (!this.lastWasLeftClick) {
+        if (!this.lastWasRightClick) {
             this.easelLogic.moveLeft(this.userService.getPlayerEasel());
             this.cancelByClick();
-            this.lastWasLeftClick = false;
+            this.lastWasRightClick = false;
             this.tempCanvasService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
         }
     }
     moveRight() {
-        if (!this.lastWasLeftClick) {
+        if (!this.lastWasRightClick) {
             this.easelLogic.moveRight(this.userService.getPlayerEasel());
             this.cancelByClick();
-            this.lastWasLeftClick = false;
+            this.lastWasRightClick = false;
             this.tempCanvasService.letterEaselToMove(this.userService.getPlayerEasel().indexToMove);
         }
     }
@@ -210,9 +210,5 @@ export class MouseHandelingService {
         for (const easelPosition of EASEL_POSITIONS) {
             easelPosition.isClicked = false;
         }
-    }
-
-    get tempCommand(): BehaviorSubject<string> {
-        return this.commandObs;
     }
 }

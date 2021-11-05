@@ -198,10 +198,8 @@ export class ModalUserNameComponent implements OnInit {
         this.storeNameInLocalStorage();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    randomBonusActivated(event: any): void {
-        // type event essaye avec bool;
-        this.chosenMode = event.target.value;
+    randomBonusActivated(event: Event): void {
+        this.chosenMode = (event.target as HTMLInputElement)?.value;
         if (this.chosenMode === this.modes[0]) {
             this.userService.isBonusBox = true;
             return;
