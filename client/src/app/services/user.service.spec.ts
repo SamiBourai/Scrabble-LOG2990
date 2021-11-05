@@ -1,138 +1,283 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-// import { TestBed } from '@angular/core/testing';
-// import { UserService } from './user.service';
-// import { VirtualPlayerService } from './virtual-player.service';
+import { HttpClientModule } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
+import { EaselObject } from '@app/classes/EaselObject';
+import { JoinedUser, RealUser } from '@app/classes/user';
+import { UserService } from './user.service';
 
-// describe('UserService', () => {
-//     let userService: UserService;
+describe('UserService', () => {
+    let service: UserService;
 
-//     let vrPlayerService: jasmine.SpyObj<VirtualPlayerService>;
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule],
+        });
+        service = TestBed.inject(UserService);
+    });
 
-//     beforeEach(() => {
-//         vrPlayerService = jasmine.createSpyObj('EaselLogiscticsService', ['manageVrPlayerActions']);
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
 
-//         vrPlayerService.manageVrPlayerActions.and.returnValue();
+    it('initiliseUsers', () => {
+        const booleanF = false;
+        const booleanT = true;
+        service.initiliseUsers(booleanF);
+        service.initiliseUsers(booleanT);
+    });
 
-//         TestBed.configureTestingModule({
-//             providers: [{ provide: VirtualPlayerService, useValue: vrPlayerService }],
-//         });
+    it('chooseFirstToPlay', () => {
+        const spy = spyOn<any>(Math, 'floor');
+        service.chooseFirstToPlay();
+        expect(spy).toHaveBeenCalled();
+    });
 
-//         vrPlayerService = jasmine.createSpyObj('VirtualPlayerService', ['manageVrPlayerActions']);
+    it('getPlayerEasel', () => {
+        const user: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: false,
+        };
+        service.joinedUser = user;
+        service.playMode = 'joinMultiplayerGame';
+        const x = service.getPlayerEasel();
+        expect(x).toEqual(service.joinedUser.easel);
+    });
 
-//         TestBed.configureTestingModule({});
-//         userService = TestBed.inject(UserService);
+    it('getPlayerEasel', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        service.realUser = userR;
+        service.playMode = 'soloGame';
+        const x2 = service.getPlayerEasel();
+        expect(x2).toEqual(service.realUser.easel);
+    });
 
-//         vrPlayerService = TestBed.inject(VirtualPlayerService) as jasmine.SpyObj<VirtualPlayerService>;
-//     });
+    // it('chooseRandomName', () => {
+    //     localStorage.setItem('abdel123', 'abdel123');
+    //     spyOn<any>(localStorage, 'getItem').and.returnValue('abdel123');
+    //     service.vrPlayerNames[0] = 'abdel123';
+    //     service.vrPlayerNames[1] = 'abdel123';
+    //     service.vrPlayerNames[2] = 'abdel123';
+    //     service.vrPlayerNames[3] = 'abdel123';
+    //     const spy2 = spyOn<any>(localStorage, 'setItem');
+    //     service.chooseRandomName();
+    //     expect(spy2).not.toHaveBeenCalled();
+    // });
 
-//     it('should be created', () => {
-//         expect(userService).toBeTruthy();
-//     });
-//     // test of getRandomInt() function
-//     it('getRandomInt should return a number >= to 0 and < max number ex :(0<=number<max number)', () => {
-//         // eslint-disable-next-line @typescript-eslint/naming-convention
-//         const randomInt_1: number = userService.getRandomInt(5);
-//         expect(randomInt_1).toBeLessThan(5);
-//         // eslint-disable-next-line @typescript-eslint/naming-convention
-//         const randomInt_2: number = userService.getRandomInt(10);
-//         expect(randomInt_2).toBeLessThan(10);
-//     });
+    // it('chooseRandomName', () => {
+    //     spyOn<any>(localStorage, 'getItem').and.returnValue('abdel124');
+    //     service.vrPlayerNames[0] = 'abdel123';
+    //     const spy = spyOn<any>(service, 'getRandomInt');
+    //     const spy2 = spyOn<any>(localStorage, 'setItem');
+    //     service.chooseRandomName();
+    //     expect(spy).toHaveBeenCalled();
+    //     expect(spy2).not.toHaveBeenCalled();
+    // });
 
-//     it('should continue because Vr name is the same then  user name player', () => {
-//         const localStorageSpy = spyOn(Object.getPrototypeOf(localStorage), 'getItem');
-//         userService.vrPlayerNames = ['Bobby1234', 'Bobby1234', 'Bobby1234'];
-//         localStorage.setItem('userName', 'Bobby1234');
-//         userService.chooseRandomName();
-//         expect(localStorageSpy).toHaveBeenCalled();
-//     });
+    it('getVrUsername', () => {
+        spyOn<any>(localStorage, 'getItem').and.returnValue('abdel124');
+        const x2 = service.getVrUserName();
+        expect(x2).toEqual('abdel124');
+    });
 
-//     it('chooseRandomName should return name Bobby1234 and local storage should be called only once', () => {
-//         const localStorageSpy = spyOn(Object.getPrototypeOf(localStorage), 'getItem');
-//         spyOn(userService, 'getRandomInt').and.callFake(() => {
-//             return 0;
-//         });
-//         userService.vrPlayerNames = ['Bobby1234', 'Martin1234', 'Momo1234'];
-//         localStorage.setItem('userName', 'Sami123445');
-//         const playerName = userService.chooseRandomName();
-//         expect(localStorageSpy).toHaveBeenCalledTimes(1);
-//         expect(playerName).toEqual('Bobby1234');
-//     });
+    it('getVrUsername', () => {
+        spyOn<any>(localStorage, 'getItem').and.returnValue('abdel124');
+        const x2 = service.getVrUserName();
+        expect(x2).toEqual('abdel124');
+    });
 
-//     it('chooseRandomName of vr should return Martin1234', () => {
-//         spyOn(userService, 'getRandomInt').and.callFake(() => {
-//             return 1;
-//         });
-//         const playerName = userService.chooseRandomName();
-//         expect(playerName).toEqual('Martin1234');
-//     });
+    it('isUserTurn', () => {
+        service.playMode = 'soloGame';
+        const x2 = service.isUserTurn();
+        expect(x2).toEqual(service.realUser.turnToPlay);
+    });
 
-//     it('chooseRandomName of vr should return Momo1234', () => {
-//         spyOn(userService, 'getRandomInt').and.callFake(() => {
-//             return 2;
-//         });
-//         const playerName = userService.chooseRandomName();
-//         expect(playerName).toEqual('Momo1234');
-//     });
+    it('isUserTurn2', () => {
+        const user: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: false,
+        };
+        service.joinedUser = user;
+        service.playMode = 'miedsad';
+        const x2 = service.isUserTurn();
+        expect(x2).toEqual(service.realUser.turnToPlay);
+    });
 
-//     it('chooseRandomName of vr should return Bobby1234', () => {
-//         spyOn(userService, 'getRandomInt').and.callFake(() => {
-//             return 0;
-//         });
-//         const playerName = userService.chooseRandomName();
-//         expect(playerName).toEqual('Bobby1234');
-//     });
+    it('isUserTurn3', () => {
+        const user: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: true,
+        };
+        service.joinedUser = user;
+        service.playMode = 'miedsad';
+        const x2 = service.isUserTurn();
+        expect(x2).toEqual(!service.realUser.turnToPlay);
+    });
 
-//     it('chooseRandomName should continue and not choose name', () => {
-//         spyOn(Object.getPrototypeOf(localStorage), 'getItem');
-//         spyOn(userService, 'getRandomInt').and.callFake(() => {
-//             return 0;
-//         });
-//         userService.vrPlayerNames = ['Bobby1234', 'Martin1234', 'Momo1234'];
-//         localStorage.setItem('userName', 'Bobby1234');
-//         const name: string = userService.chooseRandomName();
-//         expect(name).not.toEqual('');
-//     });
+    it('detectSkipTurnBtn', () => {
+        const user: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: true,
+        };
+        service.joinedUser = user;
+        service.playMode = 'soloGame';
+        const spy = spyOn<any>(service.realUserTurnObs, 'next');
+        const spy2 = spyOn<any>(service, 'checkForSixthSkip');
+        service.detectSkipTurnBtn();
+        expect(spy).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+    });
 
-//     // startTime() tests
-//     it('test if vr skip turn . should get counter = 59 sec and time=59 sec', (done) => {
-//         userService.vrSkipingTurn = true;
-//         userService.userSkipingTurn = false;
-//         userService.startTimer();
+    it('detectSkipTurnBtn else', () => {
+        const user: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: true,
+        };
+        service.joinedUser = user;
+        service.playMode = 'asdsad';
+        const spy = spyOn<any>(service.playedObs, 'next');
+        service.detectSkipTurnBtn();
+        expect(spy).toHaveBeenCalled();
+    });
 
-//         setTimeout(() => {
-//             expect(userService.vrSkipingTurn).toBeFalse();
-//             done();
-//         }, 3000);
-//     });
+    it('turnToPlayObs', () => {
+        const i = service.turnToPlayObs;
+        expect(i).toEqual(service.turnToPlayObs);
+    });
 
-//     it('test if vr skip turn . should get counter = 59 sec and time=59 sec', (done) => {
-//         const clearIntervalSpy = spyOn(global, 'clearInterval');
-//         userService.vrSkipingTurn = false;
-//         userService.userSkipingTurn = true;
-//         userService.startTimer();
+    it('isEndOfGame', () => {
+        const i = service.isEndOfGame;
+        expect(i).toEqual(service.endOfGameBehaviorSubject);
+    });
 
-//         setTimeout(() => {
-//             expect(userService.userSkipingTurn).toBeFalse();
-//             expect(clearIntervalSpy).toHaveBeenCalled();
-//             done();
-//         }, 3000);
-//     });
+    it('userPlayed', () => {
+        const spy = spyOn<any>(service.realUserTurnObs, 'next');
+        service.userPlayed();
+        expect(spy).toHaveBeenCalled();
+    });
 
-//     // test skipTurnValidUSer()
-//     it('test skipTurnValidUser, expect true when time=59 ', () => {
-//         userService.time = 59;
+    it('scoreRealPlayer', () => {
+        const x = service.scoreRealPlayer();
+        expect(x).toEqual(service.realUser.score);
+    });
 
-//         expect(userService.isUserTurn()).toBeTrue();
-//     });
-//     it('test skipTurnValidUser, expect false when time=20 ', () => {
-//         userService.time = 20;
+    it('checkForSixthSkip', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        service.realUser = userR;
+        const user: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: true,
+        };
+        service.vrUser = user;
+        service.endOfGameCounter = 5;
+        const spy = spyOn<any>(service.realUser.easel, 'pointInEasel');
+        const spy2 = spyOn<any>(service['virtualPlayer'].easel, 'pointInEasel');
+        const spy3 = spyOn<any>(service.endOfGameBehaviorSubject, 'next');
+        service.checkForSixthSkip();
+        expect(spy).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+        expect(spy3).toHaveBeenCalled();
+    });
 
-//         expect(userService.isUserTurn()).toBeFalse();
-//     });
-//     it('test skipTurnValidUser, expect false when time!=20 and time!=59 ', () => {
-//         userService.time = 0;
+    it('getWinnerName', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        service.realUser = userR;
+        const user: JoinedUser = {
+            name: 'bob',
+            level: '2',
+            round: '3',
+            score: 7,
+            easel: new EaselObject(true),
+            guestPlayer: true,
+        };
+        service.vrUser = user;
+        const x = service.getWinnerName();
+        expect(x).toEqual('bob');
+    });
 
-//         expect(userService.isUserTurn()).toBeFalse();
-//     });
-// });
+    it('getWinnerName 2', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 0, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        service.realUser = userR;
+        const user: JoinedUser = {
+            name: 'charles',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: true,
+        };
+        service.vrUser = user;
+        const x = service.getWinnerName();
+        expect(x).toEqual('charles');
+    });
+
+    it('getWinnerName 3', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        service.realUser = userR;
+        const user: JoinedUser = {
+            name: 'charles',
+            level: '2',
+            round: '3',
+            score: 8,
+            easel: new EaselObject(true),
+            guestPlayer: true,
+        };
+        service.vrUser = user;
+        const x = service.getWinnerName();
+        expect(x).toEqual('egale');
+    });
+
+    it('isPlayerTurn', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: false, easel: new EaselObject(true) };
+        service.realUser = userR;
+        service.playMode = 'joinMultiplayerGame';
+        const x = service.isPlayerTurn();
+        expect(x).toEqual(true);
+    });
+
+    it('isPlayerTurn 2', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        service.realUser = userR;
+        service.playMode = 'joinMultiplayerGame';
+        const x = service.isPlayerTurn();
+        expect(x).toEqual(false);
+    });
+
+    it('isPlayerTurn 2', () => {
+        const userR: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        service.realUser = userR;
+        service.playMode = 'soloGame';
+        const x = service.isPlayerTurn();
+        expect(x).toEqual(service.realUser.turnToPlay);
+    });
+
+    it('initArrayMessage', () => {
+        const i = service.initArrayMessage;
+        expect(i).toEqual(service.reInit);
+    });
+});

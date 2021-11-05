@@ -62,18 +62,20 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.reserveLettersQuantity();
             }, 0);
         });
+
         this.virtualPlayerService.commandToSendVr.subscribe((res) => {
             setTimeout(() => {
                 this.arrayOfVrCommands.push(res);
             }, 0);
         });
-
-        this.timeService.commandObs.subscribe((res) => {
-            setTimeout(() => {
-                this.typeArea = res;
-                this.logMessage();
-            }, 0);
-        });
+        if (this.timeService.commandObs !== undefined ) {
+            this.timeService.commandObs.subscribe((res) => {
+                setTimeout(() => {
+                    this.typeArea = res;
+                    this.logMessage();
+                }, 0);
+            });
+        }
 
         this.mouseHandelingService.commandObs.subscribe((res) => {
             setTimeout(() => {
@@ -82,10 +84,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             }, 0);
         });
         if (this.userService.playMode !== 'soloGame') {
-            this.messageService.newTextMessageObs.subscribe(() => {
-                this.arrayOfMessages = this.messageService.textMessage;
-                this.messageService.newTextMessage = false;
-            });
+            if (this.messageService.newTextMessageObs) {
+                this.messageService.newTextMessageObs.subscribe(() => {
+                    this.arrayOfMessages = this.messageService.textMessage;
+                    this.messageService.newTextMessage = false;
+                });
+            }
         }
     }
 

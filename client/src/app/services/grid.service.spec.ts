@@ -1,10 +1,13 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { MessageServer } from '@app/classes/message-server';
 import { GridService } from '@app/services/grid.service';
+import { of } from 'rxjs';
 describe('GridService', () => {
     let service: GridService;
     let ctxStub: CanvasRenderingContext2D;
@@ -69,4 +72,51 @@ describe('GridService', () => {
         expect(spy).toHaveBeenCalled();
         service.resetBonusesToDefault();
     });
+    it('drawBox',()=>{
+        const data: MessageServer = {
+            gameName: 'game000111',
+            gameStarted: false,
+        };
+        const b = true;
+        const mode = 'joinMultiplayerGame';
+        const gameM = 'game1';
+        spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(gameM);
+        const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
+        // eslint-disable-next-line @typescript-eslint/semi
+        const spy1 = spyOn<any>(service,'drawBonusBox')
+        service.drawBox(b,mode,gameM);
+        expect(spy).toHaveBeenCalled();
+        expect(spy1).toHaveBeenCalled();
+        expect(service.arrayOfBonusBox).toEqual(service.arrayOfBonusBox);
+    });
+
+    it('drawBox else',()=>{
+        const b = true;
+        const mode = 'solo';
+        const gameM = 'game1';
+        const spy = spyOn(service,'randomizeBonuses');
+        spyOn<any>(service,'drawBonusBox');
+        service.drawBox(b,mode,gameM);
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('drawBox else 2', () => {
+        
+        const b = true;
+        const mode = 'createMultiplayerGame';
+        const gameM = 'game1';
+        spyOn<any>(service,'drawBonusBox');
+        const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(gameM);
+        service.drawBox(b,mode,gameM);
+        expect(spy).toHaveBeenCalled();
+    });
+
+    // it('drawBonus real',()=>{
+    //     const v = {x:2,y:2};
+    //     const str = 'abc';
+    //     const spy = spyOn(service.gridContext,'fillRect');
+
+    //     service['drawBonus'](v,str);
+    //     expect(spy).toHaveBeenCalled();
+    // });
 });
