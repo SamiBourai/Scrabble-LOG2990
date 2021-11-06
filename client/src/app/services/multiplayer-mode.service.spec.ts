@@ -95,7 +95,7 @@ describe('MultiplayerModeService', () => {
             user: { name: 'abdel3234', score: 0 },
             guestPlayer: { name: 'marouane3234', score: 45 },
         };
-
+        spyOn<any>(JSON, 'parse');
         const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(data);
         service.play('guestUserPlayed', place);
         expect(spy).toHaveBeenCalled();
