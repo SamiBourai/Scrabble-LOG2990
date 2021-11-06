@@ -4,7 +4,7 @@ import { MessageServer } from '@app/classes/message-server';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
 import { io } from 'socket.io-client';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environement';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { ReserveService } from './reserve.service';
 import { UserService } from './user.service';
