@@ -19,8 +19,8 @@ export class ReserveService {
 
     getRandomLetter(): Letter {
         const save = this.getRandomKey(this.letters);
-        let qty = this.letters.get(save) as number;
-        this.letters.set(save, --qty);
+        const qty = (this.letters.get(save) as number) - 1;
+        this.letters.set(save, qty);
         this.reserveSize--;
         this.sizeObs.next(this.reserveSize);
         return save;
