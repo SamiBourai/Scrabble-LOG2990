@@ -224,7 +224,7 @@ export class ValidWordService {
     }
 
     private getCompressedWords(): Observable<ArrayBuffer> {
-        return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
+        return this.http.get('./assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
     }
 
     private getWords(): Observable<string[]> {
