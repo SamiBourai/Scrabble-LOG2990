@@ -7,7 +7,7 @@ import { SocketManagerService } from './services/socket-manager.service';
 
 @Service()
 export class Server {
-    private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || '5020');
+    private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || '3000');
     private static readonly baseDix: number = NUMBER_TO_COMPARE;
     private server: http.Server;
 
