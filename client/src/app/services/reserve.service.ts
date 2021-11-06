@@ -49,6 +49,7 @@ export class ReserveService {
         return this.reserveSize === 0;
     }
     redefineReserve(map: string, size: number) {
+
         this.letters = new Map(JSON.parse(map));
 
         this.reserveSize = size;

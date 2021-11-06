@@ -95,7 +95,6 @@ describe('MultiplayerModeService', () => {
             user: { name: 'abdel3234', score: 0 },
             guestPlayer: { name: 'marouane3234', score: 45 },
         };
-        spyOn<any>(JSON, 'parse');
         const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(data);
         service.play('guestUserPlayed', place);
         expect(spy).toHaveBeenCalled();
@@ -150,7 +149,8 @@ describe('MultiplayerModeService', () => {
     it('updateReserveChangeLetters', () => {
         const data: MessageServer = {
             gameName: 'game000111',
-            reserve: 'quel projet de plouc',
+            reserve:
+                '[[{"score":1,"charac":"a","img":"../../assets/letter-A.png"},9],[{"score":3,"charac":"b","img":"../../assets/letter-b.png"},2],[{"score":3,"charac":"c","img":"../../assets/letter-c.png"},2],[{"score":2,"charac":"d","img":"../../assets/letter-d.png"},3],[{"score":1,"charac":"e","img":"../../assets/letter-e.png"},15],[{"score":4,"charac":"f","img":"../../assets/letter-f.png"},2],[{"score":2,"charac":"g","img":"../../assets/letter-g.png"},2],[{"score":4,"charac":"h","img":"../../assets/letter-h.png"},2],[{"score":1,"charac":"i","img":"../../assets/letter-i.png"},8],[{"score":8,"charac":"j","img":"../../assets/letter-j.png"},1],[{"score":10,"charac":"k","img":"../../assets/letter-k.png"},1],[{"score":1,"charac":"l","img":"../../assets/letter-l.png"},5],[{"score":2,"charac":"m","img":"../../assets/letter-m.png"},3],[{"score":1,"charac":"n","img":"../../assets/letter-n.png"},6],[{"score":1,"charac":"o","img":"../../assets/letter-o.png"},6],[{"score":3,"charac":"p","img":"../../assets/letter-p.png"},2],[{"score":8,"charac":"q","img":"../../assets/letter-q.png"},1],[{"score":1,"charac":"r","img":"../../assets/letter-r.png"},6],[{"score":1,"charac":"s","img":"../../assets/letter-s.png"},6],[{"score":1,"charac":"t","img":"../../assets/letter-t.png"},6],[{"score":1,"charac":"u","img":"../../assets/letter-u.png"},6],[{"score":4,"charac":"v","img":"../../assets/letter-v.png"},2],[{"score":10,"charac":"w","img":"../../assets/letter-w.png"},1],[{"score":10,"charac":"x","img":"../../assets/letter-x.png"},1],[{"score":10,"charac":"y","img":"../../assets/letter-y.png"},1],[{"score":10,"charac":"z","img":"../../assets/letter-z.png"},1]]',
             reserveSize: 5,
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
@@ -205,9 +205,10 @@ describe('MultiplayerModeService', () => {
             gameStarted: true,
             user: { name: 'abdel3234', score: 0 },
             guestPlayer: { name: 'marouane3234', score: 45 },
-            reserve: 'quel projet de plouc',
+            reserve:
+                '[[{"score":1,"charac":"a","img":"../../assets/letter-A.png"},9],[{"score":3,"charac":"b","img":"../../assets/letter-b.png"},2],[{"score":3,"charac":"c","img":"../../assets/letter-c.png"},2],[{"score":2,"charac":"d","img":"../../assets/letter-d.png"},3],[{"score":1,"charac":"e","img":"../../assets/letter-e.png"},15],[{"score":4,"charac":"f","img":"../../assets/letter-f.png"},2],[{"score":2,"charac":"g","img":"../../assets/letter-g.png"},2],[{"score":4,"charac":"h","img":"../../assets/letter-h.png"},2],[{"score":1,"charac":"i","img":"../../assets/letter-i.png"},8],[{"score":8,"charac":"j","img":"../../assets/letter-j.png"},1],[{"score":10,"charac":"k","img":"../../assets/letter-k.png"},1],[{"score":1,"charac":"l","img":"../../assets/letter-l.png"},5],[{"score":2,"charac":"m","img":"../../assets/letter-m.png"},3],[{"score":1,"charac":"n","img":"../../assets/letter-n.png"},6],[{"score":1,"charac":"o","img":"../../assets/letter-o.png"},6],[{"score":3,"charac":"p","img":"../../assets/letter-p.png"},2],[{"score":8,"charac":"q","img":"../../assets/letter-q.png"},1],[{"score":1,"charac":"r","img":"../../assets/letter-r.png"},6],[{"score":1,"charac":"s","img":"../../assets/letter-s.png"},6],[{"score":1,"charac":"t","img":"../../assets/letter-t.png"},6],[{"score":1,"charac":"u","img":"../../assets/letter-u.png"},6],[{"score":4,"charac":"v","img":"../../assets/letter-v.png"},2],[{"score":10,"charac":"w","img":"../../assets/letter-w.png"},1],[{"score":10,"charac":"x","img":"../../assets/letter-x.png"},1],[{"score":10,"charac":"y","img":"../../assets/letter-y.png"},1],[{"score":10,"charac":"z","img":"../../assets/letter-z.png"},1]]',
             reserveSize: 5,
-            usedWords: 'hello',
+            usedWords: '[]',
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
         // const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
@@ -228,9 +229,10 @@ describe('MultiplayerModeService', () => {
             gameStarted: true,
             user: { name: 'abdel3234', score: 0 },
             guestPlayer: { name: 'marouane3234', score: 45 },
-            reserve: 'quel projet de plouc',
+            reserve:
+                '[[{"score":1,"charac":"a","img":"../../assets/letter-A.png"},9],[{"score":3,"charac":"b","img":"../../assets/letter-b.png"},2],[{"score":3,"charac":"c","img":"../../assets/letter-c.png"},2],[{"score":2,"charac":"d","img":"../../assets/letter-d.png"},3],[{"score":1,"charac":"e","img":"../../assets/letter-e.png"},15],[{"score":4,"charac":"f","img":"../../assets/letter-f.png"},2],[{"score":2,"charac":"g","img":"../../assets/letter-g.png"},2],[{"score":4,"charac":"h","img":"../../assets/letter-h.png"},2],[{"score":1,"charac":"i","img":"../../assets/letter-i.png"},8],[{"score":8,"charac":"j","img":"../../assets/letter-j.png"},1],[{"score":10,"charac":"k","img":"../../assets/letter-k.png"},1],[{"score":1,"charac":"l","img":"../../assets/letter-l.png"},5],[{"score":2,"charac":"m","img":"../../assets/letter-m.png"},3],[{"score":1,"charac":"n","img":"../../assets/letter-n.png"},6],[{"score":1,"charac":"o","img":"../../assets/letter-o.png"},6],[{"score":3,"charac":"p","img":"../../assets/letter-p.png"},2],[{"score":8,"charac":"q","img":"../../assets/letter-q.png"},1],[{"score":1,"charac":"r","img":"../../assets/letter-r.png"},6],[{"score":1,"charac":"s","img":"../../assets/letter-s.png"},6],[{"score":1,"charac":"t","img":"../../assets/letter-t.png"},6],[{"score":1,"charac":"u","img":"../../assets/letter-u.png"},6],[{"score":4,"charac":"v","img":"../../assets/letter-v.png"},2],[{"score":10,"charac":"w","img":"../../assets/letter-w.png"},1],[{"score":10,"charac":"x","img":"../../assets/letter-x.png"},1],[{"score":10,"charac":"y","img":"../../assets/letter-y.png"},1],[{"score":10,"charac":"z","img":"../../assets/letter-z.png"},1]]',
             reserveSize: 5,
-            usedWords: 'hello',
+            usedWords: '[]',
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
         // const spy3 = spyOn<any>(service['lettersService'], 'placeLettersWithDirection');
@@ -311,6 +313,7 @@ describe('MultiplayerModeService', () => {
     });
 
     it('setGuestPlayerInfromation', () => {
+        spyOn<any>(service['socketManagementService'], 'reserveToserver');
         service.setGuestPlayerInfromation('abdel1232');
         const spy = spyOn<any>(service['userService'], 'initiliseUsers');
         service.setGuestPlayerInfromation('abdel234');

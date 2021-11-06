@@ -89,22 +89,6 @@ describe('Object: Easel', () => {
         expect(pointsTest).toEqual(pointsReturn);
     });
 
-    // it('should return true on contains', () => {
-    //     object.foundLetter = [false, false, false, false, false, false, false];
-    //     const word = 'aaaaaaa';
-    //     object.easelLetters = [A, A, A, A, A, A, A];
-    //     const boleanTest: boolean = object.contains(word);
-    //     expect(boleanTest).toBeTrue();
-    // });
-
-    // it('should return true on foundLetter contains', () => {
-    //     object.foundLetter = [false, false, false, false, false, false, false];
-    //     const word = 'aaaaaaa';
-    //     object.easelLetters = [A, A, A, A, A, A, A];
-    //     object.contains(word);
-    //     expect(object.foundLetter).toEqual([true, true, true, true, true, true, true]);
-    // });
-
     it('should return false on contains', () => {
         object.foundLetter = [true, true, true, true, true, true, true];
         const word = 'aaaSaaaa';

@@ -77,7 +77,6 @@ describe('SidebarComponent', () => {
         reserveServiceSpy = jasmine.createSpyObj('reserveServiceSpy', ['reserveSize', 'isReserveEmpty']);
 
         validWordServiceSpy = jasmine.createSpyObj('validWordServiceSpy', ['readWordsAndGivePointsIfValid', 'verifyWord']);
-
         jasmine.getEnv().allowRespy(true);
     });
 
@@ -101,6 +100,8 @@ describe('SidebarComponent', () => {
         fixture.detectChanges();
         const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
         component['userService'].realUser = user;
+        const userJ: JoinedUser = { name: 'bib', level: '2', round: '3', score: 8, guestPlayer: true, easel: new EaselObject(true) };
+        component['userService'].joinedUser = userJ;
     });
 
     it('should create ', () => {
@@ -117,6 +118,10 @@ describe('SidebarComponent', () => {
 
     it('should call the method switchCaseCommands', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        spyOn<any>(component, 'updateMessageArray');
+        spyOn<any>(component, 'skipTurnCommand');
+        spyOn<any>(component, 'logMessage');
+
         messageServiceSpy.command = cmd;
 
         messageServiceSpy.isCommand.and.callFake(() => {
@@ -141,7 +146,7 @@ describe('SidebarComponent', () => {
         const spy = spyOn<any>(component, 'switchCaseCommands');
 
         component.logMessage();
-        expect(spy).toHaveBeenCalled();
+        expect(spy).not.toHaveBeenCalled();
     });
 
     it('should call the methods when the input is not a command', () => {
