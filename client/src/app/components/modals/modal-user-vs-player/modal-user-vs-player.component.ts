@@ -31,7 +31,7 @@ export class ModalUserVsPlayerComponent {
         return this.userService.realUser.name;
     }
     setIsUserQuitGame(): void {
-        window.location.assign('/home');
+        this.getOne();
     }
     quitMultiPlayerGame() {
         switch (this.userService.playMode) {
@@ -45,6 +45,10 @@ export class ModalUserVsPlayerComponent {
                 this.socketManagementService.emit('userLeftGame', { gameName: this.userService.gameName });
                 break;
         }
+        this.getOne();
+    }
+
+    getOne() {
         window.location.assign('/home');
     }
 }

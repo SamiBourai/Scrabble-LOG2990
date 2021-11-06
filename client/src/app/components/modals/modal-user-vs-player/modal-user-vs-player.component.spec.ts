@@ -53,14 +53,18 @@ describe('ModalUserVsPlayerComponent', () => {
     });
 
     it('setIsUserQuitGame', () => {
-        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {});
+        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {
+            // call fake (so its not empty)
+        });
         component.setIsUserQuitGame();
         expect(spy).toHaveBeenCalled();
     });
 
     it('quitMultiPlayerGame', () => {
         component.userService.playMode = 'soloGame';
-        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {});
+        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {
+            // call fake (so its not empty)
+        });
         component.quitMultiPlayerGame();
         expect(spy).toHaveBeenCalled();
     });
@@ -71,7 +75,9 @@ describe('ModalUserVsPlayerComponent', () => {
             gameName: 'game000111',
         };
         component.userService.playMode = 'joinMultiplayerGame';
-        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {});
+        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {
+            // call fake (so its not empty)
+        });
         const spy2 = spyOn<any>(component['socketManagementService'], 'emit').and.returnValue(data);
 
         component.quitMultiPlayerGame();
@@ -84,7 +90,9 @@ describe('ModalUserVsPlayerComponent', () => {
             gameName: 'game000111',
         };
         component.userService.playMode = 'createMultiplayerGame';
-        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {});
+        const spy = spyOn<any>(component, 'getOne').and.callFake(() => {
+            // call fake (so its not empty)
+        });
         const spy2 = spyOn<any>(component['socketManagementService'], 'emit').and.returnValue(data);
         component.quitMultiPlayerGame();
         expect(spy).toHaveBeenCalled();
