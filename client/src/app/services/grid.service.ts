@@ -115,7 +115,7 @@ export class GridService {
 
     drawCentralTile() {
         const img = new Image();
-        img.src = '../../../assets/black-star.png';
+        img.src = './assets/black-star.png';
 
         img.onload = () => {
             this.gridContext.drawImage(
