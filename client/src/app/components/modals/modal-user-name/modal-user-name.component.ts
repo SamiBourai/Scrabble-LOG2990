@@ -42,6 +42,7 @@ export class ModalUserNameComponent implements OnInit {
     modes: string[] = MODES;
     chosenMode: string = MODES[DEFAULT_MODE];
     chooseSoloMode: boolean = false;
+    disableBtn:boolean = false;
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,
@@ -206,5 +207,11 @@ export class ModalUserNameComponent implements OnInit {
         }
         this.chosenMode = this.modes[DEFAULT_MODE];
         this.userService.isBonusBox = false;
+    }
+
+    randomGame(){
+        const randomGame = this.rooms[Math.floor(Math.random() * this.rooms.length)];
+        this.joinGame(randomGame);
+        this.disableBtn = true;
     }
 }
