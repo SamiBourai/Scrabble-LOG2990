@@ -1,29 +1,31 @@
-<div class="container justified">
-    <div id="header">
-        <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
-    </div>
-    <img src="https://bit.ly/3m206ss" width="900" height="180" alt="Logo Scrabble" />
-    <section id="server-message">
-        <p>Petit message du serveur : {{ message.getValue() }}</p>
-        <div class="justified">
-            <button class="button" (click)="getMessagesFromServer()">Récupérer un message du serveur</button>
-            <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
-            <div class="topNav">
-                <a><button mat-raised-button color="primary" id="scrableClassiqueButton" (click)="openDialog()">Scrabble classique</button></a>
-                <a><button mat-raised-button color="primary" id="scrableLOG2990Button">Scrabble LOG2990</button></a>
-                <a><button mat-raised-button color="primary" id="meilleursScoresButton" (click)="openScoreModal()">Meilleurs scores</button></a>
+<div class="background">
+    <div class="container d-flex justify-content-center ">
+        <section *ngIf="false" id="server-message">
+            <p>Petit message du serveur : {{ message.getValue() }}</p>
+            <div class="justified">
+                <button class="button" (click)="getMessagesFromServer()">Récupérer un message du serveur</button>
+                <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
             </div>
-            <!-- <button class="button" routerLink="/material">Voir la page démo Angular Material</button> -->
+        </section>
+
+        <div  class="col-6 h-100">
+            <div class="d-flex full-screen flex-column justify-content-center align-items-center">
+                <div class="d-flex flex-column btn-group">
+                    <button mat-raised-button (click)="openStartGameModal()"><mat-icon>sports_esports</mat-icon> Scrabble Classique</button>
+                    <button mat-raised-button><mat-icon>star</mat-icon> Scrabble LOG2990</button>
+                    <button mat-raised-button (click)="openScoreModal()"><mat-icon>space_dashboard</mat-icon> Meilleurs scores</button>
+                    <button mat-raised-button><mat-icon>groups</mat-icon> Notre Équipe</button>
+                </div>
+            </div>
+
         </div>
-    </section>
-
-    <!-- <button class="button" routerLink="/game">Jouer!</button> -->
-
-    <div class="footer-item">
-        <h4 class="team-name">Équipe Poly</h4>
-        <p>
-            <span>Yanick Aouchiche</span>, <span>Monib Djellab</span>, <span>Sami Bourai</span>, <span>Gaya Bessaih</span>,
-            <span>Marouane Oudada</span>, <span>Abdelaziz Kheloufi</span>
-        </p>
+        <div class="col-6 h-100">
+            <div class="d-flex full-screen flex-column justify-content-center align-items-center">
+                <div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </div>
+

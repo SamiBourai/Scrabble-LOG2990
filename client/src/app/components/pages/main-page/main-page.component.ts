@@ -17,7 +17,7 @@ export class MainPageComponent {
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     constructor(private readonly communicationService: CommunicationService, private dialogRef: MatDialog) {}
-    openDialog() {
+    openStartGameModal() {
         this.dialogRef.open(ModalScrableClassiqueComponent);
     }
     sendTimeToServer(): void {
@@ -40,10 +40,7 @@ export class MainPageComponent {
             .subscribe(this.message);
     }
 
-    openScoreModal():void {
+    openScoreModal(): void {
         this.dialogRef.open(ModalScoresComponent);
     }
-
-
-
 }

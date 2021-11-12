@@ -68,3 +68,15 @@ input[type="radio"]:checked {
     font-size: 19px;
     font-weight: 450;
 }
+
+::ng-deep{
+    .mat-card{
+        background-color: #312E2B;
+    }
+    .mat-card-title{
+        color: #EFEFEF;
+    }
+    .mat-card-subtitle{
+        color: #c0c0c0;
+    }
+}
