@@ -19,6 +19,7 @@ export class SocketManagerService {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createGame', (message: MessageClient) => {
+                console.log('socket');
                 const createdGame = new GameObject(
                     message.gameName,
                     message.aleatoryBonus ?? false,

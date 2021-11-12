@@ -74,6 +74,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     this.mouseHandlingService.previousClick = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
                     break;
                 default:
+                    console.log('hostLister');
                     this.mouseHandlingService.keyBoardEntryManage(event.key);
                     break;
             }

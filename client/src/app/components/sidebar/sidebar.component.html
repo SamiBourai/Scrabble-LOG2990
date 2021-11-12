@@ -37,15 +37,17 @@
                             <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
                         </div>
 
-                        <input
+                        <input      
                             formControlName="message"
                             maxlength="512"
                             [(ngModel)]="typeArea"
                             #message
+                            (input)="verifyInput()"
                             (keyup.enter)="logMessage()"
                             type="text"
                             class="form-control"
                             autofocus
+                            
                         />
 
                         <mat-hint id="hint" align="end">{{ message.value.length }} / 512 </mat-hint>
