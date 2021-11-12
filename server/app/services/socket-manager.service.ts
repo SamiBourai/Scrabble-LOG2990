@@ -2,17 +2,20 @@ import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, ONE_SECOND_MS, SIX_TURN }
 import { GameObject } from '@app/classes/game-object';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/message-client';
+// import { Score } from '@app/classes/score';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
+import { DatabaseService } from './database.service';
 import { ValidWordService } from './validate-words.service';
+
 
 @Service()
 export class SocketManagerService {
     sio: io.Server;
     private games = new Map();
     private rooms = new Array<MessageClient>();
-    constructor(private validWordService: ValidWordService) {}
+    constructor(private validWordService: ValidWordService, private databaseService:DatabaseService) {}
     initiliaseSocket(server: http.Server) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
     }
@@ -138,6 +141,15 @@ export class SocketManagerService {
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
                 this.sio.to(message.gameName).emit('verifyWordCreator', message);
             });
+            socket.on('getAllScores', (message: MessageClient) => {
+                // let allScores:Promise<Score[]>;
+                this.databaseService.fetchDataReturn('Score');
+                message.allScoresOfClassicGame =  this.databaseService.arrayOfAllClassicGameScores;
+
+                // message.allScoresOfModeLog2990 = this.
+                this.sio.to(message.gameName).emit('getAllScores', message);
+                // console.log(allScores);
+            })
             socket.on('disconnect', () => {
                 socket.disconnect();
             });

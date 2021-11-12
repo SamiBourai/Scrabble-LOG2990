@@ -1,4 +1,5 @@
 import { Letter } from './letters';
+import { Score } from './score';
 import { Vec2 } from './vec2';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
@@ -302,3 +303,28 @@ export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
 export const RESERVE_SIZE = 100;
 export const FIVE_SEC_MS = 5000;
 export const BOTH_EASEL_FILLED = 86;
+
+// database constants
+export const DEFAULT_SCORE:Score[] = [
+    {
+        name: "joueur par defaut - 1",
+        score: 1,
+    },
+    {
+        name: "joueur par defaut - 2",
+        score: 2,
+    },
+    {
+        name: "joueur par defaut - 3",
+        score: 3,
+    },
+    {
+        name: "joueur par defaut -4",
+        score: 4,
+    },
+    {
+        name: "joueur par defaut -5",
+        score: 5,
+    },
+];
+

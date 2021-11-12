@@ -1,5 +1,6 @@
 import { ChatCommand } from './chat-command';
 import { Letter } from './letters';
+import { Score } from './score';
 import { Vec2 } from './vec2';
 export interface MessageClient {
     gameName: string;
@@ -21,4 +22,6 @@ export interface MessageClient {
     passTurn?: boolean;
     reserve?: string;
     reserveSize?: number;
+    allScoresOfClassicGame?: Score[];
+    allScoresOfModeLog2990?: Score[];
 }

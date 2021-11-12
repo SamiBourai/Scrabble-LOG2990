@@ -24,6 +24,7 @@ import { ModalEndOfGameComponent } from './modal-end-of-game/modal-end-of-game.c
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-word.service';
 import { WordPointsService } from './services/word-points.service';
+import { ModalScoresComponent } from './components/modals/modal-scores/modal-scores.component';
 
 /**
  * Main module that is used in main.ts.
@@ -47,6 +48,7 @@ import { WordPointsService } from './services/word-points.service';
         VrUserComponent,
         JoinedUserComponent,
         ModalEndOfGameComponent,
+        ModalScoresComponent,
     ],
     imports: [
         AppMaterialModule,
