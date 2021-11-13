@@ -59,6 +59,17 @@
                     </div>
                 </div>
             </div>
+
+            <p><span class="multiplayerP">Niveau JV:</span></p>
+            <div class="radio" *ngFor="let lvl of lvls">
+                <label>
+                    <input type="radio" name="lvlJv" [value]="lvl" checked
+                        (change)="setLevelJv($event)" />
+                    {{ lvl }}
+                </label>
+            </div>
+            <p>
+
             <p><span class="multiplayerP">Mode de jeu :</span></p>
             <div class="radio" *ngFor="let mode of modes">
                 <label>

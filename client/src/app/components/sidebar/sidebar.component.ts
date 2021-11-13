@@ -23,6 +23,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     arrayOfVrCommands: string[] = [];
     arrayOfReserveLetters: string[] = [];
     typeArea: string = '';
+    showReserve: boolean = false;
     isValid: boolean = true;
     invalidCommand: boolean = false;
     isCommand: boolean = false;
@@ -44,7 +45,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private changeDetectorRef: ChangeDetectorRef,
         private readonly valideWordService: ValidWordService,
         private lettersService: LettersService,
-        private userService: UserService,
+        public userService: UserService,
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
@@ -107,17 +108,19 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.switchCaseCommands();
         } else if (validPlay && !this.isTheGameDone() && this.isDebug) {
             if (this.typeArea === '!reserve') {
+                this.showReserve = !this.showReserve;
                 this.invalidCommand = false;
                 this.errorMessage = '';
                 this.reserveLettersQuantity();
             }
         } else {
             this.skipTurnCommand();
+            this.impossibleAndValid();
         }
         this.invalidCommand = false;
         this.name = this.userService.getUserName();
         this.nameVr = this.userService.getVrUserName();
-        this.impossibleAndValid();
+        this.typeArea = '';
     }
 
     skipTurnCommand() {
@@ -142,9 +145,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         }
         return false;
     }
-    logDebug() {
-        return this.messageService.debugCommand(this.typeArea);
-    }
+
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(
             this.lettersService.tiles,
@@ -232,7 +233,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
     reserveLettersQuantity() {
         let s: string;
-        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length - 1);
+        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length);
         this.reserveService.letters.forEach((value: number, key: Letter) => {
             s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
@@ -318,7 +319,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     if (!this.invalidCommand) {
                         if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
                         this.userService.exchangeLetters = true;
-                        if (this.userService.playedObs) this.userService.playedObs.next(this.userService.exchangeLetters);
+                        this.userService.playedObs.next(this.userService.exchangeLetters);
                     }
                     break;
                 case '!debug':
@@ -332,6 +333,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
                 case '!reserve':
                     this.invalidCommand = false;
+                    this.showReserve = !this.showReserve;
                     this.errorMessage = '';
                     if (this.isDebug) {
                         this.reserveLettersQuantity();

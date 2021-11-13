@@ -2,7 +2,17 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/easel-object';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
-import { BONUS_POINTS_50, FIRST_NAME, MAX_PLAYER, PARAMETERS_OF_SWAP, SECOND_NAME, SIX_TURN, THIRD_NAME } from '@app/constants/constants';
+import {
+    BONUS_POINTS_50,
+    EXPERT_NAMES,
+    FIRST_NAME,
+    MAX_PLAYER,
+    PARAMETERS_OF_SWAP,
+    SECOND_NAME,
+    SIX_TURN,
+    THIRD_NAME,
+    UNDEFINED_INDEX,
+} from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
 import { VirtualPlayerService } from './virtual-player.service';
@@ -23,9 +33,13 @@ export class UserService {
     vrUser: VrUser;
     gameName: string;
     chatCommandToSend: ChatCommand;
-    commandtoSendObs: BehaviorSubject<ChatCommand> = new BehaviorSubject<ChatCommand>({} as ChatCommand);
+    commandtoSendObs: BehaviorSubject<ChatCommand> = new BehaviorSubject<ChatCommand>({
+        word: '',
+        position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX },
+        direction: '',
+    });
     observableCommandToSend: Observable<ChatCommand>;
-    playedObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
+    playedObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     observablePlayed: Observable<boolean>;
     passTurn: boolean = false;
     exchangeLetters: boolean = false;
@@ -36,7 +50,7 @@ export class UserService {
     isBonusBox: boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
-    realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
+    realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     observableTurnToPlay: Observable<boolean>;
     reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     vrPlayerNames: string[] = [FIRST_NAME, SECOND_NAME, THIRD_NAME];
@@ -121,7 +135,18 @@ export class UserService {
         this.userNameLocalStorage = localStorage.getItem('vrUserName');
         return this.userNameLocalStorage;
     }
-
+    setVrName() {
+        if (this.virtualPlayer.expert) {
+            do {
+                this.vrUser.name = EXPERT_NAMES[Math.floor(Math.random() * EXPERT_NAMES.length)];
+            } while (this.vrUser.name === this.realUser.name);
+            localStorage.setItem('vrUserName', this.vrUser.name);
+            this.vrUser.level = 'Expert';
+        } else {
+            this.vrUser.name = this.chooseRandomName();
+            this.vrUser.level = 'Débutant';
+        }
+    }
     isUserTurn(): boolean {
         if (this.playMode === 'soloGame') return this.realUser.turnToPlay;
         if (this.joinedUser.guestPlayer === false) return this.realUser.turnToPlay;

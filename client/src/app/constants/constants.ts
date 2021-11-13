@@ -18,6 +18,8 @@ export const TIME_CHOICE: GameTime[] = [
     { min: 5, sec: 0 },
 ];
 export const MODES: string[] = ['Aléatoire', 'Normal'];
+export const LVL_JV: string[] = ['Expert', 'Normal'];
+export const EXPERT_NAMES: string[] = ['Tahanus-23000', 'WorldValidator', 'KoneQuePlacerSeulement'];
 export const DEFAULT_TIME = 1;
 export const DEFAULT_MODE = 1;
 // user-service
