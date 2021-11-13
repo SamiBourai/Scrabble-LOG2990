@@ -23,12 +23,10 @@ export class DatabaseService {
         );
     }
 
-    getAllScores(): Observable<number | Score[]> {
-        return this.http.get<Score[] | number>(this.GET_URL_ALL_DATA).pipe(
-            catchError((error: HttpErrorResponse) => {
-                return of(error.status);
-            }),
-        );
+    getAllScores(collectionName:string): Observable<Score[]> {
+        const fullUrl = this.GET_URL_ALL_DATA+'/'+collectionName;
+        console.log(fullUrl);
+        return this.http.get<Score[] >(fullUrl);
     }
     resetAllScores(collectionName: string): Observable<number | Score> {
         return this.http.get<Score | number>(this.GET_URL_DEFAULT_DATA + collectionName).pipe(

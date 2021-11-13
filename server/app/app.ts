@@ -9,6 +9,7 @@ import * as logger from 'morgan';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
+import { DatabaseController } from './controllers/database.controller';
 
 @Service()
 export class Application {
@@ -16,7 +17,7 @@ export class Application {
     private readonly internalError: number = StatusCodes.INTERNAL_SERVER_ERROR;
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
-    constructor(private readonly exampleController: ExampleController, private readonly dateController: DateController) {
+    constructor(private readonly exampleController: ExampleController, private readonly dateController: DateController, private readonly databaseController: DatabaseController) {
         this.app = express();
 
         this.swaggerOptions = {
@@ -39,6 +40,7 @@ export class Application {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/example', this.exampleController.router);
         this.app.use('/api/date', this.dateController.router);
+        this.app.use('/api/database', this.databaseController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });

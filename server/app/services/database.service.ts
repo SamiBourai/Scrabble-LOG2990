@@ -31,8 +31,9 @@ export class DatabaseService {
         } catch {
             throw new Error('Database connection error');
         }
-        this.resetAllScores(DATABASE_COLLECTION_LOG2990);
-        this.removeDuplicatedDocument(DATABASE_COLLECTION_LOG2990);
+        // this.resetAllScores(DATABASE_COLLECTION_LOG2990);
+        // this.removeDuplicatedDocument(DATABASE_COLLECTION_LOG2990);
+
         return this.client;
     }
     async closeConnection(): Promise<void> {
@@ -71,11 +72,13 @@ export class DatabaseService {
 
         console.log('array 2', scoreObj);
     }
-    async resetAllScores(collectionName: string): Promise<void> {
+    async resetAllScores(collectionName: string): Promise<Score[]> {
         await this.db.collection(collectionName).deleteMany({});
         for (let score of DEFAULT_SCORE) {
             await this.db.collection(collectionName).insertOne(score);
         }
+        await this.sortAllScores(collectionName);
+        return this.getAllScores(collectionName);
     }
 
     async removeDuplicatedDocument(collectionName: string):Promise<void>{
