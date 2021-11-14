@@ -21,7 +21,7 @@ export class UserService {
     realUser: RealUser;
     joinedUser: JoinedUser;
     vrUser: VrUser;
-    gameName: string;
+    gameName: string = 'default';
     chatCommandToSend: ChatCommand;
     commandtoSendObs: BehaviorSubject<ChatCommand> = new BehaviorSubject<ChatCommand>({} as ChatCommand);
     observableCommandToSend: Observable<ChatCommand>;
@@ -141,10 +141,8 @@ export class UserService {
     }
     userPlayed() {
         this.endOfGameCounter = 0;
-        if (this.playMode !== 'joinMultiplayerGame') {
-            this.realUser.turnToPlay = false;
-            this.realUserTurnObs.next(this.realUser.turnToPlay);
-        }
+        this.realUser.turnToPlay = false;
+        this.realUserTurnObs.next(this.realUser.turnToPlay);
     }
     get turnToPlayObs(): Observable<boolean> {
         return this.observableTurnToPlay;

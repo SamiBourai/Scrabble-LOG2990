@@ -129,15 +129,11 @@ export class SocketManagerService {
             socket.on('userCanceled', (message: MessageClient) => {
                 this.updateDeletedGames(message);
             });
-            socket.on('verifyWordGuest', (message: MessageClient) => {
+            socket.on('verifyWord', (message: MessageClient) => {
                 const word: Letter[] = [];
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
-                this.sio.to(message.gameName).emit('verifyWordGuest', message);
-            });
-            socket.on('verifyWordCreator', (message: MessageClient) => {
-                const word: Letter[] = [];
-                message.isValid = this.validWordService.verifyWord(message.word ?? word);
-                this.sio.to(message.gameName).emit('verifyWordCreator', message);
+                console.log('verifyyy');
+                this.sio.to(message.gameName).emit('verifyWord', message);
             });
             socket.on('disconnect', () => {
                 socket.disconnect();

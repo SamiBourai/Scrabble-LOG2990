@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
-import { BOARD_HEIGHT, BOARD_WIDTH, LEFTSPACE, NB_TILES, TOPSPACE, UNDEFINED_INDEX } from '@app/constants/constants';
+import { EaselObject } from '@app/classes/easel-object';
 import { LettersService } from './letters.service';
-import { MessageService } from './message.service';
-import { MouseHandelingService } from './mouse-handeling.service';
-import { ReserveService } from './reserve.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
 import { ValidWordService } from './valid-word.service';
@@ -13,28 +10,20 @@ import { ValidWordService } from './valid-word.service';
 })
 export class CommandManagerService {
     errorMessage: string = '';
-    private firstTurn: boolean = false;
-    word: boolean = false;
-
-    private inputIndex: number = 0;
-    private firstNumber: string = '';
-    command: ChatCommand = { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
-    // private validPlacement: boolean = false;
+    wordIsValid: boolean = false;
+    playerScore: number = 0;
     constructor(
-        private userService: UserService,
         private socketManagementService: SocketManagementService,
         private validWordService: ValidWordService,
-        private lettersService: LettersService,
-        private reserveService: ReserveService,
-        private messageService: MessageService,
-        private mouseHandle: MouseHandelingService,
+        private lettersService: LettersService, // private mouseHandle: MouseHandelingService,
+        private userService: UserService,
     ) {}
-    verifyExchageCommand(command: string): boolean {
-        if (this.reserveService.reserveSize < 7) {
+    verifyExchageCommand(reserveSize: number, playerEasel: EaselObject, lettersToExchange: string): boolean {
+        if (reserveSize < 7) {
             this.errorMessage = 'la reserve contient moins de 7 lettres';
             return false;
         } else {
-            if (this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(command), this.userService.getPlayerEasel())) return true;
+            if (this.lettersService.changeLetterFromReserve(lettersToExchange, playerEasel)) return true;
             else {
                 this.errorMessage = 'les lettres à echanger ne sont pas dans le chevalet';
                 return false;
@@ -42,117 +31,46 @@ export class CommandManagerService {
         }
     }
 
-    isWordValid(command: ChatCommand): boolean {
-        switch (this.userService.playMode) {
-            case 'soloGame':
-                return this.verifyWordSoloGame(command);
-            case 'joinMultiplayerGame':
-                this.verifyWord('verifyWordGuest', command);
-                return this.verifyCommand(command);
-            case 'createMultiplayerGame':
-                this.verifyWord('verifyWordCreator', command);
-                return this.verifyCommand(command);
-            default:
-                return false;
-        }
+    validateWord(command: ChatCommand, playMode: string, gameName: string) {
+        if (playMode === 'soloGame') this.verifyWordsInDictionnary(command, playMode);
+        else
+            this.socketManagementService.emit('verifyWord', {
+                gameName,
+                word: this.lettersService.fromWordToLetters(command.word),
+            });
     }
-    verifyCommand(command: ChatCommand): boolean {
-        // const points: number = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, command, this.userService.playMode);
+    verifyCommand(command: ChatCommand, playerEasel: EaselObject): boolean {
+        this.errorMessage = '';
         if (this.isWordInBoardLimits(command)) {
-            if (this.firstPlay(command) && this.playFirstTurn(command)) return true;
-            else if (this.isWordAttached(command) && !this.firstTurn) return true;
+            if (this.firstPlay()) {
+                if (this.validFirstPosition(command) && this.isInEasel(command, playerEasel)) {
+                    this.userService.realUser.firstToPlay = false;
+                    this.userService.firstTurn = false;
+                    return true;
+                }
+            } else if (this.isWordAttachedToTheBoard(command) && this.isPlacableWord(command, playerEasel)) return true;
         }
         return false;
     }
-    verifyInput(input: string) {
-        const charac: string = input.charAt(input.length - 1);
-        console.log(charac, ': lastLt');
-        if (!this.word) {
-            this.validPostion(charac);
-        } else {
-            this.command.word = this.mouseHandle.chatWord;
-        }
+    private firstPlay(): boolean {
+        if (this.userService.playMode === 'soloGame') return this.userService.realUser.firstToPlay;
+        else return this.userService.firstTurn;
     }
-
-    private validPostion(key: string) {
-        switch (this.inputIndex) {
-            case 0:
-                console.log(this.messageService.getLineNumber(key), ': X');
-                if (1 <= this.messageService.getLineNumber(key) && this.messageService.getLineNumber(key) <= NB_TILES) {
-                    this.command.position.x = this.messageService.getLineNumber(key);
-
-                    this.inputIndex++;
-                }
+    private verifyWordsInDictionnary(command: ChatCommand, playMode: string) {
+        const points: number = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, command, playMode);
+        const wordInDictionnay = this.validWordService.verifyWord(this.lettersService.fromWordToLetters(command.word), playMode);
+        switch (true) {
+            case wordInDictionnay && points !== 0:
+                this.wordIsValid = true;
                 break;
-            case 1:
-                console.log(key, ': first');
-                if (key.charCodeAt(0) >= 49 && key.charCodeAt(0) <= 57 && this.firstNumber === '') {
-                    this.firstNumber = key;
-                    this.inputIndex++;
-                }
+            case wordInDictionnay && points === 0:
+                this.errorMessage = 'les mots engendrés par votre placement ne sont pas dans le dictionnaire';
                 break;
-            case 2:
-                console.log(this.messageService.getLineNumber(key), ': y');
-                this.setY(key);
-                break;
-            case 3:
-                if (key === 'h' || key === 'v') {
-                    this.command.direction = key;
-                    this.word = true;
-                    this.clickSimul();
-                }
-                break;
+            default:
+                this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
         }
-    }
-    private clickSimul() {
-        if (this.command.direction === 'h') this.callMouse();
-        else {
-            this.callMouse();
-            this.callMouse();
-        }
-    }
-    private callMouse() {
-        console.log({
-            offsetX: LEFTSPACE + (this.command.position.x * BOARD_WIDTH) / NB_TILES,
-            offsetY: TOPSPACE + (this.command.position.y * BOARD_HEIGHT) / NB_TILES,
-        } as MouseEvent);
-        this.mouseHandle.mouseHitDetect({
-            offsetX: LEFTSPACE + (this.command.position.x * BOARD_WIDTH) / NB_TILES,
-            offsetY: TOPSPACE + (this.command.position.y * BOARD_HEIGHT) / NB_TILES,
-            button: 0,
-        } as MouseEvent);
-    }
-
-    private setY(key: string) {
-        if (key.charCodeAt(0) >= 49 && key.charCodeAt(0) <= 53 && this.firstNumber.charCodeAt(0) === 49) {
-            this.command.position.y = parseInt(this.firstNumber + key, 10);
-            this.inputIndex++;
-        } else if (key === 'h' || key === 'v') {
-            this.command.position.y = parseInt(this.firstNumber, 10);
-            this.command.direction = key;
-            this.command.direction = key;
-
-            this.word = true;
-            this.clickSimul();
-        }
-    }
-
-    private verifyWord(method: string, command: ChatCommand) {
-        this.socketManagementService.emit(method, {
-            gameName: this.userService.gameName,
-            word: this.lettersService.fromWordToLetters(command.word),
-        });
-        this.socketManagementService.listen(method).subscribe((data) => {
-            this.validWordService.isWordValid = data.isValid ?? false;
-            if (!this.validWordService.isWordValid) this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
-        });
-    }
-    private verifyWordSoloGame(command: ChatCommand): boolean {
-        if (this.validWordService.verifyWord(this.lettersService.fromWordToLetters(command.word), 'soloGame')) return this.verifyCommand(command);
-        else {
-            this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
-            return false;
-        }
+        this.playerScore = points;
+        console.log('verifyWordddd commandddddd Maanaaagerrrrr');
     }
     private isWordInBoardLimits(command: ChatCommand): boolean {
         if (this.lettersService.wordInBoardLimits(command)) {
@@ -161,23 +79,28 @@ export class CommandManagerService {
         this.errorMessage = 'le mot saisi doit ne doit pas dépasser la grille du scrable';
         return false;
     }
-    private firstPlay(command: ChatCommand): boolean {
-        if (this.firstTurn && command.position.x === 8 && command.position.y === 8) return true;
-        this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
+    private validFirstPosition(command: ChatCommand): boolean {
+        if (command.position.x === 8 && command.position.y === 8) {
+            return true;
+        }
+        this.errorMessage = 'votre mot doit être placer à la position central(h8)!';
         return false;
     }
-    private playFirstTurn(command: ChatCommand): boolean {
-        if (this.userService.getPlayerEasel().contains(command.word)) {
-            this.firstTurn = false;
+    private isInEasel(command: ChatCommand, playerEasel: EaselObject): boolean {
+        if (playerEasel.contains(command.word)) {
             return true;
         }
         this.errorMessage = 'Les lettres de votre mot ne sont pas dans le chevalet';
         return false;
     }
-    private isWordAttached(command: ChatCommand): boolean {
-        console.log(this.lettersService.wordIsAttached(command), 'isWordAttached');
+    private isWordAttachedToTheBoard(command: ChatCommand): boolean {
         if (this.lettersService.wordIsAttached(command)) return true;
         this.errorMessage = 'votre mot doit être attaché à ceux déjà présent dans la grille ';
+        return false;
+    }
+    private isPlacableWord(command: ChatCommand, playerEasel: EaselObject): boolean {
+        if (this.lettersService.wordIsPlacable(command, playerEasel)) return true;
+        this.errorMessage = 'les lettres de votre mots ne sont pas contenue dans le chevalet ou dans la grille';
         return false;
     }
 }

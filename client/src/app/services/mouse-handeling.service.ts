@@ -42,6 +42,7 @@ export class MouseHandelingService {
     isGood: boolean = false;
     inEasel: boolean = false;
     lettersToSwapByClick: Letter[] = [];
+    sideBarInputEnable: boolean = true;
     commandObs = new BehaviorSubject<string>('');
     constructor(
         private readonly tempCanvasService: TemporaryCanvasService,
@@ -63,7 +64,7 @@ export class MouseHandelingService {
         }
     }
     deletPreviousLetter() {
-        if (this.tempCanvasService.tempWord !== '') {
+        if (this.tempCanvasService.tempWord !== '' && this.sideBarInputEnable) {
             this.tempCanvasService.removeLastLetter();
             this.easelLogic.replaceTempInEasel(this.userService.getPlayerEasel());
         }
@@ -82,13 +83,6 @@ export class MouseHandelingService {
         } else this.inEasel = false;
     }
     mouseHitDetect(event: MouseEvent) {
-        console.log(this.userService.isPlayerTurn());
-        console.log(event.button === MouseButton.Left);
-        console.log(event.offsetX > LEFTSPACE);
-        console.log(event.offsetX < BOARD_WIDTH + LEFTSPACE);
-        console.log(event.offsetY > TOPSPACE);
-        console.log(event.offsetY < BOARD_HEIGHT + TOPSPACE);
-
         if (
             this.userService.isPlayerTurn() &&
             event.button === MouseButton.Left &&

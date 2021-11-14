@@ -19,14 +19,13 @@ import {
     PARAMETERS_OF_SWAP,
     PLACE_LENGTH,
     SWAP_LENGTH,
-    UNDEFINED_INDEX,
+    UNDEFINED_INDEX
 } from './../constants/constants';
 
 @Injectable({
     providedIn: 'root',
 })
 export class MessageService {
-    chatCommandArray = new Array<ChatCommand>();
     arrayOfCommand: string[] = ['!aide', '!debug', '!passer', '!reserve'];
     command: ChatCommand = { word: '', position: { x: 0, y: 0 }, direction: 'h' };
     arrayOfSpecialChars: string[] = ['ç', 'é', 'è', 'ë'];
@@ -59,7 +58,6 @@ export class MessageService {
     isValid(command: string): boolean {
         const containsPlace = this.containsPlaceCommand(command);
         const containsSwap = this.containsSwapCommand(command);
-        if (!this.isCommand(command)) return false;
         if (containsPlace && command.length !== PLACE_LENGTH && this.placeCommand(command).length !== 0) {
             return true;
         } else if (containsSwap && command.length !== SWAP_LENGTH && this.swapCommand(command) !== '') {
@@ -102,7 +100,7 @@ export class MessageService {
 
     placeCommand(input: string): ChatCommand[] {
         input = input.substring(INDEX_OF_PLACE_PARAMETERS, input.length);
-
+        const chatCommandArray = new Array<ChatCommand>();
         this.line = input.substring(0, 1);
 
         const parametersString = input.substring(0, INDEX_PARAMETERS);
@@ -121,10 +119,9 @@ export class MessageService {
 
         if (validPosition && validOrientation && this.word !== '') {
             this.command = { word: this.word, position: { x: this.column, y: this.getLineNumber(this.line) }, direction: this.orientation };
-
-            this.chatCommandArray.push(this.command);
+            chatCommandArray.push(this.command);
         }
-        return this.chatCommandArray;
+        return chatCommandArray;
     }
 
     swapCommand(input: string): string {
