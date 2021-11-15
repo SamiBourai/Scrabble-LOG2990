@@ -2,9 +2,9 @@ import { MINUTE_TURN, ONE_MINUTE, ONE_SECOND, ONE_SECOND_MS } from '@app/classes
 import { Subject } from 'rxjs';
 export class Timer {
     timeUser: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
-    timerConfig: { min: number; sec: number };
+    timerConfig: { min: number; sec: number } = { min: 0, sec: MINUTE_TURN };
     timerObs: Subject<{ min: number; sec: number }> = new Subject<{ min: number; sec: number }>();
-    creatorTurn: boolean;
+    creatorTurn: boolean = false;
     playerPlayed: boolean = false;
     constructor() {
         this.timerObs.subscribe((timer) => {

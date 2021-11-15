@@ -12,7 +12,7 @@ import {
     SIX,
     TOPSPACE,
     UNDEFINED_INDEX,
-    V_ARROW,
+    V_ARROW
 } from '@app/constants/constants';
 import { LettersService } from './letters.service';
 
@@ -50,6 +50,21 @@ export class TemporaryCanvasService {
             this.incrementDirection();
             this.drawTileFocus(this.previousTile);
         }
+    }
+    drawLetter(lett: Letter, pos: Vec2) {
+        const imgLetter = new Image();
+        imgLetter.src = lett.img;
+        const x = pos.x;
+        const y = pos.y;
+        imgLetter.onload = () => {
+            this.tempContext.drawImage(
+                imgLetter,
+                LEFTSPACE + ((x - 1) * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + ((y - 1) * BOARD_WIDTH) / NB_TILES,
+                BOARD_WIDTH / NB_TILES,
+                BOARD_HEIGHT / NB_TILES,
+            );
+        };
     }
     addLetterFromGrid(letter: string) {
         this.tempWord += letter;

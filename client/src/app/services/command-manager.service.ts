@@ -52,11 +52,7 @@ export class CommandManagerService {
         }
         return false;
     }
-    private firstPlay(): boolean {
-        if (this.userService.playMode === 'soloGame') return this.userService.realUser.firstToPlay;
-        else return this.userService.firstTurn;
-    }
-    private verifyWordsInDictionnary(command: ChatCommand, playMode: string) {
+    verifyWordsInDictionnary(command: ChatCommand, playMode: string) {
         const points: number = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, command, playMode);
         const wordInDictionnay = this.validWordService.verifyWord(this.lettersService.fromWordToLetters(command.word), playMode);
         switch (true) {
@@ -70,8 +66,12 @@ export class CommandManagerService {
                 this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
         }
         this.playerScore = points;
-        console.log('verifyWordddd commandddddd Maanaaagerrrrr');
     }
+    private firstPlay(): boolean {
+        if (this.userService.playMode === 'soloGame') return this.userService.realUser.firstToPlay;
+        else return this.userService.firstTurn;
+    }
+
     private isWordInBoardLimits(command: ChatCommand): boolean {
         if (this.lettersService.wordInBoardLimits(command)) {
             return true;

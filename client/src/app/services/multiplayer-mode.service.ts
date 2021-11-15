@@ -144,10 +144,4 @@ export class MultiplayerModeService {
             this.winnerObs.next(this.gotWinner);
         });
     }
-    validateWordInSever() {
-        this.socketManagementService.listen('verifyWord').subscribe((data) => {
-            this.validWordService.isWordValid = data.isValid ?? false;
-            console.log('verify');
-        });
-    }
 }
