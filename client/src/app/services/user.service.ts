@@ -5,10 +5,13 @@ import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import {
     BONUS_POINTS_50,
     EXPERT_NAMES,
+    FIFTH_NAME,
     FIRST_NAME,
+    FOURTH_NAME,
     MAX_PLAYER,
     PARAMETERS_OF_SWAP,
     SECOND_NAME,
+    SIXTH_NAME,
     SIX_TURN,
     THIRD_NAME,
     UNDEFINED_INDEX,
@@ -53,7 +56,8 @@ export class UserService {
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     observableTurnToPlay: Observable<boolean>;
     reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    vrPlayerNames: string[] = [FIRST_NAME, SECOND_NAME, THIRD_NAME];
+    vrPlayerNamesBeginner: string[][] = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []]; // admin ici pour nom vr user
+    vrPlayerNamesExpert: string[][] = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
     endOfGameCounter: number = 0;
     endOfGame: boolean;
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -115,16 +119,19 @@ export class UserService {
     getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
     }
+    mergeBoth() {
+        // code
+    }
     chooseRandomName(): string {
         let randomInteger = this.getRandomInt(MAX_PLAYER);
         for (;;) {
             randomInteger = this.getRandomInt(MAX_PLAYER);
-            if (this.vrPlayerNames[randomInteger] === localStorage.getItem('userName')) {
+            if (this.vrPlayerNamesBeginner[0][randomInteger] === localStorage.getItem('userName')) {
                 continue;
             } else break;
         }
-        localStorage.setItem('vrUserName', this.vrPlayerNames[randomInteger]);
-        return this.vrPlayerNames[randomInteger];
+        localStorage.setItem('vrUserName', this.vrPlayerNamesBeginner[0][randomInteger]);
+        return this.vrPlayerNamesBeginner[0][randomInteger];
     }
     getUserName(): string {
         this.userNameLocalStorage = localStorage.getItem('userName');

@@ -4,6 +4,8 @@ import { Vec2 } from '@app/classes/vec2';
 import { Pair } from './../classes/pair';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
+export const ENTER = 13;
+export const COMMA = 188;
 // modal user-component
 export const TIME_CHOICE: GameTime[] = [
     { min: 0, sec: 30 },
@@ -26,6 +28,9 @@ export const DEFAULT_MODE = 1;
 export const FIRST_NAME = 'Bobby1234';
 export const SECOND_NAME = 'Martin1234';
 export const THIRD_NAME = 'VirtualPlayer1234';
+export const FOURTH_NAME = 'Felix1234';
+export const FIFTH_NAME = 'Emmanuel1234';
+export const SIXTH_NAME = 'Halouf1234';
 export const MAX_PLAYER = 3;
 export const NUMBER_COMPARED = 20;
 export const NUMBER_TO_COMPARE = 10;
@@ -60,32 +65,32 @@ export const TOPSPACE = 25;
 export const LEFTSPACE = 50;
 // LETTERS
 export const NOT_A_LETTER: Letter = { score: 0, charac: '1', img: 'no-image' };
-export const A: Letter = { score: 1, charac: 'a', img: '../../assets/letter-A.png' };
-export const B: Letter = { score: 3, charac: 'b', img: '../../assets/letter-b.png' };
-export const C: Letter = { score: 3, charac: 'c', img: '../../assets/letter-c.png' };
-export const D: Letter = { score: 2, charac: 'd', img: '../../assets/letter-d.png' };
-export const E: Letter = { score: 1, charac: 'e', img: '../../assets/letter-e.png' };
-export const F: Letter = { score: 4, charac: 'f', img: '../../assets/letter-f.png' };
-export const G: Letter = { score: 2, charac: 'g', img: '../../assets/letter-g.png' };
-export const H: Letter = { score: 4, charac: 'h', img: '../../assets/letter-h.png' };
-export const I: Letter = { score: 1, charac: 'i', img: '../../assets/letter-i.png' };
-export const J: Letter = { score: 8, charac: 'j', img: '../../assets/letter-j.png' };
-export const K: Letter = { score: 10, charac: 'k', img: '../../assets/letter-k.png' };
-export const L: Letter = { score: 1, charac: 'l', img: '../../assets/letter-l.png' };
-export const M: Letter = { score: 2, charac: 'm', img: '../../assets/letter-m.png' };
-export const N: Letter = { score: 1, charac: 'n', img: '../../assets/letter-n.png' };
-export const O: Letter = { score: 1, charac: 'o', img: '../../assets/letter-o.png' };
-export const P: Letter = { score: 3, charac: 'p', img: '../../assets/letter-p.png' };
-export const Q: Letter = { score: 8, charac: 'q', img: '../../assets/letter-q.png' };
-export const R: Letter = { score: 1, charac: 'r', img: '../../assets/letter-r.png' };
-export const S: Letter = { score: 1, charac: 's', img: '../../assets/letter-s.png' };
-export const T: Letter = { score: 1, charac: 't', img: '../../assets/letter-t.png' };
-export const U: Letter = { score: 1, charac: 'u', img: '../../assets/letter-u.png' };
-export const V: Letter = { score: 4, charac: 'v', img: '../../assets/letter-v.png' };
-export const W: Letter = { score: 10, charac: 'w', img: '../../assets/letter-w.png' };
-export const X: Letter = { score: 10, charac: 'x', img: '../../assets/letter-x.png' };
-export const Y: Letter = { score: 10, charac: 'y', img: '../../assets/letter-y.png' };
-export const Z: Letter = { score: 10, charac: 'z', img: '../../assets/letter-z.png' };
+export const A: Letter = { score: 1, charac: 'a', img: './assets/letter-A.png' };
+export const B: Letter = { score: 3, charac: 'b', img: './assets/letter-b.png' };
+export const C: Letter = { score: 3, charac: 'c', img: './assets/letter-c.png' };
+export const D: Letter = { score: 2, charac: 'd', img: './assets/letter-d.png' };
+export const E: Letter = { score: 1, charac: 'e', img: './assets/letter-e.png' };
+export const F: Letter = { score: 4, charac: 'f', img: './assets/letter-f.png' };
+export const G: Letter = { score: 2, charac: 'g', img: './assets/letter-g.png' };
+export const H: Letter = { score: 4, charac: 'h', img: './assets/letter-h.png' };
+export const I: Letter = { score: 1, charac: 'i', img: './assets/letter-i.png' };
+export const J: Letter = { score: 8, charac: 'j', img: './assets/letter-j.png' };
+export const K: Letter = { score: 10, charac: 'k', img: './assets/letter-k.png' };
+export const L: Letter = { score: 1, charac: 'l', img: './assets/letter-l.png' };
+export const M: Letter = { score: 2, charac: 'm', img: './assets/letter-m.png' };
+export const N: Letter = { score: 1, charac: 'n', img: './assets/letter-n.png' };
+export const O: Letter = { score: 1, charac: 'o', img: './assets/letter-o.png' };
+export const P: Letter = { score: 3, charac: 'p', img: './assets/letter-p.png' };
+export const Q: Letter = { score: 8, charac: 'q', img: './assets/letter-q.png' };
+export const R: Letter = { score: 1, charac: 'r', img: './assets/letter-r.png' };
+export const S: Letter = { score: 1, charac: 's', img: './assets/letter-s.png' };
+export const T: Letter = { score: 1, charac: 't', img: './assets/letter-t.png' };
+export const U: Letter = { score: 1, charac: 'u', img: './assets/letter-u.png' };
+export const V: Letter = { score: 4, charac: 'v', img: './assets/letter-v.png' };
+export const W: Letter = { score: 10, charac: 'w', img: './assets/letter-w.png' };
+export const X: Letter = { score: 10, charac: 'x', img: './assets/letter-x.png' };
+export const Y: Letter = { score: 10, charac: 'y', img: './assets/letter-y.png' };
+export const Z: Letter = { score: 10, charac: 'z', img: './assets/letter-z.png' };
 
 export const RESERVE_SIZE = 100;
 

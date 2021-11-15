@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
+import { Dictionary, LoadableDictionary } from '@app/classes/dictionary';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
@@ -20,13 +21,16 @@ export class ValidWordService {
     usedWords = new Map<string, Vec2[]>();
     private readonly utf8Decoder = new TextDecoder('UTF-8');
 
-    private dictionary: Set<string>[];
+    private dictionary: Dictionary;
+
     constructor(private http: HttpClient, private wps: WordPointsService, private letterService: LettersService) {}
-    async loadDictionary() {
-        const wordsObs = this.getWords();
-        const words = await wordsObs.toPromise();
+
+    static loadableDictToDict({ title, description, words }: LoadableDictionary) {
         const letterIndexes = new Array<number[]>();
 
+        // Diviser les mots en differentes lites selon leur premieres
+        // lettres en utilisant l'indice.
+        // On suppose que les mots sont en ordres alphabetiques
         let tailLetter = words[0].charCodeAt(0);
         let tail = 0;
         for (let head = 0; head < words.length; ++head) {
@@ -39,7 +43,13 @@ export class ValidWordService {
         }
         letterIndexes.push([tail, words.length]);
 
-        this.dictionary = letterIndexes.map(([t, h]) => new Set(words.slice(t, h)));
+        return { title, description, words: letterIndexes.map(([t, h]) => new Set(words.slice(t, h))) } as Dictionary;
+    }
+
+    async loadDictionary() {
+        const loadableDictionaryObs = this.getLoadableDictionary();
+        const loadableDictionary = await loadableDictionaryObs.toPromise();
+        this.dictionary = ValidWordService.loadableDictToDict(loadableDictionary);
     }
 
     generateRegEx(lett: Letter[]): string {
@@ -102,10 +112,10 @@ export class ValidWordService {
         }
 
         for (let i = this.concatWord.length; i >= 1; i--) {
-            const regex = new RegExp('[' + this.concatWord + ']{' + i + '}', 'g');
+            const regex = new RegExp(`[${this.concatWord}]{${i}}`, 'g');
 
-            for (const words of this.dictionary) {
-                for (const dictionaryWord of words) {
+            for (const letteredWords of this.dictionary.words) {
+                for (const dictionaryWord of letteredWords) {
                     if (i === dictionaryWord.length) {
                         const match = regex.test(dictionaryWord);
                         if (match) {
@@ -187,7 +197,7 @@ export class ValidWordService {
             }
 
             const letterIndexInput = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
-            return this.dictionary[letterIndexInput].has(concatWord);
+            return this.dictionary.words[letterIndexInput].has(concatWord);
         }
     }
 
@@ -224,10 +234,10 @@ export class ValidWordService {
     }
 
     private getCompressedWords(): Observable<ArrayBuffer> {
-        return this.http.get('/assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
+        return this.http.get('./assets/dictionary_min.json.zst', { responseType: 'arraybuffer' });
     }
 
-    private getWords(): Observable<string[]> {
+    private getLoadableDictionary(): Observable<LoadableDictionary> {
         const compressedWords = this.getCompressedWords();
         return compressedWords.pipe(
             map((buf) => new Uint8Array(buf)),

@@ -19,6 +19,7 @@ export class MainPageComponent {
     openDialog() {
         this.dialogRef.open(ModalScrableClassiqueComponent);
     }
+
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
             title: 'Hello from the client to samy plzzzz',
