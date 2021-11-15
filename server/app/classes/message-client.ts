@@ -21,4 +21,5 @@ export interface MessageClient {
     passTurn?: boolean;
     reserve?: string;
     reserveSize?: number;
+    easel?: Letter[];
 }

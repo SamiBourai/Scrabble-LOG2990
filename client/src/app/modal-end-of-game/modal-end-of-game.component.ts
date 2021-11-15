@@ -18,4 +18,5 @@ export class ModalEndOfGameComponent implements OnInit {
     setIsUserQuitGame(): void {
         window.location.assign('/home');
     }
+    joinVrPlayer() {}
 }

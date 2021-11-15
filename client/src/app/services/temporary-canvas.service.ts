@@ -29,23 +29,26 @@ export class TemporaryCanvasService {
 
     constructor(private letterService: LettersService) {}
 
-    placeTempLetter(lett: Letter): void {
+    drawLetter(lett: Letter, pos: Vec2) {
         const imgLetter = new Image();
         imgLetter.src = lett.img;
+        const x = pos.x;
+        const y = pos.y;
+        imgLetter.onload = () => {
+            this.tempContext.drawImage(
+                imgLetter,
+                LEFTSPACE + ((x - 1) * BOARD_WIDTH) / NB_TILES,
+                TOPSPACE + ((y - 1) * BOARD_WIDTH) / NB_TILES,
+                BOARD_WIDTH / NB_TILES,
+                BOARD_HEIGHT / NB_TILES,
+            );
+        };
+    }
 
+    placeTempLetter(lett: Letter): void {
         if (this.findNextEmptyTile()) {
             this.tempWord += lett.charac;
-            const x = this.previousTile.x;
-            const y = this.previousTile.y;
-            imgLetter.onload = () => {
-                this.tempContext.drawImage(
-                    imgLetter,
-                    LEFTSPACE + ((x - 1) * BOARD_WIDTH) / NB_TILES,
-                    TOPSPACE + ((y - 1) * BOARD_WIDTH) / NB_TILES,
-                    BOARD_WIDTH / NB_TILES,
-                    BOARD_HEIGHT / NB_TILES,
-                );
-            };
+            this.drawLetter(lett, this.previousTile);
             this.drawRedFocus(this.previousTile, this.tempContext);
             this.incrementDirection();
             this.drawTileFocus(this.previousTile);

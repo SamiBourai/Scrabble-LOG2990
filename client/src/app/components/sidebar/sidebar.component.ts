@@ -30,7 +30,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     command: ChatCommand[] = [];
     firstTurn: boolean = true;
     skipTurn: boolean = false;
-    active: boolean = false;
     name: string;
     nameVr: string;
     word: string = 'mot';
@@ -100,6 +99,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
+        this.errorMessage = '';
         this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
         const validPlayAndYourTurn =
             this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
@@ -115,17 +115,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             }
         } else {
             this.skipTurnCommand();
-            this.impossibleAndValid();
         }
         this.invalidCommand = false;
-        this.name = this.userService.getUserName();
-        this.nameVr = this.userService.getVrUserName();
         this.typeArea = '';
     }
 
     skipTurnCommand() {
         if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
-            this.skipTurn = true;
             this.invalidCommand = true;
             this.errorMessage = 'ce n est pas votre tour';
         } else if (this.typeArea === '!debug') {
@@ -138,7 +134,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     isSkipButtonClicked() {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
-            this.active = true;
             this.errorMessage = '';
             this.updateMessageArray('!passer');
             return true;
@@ -194,13 +189,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    impossibleAndValid() {
-        this.isCommand = this.messageService.isCommand(this.typeArea);
-        if (!this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea)) {
-            this.invalidCommand = true;
-        }
-        this.isValid = this.messageService.isValid(this.typeArea);
-    }
     playFirstTurn(points: number): boolean {
         let lettersplaced = false;
         if (this.userService.getPlayerEasel().contains(this.messageService.command.word)) {

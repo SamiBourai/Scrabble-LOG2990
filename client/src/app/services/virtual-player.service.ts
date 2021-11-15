@@ -102,7 +102,7 @@ export class VirtualPlayerService {
         }
     }
     tradeLetterSteps() {
-        this.commandToSend = '!echanger';
+        this.commandToSend = '!echanger ';
         this.exchangeLettersInEasel();
         this.commandObs.next(this.commandToSend);
         this.commandToSend = '';
