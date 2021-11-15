@@ -1,0 +1,79 @@
+<div class="bg1">
+    <div class="admin_container">
+        <div class="containerBox">
+            <mat-tab-group>
+
+                <mat-tab label="Dictionnary settings">
+                    <div class="segment">
+                        <button class="uploadButton" type="button" mat-raised-button (click)="fileInput.click()">Upload a dictionary as JSON...</button>
+                        <input hidden type="file" (change)="onFileSelected()" #fileInput>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Virtual player settings">
+                    <div class="segment">
+
+                        <!-- Name of beginner VP -->
+                        <mat-form-field class="VPBeg-names-chiplist" appearance="fill">
+                            <mat-label>Beginner virtual player names list</mat-label>
+                            <mat-chip-list #chipListBeg aria-label="Names selection">
+                                <!-- The default names -->
+                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[0]" [selectable]="selectable"
+                                       [removable]="false">{{name}}</mat-chip>
+                                <!-- New names -->
+                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[1]" [selectable]="selectable"
+                                       [removable]="removableBeg" (removed)="remove(name, 'beginner')">
+                                {{name}}
+                                <button matChipRemove *ngIf="removableBeg">
+                                  <mat-icon>cancel</mat-icon>
+                                </button>
+                              </mat-chip>
+                              <input placeholder="New name..."
+                                     [matChipInputFor]="chipListBeg"
+                                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                     [matChipInputAddOnBlur]="addOnBlur"
+                                     (matChipInputTokenEnd)="add($event, 'beginner')">
+                            </mat-chip-list>
+                          </mat-form-field>
+                          <mat-divider></mat-divider>
+
+
+                          <!-- Name of expert VP -->
+                          <mat-form-field class="VPExp-names-chiplist" appearance="fill">
+                            <mat-label>Expert virtual player names list</mat-label>
+                            <mat-chip-list #chipListExp aria-label="Names selection">
+                                <!-- The default names -->
+                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesExpert[0]" [selectable]="selectable"
+                                       [removable]="false">{{name}}</mat-chip>
+                                <!-- New names -->
+                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesExpert[1]" [selectable]="selectable"
+                                       [removable]="removableExp" (removed)="remove(name, 'expert')">
+                                {{name}}
+                                <button matChipRemove *ngIf="removableExp">
+                                  <mat-icon>cancel</mat-icon>
+                                </button>
+                              </mat-chip>
+                              <input placeholder="New name..."
+                                     [matChipInputFor]="chipListExp"
+                                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                     [matChipInputAddOnBlur]="addOnBlur"
+                                     (matChipInputTokenEnd)="add($event, 'expert')">
+                            </mat-chip-list>
+                          </mat-form-field>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Reset settings">
+                    <div class="segment">
+                        <button class="uploadButton" mat-flat-button color="warn" (click)="resetDictionaries()">Reset Dictionaries</button>
+                        <button class="uploadButton" mat-flat-button color="warn" (click)="resetVPNames()">Reset Virtual Player Names</button>
+                    </div>
+                </mat-tab>
+
+              </mat-tab-group>
+        </div>
+        <div>
+            <button mat-stroked-button routerLink="/home" routerLinkActive="active">Admin</button>
+        </div>
+    </div>
+</div>

@@ -16,6 +16,7 @@ import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AvatarModule } from 'ngx-avatar';
+import { AdminPageComponent } from './components/pages/admin-page/admin-page/admin-page.component';
 import { JoinedUserComponent } from './components/users/joined-user/joined-user.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
@@ -34,6 +35,7 @@ import { WordPointsService } from './services/word-points.service';
 
 @NgModule({
     declarations: [
+        AdminPageComponent,
         AppComponent,
         GamePageComponent,
         MainPageComponent,

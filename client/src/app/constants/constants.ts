@@ -4,6 +4,8 @@ import { Vec2 } from '@app/classes/vec2';
 import { Pair } from './../classes/pair';
 
 export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
+export const ENTER = 13;
+export const COMMA = 188;
 // modal user-component
 export const TIME_CHOICE: GameTime[] = [
     { min: 0, sec: 30 },
@@ -24,6 +26,9 @@ export const DEFAULT_MODE = 1;
 export const FIRST_NAME = 'Bobby1234';
 export const SECOND_NAME = 'Martin1234';
 export const THIRD_NAME = 'VirtualPlayer1234';
+export const FOURTH_NAME = 'Felix1234';
+export const FIFTH_NAME = 'Emmanuel1234';
+export const SIXTH_NAME = 'Halouf1234';
 export const MAX_PLAYER = 3;
 export const NUMBER_COMPARED = 20;
 export const NUMBER_TO_COMPARE = 10;
