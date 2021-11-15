@@ -4,11 +4,9 @@ import { EaselObject } from '@app/classes/easel-object';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import {
     BONUS_POINTS_50,
-    EXPERT_NAMES,
     FIFTH_NAME,
     FIRST_NAME,
     FOURTH_NAME,
-    MAX_PLAYER,
     PARAMETERS_OF_SWAP,
     SECOND_NAME,
     SIXTH_NAME,
@@ -95,7 +93,7 @@ export class UserService {
             };
         else
             this.vrUser = {
-                name: this.chooseRandomName(),
+                name: this.chooseRandomNameBeg(),
                 level: 'Débutant',
                 round: '1 min',
                 score: 0,
@@ -119,19 +117,22 @@ export class UserService {
     getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
     }
-    mergeBoth() {
-        // code
-    }
-    chooseRandomName(): string {
-        let randomInteger = this.getRandomInt(MAX_PLAYER);
-        for (;;) {
-            randomInteger = this.getRandomInt(MAX_PLAYER);
-            if (this.vrPlayerNamesBeginner[0][randomInteger] === localStorage.getItem('userName')) {
-                continue;
-            } else break;
+    mergeBoth(names: string[][]): string[] {
+        const mergedNames: string[] = [];
+        for (let i = 0; i < 2; i++) {
+            for (const name of names[i]) {
+                mergedNames.push(name);
+            }
         }
-        localStorage.setItem('vrUserName', this.vrPlayerNamesBeginner[0][randomInteger]);
-        return this.vrPlayerNamesBeginner[0][randomInteger];
+        return mergedNames;
+    }
+    chooseRandomNameBeg(): string {
+        const randomInteger = this.getRandomInt(this.mergeBoth(this.vrPlayerNamesBeginner).length);
+        return this.mergeBoth(this.vrPlayerNamesBeginner)[randomInteger];
+    }
+    chooseRandomNameExp(): string {
+        const randomInteger = this.getRandomInt(this.mergeBoth(this.vrPlayerNamesExpert).length);
+        return this.mergeBoth(this.vrPlayerNamesExpert)[randomInteger];
     }
     getUserName(): string {
         this.userNameLocalStorage = localStorage.getItem('userName');
@@ -145,12 +146,13 @@ export class UserService {
     setVrName() {
         if (this.virtualPlayer.expert) {
             do {
-                this.vrUser.name = EXPERT_NAMES[Math.floor(Math.random() * EXPERT_NAMES.length)];
+                // this.vrUser.name = EXPERT_NAMES[Math.floor(Math.random() * EXPERT_NAMES.length)];
+                this.vrUser.name = this.chooseRandomNameExp();
             } while (this.vrUser.name === this.realUser.name);
             localStorage.setItem('vrUserName', this.vrUser.name);
             this.vrUser.level = 'Expert';
         } else {
-            this.vrUser.name = this.chooseRandomName();
+            this.vrUser.name = this.chooseRandomNameBeg();
             this.vrUser.level = 'Débutant';
         }
     }
