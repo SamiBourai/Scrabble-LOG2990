@@ -107,6 +107,8 @@ export class DatabaseService {
 
     async addPlayer(collectionName: string, playerName: string): Promise<void> {
         const player: VirtualPlayer = { name: playerName };
+        console.log('bouda');
+        
         await this.db.collection(collectionName).insertOne(player);
     }
 

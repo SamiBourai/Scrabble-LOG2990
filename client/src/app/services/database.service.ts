@@ -40,9 +40,21 @@ export class DatabaseService {
         const fullUrl = this.GET_URL_ALL_PLAYERS + '/' + collectionName;
         return this.http.get<VirtualPlayer[]>(fullUrl);
     }
-    sendPlayer(collectionName:string, player: string): Observable<void> {
-        const fullUrl = this.SEND_URL_ADD_PLAYER + '/' + collectionName;
-        return this.http.post<void>(fullUrl, player);
+    // sendPlayer(collectionName:string, player: string): Observable<void> {
+    //     const fullUrl = this.SEND_URL_ADD_PLAYER + '/' + collectionName;
+    //     console.log("ta ter");
+    //     return this.http.post<void>(fullUrl, player);
+        
+        
+    // }
+
+    sendPlayer(collectionName:string, player: string): Observable<number> {
+        const fullUrl = this.SEND_URL_ADD_PLAYER + '/' + collectionName + '/' + player;
+        return this.http.post<number>(fullUrl, player).pipe(
+            catchError((error: HttpErrorResponse) => {
+                return of(error.status);
+            }),
+        );
     }
 
 }

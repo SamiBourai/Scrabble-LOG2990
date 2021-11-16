@@ -38,8 +38,6 @@ export class AdminPageComponent implements OnInit {
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
-
-
     }
 
     getPlayersNamesBeg() {
@@ -91,13 +89,16 @@ export class AdminPageComponent implements OnInit {
     // getNames(): Observable<string[][]> {
     //     // return this.http.get();
     // }
-    private addPlayerToDatabase(collectionName:string, player:string):void{
+    private addPlayerToDatabase(collectionName: string, player: string): void {
+        const addPlayerObs: Observable<number> = this.database.sendPlayer(collectionName, player);
         console.log('add function');
+        addPlayerObs.subscribe(() => {
+            this.getPlayersNamesBeg();
+        })
         
-        this.database.sendPlayer(collectionName, player);
-        console.log('apres add fucntion');
 
-        
+        //this.database.sendPlayer(collectionName, player);
+        console.log('apres add fucntion');
     }
 
     add(event: MatChipInputEvent, level: string): void {
@@ -105,19 +106,17 @@ export class AdminPageComponent implements OnInit {
         // let array;
         if (level === 'beginner') {
             // array = this.userService.vrPlayerNamesBeginner[1];
-            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value )
+            
+            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value);
+            this.getPlayersNamesBeg();
             console.log('111');
-            
         } else if (level === 'expert') {
-
             // array = this.userService.vrPlayerNamesExpert[1];
-            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value )
+            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value);
             console.log('33333');
-            
         }
         console.log('je suis dans add');
-        
-        
+
         // Add our name
         // if (array !== undefined) {
         //     console.log('je suis dans le if');

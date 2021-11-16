@@ -64,11 +64,9 @@ export class DatabaseController {
                 });
         });
 
-        this.router.post('/addPlayer/:collectionName', async (req: Request, res: Response) => {
-            console.log('collectionName: '+req.params.collectionName);
-            console.log('collectionName: '+req.params.player);
+        this.router.post('/addPlayer/:collectionName/:player', async (req: Request, res: Response) => {
             this.databaseService
-                .addPlayer(req.params.collectionName,req.body)
+                .addPlayer(req.params.collectionName, req.params.player)
                 .then(() => {
                     res.sendStatus(CREATED_HTTP_STATUS).send();
                 })
