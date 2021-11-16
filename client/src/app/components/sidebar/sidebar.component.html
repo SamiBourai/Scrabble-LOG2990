@@ -7,7 +7,7 @@
                     <!-- <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div> -->
                     <div class="debugActive" *ngIf="isDebug">affichage de debogage activé</div>
                     <div class="debug" *ngIf="!isDebug">affichage de debogage desactivé <br /><br /></div>
-                    <div id="turn" *ngIf="invalidCommand && isValid && isCommand && errorMessage !== ''" class="alert alert-danger">
+                    <div id="turn" *ngIf="invalidCommand && userService.isPlayerTurn() && isValid && isCommand && errorMessage !== ''" class="alert alert-danger">
                         commande impossible a realiser {{ ' ' + 'car ' + errorMessage }}
                     </div>
                     <ng-container>
@@ -21,12 +21,13 @@
                     </ng-container>
 
                     <div class="debugActive" *ngIf="isDebug">
-                        <div *ngFor="let cmd of arrayOfVrCommands">
-                            <p>{{ '[' + nameVr + ']' + ' ' + cmd }}</p>
+                        <div *ngIf="userService.playMode==='soloGame'"  >
+                            <p *ngFor="let cmd of arrayOfVrCommands">{{ '[' + nameVr + ']' + ' ' + cmd }}</p>
                         </div>
+                        <div  *ngIf="showReserve">
                         <div *ngFor="let i of arrayOfReserveLetters">
                             <p>{{ i }}</p>
-                        </div>
+                        </div></div>
                     </div>
                 </div>
                 <hr />

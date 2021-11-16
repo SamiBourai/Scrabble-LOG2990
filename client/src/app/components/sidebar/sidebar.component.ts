@@ -23,13 +23,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     arrayOfVrCommands: string[] = [];
     arrayOfReserveLetters: string[] = [];
     typeArea: string = '';
+    showReserve: boolean = false;
     isValid: boolean = true;
     invalidCommand: boolean = false;
     isCommand: boolean = false;
     command: ChatCommand[] = [];
     firstTurn: boolean = true;
     skipTurn: boolean = false;
-    active: boolean = false;
     name: string;
     nameVr: string;
     word: string = 'mot';
@@ -44,7 +44,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private changeDetectorRef: ChangeDetectorRef,
         private readonly valideWordService: ValidWordService,
         private lettersService: LettersService,
-        private userService: UserService,
+        public userService: UserService,
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
@@ -99,6 +99,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
 
     logMessage() {
+        this.errorMessage = '';
         this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
         const validPlayAndYourTurn =
             this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
@@ -107,6 +108,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.switchCaseCommands();
         } else if (validPlay && !this.isTheGameDone() && this.isDebug) {
             if (this.typeArea === '!reserve') {
+                this.showReserve = !this.showReserve;
                 this.invalidCommand = false;
                 this.errorMessage = '';
                 this.reserveLettersQuantity();
@@ -115,14 +117,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.skipTurnCommand();
         }
         this.invalidCommand = false;
-        this.name = this.userService.getUserName();
-        this.nameVr = this.userService.getVrUserName();
-        this.impossibleAndValid();
+        this.typeArea = '';
     }
 
     skipTurnCommand() {
         if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
-            this.skipTurn = true;
             this.invalidCommand = true;
             this.errorMessage = 'ce n est pas votre tour';
         } else if (this.typeArea === '!debug') {
@@ -135,16 +134,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     isSkipButtonClicked() {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
-            this.active = true;
             this.errorMessage = '';
             this.updateMessageArray('!passer');
             return true;
         }
         return false;
     }
-    logDebug() {
-        return this.messageService.debugCommand(this.typeArea);
-    }
+
     getLettersFromChat(): void {
         const points: number = this.valideWordService.readWordsAndGivePointsIfValid(
             this.lettersService.tiles,
@@ -193,13 +189,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         }
     }
 
-    impossibleAndValid() {
-        this.isCommand = this.messageService.isCommand(this.typeArea);
-        if (!this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea)) {
-            this.invalidCommand = true;
-        }
-        this.isValid = this.messageService.isValid(this.typeArea);
-    }
     playFirstTurn(points: number): boolean {
         let lettersplaced = false;
         if (this.userService.getPlayerEasel().contains(this.messageService.command.word)) {
@@ -232,7 +221,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     }
     reserveLettersQuantity() {
         let s: string;
-        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length - 1);
+        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length);
         this.reserveService.letters.forEach((value: number, key: Letter) => {
             s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
@@ -318,7 +307,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     if (!this.invalidCommand) {
                         if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
                         this.userService.exchangeLetters = true;
-                        if (this.userService.playedObs) this.userService.playedObs.next(this.userService.exchangeLetters);
+                        this.userService.playedObs.next(this.userService.exchangeLetters);
                     }
                     break;
                 case '!debug':
@@ -332,6 +321,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
                 case '!reserve':
                     this.invalidCommand = false;
+                    this.showReserve = !this.showReserve;
                     this.errorMessage = '';
                     if (this.isDebug) {
                         this.reserveLettersQuantity();

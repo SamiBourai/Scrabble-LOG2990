@@ -4,11 +4,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
-import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, ONE_SECOND_MS, TIME_CHOICE } from '@app/constants/constants';
+import { DEFAULT_MODE, DEFAULT_TIME, LVL_JV, MAX_LENGTH, MIN_LENGTH, MODES, ONE_SECOND_MS, TIME_CHOICE } from '@app/constants/constants';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
+import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 @Component({
     selector: 'app-modal-user-name',
@@ -41,6 +42,7 @@ export class ModalUserNameComponent implements OnInit {
     requestAccepted: boolean = false;
     modes: string[] = MODES;
     chosenMode: string = MODES[DEFAULT_MODE];
+    lvls: string[] = LVL_JV;
     chooseSoloMode: boolean = false;
     constructor(
         private dialogRef: MatDialog,
@@ -49,6 +51,7 @@ export class ModalUserNameComponent implements OnInit {
         private socketManagementService: SocketManagementService,
         private timeService: TimeService,
         private multiplayerModeService: MultiplayerModeService,
+        private virtualPlayerService: VirtualPlayerService,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
@@ -206,5 +209,14 @@ export class ModalUserNameComponent implements OnInit {
         }
         this.chosenMode = this.modes[DEFAULT_MODE];
         this.userService.isBonusBox = false;
+    }
+    setLevelJv(event: Event): void {
+        if ((event.target as HTMLInputElement)?.value === 'Expert') {
+            this.virtualPlayerService.expert = true;
+            this.userService.setVrName();
+        } else {
+            this.virtualPlayerService.expert = false;
+            this.userService.setVrName();
+        }
     }
 }

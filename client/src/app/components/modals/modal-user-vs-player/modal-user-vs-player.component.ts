@@ -38,11 +38,16 @@ export class ModalUserVsPlayerComponent {
             case 'soloGame':
                 break;
             case 'joinMultiplayerGame':
-                this.socketManagementService.emit('guestLeftGame', { gameName: this.userService.gameName });
-
+                this.socketManagementService.emit('guestLeftGame', {
+                    gameName: this.userService.gameName,
+                    easel: this.userService.getPlayerEasel().easelLetters,
+                });
                 break;
             case 'createMultiplayerGame':
-                this.socketManagementService.emit('userLeftGame', { gameName: this.userService.gameName });
+                this.socketManagementService.emit('userLeftGame', {
+                    gameName: this.userService.gameName,
+                    easel: this.userService.getPlayerEasel().easelLetters,
+                });
                 break;
         }
         this.getOne();

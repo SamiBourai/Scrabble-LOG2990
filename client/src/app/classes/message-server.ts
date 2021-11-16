@@ -22,4 +22,5 @@ export interface MessageServer {
     passTurn?: boolean;
     reserve?: string;
     reserveSize?: number;
+    easel?: Letter[];
 }

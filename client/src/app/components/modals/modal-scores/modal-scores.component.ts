@@ -30,8 +30,8 @@ const ELEMENT_DATA: PeriodicElement[] = [
     styleUrls: ['./modal-scores.component.scss'],
 })
 export class ModalScoresComponent implements OnInit, AfterViewInit {
-    displayedColumns: string[] = ['position','name', 'score'];
-    arrayOfNumber:number[]=[1,2,4,3,4,5,6,7]
+    displayedColumns: string[] = ['name', 'score'];
+
     dataSource=ELEMENT_DATA;
 
     arrayOfScoresClassicMode: Score[];

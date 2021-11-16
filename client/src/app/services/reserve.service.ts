@@ -18,17 +18,17 @@ export class ReserveService {
     }
 
     getRandomLetter(): Letter {
-        const save = this.getRandomKey(this.letters);
-        let qty = this.letters.get(save) as number;
-        this.letters.set(save, --qty);
+        const save: Letter = this.getRandomKey(this.letters);
+        const qty: number = (this.letters.get(save) || 0) - 1;
+        this.letters.set(save, qty);
         this.reserveSize--;
         this.sizeObs.next(this.reserveSize);
         return save;
     }
-    getRandomKey(map: Map<Letter, number>) {
+    getRandomKey(map: Map<Letter, number>): Letter {
         const keys = Array.from(map.keys());
-        let random = keys[Math.floor(Math.random() * keys.length)];
-        while ((this.letters.get(random) as number) === 0) {
+        let random: Letter = keys[Math.floor(Math.random() * keys.length)];
+        while (this.letters.get(random) === 0) {
             random = keys[Math.floor(Math.random() * keys.length)];
         }
         return random;
@@ -39,7 +39,7 @@ export class ReserveService {
     }
 
     reFillReserve(lett: Letter) {
-        const qty = (this.letters.get(lett) as number) + 1;
+        const qty: number = (this.letters.get(lett) || 0) + 1;
         this.letters.set(lett, qty);
         this.reserveSize++;
         this.sizeObs.next(this.reserveSize);
@@ -50,9 +50,7 @@ export class ReserveService {
     }
     redefineReserve(map: string, size: number) {
         this.letters = new Map(JSON.parse(map));
-
         this.reserveSize = size;
-
         this.sizeObs.next(this.reserveSize);
     }
 }

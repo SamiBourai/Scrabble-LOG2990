@@ -9,6 +9,7 @@ import { ReserveService } from './reserve.service';
 import { SocketManagementService } from './socket-management.service';
 import { UserService } from './user.service';
 import { ValidWordService } from './valid-word.service';
+import { VirtualPlayerService } from './virtual-player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -28,6 +29,7 @@ export class MultiplayerModeService {
         private reserveService: ReserveService,
         private messageService: MessageService,
         private validWordService: ValidWordService,
+        private virtualPlayer: VirtualPlayerService,
     ) {
         this.observableWinner = this.winnerObs.asObservable();
     }
@@ -139,8 +141,10 @@ export class MultiplayerModeService {
         this.socketManagementService.emit(method, { gameName: this.userService.gameName, message: this.messageService.textMessage });
     }
     playersLeftGamge() {
-        this.socketManagementService.listen('getWinner').subscribe(() => {
+        this.socketManagementService.listen('getWinner').subscribe((data) => {
             this.gotWinner = true;
+            this.virtualPlayer.easel.easelLetters = data.easel ?? [];
+            this.userService.playMode = 'soloGame';
             this.winnerObs.next(this.gotWinner);
         });
     }
