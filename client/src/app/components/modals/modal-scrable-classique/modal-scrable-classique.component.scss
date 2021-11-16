@@ -1,11 +1,37 @@
-#yesButton {
-    margin-top: 5%;
-    margin-bottom: 5%;
-    display: block;
-    width: 100%;
+img{
+    width: 100px;
+    height: 100px;
+    margin: 20px;
 }
-.modalScrable{
-    border: none !important;
-    box-shadow: none !important;
-    min-width: 25% !important;
+
+p{
+    color: #EFEFEF;
+    padding: 0px 15px;
+}
+
+.button{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #2E4052;
+    border-radius: 20px;
+}
+.button:hover{
+    background-color: #3d5369;
+    cursor: pointer;
+}
+
+.button:nth-child(2){
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+::ng-deep{
+    .mat-dialog-container {
+        background-color: #312E2B;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+    }
 }

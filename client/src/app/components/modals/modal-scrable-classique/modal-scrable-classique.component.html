@@ -1,7 +1,16 @@
-<mat-card  class= "modalScrable">
-    <mat-card-title>quelle partie voulez-vous jouer ?</mat-card-title>
-    <mat-card-subtitle>choisissez parmis les 4 choix suivants </mat-card-subtitle>
-    <button mat-raised-button color="primary"  id = "yesButton" mat-dialog-close (click)="openDialog('soloGame')" >jouer une partie solo</button>
-    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close (click)="openDialog('createMultiplayerGame')">créer une partie multijoueur</button>
-    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close (click)="openDialog('joinMultiplayerGame')">joindre une partie multijoueur</button>
-    <button #button mat-raised-button color="warn" id = "yesButton" mat-dialog-close >Non je ne veux pas jouer</button>
+<div class= "d-flex flex-row justify-content-center align-item-center menu" >
+    <div class="button" (click)="openDialog('soloGame')">
+        <img src="../../../../assets/svg/robot.png" alt="robot-icon">
+        <p>Jouer contre un ordinateur</p>
+    </div>
+
+    <div class="button" (click)="openDialog('createMultiplayerGame')">
+        <img src="../../../../assets/svg/smart-human.png" alt="create-icon">
+        <p>Créer une partie multijoueur</p>
+    </div>
+
+    <div class="button" (click)="openDialog('joinMultiplayerGame')">
+        <img src="../../../../assets/svg/link.png" alt="robot-icon">
+        <p>Joindre une partie multijoueur</p>
+    </div>
+</div>

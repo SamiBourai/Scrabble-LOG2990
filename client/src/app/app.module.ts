@@ -20,7 +20,7 @@ import { AdminPageComponent } from './components/pages/admin-page/admin-page/adm
 import { JoinedUserComponent } from './components/users/joined-user/joined-user.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
-import { ModalEndOfGameComponent } from './modal-end-of-game/modal-end-of-game.component';
+import { ModalEndOfGameComponent } from './components/modals/modal-end-of-game/modal-end-of-game.component';
 // import { CommandService } from './services/command.service';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-word.service';
