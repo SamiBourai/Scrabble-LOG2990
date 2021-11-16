@@ -170,8 +170,10 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private placeWordIfValid() {
         if (this.commandManagerService.playerScore !== 0) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
-            this.endTurnValidCommand('placer', this.commandManagerService.playerScore);
-        } else this.errorMessage = this.commandManagerService.errorMessage;
+        } else {
+            this.errorMessage = this.commandManagerService.errorMessage;
+        }
+        this.endTurn('placer', this.commandManagerService.playerScore);
     }
     private exchangeCommand() {
         if (
@@ -181,14 +183,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.messageService.swapCommand(this.typeArea),
             )
         ) {
-            this.endTurnValidCommand('exchange', UNDEFINED_INDEX);
+            this.endTurn('exchange', UNDEFINED_INDEX);
         } else {
             this.errorMessage = this.commandManagerService.errorMessage;
-            this.updateMessageArray("a placé un mot qui n'est pas valid");
         }
     }
 
-    private endTurnValidCommand(commandType: string, points: number) {
+    private endTurn(commandType: string, points: number) {
         switch (commandType) {
             case 'exchange':
                 if (this.userService.playMode !== 'soloGame') {
@@ -197,11 +198,17 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 }
                 break;
             case 'placer':
-                if (this.userService.playMode !== 'soloGame') {
-                    this.userService.chatCommandToSend = this.messageService.command;
+                if (this.errorMessage === '') {
+                    if (this.userService.playMode !== 'soloGame') {
+                        this.userService.chatCommandToSend = this.messageService.command;
+                        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+                    }
+                    this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
+                } else {
+                    this.typeArea = this.typeArea + ' (la validation du mot a échoué)';
+                    this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
                     this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
                 }
-                this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
                 break;
         }
         if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
