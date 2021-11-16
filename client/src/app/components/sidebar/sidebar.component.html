@@ -3,11 +3,10 @@
         <form [formGroup]="form">
             <div class="form-group">
                 <div class="messageList">
-                    <div *ngIf="isCommand && !isValid" class="alert alert-danger">commande invalide</div>
                     <!-- <div *ngIf = "!inEasel" class = "alert alert-danger">les lettres entrées ne sont pas dans votre chevalet</div> -->
                     <div class="debugActive" *ngIf="isDebug">affichage de debogage activé</div>
                     <div class="debug" *ngIf="!isDebug">affichage de debogage desactivé <br /><br /></div>
-                    <div id="turn" *ngIf="invalidCommand && userService.isPlayerTurn() && isValid && isCommand && errorMessage !== ''" class="alert alert-danger">
+                    <div id="turn" *ngIf="errorMessage !== ''" class="alert alert-danger">
                         commande impossible a realiser {{ ' ' + 'car ' + errorMessage }}
                     </div>
                     <ng-container>
@@ -24,10 +23,11 @@
                         <div *ngIf="userService.playMode==='soloGame'"  >
                             <p *ngFor="let cmd of arrayOfVrCommands">{{ '[' + nameVr + ']' + ' ' + cmd }}</p>
                         </div>
-                        <div  *ngIf="showReserve">
+                        <div *ngIf= "toggleReserve">
                         <div *ngFor="let i of arrayOfReserveLetters">
                             <p>{{ i }}</p>
                         </div></div>
+                    </div>
                     </div>
                 </div>
                 <hr />
@@ -38,21 +38,23 @@
                             <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
                         </div>
 
-                        <input
+                        <input     
                             formControlName="message"
                             maxlength="512"
                             [(ngModel)]="typeArea"
                             #message
-                            (keyup.enter)="logMessage()"
                             type="text"
                             class="form-control"
                             autofocus
+                            
                         />
+
+                        <button mat-raised-button (click)="logMessage()">Ok</button>
+
 
                         <mat-hint id="hint" align="end">{{ message.value.length }} / 512 </mat-hint>
                     </div>
                 </div>
-            </div>
         </form>
     </div>
 </div>

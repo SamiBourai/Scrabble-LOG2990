@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Score } from '@app/classes/score';
 import { DATABASE_COLLECTION_CLASSIC } from '@app/constants/constants';
-// import { DATABASE_COLLECTION_CLASSIC } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
 import { Observable } from 'rxjs';
 export interface PeriodicElement {
@@ -32,37 +31,33 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class ModalScoresComponent implements OnInit, AfterViewInit {
     displayedColumns: string[] = ['name', 'score'];
 
-    dataSource=ELEMENT_DATA;
+    dataSource = ELEMENT_DATA;
 
     arrayOfScoresClassicMode: Score[];
 
-    arrayOfScoresLog2990Mode: any;
+    arrayOfScoresLog2990Mode: unknown;
     constructor(private databaseService: DatabaseService) {}
 
     ngOnInit(): void {
         // this.getScores(DATABASE_COLLECTION_CLASSIC);
         // console.log(this.arrayOfScoresClassicMode);
-
         // this.arrayOfScoresLog2990Mode=this.getScores(DATABASE_COLLECTION_LOG2990);
         // console.log(this.arrayOfScoresLog2990Mode);
-
     }
-    ngAfterViewInit():void{
+    ngAfterViewInit(): void {
         this.getScores(DATABASE_COLLECTION_CLASSIC);
-
     }
 
-    getScores(collectionName:string):void {
+    getScores(collectionName: string): void {
         const scores: Observable<Score[]> = this.databaseService.getAllScores(collectionName);
         scores.subscribe((data) => {
             // console.log(data[0]);
-            this.arrayOfScoresClassicMode= data.map((score)=>{
-                return {name:score.name, score:score.score}
+            this.arrayOfScoresClassicMode = data.map((score) => {
+                return { name: score.name, score: score.score };
                 // this.arrayOfScoresClassicMode.push({name:score.name, score:score.score });
             });
         });
         // this.dataSource = this.arrayOfScoresClassicMode;
-        console.log('salut: ',this.arrayOfScoresClassicMode);
+        console.log('salut: ', this.arrayOfScoresClassicMode);
     }
-
 }

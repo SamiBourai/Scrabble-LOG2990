@@ -90,8 +90,10 @@ export class MultiplayerModeService {
                 data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
                 data.reserveSize ?? UNDEFINED_INDEX,
             );
-            this.lettersService.placeLettersWithDirection(this.guestCommand);
-            this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
+            if (this.guestCommand.word !== 'invalid') {
+                this.lettersService.placeLettersWithDirection(this.guestCommand);
+                this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
+            }
 
             if (playedMethod === 'guestUserPlayed') {
                 this.userService.realUser.turnToPlay = true;

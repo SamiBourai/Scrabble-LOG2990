@@ -19,7 +19,7 @@ export class SocketManagementService {
         this.socket = io(environment.serverUrl) as unknown as Socket;
     }
 
-    listen(eventName: string) {
+    listen(eventName: string): Observable<MessageServer> {
         return new Observable<MessageServer>((subscriber) => {
             this.socket.on(eventName, (data: MessageServer) => {
                 subscriber.next(data);
@@ -29,6 +29,13 @@ export class SocketManagementService {
     getRooms() {
         return new Observable<MessageServer[]>((subscriber) => {
             this.socket.on('createdGames', (data: MessageServer[]) => {
+                subscriber.next(data);
+            });
+        });
+    }
+    validateWord(eventName: string): Observable<MessageServer> {
+        return new Observable<MessageServer>((subscriber) => {
+            this.socket.on(eventName, (data: MessageServer) => {
                 subscriber.next(data);
             });
         });

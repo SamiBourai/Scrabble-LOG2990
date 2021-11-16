@@ -16,7 +16,7 @@ import {
     SWAP_BUTTON_RANGE_X,
     SWAP_BUTTON_RANGE_Y,
     TOPSPACE,
-    UNDEFINED_INDEX,
+    UNDEFINED_INDEX
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
@@ -40,8 +40,9 @@ export class MouseHandelingService {
     dialogRef: unknown;
     isClicked: boolean = false;
     isGood: boolean = false;
-
+    inEasel: boolean = false;
     lettersToSwapByClick: Letter[] = [];
+    sideBarInputEnable: boolean = true;
     commandObs = new BehaviorSubject<string>('');
     constructor(
         private readonly tempCanvasService: TemporaryCanvasService,
@@ -63,7 +64,7 @@ export class MouseHandelingService {
         }
     }
     deletPreviousLetter() {
-        if (this.tempCanvasService.tempWord !== '') {
+        if (this.tempCanvasService.tempWord !== '' && this.sideBarInputEnable) {
             this.tempCanvasService.removeLastLetter();
             this.easelLogic.replaceTempInEasel(this.userService.getPlayerEasel());
         }
@@ -77,8 +78,9 @@ export class MouseHandelingService {
                 this.firstBorderLetter = false;
         }
         if (letter !== NOT_A_LETTER) {
+            this.inEasel = true;
             this.tempCanvasService.placeTempLetter(letter);
-        }
+        } else this.inEasel = false;
     }
     mouseHitDetect(event: MouseEvent) {
         if (

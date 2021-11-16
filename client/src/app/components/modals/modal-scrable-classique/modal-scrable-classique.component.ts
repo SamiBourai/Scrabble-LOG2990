@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalUserNameComponent } from '@app/components/modals/modal-user-name/modal-user-name.component';
+import { GameInitializationComponent } from '@app/components/modals/game-initialization/game-initialization.component';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -13,6 +13,6 @@ export class ModalScrableClassiqueComponent {
 
     openDialog(gameMode: string) {
         this.userService.firstMode = gameMode;
-        this.dialogRef.open(ModalUserNameComponent);
+        this.dialogRef.open(GameInitializationComponent);
     }
 }
