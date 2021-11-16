@@ -237,6 +237,8 @@ export const LETTERS_OBJECT = new Map<string, Letter>([
     ['z', Z],
 ]);
 
+export const FIRST_POSITION_BOARD = { x: 8, y: 8 } as Vec2;
+
 // database Service constant
 
 export const DATABASE_COLLECTION_CLASSIC = 'Score';

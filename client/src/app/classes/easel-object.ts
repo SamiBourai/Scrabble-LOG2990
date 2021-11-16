@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { EASEL_LENGTH, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
 import { Letter } from './letter';
 

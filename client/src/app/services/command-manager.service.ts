@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/easel-object';
+import { EASEL_LENGTH, FIRST_POSITION_BOARD } from '@app/constants/constants';
 import { LettersService } from './letters.service';
 import { SocketManagementService } from './socket-management.service';
-import { UserService } from './user.service';
 import { ValidWordService } from './valid-word.service';
 @Injectable({
     providedIn: 'root',
@@ -16,10 +16,9 @@ export class CommandManagerService {
         private socketManagementService: SocketManagementService,
         private validWordService: ValidWordService,
         private lettersService: LettersService, // private mouseHandle: MouseHandelingService,
-        private userService: UserService,
     ) {}
     verifyExchageCommand(reserveSize: number, playerEasel: EaselObject, lettersToExchange: string): boolean {
-        if (reserveSize < 7) {
+        if (reserveSize < EASEL_LENGTH) {
             this.errorMessage = 'la reserve contient moins de 7 lettres';
             return false;
         } else {
@@ -42,10 +41,8 @@ export class CommandManagerService {
     verifyCommand(command: ChatCommand, playerEasel: EaselObject): boolean {
         this.errorMessage = '';
         if (this.isWordInBoardLimits(command)) {
-            if (this.firstPlay()) {
+            if (this.lettersService.tileIsEmpty(FIRST_POSITION_BOARD)) {
                 if (this.validFirstPosition(command) && this.isInEasel(command, playerEasel)) {
-                    this.userService.realUser.firstToPlay = false;
-                    this.userService.firstTurn = false;
                     return true;
                 }
             } else if (this.isWordAttachedToTheBoard(command) && this.isPlacableWord(command, playerEasel)) return true;
@@ -67,11 +64,6 @@ export class CommandManagerService {
         }
         this.playerScore = points;
     }
-    private firstPlay(): boolean {
-        if (this.userService.playMode === 'soloGame') return this.userService.realUser.firstToPlay;
-        else return this.userService.firstTurn;
-    }
-
     private isWordInBoardLimits(command: ChatCommand): boolean {
         if (this.lettersService.wordInBoardLimits(command)) {
             return true;
@@ -80,7 +72,7 @@ export class CommandManagerService {
         return false;
     }
     private validFirstPosition(command: ChatCommand): boolean {
-        if (command.position.x === 8 && command.position.y === 8) {
+        if (command.position.x === FIRST_POSITION_BOARD.x && command.position.y === FIRST_POSITION_BOARD.y) {
             return true;
         }
         this.errorMessage = 'votre mot doit être placer à la position central(h8)!';

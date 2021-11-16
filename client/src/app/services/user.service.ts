@@ -12,7 +12,7 @@ import {
     SIXTH_NAME,
     SIX_TURN,
     THIRD_NAME,
-    UNDEFINED_INDEX,
+    UNDEFINED_INDEX
 } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
@@ -60,7 +60,6 @@ export class UserService {
     endOfGame: boolean;
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     endOfGameObs: Observable<boolean>;
-    firstTurn: boolean = true;
     firstMode: string = '';
 
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {

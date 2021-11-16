@@ -5,6 +5,7 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { UNDEFINED_INDEX, WAIT_TIME_3_SEC } from '@app/constants/constants';
 import { CommandManagerService } from '@app/services/command-manager.service';
+import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
@@ -48,6 +49,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private tempCanvasService: TemporaryCanvasService,
         private validWordService: ValidWordService,
         private socketManagementService: SocketManagementService,
+        private easelLogicService: EaselLogiscticsService,
     ) {}
 
     ngOnInit(): void {
@@ -152,7 +154,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.placeInTempCanvas(this.messageService.command);
                 setTimeout(() => {
                     this.commandManagerService.verifyWordsInDictionnary(this.messageService.command, this.userService.playMode);
-                    this.tempCanvasService.clearLayers();
+                    this.mouseHandelingService.clearAll();
                     this.placeWordIfValid();
                 }, WAIT_TIME_3_SEC);
         }
@@ -160,12 +162,20 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private placeInTempCanvas(command: ChatCommand) {
         const pos: Vec2 = { x: command.position.x, y: command.position.y };
         if (command.direction === 'h') {
-            for (const letter of this.lettersService.fromWordToLetters(command.word)) {
-                this.tempCanvasService.drawLetter(letter, { x: pos.x++, y: pos.y });
+            for (const letter of command.word) {
+                this.tempCanvasService.drawRedFocus(pos, this.tempCanvasService.focusContext);
+                this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
+                    x: pos.x++,
+                    y: pos.y,
+                });
             }
         } else
-            for (const letter of this.lettersService.fromWordToLetters(command.word)) {
-                this.tempCanvasService.drawLetter(letter, { x: pos.x, y: pos.y++ });
+            for (const letter of command.word) {
+                this.tempCanvasService.drawRedFocus(pos, this.tempCanvasService.focusContext);
+                this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
+                    x: pos.x,
+                    y: pos.y++,
+                });
             }
     }
     private placeWordIfValid() {
@@ -260,7 +270,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
     private reserveLettersQuantity() {
         let s: string;
-        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length - 1);
+        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length);
         this.reserveService.letters.forEach((value: number, key: Letter) => {
             s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
