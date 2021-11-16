@@ -13,6 +13,7 @@ export class DatabaseService {
     private readonly GET_URL_ALL_DATA: string = 'http://localhost:3000/api/database/Scores';
     private readonly GET_URL_DEFAULT_DATA: string = 'http://localhost:3000/api/database/Scores/resetAllScores';
     private readonly GET_URL_ALL_PLAYERS: string = 'http://localhost:3000/api/database/vrNames';
+    private readonly SEND_URL_ADD_PLAYER: string = 'http://localhost:3000/api/database/addPlayer';
 
     constructor(private http: HttpClient) {}
 
@@ -39,4 +40,9 @@ export class DatabaseService {
         const fullUrl = this.GET_URL_ALL_PLAYERS + '/' + collectionName;
         return this.http.get<VirtualPlayer[]>(fullUrl);
     }
+    sendPlayer(collectionName:string, player: string): Observable<void> {
+        const fullUrl = this.SEND_URL_ADD_PLAYER + '/' + collectionName;
+        return this.http.post<void>(fullUrl, player);
+    }
+
 }

@@ -38,6 +38,8 @@ export class AdminPageComponent implements OnInit {
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
+
+
     }
 
     getPlayersNamesBeg() {
@@ -89,22 +91,51 @@ export class AdminPageComponent implements OnInit {
     // getNames(): Observable<string[][]> {
     //     // return this.http.get();
     // }
+    private addPlayerToDatabase(collectionName:string, player:string):void{
+        console.log('add function');
+        
+        this.database.sendPlayer(collectionName, player);
+        console.log('apres add fucntion');
+
+        
+    }
 
     add(event: MatChipInputEvent, level: string): void {
         const value = (event.value || '').trim();
-        let array;
+        // let array;
         if (level === 'beginner') {
-            array = this.userService.vrPlayerNamesBeginner[1];
+            // array = this.userService.vrPlayerNamesBeginner[1];
+            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value )
+            console.log('111');
+            
         } else if (level === 'expert') {
-            array = this.userService.vrPlayerNamesExpert[1];
-        }
 
-        // Add our name
-        if (array !== undefined) {
-            if (value) {
-                array.push(value);
-            }
+            // array = this.userService.vrPlayerNamesExpert[1];
+            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value )
+            console.log('33333');
+            
         }
+        console.log('je suis dans add');
+        
+        
+        // Add our name
+        // if (array !== undefined) {
+        //     console.log('je suis dans le if');
+
+        //     if (value) {
+
+        //         array.push(value);
+        //         if(level==='beginner') {
+        //             console.log('je suis beg');
+
+        //             this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value )
+        //         }else if(level==='expert') {
+        //             console.log('je suis expert');
+
+        //             this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value )
+        //         }
+        //     }
+        // }
         // Clear the input value
         event.chipInput?.clear();
     }

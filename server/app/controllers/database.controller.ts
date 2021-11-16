@@ -53,11 +53,24 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
-        this.router.get('/vrNames/:collectionName', async (req: Request, res: Response) => {
+        this.router.get('/vrNames/:collectionName', async (req: Request, res: Response, nex) => {
             this.databaseService
                 .getAllPlayers(req.params.collectionName)
                 .then((virtualPlayers: VirtualPlayer[]) => {
                     res.json(virtualPlayers);
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
+
+        this.router.post('/addPlayer/:collectionName', async (req: Request, res: Response) => {
+            console.log('collectionName: '+req.params.collectionName);
+            console.log('collectionName: '+req.params.player);
+            this.databaseService
+                .addPlayer(req.params.collectionName,req.body)
+                .then(() => {
+                    res.sendStatus(CREATED_HTTP_STATUS).send();
                 })
                 .catch((error: Error) => {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
