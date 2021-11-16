@@ -1,8 +1,22 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { COMMA, ENTER, FIFTH_NAME, FIRST_NAME, FOURTH_NAME, SECOND_NAME, SIXTH_NAME, THIRD_NAME } from '@app/constants/constants';
+import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import {
+    COMMA,
+    DATABASE_COLLECTION_VRNAMESBEG,
+    DATABASE_COLLECTION_VRNAMESEXP,
+    ENTER,
+    FIFTH_NAME,
+    FIRST_NAME,
+    FOURTH_NAME,
+    SECOND_NAME,
+    SIXTH_NAME,
+    THIRD_NAME,
+} from '@app/constants/constants';
+import { DatabaseService } from '@app/services/database.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
+import { Observable } from 'rxjs';
 // import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -10,17 +24,39 @@ import { ValidWordService } from '@app/services/valid-word.service';
     templateUrl: './admin-page.component.html',
     styleUrls: ['./admin-page.component.scss'],
 })
-export class AdminPageComponent {
+export class AdminPageComponent implements OnInit {
     @ViewChild('fileInput', { static: false }) private fileInput: ElementRef<HTMLInputElement>;
     selectable = true;
     removableBeg = true;
     removableExp = true;
     addOnBlur = true;
-    readonly separatorKeysCodes = [ENTER, COMMA] as const;
-    // eslint-disable-next-line @typescript-eslint/member-ordering
-    // eslint-disable-next-line @typescript-eslint/member-ordering
 
-    constructor(public userService: UserService) {}
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+
+    constructor(public userService: UserService, private database: DatabaseService) {}
+
+    ngOnInit(): void {
+        this.getPlayersNamesBeg();
+        this.getPlayersNamesExp();
+    }
+
+    getPlayersNamesBeg() {
+        const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG);
+        // this.userService.vrPlayerNamesBeginner
+        vrPlayerObs.subscribe((data) => {
+            this.userService.vrPlayerNamesBeginner[1] = data.map((e) => {
+                return e.name;
+            });
+        });
+    }
+
+    getPlayersNamesExp() {
+        const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESEXP);
+        vrPlayerObs.subscribe((data) => {
+            // code
+        });
+    }
+
     addNameVrToList(level: string) {
         if (level === 'beginner') {
             // code
