@@ -243,3 +243,5 @@ export const FIRST_POSITION_BOARD = { x: 8, y: 8 } as Vec2;
 
 export const DATABASE_COLLECTION_CLASSIC = 'Score';
 export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
+export const DATABASE_COLLECTION_VRNAMESBEG = 'virtualPlayerBeg';
+export const DATABASE_COLLECTION_VRNAMESEXP = 'virtualPlayerExpert';
