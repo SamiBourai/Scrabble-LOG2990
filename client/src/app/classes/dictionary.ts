@@ -4,6 +4,11 @@ export interface Dictionary {
     words: Set<string>[];
 }
 
+export interface DictionaryPresentation {
+    title: string;
+    description: string;
+}
+
 export interface LoadableDictionary {
     title: string;
     description: string;

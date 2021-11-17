@@ -1,6 +1,8 @@
+import { LoadableDictionary, DictionaryPresentation } from './../../../../classes/dictionary';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
     COMMA,
     DATABASE_COLLECTION_VRNAMESBEG,
@@ -18,7 +20,10 @@ import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
 // import { UserService } from '@app/services/user.service';
-
+const ELEMENT_DATA: DictionaryPresentation[] = [
+    { title: 'abc', description: 'tg' },
+    { title: 'def', description: 't laid' },
+];
 @Component({
     selector: 'app-admin-page',
     templateUrl: './admin-page.component.html',
@@ -31,12 +36,15 @@ export class AdminPageComponent implements OnInit {
     removableExp = true;
     change = true;
     addOnBlur = true;
+    displayedColumns: string[] = ['titre', 'description', 'modifier', 'telecharger', 'supprimer'];
+
+    dataSource = ELEMENT_DATA;
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
-    arrayOfDictionnaries:string[] = [];
-    errorMessage:boolean = false;
+    arrayOfDictionnaries: LoadableDictionary[] = [];
+    errorMessage: boolean = false;
 
-    constructor(public userService: UserService, private database: DatabaseService) {}
+    constructor(public userService: UserService, private database: DatabaseService, private snackBar: MatSnackBar) {}
 
     ngOnInit(): void {
         this.getPlayersNamesBeg();
@@ -83,18 +91,18 @@ export class AdminPageComponent implements OnInit {
         const reader = new FileReader();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         reader.onload = (e) => {
-            let possibleResult = e.target?.result;
+            const possibleResult = e.target?.result;
             if (typeof possibleResult === 'string') {
-                //console.log(ValidWordService.loadableDictToDict(JSON.parse(possibleResult)));
-                ValidWordService.loadableDictToDict(JSON.parse(possibleResult))
-                this.arrayOfDictionnaries.push(possibleResult as string);
+                const dictionnary = ValidWordService.loadableDictToDict(JSON.parse(possibleResult));
+                this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
+                this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
                 console.log(this.arrayOfDictionnaries);
+                console.log(this.dataSource);
             }
         };
 
         reader.readAsText(files[0], 'UTF-8');
     }
-
 
     add(event: MatChipInputEvent, level: string): void {
         const value = (event.value || '').trim();
@@ -126,8 +134,8 @@ export class AdminPageComponent implements OnInit {
     }
 
     resetVPNames() {
-         this.userService.vrPlayerNamesBeginner = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []];
-         this.userService.vrPlayerNamesExpert = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
+        this.userService.vrPlayerNamesBeginner = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []];
+        this.userService.vrPlayerNamesExpert = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
         this.removeAllPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG);
         this.removeAllPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP);
     }
@@ -167,11 +175,11 @@ export class AdminPageComponent implements OnInit {
             this.userService.vrPlayerNamesBeginner[0].includes(name) || this.userService.vrPlayerNamesBeginner[1].includes(name);
         const isNameInExpertArray = this.userService.vrPlayerNamesExpert[0].includes(name) || this.userService.vrPlayerNamesExpert[1].includes(name);
         if (this.userService.vrPlayerNamesBeginner[1].length > 0) {
-            if (isNameInBeginnerArray || isNameInExpertArray){
-                this.errorMessage = true;
+            if (isNameInBeginnerArray || isNameInExpertArray) {
+                this.snackBar.open('Ce nom est deja dans la liste', 'Close');
                 return false;
             }
-            this.errorMessage = false;
+
             return true;
         }
         return true;
