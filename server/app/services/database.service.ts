@@ -108,13 +108,17 @@ export class DatabaseService {
     async addPlayer(collectionName: string, playerName: string): Promise<void> {
         const player: VirtualPlayer = { name: playerName };
         console.log('bouda');
-        
+
         await this.db.collection(collectionName).insertOne(player);
     }
 
     async removePlayer(collectionName: string, playerName: string): Promise<void> {
         const player: VirtualPlayer = { name: playerName };
         await this.db.collection(collectionName).deleteOne(player);
+    }
+
+    async removeAllPlayer(collectionName: string): Promise<void> {
+        await this.db.collection(collectionName).deleteMany({});
     }
 
     async fetchPlayer(collectionName: string): Promise<void> {

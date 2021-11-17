@@ -29,6 +29,7 @@ export class AdminPageComponent implements OnInit {
     selectable = true;
     removableBeg = true;
     removableExp = true;
+    change = true;
     addOnBlur = true;
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
@@ -53,7 +54,9 @@ export class AdminPageComponent implements OnInit {
     getPlayersNamesExp() {
         const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESEXP);
         vrPlayerObs.subscribe((data) => {
-            // code
+            this.userService.vrPlayerNamesExpert[1] = data.map((e) => {
+                return e.name;
+            });
         });
     }
 
@@ -86,83 +89,73 @@ export class AdminPageComponent implements OnInit {
         reader.readAsText(files[0], 'UTF-8');
     }
 
-    // getNames(): Observable<string[][]> {
-    //     // return this.http.get();
-    // }
-    private addPlayerToDatabase(collectionName: string, player: string): void {
-        const addPlayerObs: Observable<number> = this.database.sendPlayer(collectionName, player);
-        console.log('add function');
-        addPlayerObs.subscribe(() => {
-            this.getPlayersNamesBeg();
-        })
-        
-
-        //this.database.sendPlayer(collectionName, player);
-        console.log('apres add fucntion');
-    }
 
     add(event: MatChipInputEvent, level: string): void {
         const value = (event.value || '').trim();
         // let array;
         if (level === 'beginner') {
-            // array = this.userService.vrPlayerNamesBeginner[1];
-            
             this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value);
             this.getPlayersNamesBeg();
-            console.log('111');
         } else if (level === 'expert') {
-            // array = this.userService.vrPlayerNamesExpert[1];
             this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value);
-            console.log('33333');
+            this.getPlayersNamesExp();
         }
         console.log('je suis dans add');
-
-        // Add our name
-        // if (array !== undefined) {
-        //     console.log('je suis dans le if');
-
-        //     if (value) {
-
-        //         array.push(value);
-        //         if(level==='beginner') {
-        //             console.log('je suis beg');
-
-        //             this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value )
-        //         }else if(level==='expert') {
-        //             console.log('je suis expert');
-
-        //             this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value )
-        //         }
-        //     }
-        // }
         // Clear the input value
         event.chipInput?.clear();
     }
 
     remove(name: string, level: string): void {
-        let array;
         if (level === 'beginner') {
-            array = this.userService.vrPlayerNamesBeginner[1];
+            this.removePlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, name);
+            this.getPlayersNamesBeg();
         } else if (level === 'expert') {
-            array = this.userService.vrPlayerNamesExpert[1];
-        }
-
-        // remove our name
-        if (array !== undefined) {
-            const index = array.indexOf(name);
-
-            if (index >= 0) {
-                array.splice(index, 1);
-            }
+            this.removePlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, name);
+            this.getPlayersNamesExp();
         }
     }
+
+   
 
     resetDictionaries() {
         console.log('Dictionnaires reset!');
     }
 
     resetVPNames() {
-        this.userService.vrPlayerNamesBeginner = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []];
-        this.userService.vrPlayerNamesExpert = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
+         this.userService.vrPlayerNamesBeginner = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []];
+         this.userService.vrPlayerNamesExpert = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
+        this.removeAllPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG);
+        this.removeAllPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP);
     }
+
+    private addPlayerToDatabase(collectionName: string, player: string): void {
+        const addPlayerObs: Observable<number> = this.database.sendPlayer(collectionName, player);
+        console.log('add function');
+        addPlayerObs.subscribe(() => {
+            this.getPlayersNamesBeg();
+            this.getPlayersNamesExp();
+        });
+        console.log('apres add fucntion');
+    }
+
+    private removePlayerToDatabase(collectionName: string, player: string): void {
+        const removePlayerObs = this.database.removePlayer(collectionName, player);
+        console.log('remove function');
+        removePlayerObs.subscribe(() => {
+            this.getPlayersNamesBeg();
+            this.getPlayersNamesExp();
+        });
+        console.log('apres remove fucntion');
+    }
+
+    private removeAllPlayerToDatabase(collectionName: string): void {
+        const removeAllPlayerObs = this.database.removeAllPlayer(collectionName);
+        console.log('remove function');
+        removeAllPlayerObs.subscribe(() => {
+            this.getPlayersNamesBeg();
+            this.getPlayersNamesExp();
+        });
+        console.log('apres remove fucntion');
+    }
+    
 }

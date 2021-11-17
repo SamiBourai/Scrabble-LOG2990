@@ -16,13 +16,13 @@
                         <!-- Name of beginner VP -->
                         <mat-form-field class="VPBeg-names-chiplist" appearance="fill">
                             <mat-label>Beginner virtual player names list</mat-label>
-                            <mat-chip-list #chipListBeg aria-label="Names selection">
+                            <mat-chip-list  #chipListBeg aria-label="Names selection">
                                 <!-- The default names -->
                                 <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[0]" [selectable]="selectable"
-                                       [removable]="false">{{name}}</mat-chip>
+                                       [removable]="false" [onTagEdited] = "true">{{name}}</mat-chip>
                                 <!-- New names -->
                                 <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[1]" [selectable]="selectable"
-                                       [removable]="removableBeg" (removed)="remove(name, 'beginner')">
+                                       [removable]="removableBeg" [change] = "true" (removed)="remove(name, 'beginner')">
                                 {{name}}
                                 <button matChipRemove *ngIf="removableBeg">
                                   <mat-icon>cancel</mat-icon>

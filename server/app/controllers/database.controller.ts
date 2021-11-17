@@ -74,5 +74,27 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
+
+        this.router.delete('/removePlayer/:collectionName/:player', async (req: Request, res: Response) => {
+            this.databaseService
+                .removePlayer(req.params.collectionName, req.params.player)
+                .then(() => {
+                    res.sendStatus(CREATED_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
+
+        this.router.delete('/removeAllPlayer/:collectionName', async (req: Request, res: Response) => {
+            this.databaseService
+                .removeAllPlayer(req.params.collectionName)
+                .then(() => {
+                    res.sendStatus(CREATED_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
     }
 }
