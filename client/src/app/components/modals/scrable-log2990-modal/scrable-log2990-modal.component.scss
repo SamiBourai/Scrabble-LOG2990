@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Titan+One&display=swap");
+.wrapper {
+  width: 15vw;
+  text-align: center;
+  background: #424242;
+  span {
+    -webkit-text-stroke-width: 1.25px;
+    -webkit-text-stroke-color: #000;
+    font-size: 25px;
+    text-shadow: 0 0px #f3c623, 0 0px #f2aaaa;
+    transform: translate(0, 100%) rotate(4deg);
+    animation: jump 2s ease-in-out infinite;
+    display: inline-block;
+    font-family: "Titan One", cursive;
+    color: #fff;
+
+    @for $i from 1 through 7 {
+      &:nth-child(#{$i}) {
+        animation-delay: 120ms * $i;
+      }
+    }
+  }
+}
+@keyframes jump {
+  33% {
+    text-shadow: 0 25px #f37121, 0 25px #f2aaaa;
+  }
+  50% {
+    transform: translate(0, 0) rotate(-4deg);
+    text-shadow: 0 0px #8fc0a9, 0 0px #84a9ac;
+  }
+  67% {
+    text-shadow: 0 -25px #d54062, 0 -25px #8fc0a9;
+  }
+}
+
+
+html {
+  width: 25%;
+  height: 400vh;
+}
+body {
+  margin: 0;
+  padding: 0;
+  width: 25%;
+  height: 100vh;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-color: #424242;
+}
+@media screen and (max-height: 40px) {
+  .wrapper {
+    transform: scale(0.3,0.3);
+  }
+}
+@media screen and (max-width: 40px) {
+  .wrapper {
+    span {
+      font-size: 20px;
+    }
+  }
+}
+.objectifs {
+    height: 30vh;
+    /*This part is important for centering*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+.objectif{
+    width: 60ch;
+    animation: typing 2s steps(100), blink .5s step-end infinite alternate;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 2px solid;
+    font-family: monospace;
+    font-size: large;
+    color: blanchedalmond;
+    padding-top: 10px;
+  }
+  .button{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #2E4052;
+    border-radius: 20px;
+}
+img{
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+}
+.button:hover{
+  background-color: #3d5369;
+  cursor: pointer;
+}
+
+.button:nth-child(2){
+  margin-left: 10px;
+  margin-right: 10px;
+}
+p{
+  color: #EFEFEF;
+  padding: 0px 5px;
+  font-size: x-small;
+} 
+  @keyframes typing {
+    from {
+      width: 0
+    }
+  }
+      
+  @keyframes blink {
+    100% {
+      border-color: transparent
+    }
+  }
+::ng-deep{
+    .mat-dialog-container {
+        background-color: #424242;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+    }
+}

@@ -44,6 +44,7 @@ export class GameInitializationComponent implements OnInit {
     chosenMode: string = MODES[DEFAULT_MODE];
     lvls: string[] = LVL_JV;
     chooseSoloMode: boolean = false;
+    modeLog2990: boolean = true;
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,

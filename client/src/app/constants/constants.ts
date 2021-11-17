@@ -243,3 +243,9 @@ export const FIRST_POSITION_BOARD = { x: 8, y: 8 } as Vec2;
 
 export const DATABASE_COLLECTION_CLASSIC = 'Score';
 export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
+
+export const NUMBER_OF_SENTENCE = 12;
+export const TWO_SECOND_INTERVAL = 2300;
+
+export const NUMBER_OF_OBJECTIFS = 8;
+export const NUMBER_OF_PUBLIC_OBJECTIFS = 2;

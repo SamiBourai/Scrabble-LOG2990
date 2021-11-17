@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Message } from '@app/classes/message';
 import { ModalScoresComponent } from '@app/components/modals/modal-scores/modal-scores.component';
 import { ModalScrableClassiqueComponent } from '@app/components/modals/modal-scrable-classique/modal-scrable-classique.component';
+import { ScrableLog2990ModalComponent } from '@app/components/modals/scrable-log2990-modal/scrable-log2990-modal.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -43,5 +44,8 @@ export class MainPageComponent {
 
     openScoreModal(): void {
         this.dialogRef.open(ModalScoresComponent);
+    }
+    openScrableLog2990Modal(): void {
+        this.dialogRef.open(ScrableLog2990ModalComponent);
     }
 }

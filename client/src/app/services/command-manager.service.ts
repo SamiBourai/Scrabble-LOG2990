@@ -12,6 +12,7 @@ export class CommandManagerService {
     errorMessage: string = '';
     wordIsValid: boolean = false;
     playerScore: number = 0;
+    numberOfLettersToExchange: number = 0;
     constructor(
         private socketManagementService: SocketManagementService,
         private validWordService: ValidWordService,
@@ -22,8 +23,10 @@ export class CommandManagerService {
             this.errorMessage = 'la reserve contient moins de 7 lettres';
             return false;
         } else {
-            if (this.lettersService.changeLetterFromReserve(lettersToExchange, playerEasel)) return true;
-            else {
+            if (this.lettersService.changeLetterFromReserve(lettersToExchange, playerEasel)) {
+                this.numberOfLettersToExchange = lettersToExchange.length;
+                return true;
+            } else {
                 this.errorMessage = 'les lettres à echanger ne sont pas dans le chevalet';
                 return false;
             }

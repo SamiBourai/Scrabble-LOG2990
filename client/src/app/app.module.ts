@@ -26,6 +26,10 @@ import { VrUserComponent } from './components/users/vr-user/vr-user.component';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-word.service';
 import { WordPointsService } from './services/word-points.service';
+import { ScrableLog2990ModalComponent } from './components/modals/scrable-log2990-modal/scrable-log2990-modal.component';
+import { CreateMultiplayerGameComponent } from './components/game-mode/create-multiplayer-game/create-multiplayer-game.component';
+import { JoinMultiplayerGameComponent } from './components/game-mode/join-multiplayer-game/join-multiplayer-game.component';
+import { SoloGameComponent } from './components/game-mode/solo-game/solo-game.component';
 
 /**
  * Main module that is used in main.ts.
@@ -51,6 +55,10 @@ import { WordPointsService } from './services/word-points.service';
         JoinedUserComponent,
         ModalEndOfGameComponent,
         ModalScoresComponent,
+        ScrableLog2990ModalComponent,
+        CreateMultiplayerGameComponent,
+        JoinMultiplayerGameComponent,
+        SoloGameComponent,
     ],
     imports: [
         AppMaterialModule,

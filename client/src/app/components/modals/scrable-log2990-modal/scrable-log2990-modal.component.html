@@ -1,0 +1,56 @@
+<div>
+<div class="wrapper">
+    <span>mode</span>
+    <span>de</span>
+    <span>jeu</span>
+    <span>LOG2990</span>
+</div>
+
+<div *ngIf = "!this.objectifManagerService.initializedGame; else elseBlock" class="Objectifs">
+    <!-- <br><br>
+      <div *ngIf = "sentence[0]" class="objectif"> Le mode de jeu scrable LOG2990 va vous permettre</div>
+      <div *ngIf = "sentence[1]" class="objectif"> de jouer une partie avec des objectifs à acomplir. </div>
+      <div *ngIf = "sentence[2]" class="objectif"> Une fois acommplis, des points suplémentaires </div>
+      <div *ngIf = "sentence[3]" class="objectif"> seront ajouter à votre score. Il y a 2 types d'objectifs,</div>
+      <div *ngIf = "sentence[4]" class="objectif"> les publics et les privés générés aléatoirement :</div><br><br>
+      <div *ngIf = "sentence[5]" class="objectif"> 1. Il y a deux objectifs publics et ils sont partagés</div>
+      <div *ngIf = "sentence[6]" class="objectif"> et votre adversaire. Celui qui les atteint en premier aura</div>
+      <div *ngIf = "sentence[7]" class="objectif"> les points bonus dans son score et ils ne seront plus </div>
+      <div *ngIf = "sentence[8]" class="objectif"> atteignables par la suite.</div><br><br>
+      <div *ngIf = "sentence[9]" class="objectif">  2. Il y a un objectif privé qui est différent de celui de</div>
+      <div *ngIf = "sentence[10]" class="objectif"> votre adversaire. Vous le verez seulement si votre</div>
+      <div *ngIf = "sentence[11]" class="objectif"> adversaire l'a atteint.</div>
+        <br>  -->
+      <div *ngIf = "sentence[0]" class= "d-flex flex-row justify-content-center align-item-center menu" >
+        <div class="button" (click)="openDialog('soloGame')" mat-dialog-close>
+            <img src="./assets/svg/robot.png" alt="robot-icon">
+            <p>Jouer contre un ordinateur</p>
+        </div>
+    
+        <div class="button" (click)="openDialog('createMultiplayerGame')" mat-dialog-close>
+            <img src="./assets/svg/smart-human.png" alt="create-icon">
+            <p>Créer une partie multijoueur</p>
+        </div>
+    
+        <div class="button" (click)="openDialog('joinMultiplayerGame') " mat-dialog-close>
+            <img src="./assets/svg/link.png" alt="robot-icon">
+            <p>Joindre une partie multijoueur</p>
+        </div>
+    </div>
+</div>
+
+<ng-template #elseBlock>
+Voici vos objectfs public : {{this.objectifManagerService.publicObjectifs}}
+voici votre objectifs privé : {{this.objectifManagerService.privateObjectif}}
+</ng-template>
+      <!-- <div class="objectif"> permettre de jouer une partie avec des objectifs à acomplir.</div>
+      <div class="objectif"> permettre de jouer une partie avec des objectifs à acomplir.</div> -->
+<!-- </div>
+<div *ngIf = "sentence[5]" class="publicObjectifs">
+        
+</div>
+<div *ngIf = "sentence[9]" class="privateObjectifs">
+        <div *ngIf = "sentence[9]" class="objectif">  2. Il y a un objectif privé qui est différent de</div>
+        <div *ngIf = "sentence[10]" class="objectif">  celui de votre adversaire. Vous le verez </div>
+        <div *ngIf = "sentence[11]" class="objectif"> seulement si votre adversaire l'a atteint.</div>
+</div>  -->

@@ -196,6 +196,7 @@
             <ng-template matStepLabel>Salle d'attente</ng-template>
             <div *ngIf="guestName; else elseBlock">
                 <p class="multiplayerP">vous allez jouer contre l'utilisateur {{ guestName}}</p>
+                <app-scrable-log2990-modal *ngIf="modeLog2990" ></app-scrable-log2990-modal>
                 <button mat-button (click)="beginGame(true)" routerLink="/game" mat-dialog-close>Démarer la
                     partie</button>
                 <button mat-button (click)="beginGame(false)" mat-dialog-close>Annuler</button>
