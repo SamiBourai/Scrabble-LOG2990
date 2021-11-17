@@ -19,7 +19,7 @@
                             <mat-chip-list  #chipListBeg aria-label="Names selection">
                                 <!-- The default names -->
                                 <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[0]" [selectable]="selectable"
-                                       [removable]="false" [onTagEdited] = "true">{{name}}</mat-chip>
+                                       [removable]="false">{{name}}</mat-chip>
                                 <!-- New names -->
                                 <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[1]" [selectable]="selectable"
                                        [removable]="removableBeg" [change] = "true" (removed)="remove(name, 'beginner')">
@@ -33,11 +33,14 @@
                                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                                      [matChipInputAddOnBlur]="addOnBlur"
                                      (matChipInputTokenEnd)="add($event, 'beginner')">
+                                     
                             </mat-chip-list>
                           </mat-form-field>
                           <mat-divider></mat-divider>
 
-
+                          <div id="turn" *ngIf=errorMessage class="alert alert-danger">
+                            ce nom est deja dans la liste
+                        </div>
                           <!-- Name of expert VP -->
                           <mat-form-field class="VPExp-names-chiplist" appearance="fill">
                             <mat-label>Expert virtual player names list</mat-label>

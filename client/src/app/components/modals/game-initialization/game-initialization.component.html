@@ -285,6 +285,7 @@
             <div>
                 <br />
                 <button mat-button matStepperPrevious mat-raised-button color="accent">Retour</button>
+                <button *ngIf = "rooms?.length !== 0" id = "randomButton"  mat-button  mat-raised-button  color="accent" [disabled] = ' rooms?.length === 1 || disableBtn'  (click) = randomGame()>placement aleatoire</button>
             </div>
         </mat-step>
     </mat-stepper>

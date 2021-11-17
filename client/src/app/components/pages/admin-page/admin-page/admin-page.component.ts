@@ -33,6 +33,8 @@ export class AdminPageComponent implements OnInit {
     addOnBlur = true;
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
+    arrayOfDictionnaries:string[] = [];
+    errorMessage:boolean = false;
 
     constructor(public userService: UserService, private database: DatabaseService) {}
 
@@ -81,11 +83,15 @@ export class AdminPageComponent implements OnInit {
         const reader = new FileReader();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         reader.onload = (e) => {
-            const possibleResult = e.target?.result;
+            let possibleResult = e.target?.result;
             if (typeof possibleResult === 'string') {
-                console.log(ValidWordService.loadableDictToDict(JSON.parse(possibleResult)));
+                //console.log(ValidWordService.loadableDictToDict(JSON.parse(possibleResult)));
+                ValidWordService.loadableDictToDict(JSON.parse(possibleResult))
+                this.arrayOfDictionnaries.push(possibleResult as string);
+                console.log(this.arrayOfDictionnaries);
             }
         };
+
         reader.readAsText(files[0], 'UTF-8');
     }
 
@@ -94,10 +100,10 @@ export class AdminPageComponent implements OnInit {
         const value = (event.value || '').trim();
         // let array;
         if (level === 'beginner') {
-            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value);
+            if (this.verifyValidity(value)) this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value);
             this.getPlayersNamesBeg();
         } else if (level === 'expert') {
-            this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value);
+            if (this.verifyValidity(value)) this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value);
             this.getPlayersNamesExp();
         }
         console.log('je suis dans add');
@@ -114,8 +120,6 @@ export class AdminPageComponent implements OnInit {
             this.getPlayersNamesExp();
         }
     }
-
-   
 
     resetDictionaries() {
         console.log('Dictionnaires reset!');
@@ -157,5 +161,19 @@ export class AdminPageComponent implements OnInit {
         });
         console.log('apres remove fucntion');
     }
-    
+
+    private verifyValidity(name: string): boolean {
+        const isNameInBeginnerArray =
+            this.userService.vrPlayerNamesBeginner[0].includes(name) || this.userService.vrPlayerNamesBeginner[1].includes(name);
+        const isNameInExpertArray = this.userService.vrPlayerNamesExpert[0].includes(name) || this.userService.vrPlayerNamesExpert[1].includes(name);
+        if (this.userService.vrPlayerNamesBeginner[1].length > 0) {
+            if (isNameInBeginnerArray || isNameInExpertArray){
+                this.errorMessage = true;
+                return false;
+            }
+            this.errorMessage = false;
+            return true;
+        }
+        return true;
+    }
 }

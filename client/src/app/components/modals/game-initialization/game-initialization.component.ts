@@ -44,6 +44,7 @@ export class GameInitializationComponent implements OnInit {
     chosenMode: string = MODES[DEFAULT_MODE];
     lvls: string[] = LVL_JV;
     chooseSoloMode: boolean = false;
+    disableBtn:boolean = false;
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,
@@ -219,4 +220,11 @@ export class GameInitializationComponent implements OnInit {
             this.userService.setVrName();
         }
     }
+
+    randomGame(){
+        const randomGame = this.rooms[Math.floor(Math.random() * this.rooms.length)];
+        this.joinGame(randomGame);
+        this.disableBtn = true;
+    }
+
 }
