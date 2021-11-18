@@ -2,12 +2,15 @@ import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
-import { EASEL_LENGTH } from '@app/constants/constants';
+import { Vec2 } from '@app/classes/vec2';
+import { UNDEFINED_INDEX, WAIT_TIME_3_SEC } from '@app/constants/constants';
+import { CommandManagerService } from '@app/services/command-manager.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
+import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
@@ -23,32 +26,27 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     arrayOfVrCommands: string[] = [];
     arrayOfReserveLetters: string[] = [];
     typeArea: string = '';
-    showReserve: boolean = false;
-    isValid: boolean = true;
-    invalidCommand: boolean = false;
-    isCommand: boolean = false;
-    command: ChatCommand[] = [];
-    firstTurn: boolean = true;
-    skipTurn: boolean = false;
     name: string;
     nameVr: string;
-    word: string = 'mot';
     errorMessage: string = '';
-    score: number = 0;
     form = new FormGroup({
         message: new FormControl(''),
     });
+    message: string;
     isDebug: boolean = false;
+    toggleReserve: boolean = false;
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
-        private readonly valideWordService: ValidWordService,
         private lettersService: LettersService,
         public userService: UserService,
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
         private timeService: TimeService,
+        private commandManagerService: CommandManagerService,
+        private tempCanvasService: TemporaryCanvasService,
+        private validWordService: ValidWordService,
         private socketManagementService: SocketManagementService,
     ) {}
 
@@ -70,8 +68,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.timeService.commandObs) {
             this.timeService.commandObs.subscribe((res) => {
                 setTimeout(() => {
-                    this.typeArea = res;
-                    this.logMessage();
+                    if (res === '!passer') this.updateMessageArray('passer');
                 }, 0);
             });
         }
@@ -88,184 +85,136 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.messageService.newTextMessage = false;
                 });
             }
+            if (this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+            if (this.socketManagementService.listen('verifyWord')) {
+                this.socketManagementService.listen('verifyWord').subscribe((data) => {
+                    this.validWordService.isWordValid = data.isValid ?? false;
+                });
+            }
         }
     }
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }
-
-    checkIfFirstPlay() {
-        if (this.userService.playMode !== 'soloGame') this.firstTurn = this.userService.firstTurn;
-    }
-
     logMessage() {
         this.errorMessage = '';
         this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
-        const validPlayAndYourTurn =
-            this.userService.isPlayerTurn() && this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
-        const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea);
-        if (validPlayAndYourTurn && !this.isTheGameDone()) {
-            this.switchCaseCommands();
-        } else if (validPlay && !this.isTheGameDone() && this.isDebug) {
-            if (this.typeArea === '!reserve') {
-                this.showReserve = !this.showReserve;
-                this.invalidCommand = false;
-                this.errorMessage = '';
-                this.reserveLettersQuantity();
+        this.errorMessage = '';
+        const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea) && !this.userService.endOfGame;
+        if (validPlay) {
+            switch (this.userService.isPlayerTurn()) {
+                case true:
+                    this.manageCommands();
+                    break;
+                case false:
+                    if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
+                        this.errorMessage = "ce n'est pas votre tour";
+                    }
+                    break;
             }
-        } else {
-            this.skipTurnCommand();
         }
-        this.invalidCommand = false;
-        this.typeArea = '';
+        this.name = this.userService.getUserName();
+        this.nameVr = this.userService.getVrUserName();
+        this.verifyInput();
     }
-
-    skipTurnCommand() {
-        if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
-            this.invalidCommand = true;
-            this.errorMessage = 'ce n est pas votre tour';
-        } else if (this.typeArea === '!debug') {
-            this.isDebug = !this.isDebug;
-        } else if (this.messageService.isCommand(this.typeArea) && !this.messageService.isValid(this.typeArea)) {
-            this.errorMessage = 'commande invalide';
-        } else this.updateMessageArray(this.typeArea);
-    }
-
     isSkipButtonClicked() {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
-            this.errorMessage = '';
             this.updateMessageArray('!passer');
             return true;
         }
         return false;
     }
+    private manageCommands() {
+        if (this.typeArea) {
+            switch (this.typeArea.split(' ', 1)[0]) {
+                case '!placer':
+                    if (this.commandManagerService.verifyCommand(this.messageService.command, this.userService.getPlayerEasel())) {
+                        this.placeWord();
+                    } else this.errorMessage = this.commandManagerService.errorMessage;
+                    break;
+                case '!echanger':
+                    this.exchangeCommand();
+                    break;
+                case '!passer':
+                    this.userService.detectSkipTurnBtn();
+                    break;
+            }
+        }
+    }
+    private placeWord() {
+        this.commandManagerService.validateWord(this.messageService.command, this.userService.playMode, this.userService.gameName);
+        switch (this.userService.playMode) {
+            case 'soloGame':
+                this.placeWordIfValid();
+                break;
+            default:
+                this.placeInTempCanvas(this.messageService.command);
+                setTimeout(() => {
+                    this.commandManagerService.verifyWordsInDictionnary(this.messageService.command, this.userService.playMode);
+                    this.tempCanvasService.clearLayers();
+                    this.placeWordIfValid();
+                }, WAIT_TIME_3_SEC);
+        }
+    }
+    private placeInTempCanvas(command: ChatCommand) {
+        const pos: Vec2 = { x: command.position.x, y: command.position.y };
+        if (command.direction === 'h') {
+            for (const letter of this.lettersService.fromWordToLetters(command.word)) {
+                this.tempCanvasService.drawLetter(letter, { x: pos.x++, y: pos.y });
+            }
+        } else
+            for (const letter of this.lettersService.fromWordToLetters(command.word)) {
+                this.tempCanvasService.drawLetter(letter, { x: pos.x, y: pos.y++ });
+            }
+    }
+    private placeWordIfValid() {
+        if (this.commandManagerService.playerScore !== 0) {
+            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
+        } else {
+            this.errorMessage = this.commandManagerService.errorMessage;
+        }
+        this.endTurn('placer', this.commandManagerService.playerScore);
+    }
+    private exchangeCommand() {
+        if (
+            this.commandManagerService.verifyExchageCommand(
+                this.reserveService.reserveSize,
+                this.userService.getPlayerEasel(),
+                this.messageService.swapCommand(this.typeArea),
+            )
+        ) {
+            this.endTurn('exchange', UNDEFINED_INDEX);
+        } else {
+            this.errorMessage = this.commandManagerService.errorMessage;
+        }
+    }
 
-    getLettersFromChat(): void {
-        const points: number = this.valideWordService.readWordsAndGivePointsIfValid(
-            this.lettersService.tiles,
-            this.messageService.command,
-            this.userService.playMode,
-        );
-        if (this.lettersService.wordInBoardLimits(this.messageService.command)) {
-            if (points !== 0) {
-                if (this.firstTurn && this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
-                    if (this.messageService.command.position.x === EASEL_LENGTH + 1 && this.messageService.command.position.y === EASEL_LENGTH + 1) {
-                        if (!this.playFirstTurn(points)) {
-                            this.invalidCommand = true;
-                            this.typeArea = '';
-                            return;
-                        }
-                    } else {
-                        this.invalidCommand = true;
-                        this.errorMessage = 'votre mot dois etre placer à la position central(h8)!';
-                        this.typeArea = '';
-                        return;
-                    }
-                } else if (this.lettersService.wordIsAttached(this.messageService.command)) {
-                    if (!this.placeOtherTurns(points)) {
-                        this.invalidCommand = true;
-                        this.errorMessage = 'votre mot dois etre attaché à ceux déjà présent dans la grille ';
-                        this.typeArea = '';
-                        return;
-                    }
-                } else {
-                    this.invalidCommand = true;
-                    this.errorMessage = 'les lettres a placer ne constituent pas un mot';
-                    this.typeArea = '';
-                    return;
+    private endTurn(commandType: string, points: number) {
+        switch (commandType) {
+            case 'exchange':
+                if (this.userService.playMode !== 'soloGame') {
+                    this.userService.exchangeLetters = true;
+                    this.userService.playedObs.next(this.userService.exchangeLetters);
                 }
-            } else {
-                this.invalidCommand = true;
-                this.errorMessage = 'le mot est invalide';
-                this.typeArea = '';
-                return;
-            }
-        } else {
-            this.invalidCommand = true;
-            this.errorMessage = 'votre mot dois etre contenue dans la grille!';
-            this.typeArea = '';
-            return;
+                break;
+            case 'placer':
+                if (this.errorMessage === '') {
+                    if (this.userService.playMode !== 'soloGame') {
+                        this.userService.chatCommandToSend = this.messageService.command;
+                        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+                    }
+                    this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
+                } else {
+                    this.typeArea = this.typeArea + ' (la validation du mot a échoué)';
+                    this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
+                    this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+                }
+                break;
         }
-    }
-
-    playFirstTurn(points: number): boolean {
-        let lettersplaced = false;
-        if (this.userService.getPlayerEasel().contains(this.messageService.command.word)) {
-            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
-            this.updatePlayerVariables(points);
-            lettersplaced = true;
-            this.firstTurn = false;
-        } else {
-            this.errorMessage = 'Les lettres de votre mot ne sont pas dans le chevalet';
-        }
-        return lettersplaced;
-    }
-    placeOtherTurns(points: number): boolean {
-        if (this.lettersService.wordIsPlacable(this.messageService.command, this.userService.getPlayerEasel())) {
-            this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
-            this.updatePlayerVariables(points);
-            return true;
-        }
-        return false;
-    }
-    updatePlayerVariables(points: number) {
-        this.userService.chatCommandToSend = this.messageService.command;
-        this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
-        if (this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
-        this.invalidCommand = false;
-        this.endTurnValidCommand();
-    }
-    isTheGameDone(): boolean {
-        return this.userService.endOfGame;
-    }
-    reserveLettersQuantity() {
-        let s: string;
-        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length);
-        this.reserveService.letters.forEach((value: number, key: Letter) => {
-            s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
-            this.arrayOfReserveLetters.push(s);
-        });
-    }
-    private verifyWord() {
-        if (this.userService.playMode === 'soloGame') {
-            this.getLettersFromChat();
-            this.endTurnValidCommand();
-        } else {
-            if (this.userService.playMode === 'joinMultiplayerGame') {
-                this.socketManagementService.emit('verifyWordGuest', {
-                    gameName: this.userService.gameName,
-                    word: this.lettersService.fromWordToLetters(this.messageService.command.word),
-                });
-                this.socketManagementService.listen('verifyWordGuest').subscribe((data) => {
-                    this.valideWordService.isWordValid = data.isValid ?? false;
-                    if (this.valideWordService.isWordValid) {
-                        this.getLettersFromChat();
-                    } else this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
-                });
-            } else {
-                this.socketManagementService.emit('verifyWordCreator', {
-                    gameName: this.userService.gameName,
-                    word: this.lettersService.fromWordToLetters(this.messageService.command.word),
-                });
-                this.socketManagementService.listen('verifyWordCreator').subscribe((data) => {
-                    this.valideWordService.isWordValid = data.isValid ?? false;
-                    if (this.valideWordService.isWordValid) {
-                        this.getLettersFromChat();
-                    } else this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
-                });
-            }
-        }
-        this.messageService.skipTurnIsPressed = false;
-    }
-
-    private endTurnValidCommand() {
-        if (!this.invalidCommand) {
-            if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
-            this.errorMessage = '';
-            this.userService.endOfGameCounter = 0;
-            this.updateMessageArray(this.typeArea);
-        }
+        if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
+        this.userService.endOfGameCounter = 0;
+        this.updateMessageArray(this.typeArea);
     }
     private updateMessageArray(command: string): void {
         if (command !== '') {
@@ -282,55 +231,39 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             this.errorMessage = '';
         }
     }
-    private switchCaseCommands() {
-        if (this.typeArea) {
-            switch (this.typeArea.split(' ', 1)[0]) {
-                case '!placer':
-                    this.checkIfFirstPlay();
-                    this.verifyWord();
-                    break;
-                case '!echanger':
-                    if (this.reserveService.reserveSize < EASEL_LENGTH) {
-                        this.invalidCommand = true;
-                        this.errorMessage = 'la reserve contient moins de 7 lettres';
-                    } else if (
-                        this.lettersService.changeLetterFromReserve(this.messageService.swapCommand(this.typeArea), this.userService.getPlayerEasel())
-                    ) {
-                        this.invalidCommand = false;
-                        this.errorMessage = '';
-                        this.updateMessageArray(this.typeArea);
-                        this.userService.endOfGameCounter = 0;
-                    } else {
-                        this.invalidCommand = true;
-                        this.errorMessage = 'les lettres a echanger ne sont pas dans le chevalet';
-                    }
-                    if (!this.invalidCommand) {
-                        if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
-                        this.userService.exchangeLetters = true;
-                        this.userService.playedObs.next(this.userService.exchangeLetters);
-                    }
-                    break;
+    private verifyInput() {
+        if (this.messageService.isCommand(this.typeArea) && !this.messageService.isValid(this.typeArea) && this.userService.isPlayerTurn())
+            this.errorMessage = 'commande invalide';
+        else {
+            switch (this.typeArea) {
                 case '!debug':
-                    this.invalidCommand = false;
                     this.isDebug = !this.isDebug;
                     break;
-                case '!passer':
-                    this.invalidCommand = false;
-                    this.errorMessage = '';
-                    this.userService.detectSkipTurnBtn();
-                    break;
                 case '!reserve':
-                    this.invalidCommand = false;
-                    this.showReserve = !this.showReserve;
-                    this.errorMessage = '';
-                    if (this.isDebug) {
-                        this.reserveLettersQuantity();
-                    } else {
-                        this.invalidCommand = true;
-                        this.errorMessage = 'vous n etes pas en mode debogage';
-                    }
+                    this.showReserve();
+                    break;
+
+                default:
+                    if (!this.messageService.isCommand(this.typeArea)) this.updateMessageArray(this.typeArea);
                     break;
             }
         }
+    }
+    private showReserve() {
+        if (this.isDebug) {
+            this.toggleReserve = !this.toggleReserve;
+            this.reserveLettersQuantity();
+        } else {
+            this.errorMessage = "vous n'êtes pas en mode debogage";
+        }
+    }
+
+    private reserveLettersQuantity() {
+        let s: string;
+        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length - 1);
+        this.reserveService.letters.forEach((value: number, key: Letter) => {
+            s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
+            this.arrayOfReserveLetters.push(s);
+        });
     }
 }

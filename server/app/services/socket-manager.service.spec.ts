@@ -54,14 +54,12 @@ describe('SocketManagerService', () => {
         gameObject = new GameObject('test', false, { name: 'sami', score: 10, easelLetters: 7 }, 0, 0);
         timer = new Timer();
         timer.playerPlayed = false;
-
         validateWordService = createStubInstance(ValidWordService);
         sio = createStubInstance(io.Server);
         socketManagerService = new SocketManagerService(validateWordService);
         socketManagerService.sio = sio as unknown as io.Server;
         gameObject.passTurn = 6;
         gameObject.arrayOfMessage = arrayOfMessage;
-
         gameObject.timer = timer;
         gameObject.creatorPlayer = { name: 'sami', score: 7, easelLetters: 6 };
         socketManagerService['games'].set('test', gameObject);
@@ -111,7 +109,6 @@ describe('SocketManagerService', () => {
                     callback(messagesClient);
                 }
             },
-            // join: () => {},
             emit: () => {},
         };
         socketManagerService.sio = {

@@ -17,6 +17,8 @@ export class AdminPageComponent {
     removableExp = true;
     addOnBlur = true;
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    // eslint-disable-next-line @typescript-eslint/member-ordering
 
     constructor(public userService: UserService) {}
     addNameVrToList(level: string) {
@@ -48,6 +50,10 @@ export class AdminPageComponent {
         reader.readAsText(files[0], 'UTF-8');
     }
 
+    // getNames(): Observable<string[][]> {
+    //     // return this.http.get();
+    // }
+
     add(event: MatChipInputEvent, level: string): void {
         const value = (event.value || '').trim();
         let array;
@@ -63,7 +69,6 @@ export class AdminPageComponent {
                 array.push(value);
             }
         }
-        console.log(this.userService.vrPlayerNamesBeginner);
         // Clear the input value
         event.chipInput?.clear();
     }
@@ -84,7 +89,6 @@ export class AdminPageComponent {
                 array.splice(index, 1);
             }
         }
-        console.log(this.userService.vrPlayerNamesBeginner);
     }
 
     resetDictionaries() {

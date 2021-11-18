@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalEndOfGameComponent } from '@app/modal-end-of-game/modal-end-of-game.component';
+import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
 import { MessageService } from '@app/services/message.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { TimeService } from '@app/services/time.service';

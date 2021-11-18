@@ -236,3 +236,8 @@ export const LETTERS_OBJECT = new Map<string, Letter>([
     ['y', Y],
     ['z', Z],
 ]);
+
+// database Service constant
+
+export const DATABASE_COLLECTION_CLASSIC = 'Score';
+export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';

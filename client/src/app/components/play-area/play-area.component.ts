@@ -67,7 +67,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     this.mouseHandlingService.deletPreviousLetter();
                     break;
                 case 'Enter':
-                    if (this.mouseHandlingService.previousClick.x !== UNDEFINED_INDEX) this.mouseHandlingService.placeTempWord();
+                    if (this.mouseHandlingService.previousClick.x !== UNDEFINED_INDEX) {
+                        this.mouseHandlingService.placeTempWord();
+                    }
                     break;
                 case 'Escape':
                     this.mouseHandlingService.resetSteps();

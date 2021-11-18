@@ -1,65 +1,39 @@
-.container {
-    background-image: url(../../../../assets/background_main.jpg);
-    background-size: 100%;
-    min-height: 100vh;
-    height: auto;
-    min-width: 100% !important;
+.full-screen{
+    height: 100vh;
 }
-#header {
-    background-color: rgb(2, 20, 9);
-    width: 100%;
-    height: 25%;
-    justify-content: center;
+.btn-group{
+    button{
+        margin-bottom: 15px;
+        background-color: #2E4052;
+        color: #EFEFEF;
+        width: 310px;
+        height: 53px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+    }
+    button:hover{
+        background-color: #405a74;
+    }
+    button:first-child{
+        background-color: #FF5800;
+    }
+    button:first-child:hover{
+        background-color: #fa7934;
+    }
 }
-.topNav a {
-    overflow: hidden;
-    float: left;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 25px;
-}
-.topNav a.active {
-    background-color: #04aa6d;
-    color: white;
-}
-.topNav a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-.justified {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+mat-icon{
+    margin-right: 10px;
 }
 
-.team-name {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
-    color: green;
-}
-
-.header-item {
-    justify-content: center;
-    text-align: center;
-    color: rgb(0, 255, 234);
-}
-
-.footer-item {
-    text-align: center;
-}
-
-.footer-item p :nth-child(even) {
-    color: orange;
-}
-.footer-item p :nth-child(odd) {
-    color: blue;
-}
-.server-message {
-    justify-content: center;
-    width: 20%;
-    min-width: min-content;
+.background{
+    height: 100%;
+    color: #EFEFEF;
+    background-image: url("../../../../assets/homepage-bg.jpg");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }

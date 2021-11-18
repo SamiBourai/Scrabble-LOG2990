@@ -2,10 +2,13 @@ import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, ONE_SECOND_MS, SIX_TURN }
 import { GameObject } from '@app/classes/game-object';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/message-client';
+// import { Score } from '@app/classes/score';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
+// import { DatabaseService } from './database.service';
 import { ValidWordService } from './validate-words.service';
+
 
 @Service()
 export class SocketManagerService {
@@ -19,6 +22,7 @@ export class SocketManagerService {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createGame', (message: MessageClient) => {
+                console.log('socket');
                 const createdGame = new GameObject(
                     message.gameName,
                     message.aleatoryBonus ?? false,
@@ -134,15 +138,11 @@ export class SocketManagerService {
             socket.on('userCanceled', (message: MessageClient) => {
                 this.updateDeletedGames(message);
             });
-            socket.on('verifyWordGuest', (message: MessageClient) => {
+            socket.on('verifyWord', (message: MessageClient) => {
                 const word: Letter[] = [];
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
-                this.sio.to(message.gameName).emit('verifyWordGuest', message);
-            });
-            socket.on('verifyWordCreator', (message: MessageClient) => {
-                const word: Letter[] = [];
-                message.isValid = this.validWordService.verifyWord(message.word ?? word);
-                this.sio.to(message.gameName).emit('verifyWordCreator', message);
+                console.log('verifyyy');
+                this.sio.to(message.gameName).emit('verifyWord', message);
             });
             socket.on('disconnect', () => {
                 socket.disconnect();

@@ -12,7 +12,7 @@ import {
     SIX,
     TOPSPACE,
     UNDEFINED_INDEX,
-    V_ARROW,
+    V_ARROW
 } from '@app/constants/constants';
 import { LettersService } from './letters.service';
 

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Message } from '@app/classes/message';
+import { ModalScoresComponent } from '@app/components/modals/modal-scores/modal-scores.component';
 import { ModalScrableClassiqueComponent } from '@app/components/modals/modal-scrable-classique/modal-scrable-classique.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { BehaviorSubject } from 'rxjs';
@@ -16,7 +17,7 @@ export class MainPageComponent {
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     constructor(private readonly communicationService: CommunicationService, private dialogRef: MatDialog) {}
-    openDialog() {
+    openStartGameModal() {
         this.dialogRef.open(ModalScrableClassiqueComponent);
     }
 
@@ -38,5 +39,9 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
+    }
+
+    openScoreModal(): void {
+        this.dialogRef.open(ModalScoresComponent);
     }
 }

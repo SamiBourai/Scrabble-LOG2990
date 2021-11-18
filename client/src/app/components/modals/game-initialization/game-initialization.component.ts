@@ -13,10 +13,10 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 @Component({
     selector: 'app-modal-user-name',
-    templateUrl: './modal-user-name.component.html',
-    styleUrls: ['./modal-user-name.component.scss'],
+    templateUrl: './game-initialization.component.html',
+    styleUrls: ['./game-initialization.component.scss'],
 })
-export class ModalUserNameComponent implements OnInit {
+export class GameInitializationComponent implements OnInit {
     soloMode: boolean = false;
     createMultiplayerGame: boolean = false;
     joinMultiplayerGame: boolean = false;

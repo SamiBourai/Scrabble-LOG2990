@@ -1,12 +1,11 @@
 <div *ngIf="soloMode && !chooseSoloMode">
     <mat-card class="game-Configuration-Card">
         <mat-card-title>Configuration de la partie en Solo</mat-card-title>
-
         <mat-card-subtitle>Entrez votre nom d'utilisateur afin de commencer la partie ! </mat-card-subtitle>
         <form [formGroup]="userFormGroup" (ngSubmit)="onSubmitUserName()">
             <div>
                 <!-- nom entre par l'utilisateur -->
-                <mat-form-field class="example-full-width">
+                <mat-form-field appearance="outline">
                     <mat-label>Name </mat-label>
                     <input class="user-name-input" matInput placeholder="Name" #message maxlength="15"
                         [(ngModel)]="name" formControlName="userName" placeholder="Ex. Sami1234" required />
@@ -16,6 +15,7 @@
                         *ngIf="userFormGroup.controls.userName.valid; else userNameInputInvalid">
                         &#9679; Le nom entré est valide !!! <br />
                     </mat-hint>
+
                     <ng-template #userNameInputInvalid>
                         <mat-hint align="start" class="error-hint">
                             &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
@@ -23,7 +23,6 @@
                             &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
                         </mat-hint>
                     </ng-template>
-                    <!-- <p>{{userName.value}}xx</p> -->
                     <mat-icon matSuffix mat-icon-button color="primary">info</mat-icon>
                 </mat-form-field>
             </div>

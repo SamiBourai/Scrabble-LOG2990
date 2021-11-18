@@ -10,14 +10,14 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageServer } from '@app/classes/message-server';
 import { TIME_CHOICE } from '@app/constants/constants';
+import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
-import { MultiplayerModeService } from './../../../services/multiplayer-mode.service';
-import { ModalUserNameComponent } from './modal-user-name.component';
+import { GameInitializationComponent } from './game-initialization.component';
 
 describe('ModalUserNameComponent', () => {
-    let component: ModalUserNameComponent;
-    let fixture: ComponentFixture<ModalUserNameComponent>;
+    let component: GameInitializationComponent;
+    let fixture: ComponentFixture<GameInitializationComponent>;
     const mockDialogRef = {
         open: jasmine.createSpy('open'),
     };
@@ -35,7 +35,7 @@ describe('ModalUserNameComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [ModalUserNameComponent],
+            declarations: [GameInitializationComponent],
             imports: [HttpClientModule],
             providers: [
                 { provide: MatDialog, useValue: mockDialogRef },
@@ -48,7 +48,7 @@ describe('ModalUserNameComponent', () => {
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ModalUserNameComponent);
+        fixture = TestBed.createComponent(GameInitializationComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
         jasmine.getEnv().allowRespy(true);
