@@ -22,4 +22,5 @@ export interface MessageClient {
     reserve?: string;
     reserveSize?: number;
     easel?: Letter[];
+    easelSize?: number;
 }

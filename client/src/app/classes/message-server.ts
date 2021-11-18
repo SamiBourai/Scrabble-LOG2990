@@ -23,4 +23,5 @@ export interface MessageServer {
     reserve?: string;
     reserveSize?: number;
     easel?: Letter[];
+    easelSize?: number;
 }

@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { EaselObject } from '@app/classes/easel-object';
 import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
@@ -51,6 +52,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
                 break;
             case 'createMultiplayerGame':
                 this.soloMode = false;
+                this.userService.joinedUser.easel = new EaselObject(false);
                 this.multiplayerModeService.beginGame();
                 break;
             case 'joinMultiplayerGame':

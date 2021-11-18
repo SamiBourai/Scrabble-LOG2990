@@ -10,6 +10,8 @@ export class GameObject {
     timer: Timer;
     reserveServer = new Map<Letter, number>(LETTERS_RESERVE_QTY);
     reserverServerSize: number = RESERVE_SIZE;
+    easel: Letter[] = [];
+
     endOfGame: boolean = false;
     aleatoryBonus: boolean = false;
     arrayOfMessage: string[];

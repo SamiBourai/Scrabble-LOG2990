@@ -91,12 +91,14 @@ export class SocketManagerService {
                 this.sio.to(game.gameName).emit('updateAfterChange', game);
             });
 
-            socket.on('updateReserveInServer', (gameName: string, map: string, size: number) => {
+            socket.on('updateReserveInServer', (gameName: string, map: string, size: number, easel: Letter[]) => {
                 this.games.get(gameName).reserveServer = new Map(JSON.parse(map));
-
+                this.games.get(gameName).easel = easel;
                 this.games.get(gameName).reserverServerSize = size;
                 if (size === BOTH_EASEL_FILLED)
-                    this.sio.to(gameName).emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size);
+                    this.sio
+                        .to(gameName)
+                        .emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size, easel);
             });
 
             socket.on('sendReserveJoin', (gameName: string) => {
@@ -106,6 +108,7 @@ export class SocketManagerService {
                         'updateReserveInClient',
                         JSON.stringify(Array.from(this.games.get(gameName).reserveServer)),
                         this.games.get(gameName).reserverServerSize,
+                        this.games.get(gameName).easel,
                     );
             });
             socket.on('sendMessage', (message: MessageClient) => {
