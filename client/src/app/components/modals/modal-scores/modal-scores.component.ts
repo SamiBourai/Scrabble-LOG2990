@@ -47,7 +47,8 @@ export class ModalScoresComponent implements OnInit, OnDestroy {
                     return { name: score.name, score: score.score };
                 });
             }
-        });
+        },
+        (rejected: number) => console.log(rejected))
     }
 
     private resetScores(collectionName: string): void {
