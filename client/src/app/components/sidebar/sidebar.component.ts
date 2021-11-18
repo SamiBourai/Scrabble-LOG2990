@@ -260,7 +260,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
 
     private reserveLettersQuantity() {
         let s: string;
-        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length - 1);
+        this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length);
         this.reserveService.letters.forEach((value: number, key: Letter) => {
             s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
