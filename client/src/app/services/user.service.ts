@@ -30,7 +30,6 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userNameLocalStorage: any;
     playMode: string;
-
     realUser: RealUser;
     joinedUser: JoinedUser;
     vrUser: VrUser;
@@ -47,26 +46,27 @@ export class UserService {
     passTurn: boolean = false;
     exchangeLetters: boolean = false;
     intervalId: number = 0;
-
+    gameModeObs: BehaviorSubject<string> = new BehaviorSubject<string>('');
     isUserQuitGame: boolean = false;
     userQuit: Observable<boolean>;
     isBonusBox: boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    observableTurnToPlay: Observable<boolean>;
+
     reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     vrPlayerNamesBeginner: string[][] = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []]; // admin ici pour nom vr user
     vrPlayerNamesExpert: string[][] = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
+
     endOfGameCounter: number = 0;
     endOfGame: boolean;
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     endOfGameObs: Observable<boolean>;
+
     firstTurn: boolean = true;
     firstMode: string = '';
 
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
-        this.observableTurnToPlay = this.realUserTurnObs.asObservable();
         this.observableCommandToSend = this.commandtoSendObs.asObservable();
         this.observablePlayed = this.playedObs.asObservable();
         this.vrSkipingTurn = false;
@@ -104,7 +104,7 @@ export class UserService {
     }
     chooseFirstToPlay(): boolean {
         const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);
-        if (randomIndex <= PARAMETERS_OF_SWAP / 2) {
+        if (randomIndex < PARAMETERS_OF_SWAP / 2) {
             return false;
         } else {
             return true;
@@ -156,7 +156,7 @@ export class UserService {
     }
     isUserTurn(): boolean {
         if (this.playMode === 'soloGame') return this.realUser.turnToPlay;
-        if (this.joinedUser.guestPlayer === false) return this.realUser.turnToPlay;
+        if (!this.joinedUser.guestPlayer) return this.realUser.turnToPlay;
         else return !this.realUser.turnToPlay;
     }
     detectSkipTurnBtn(): boolean {
@@ -178,9 +178,7 @@ export class UserService {
             this.realUserTurnObs.next(this.realUser.turnToPlay);
         }
     }
-    get turnToPlayObs(): Observable<boolean> {
-        return this.observableTurnToPlay;
-    }
+
     get isEndOfGame(): Observable<boolean> {
         return this.endOfGameBehaviorSubject;
     }
@@ -220,5 +218,16 @@ export class UserService {
             if (bonus) this.realUser.score += BONUS_POINTS_50;
             this.realUser.score += points;
         }
+    }
+    setJoinAsReal() {
+        this.realUser = {
+            name: this.joinedUser.name,
+            level: this.joinedUser.level,
+            round: this.joinedUser.round,
+            score: this.joinedUser.score,
+            firstToPlay: true, // if true le realuser va commencer sinon c'est vrUser va commencer
+            turnToPlay: this.isPlayerTurn(),
+            easel: this.getPlayerEasel(),
+        };
     }
 }

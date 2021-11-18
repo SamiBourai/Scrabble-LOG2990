@@ -36,6 +36,15 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     ngOnInit() {
         this.getLetter();
+        if (this.userService.gameModeObs) {
+            this.userService.gameModeObs.subscribe(() => {
+                setTimeout(() => {
+                    if (this.userService.playMode === 'soloGame') {
+                        this.soloMode = true;
+                    }
+                }, 0);
+            });
+        }
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
@@ -71,7 +80,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     isUserEaselEmpty() {
-        this.turnToPlaySubscription = this.userService.turnToPlayObs.subscribe(() => {
+        this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
             setTimeout(() => {
                 this.mouseHandlingService.clearAll();
                 if (

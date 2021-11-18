@@ -21,12 +21,11 @@ export class RealPlayerComponent implements OnInit {
         private dialogRef: MatDialog,
     ) {}
     ngOnInit() {
-        if (this.userService.playMode === 'soloGame') {
-            this.userService.turnToPlayObs.subscribe(() => {
-                if (this.userService.realUser.turnToPlay && !this.userService.endOfGame && this.userService.playMode === 'soloGame')
-                    this.timeService.startTime('user');
-            });
-        }
+        this.userService.realUserTurnObs.subscribe(() => {
+            if (this.userService.isPlayerTurn() && !this.userService.endOfGame && this.userService.playMode === 'soloGame')
+                this.timeService.startTime('user');
+        });
+
         if (this.userService.playMode === 'createMultiplayerGame') {
             this.mutltiplayerModeService.updateReserve();
             this.userService.commandtoSendObs.subscribe(() => {
@@ -42,9 +41,11 @@ export class RealPlayerComponent implements OnInit {
             this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
             this.mutltiplayerModeService.getMessageSend('getMessage');
             this.mutltiplayerModeService.playersLeftGamge();
-            this.mutltiplayerModeService.winnerObs.subscribe((response) => {
-                if (response) this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
-            });
         }
+        this.mutltiplayerModeService.winnerObs.subscribe((response) => {
+            if (response && this.userService.playMode === 'createMultiplayerGame') {
+                this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+            }
+        });
     }
 }

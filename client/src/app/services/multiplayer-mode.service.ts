@@ -144,7 +144,6 @@ export class MultiplayerModeService {
         this.socketManagementService.listen('getWinner').subscribe((data) => {
             this.gotWinner = true;
             this.virtualPlayer.easel.easelLetters = data.easel ?? [];
-            this.userService.playMode = 'soloGame';
             this.winnerObs.next(this.gotWinner);
         });
     }

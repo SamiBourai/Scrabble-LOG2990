@@ -30,7 +30,7 @@ export class MouseHandelingService {
     mousePosition: Vec2 = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
     previousClick: Vec2 = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
     firstBorderLetter: boolean = true;
-    placeTempCommand: string;
+    placeTempCommand: string = '';
     lastWasRightClick: boolean = false;
     first = true;
     buttonPressed = '';
@@ -180,8 +180,7 @@ export class MouseHandelingService {
         this.tempCanvasService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_HEIGHT);
     }
     isLettersArrayEmpty() {
-        if (this.lettersToSwapByClick.length > 0) return false;
-        return true;
+        return this.lettersToSwapByClick.length === 0;
     }
     moveLeft() {
         if (!this.lastWasRightClick) {

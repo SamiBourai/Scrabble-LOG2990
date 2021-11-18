@@ -73,11 +73,12 @@ export class SocketManagerService {
                 this.games.get(command.gameName).passTurn = 0;
             });
             socket.on('startTimer', (game: MessageClient) => {
-                this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
-                    game.timeConfig = this.games.get(game.gameName).timeConfig;
-                    game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer.creatorTurn };
-                    this.sio.to(game.gameName).emit('updateTime', game);
-                });
+                if (this.games.has(game.gameName))
+                    this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
+                        game.timeConfig = this.games.get(game.gameName).timeConfig;
+                        game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer.creatorTurn };
+                        this.sio.to(game.gameName).emit('updateTime', game);
+                    });
             });
             socket.on('passTurn', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.playerPlayed = true;
@@ -114,12 +115,17 @@ export class SocketManagerService {
                 message.winner = this.games.get(message.gameName).creatorPlayer.name;
                 setTimeout(() => {
                     this.sio.to(message.gameName).emit('getWinner', message);
+                    this.games.get(message.gameName).timer.stopTimer = true;
+                    this.updateDeletedGames(message);
                 }, FIVE_SEC_MS);
             });
             socket.on('userLeftGame', (message: MessageClient) => {
                 message.winner = this.games.get(message.gameName).guestPlayer.name;
                 setTimeout(() => {
                     this.sio.to(message.gameName).emit('getWinner', message);
+                    this.games.get(message.gameName).timer.stopTimer = true;
+
+                    this.updateDeletedGames(message);
                 }, FIVE_SEC_MS);
             });
             socket.on('userPassedInSoloMode', (message: MessageClient) => {
