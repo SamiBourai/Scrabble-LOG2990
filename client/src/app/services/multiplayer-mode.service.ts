@@ -93,7 +93,6 @@ export class MultiplayerModeService {
                 this.userService.realUser.turnToPlay = false;
                 this.userService.realUser.score = data.user?.score ?? 0;
             }
-            this.userService.firstTurn = false;
         });
     }
     sendReserve() {

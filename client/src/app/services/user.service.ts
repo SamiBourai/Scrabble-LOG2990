@@ -60,8 +60,6 @@ export class UserService {
     endOfGame: boolean;
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     endOfGameObs: Observable<boolean>;
-
-    firstTurn: boolean = true;
     firstMode: string = '';
 
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {

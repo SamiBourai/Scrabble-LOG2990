@@ -161,6 +161,18 @@ export class TemporaryCanvasService {
         );
         this.easelContext.stroke();
     }
+    drawRedFocus(pos: Vec2, ctx: CanvasRenderingContext2D) {
+        ctx.beginPath();
+        ctx.lineWidth = SIX;
+        ctx.strokeStyle = 'red';
+        ctx.rect(
+            LEFTSPACE + ((pos.x + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
+            TOPSPACE + ((pos.y + UNDEFINED_INDEX) * BOARD_HEIGHT) / NB_TILES,
+            BOARD_WIDTH / NB_TILES,
+            BOARD_WIDTH / NB_TILES,
+        );
+        ctx.stroke();
+    }
     private drawArrow(pos: Vec2) {
         if (this.direction === H_ARROW) {
             this.focusContext.fillText(
@@ -177,17 +189,5 @@ export class TemporaryCanvasService {
                 BOARD_WIDTH / NB_TILES,
             );
         }
-    }
-    private drawRedFocus(pos: Vec2, ctx: CanvasRenderingContext2D) {
-        ctx.beginPath();
-        ctx.lineWidth = SIX;
-        ctx.strokeStyle = 'red';
-        ctx.rect(
-            LEFTSPACE + ((pos.x + UNDEFINED_INDEX) * BOARD_WIDTH) / NB_TILES,
-            TOPSPACE + ((pos.y + UNDEFINED_INDEX) * BOARD_HEIGHT) / NB_TILES,
-            BOARD_WIDTH / NB_TILES,
-            BOARD_WIDTH / NB_TILES,
-        );
-        ctx.stroke();
     }
 }

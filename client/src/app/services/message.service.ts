@@ -51,8 +51,7 @@ export class MessageService {
     }
 
     isCommand(input: string): boolean {
-        if (!input.includes('!') || input.indexOf('!') !== 0) return false;
-        return true;
+        return !(!input.includes('!') || input.indexOf('!') !== 0);
     }
 
     isValid(command: string): boolean {

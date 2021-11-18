@@ -5,9 +5,11 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { UNDEFINED_INDEX, WAIT_TIME_3_SEC } from '@app/constants/constants';
 import { CommandManagerService } from '@app/services/command-manager.service';
+import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
@@ -43,11 +45,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
-        private timeService: TimeService,
         private commandManagerService: CommandManagerService,
         private tempCanvasService: TemporaryCanvasService,
         private validWordService: ValidWordService,
+        private timeService: TimeService,
         private socketManagementService: SocketManagementService,
+        private easelLogicService: EaselLogiscticsService,
+        private objectifMangerService: ObjectifManagerService,
     ) {}
 
     ngOnInit(): void {
@@ -68,7 +72,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.timeService.commandObs) {
             this.timeService.commandObs.subscribe((res) => {
                 setTimeout(() => {
-                    if (res === '!passer') this.updateMessageArray('passer');
+                    if (res === '!passer') {
+                        if (this.userService.isPlayerTurn()) {
+                            this.typeArea = res;
+                            this.manageCommands();
+                        } else this.updateMessageArray('!passer');
+                    }
                 }, 0);
             });
         }
@@ -121,6 +130,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.updateMessageArray('!passer');
+            this.objectifMangerService.verifyObjectifs();
             return true;
         }
         return false;
@@ -138,6 +148,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
                 case '!passer':
                     this.userService.detectSkipTurnBtn();
+                    this.objectifMangerService.verifyObjectifs();
                     break;
             }
         }
@@ -152,7 +163,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.placeInTempCanvas(this.messageService.command);
                 setTimeout(() => {
                     this.commandManagerService.verifyWordsInDictionnary(this.messageService.command, this.userService.playMode);
-                    this.tempCanvasService.clearLayers();
+                    this.mouseHandelingService.clearAll();
                     this.placeWordIfValid();
                 }, WAIT_TIME_3_SEC);
         }
@@ -160,12 +171,20 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private placeInTempCanvas(command: ChatCommand) {
         const pos: Vec2 = { x: command.position.x, y: command.position.y };
         if (command.direction === 'h') {
-            for (const letter of this.lettersService.fromWordToLetters(command.word)) {
-                this.tempCanvasService.drawLetter(letter, { x: pos.x++, y: pos.y });
+            for (const letter of command.word) {
+                this.tempCanvasService.drawRedFocus(pos, this.tempCanvasService.focusContext);
+                this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
+                    x: pos.x++,
+                    y: pos.y,
+                });
             }
         } else
-            for (const letter of this.lettersService.fromWordToLetters(command.word)) {
-                this.tempCanvasService.drawLetter(letter, { x: pos.x, y: pos.y++ });
+            for (const letter of command.word) {
+                this.tempCanvasService.drawRedFocus(pos, this.tempCanvasService.focusContext);
+                this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
+                    x: pos.x,
+                    y: pos.y++,
+                });
             }
     }
     private placeWordIfValid() {
@@ -197,6 +216,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.userService.exchangeLetters = true;
                     this.userService.playedObs.next(this.userService.exchangeLetters);
                 }
+                this.objectifMangerService.verifyObjectifs(undefined, this.commandManagerService.numberOfLettersToExchange);
                 break;
             case 'placer':
                 if (this.errorMessage === '') {
@@ -205,6 +225,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
                     }
                     this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
+                    this.objectifMangerService.verifyObjectifs(this.messageService.command);
                 } else {
                     this.typeArea = this.typeArea + ' (la validation du mot a échoué)';
                     this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };

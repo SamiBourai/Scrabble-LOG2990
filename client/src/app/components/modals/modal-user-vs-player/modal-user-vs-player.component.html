@@ -1,4 +1,5 @@
 <div class="content" *ngIf="!this.userService.isUserQuitGame">
+    <div *ngIf = "objectifManagerService.log2990Mode"><app-scrable-log2990-modal></app-scrable-log2990-modal>></div>
     <header class="header-user-vs-player">{{ getNameFromLocalStorage() }} vous jouerez contre ...</header>
     <br />
     <mat-card class="player-user-card" fxLayout="row">
