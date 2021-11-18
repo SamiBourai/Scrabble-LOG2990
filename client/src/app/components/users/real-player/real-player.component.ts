@@ -37,7 +37,6 @@ export class RealPlayerComponent implements OnInit {
             this.messageService.textMessageObs.subscribe(() => {
                 this.mutltiplayerModeService.sendMessage('sendMessage');
             });
-            this.mutltiplayerModeService.updateReserveChangeLetters();
             this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
             this.mutltiplayerModeService.getMessageSend('getMessage');
             this.mutltiplayerModeService.playersLeftGamge();

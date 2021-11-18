@@ -74,15 +74,6 @@ export class MultiplayerModeService {
             this.userService.exchangeLetters = false;
         }
     }
-
-    updateReserveChangeLetters() {
-        this.socketManagementService.listen('updateAfterChange').subscribe((data) => {
-            this.reserveService.redefineReserve(
-                data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
-                data.reserveSize ?? UNDEFINED_INDEX,
-            );
-        });
-    }
     getPlayedCommand(playedMethod: string) {
         this.socketManagementService.listen(playedMethod).subscribe((data) => {
             this.guestCommand = data.command ?? { word: 'errorServer', position: { x: 1, y: 1 }, direction: 'h' };

@@ -32,7 +32,6 @@ export class JoinedUserComponent implements OnInit {
             this.messageService.textMessageObs.subscribe(() => {
                 this.mutltiplayerModeService.sendMessage('sendMessage');
             });
-            this.mutltiplayerModeService.updateReserveChangeLetters();
             this.mutltiplayerModeService.getPlayedCommand('creatorPlayed');
             this.mutltiplayerModeService.getMessageSend('getMessage');
 
