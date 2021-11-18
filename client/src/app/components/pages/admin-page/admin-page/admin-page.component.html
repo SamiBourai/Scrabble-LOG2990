@@ -8,10 +8,7 @@
                       
                         <button class="uploadButton" type="button" mat-raised-button (click)="fileInput.click()">Upload a dictionary as JSON...</button>
                         <input hidden type="file" (change)="onFileSelected()" #fileInput>
-                        <p>Dictionnary list:</p>
-                        <div *ngFor = 'let dic of arrayOfDictionnaries'>
-                          {{dic.title}}
-                        </div>
+                        
                       <div>
                         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
                           <ng-container matColumnDef="titre">

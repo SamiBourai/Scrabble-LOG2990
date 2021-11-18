@@ -7,6 +7,7 @@ export interface Dictionary {
 export interface DictionaryPresentation {
     title: string;
     description: string;
+    words?: string[];
 }
 
 export interface LoadableDictionary {

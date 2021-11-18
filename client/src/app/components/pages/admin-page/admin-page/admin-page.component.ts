@@ -19,17 +19,17 @@ import { DatabaseService } from '@app/services/database.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
-// import { UserService } from '@app/services/user.service';
-const ELEMENT_DATA: DictionaryPresentation[] = [
-    { title: 'abc', description: 'tg' },
-    { title: 'def', description: 't laid' },
-];
+import { MatTable } from '@angular/material/table';
+
+
+const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal', description: 'le dictionnaire par defaut' }];
 @Component({
     selector: 'app-admin-page',
     templateUrl: './admin-page.component.html',
     styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent implements OnInit {
+    @ViewChild(MatTable, { static: true }) private table: MatTable<any>;
     @ViewChild('fileInput', { static: false }) private fileInput: ElementRef<HTMLInputElement>;
     selectable = true;
     removableBeg = true;
@@ -37,12 +37,12 @@ export class AdminPageComponent implements OnInit {
     change = true;
     addOnBlur = true;
     displayedColumns: string[] = ['titre', 'description', 'modifier', 'telecharger', 'supprimer'];
-
     dataSource = ELEMENT_DATA;
-
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
     arrayOfDictionnaries: LoadableDictionary[] = [];
     errorMessage: boolean = false;
+
+    index = 0;
 
     constructor(public userService: UserService, private database: DatabaseService, private snackBar: MatSnackBar) {}
 
@@ -95,8 +95,12 @@ export class AdminPageComponent implements OnInit {
             if (typeof possibleResult === 'string') {
                 const dictionnary = ValidWordService.loadableDictToDict(JSON.parse(possibleResult));
                 this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
-                this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
-                console.log(this.arrayOfDictionnaries);
+                if (!this.isSameDictionnaryName(dictionnary.title))
+                    this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
+                else{
+                    this.snackBar.open('Ce nom est deja utilise', 'Close');
+                }
+                this.table.renderRows();
                 console.log(this.dataSource);
             }
         };
@@ -182,6 +186,15 @@ export class AdminPageComponent implements OnInit {
 
             return true;
         }
+        return true;
+    }
+
+    private isSameDictionnaryName(name: string) {
+        const dictionnatyNames:string[] = [];
+        for (const dic of this.dataSource) {
+            dictionnatyNames.push(dic.title);
+        }
+        if (!dictionnatyNames.includes(name)) return false;
         return true;
     }
 }
