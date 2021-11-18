@@ -1,1 +1,72 @@
-<p>join-multiplayer-game works!</p>
+<mat-card class="game-Configuration-Card">
+    <mat-card-title>Joindre une partie</mat-card-title>
+</mat-card>
+<mat-stepper linear #stepper>
+    <mat-step [stepControl]="firstFormGroup">
+        <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Remplissez votre nom</ng-template>
+            <mat-form-field appearance="fill">
+                <mat-label>Nom</mat-label>
+                <input #messageGuest matInput placeholder="Last name, First name"
+                    formControlName="guestFormControl" [(ngModel)]="playerName" required />
+                <mat-hint align="end"> {{ messageGuest.value?.length }} / 15</mat-hint>
+
+                <mat-hint class="no-error-hint" align="start"
+                    *ngIf="firstFormGroup.controls.guestFormControl.valid; else guestInputInvalid">
+                    &#9679; Le nom entré est valide !!! <br />
+                </mat-hint>
+                <ng-template #guestInputInvalid>
+                    <mat-hint align="start" class="error-hint">
+                        &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
+                        &#9679; Le nom ne doit pas contenir d'espace <br />
+                        &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
+                    </mat-hint>
+                </ng-template>
+
+            </mat-form-field>
+            <br><br>
+            <hr>
+            <div>
+                <button mat-raised-button color="primary" matStepperNext>Suivant</button>
+            </div>
+        </form>
+    </mat-step>
+
+    <mat-step>
+        <ng-template matStepLabel>voir les parties</ng-template>
+        <div *ngIf="!isEmptyRoom; else elseBlock">
+            <div *ngIf="!roomJoined; else elseBlock">
+                <p class="multiplayerP">cliquez sur la partie que vous voulez rejoindre</p>
+                <table id="ht" align="center" width="400" class="table-striped table-hover">
+                    <thead class="header">
+                        <th class="contentCell">nom du client</th>
+                        <th class="contentCell">nom de la partie</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let room of rooms">
+                            <td class="contentCell" (click)="joinGame(room)">{{ room.user?.name ?? 'default'}}</td>
+                            <td class="contentCell" (click)="joinGame(room)">{{ room.gameName }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <ng-template #elseBlock>
+                <div *ngIf="!requestAccepted; else elseBlock">Le joueur n'a pas encore démarer la partie!</div>
+                <ng-template #elseBlock>
+                    <div *ngIf="objectifManagerService.log2990Mode">
+                    <app-scrable-log2990-modal></app-scrable-log2990-modal>
+                    </div>
+                    <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Rejoindre la
+                        partie</button>
+                </ng-template>
+            </ng-template>
+        </div>
+        <ng-template #elseBlock>
+            <p class="multiplayerP">Il n'y a pas de partie en ce moment!</p>
+        </ng-template>
+        <div>
+            <br />
+            <button mat-button matStepperPrevious mat-raised-button color="accent">Retour</button>
+        </div>
+    </mat-step>
+</mat-stepper>

@@ -24,6 +24,7 @@ export class ScrableLog2990ModalComponent implements OnInit {
     }
     openDialog(gameMode: string) {
         this.userService.firstMode = gameMode;
+        this.objectifManagerService.log2990Mode = true;
         this.objectifManagerService.initializedGame = true;
         this.dialogRef.open(GameInitializationComponent);
     }

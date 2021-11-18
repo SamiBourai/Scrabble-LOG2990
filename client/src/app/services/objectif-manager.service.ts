@@ -13,6 +13,7 @@ export class ObjectifManagerService {
     privateObjectif: Objectifs = { name: 'Default', bonus: UNDEFINED_INDEX, completed: false };
     initializedGame: boolean = false;
     wordToplace: string = 'bonus';
+    log2990Mode: boolean = false;
     private passturnCounter: number;
     constructor() {
         this.addObjectifs();

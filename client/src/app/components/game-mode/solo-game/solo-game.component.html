@@ -1,1 +1,96 @@
-<p>solo-game works!</p>
+<mat-card class="game-Configuration-Card">
+    <mat-card-title>Configuration de la partie en Solo</mat-card-title>
+    <mat-card-subtitle>Entrez votre nom d'utilisateur afin de commencer la partie ! </mat-card-subtitle>
+    <form [formGroup]="userFormGroup" (ngSubmit)="onSubmitUserName()">
+        <div>
+            <!-- nom entre par l'utilisateur -->
+            <mat-form-field appearance="outline">
+                <mat-label>Name </mat-label>
+                <input class="user-name-input" matInput placeholder="Name" #message maxlength="15"
+                    [(ngModel)]="name" formControlName="userName" placeholder="Ex. Sami1234" required />
+                <mat-hint align="end"> {{ message.value?.length }} / 15</mat-hint>
+
+                <mat-hint class="no-error-hint" align="start"
+                    *ngIf="userFormGroup.controls.userName.valid; else userNameInputInvalid">
+                    &#9679; Le nom entré est valide !!! <br />
+                </mat-hint>
+
+                <ng-template #userNameInputInvalid>
+                    <mat-hint align="start" class="error-hint">
+                        &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
+                        &#9679; Le nom ne doit pas contenir d'espace <br />
+                        &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
+                    </mat-hint>
+                </ng-template>
+                <mat-icon matSuffix mat-icon-button color="primary">info</mat-icon>
+            </mat-form-field>
+        </div>
+        <br />
+        <hr>
+        <div class="container">
+            <div fxLayout="row">
+                <div>
+                    <p class="multiplayerP-btn">Temps par tour :</p>
+                </div>
+
+                <div class="time-config">
+                    <button #minusBtn class="btn btn-primary" [disabled]="this.timeCounter === 0"
+                        (click)="onClickInMinusButton($event)">
+                        -
+                    </button>
+                </div>
+                <div class="time-config">
+                    <p class="form-control">{{ this.time.min | number: '2.0-0' }}</p>
+                </div>
+
+                <div class="time-config">
+                    <p class="form-control">{{ ':' }}</p>
+                </div>
+                <div>
+                    <p class="form-control">{{ this.time.sec | number: '2.0-0' }}</p>
+                </div>
+                <div class="time-config">
+                    <button #addBtn class="btn btn-primary" [disabled]="this.timeCounter === 9"
+                        (click)="onClickInAddButton($event)">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <p><span class="multiplayerP">Niveau JV:</span></p>
+        <div class="radio" *ngFor="let lvl of lvls">
+            <label>
+                <input type="radio" name="lvlJv" [value]="lvl" checked
+                    (change)="setLevelJv($event)" />
+                {{ lvl }}
+            </label>
+        </div>
+        <p>
+
+        <p><span class="multiplayerP">Mode de jeu :</span></p>
+        <div class="radio" *ngFor="let mode of modes">
+            <label>
+                <input type="radio" name="gameMode" [value]="mode" checked
+                    (change)="randomBonusActivated($event)" />
+                {{ mode }}
+            </label>
+        </div>
+        <p>
+            <span class="multiplayerP">Vous avez séléctionner le mode de jeu </span> <b
+                class="multiplayerP-chosen">{{ chosenMode }}</b>
+        </p>
+        <hr />
+        <mat-card-actions>
+            <div class="play-btn">
+                <button mat-raised-button mat-dialog-close
+                    (click)="this.userService.isBonusBox=false">Annuler</button>
+                <button mat-raised-button color="primary" [disabled]="userFormGroup.controls.userName.invalid"
+                    mat-dialog-close type="submit">
+                    Suivant
+                </button>
+            </div>
+        </mat-card-actions>
+
+    </form>
+</mat-card>

@@ -7,7 +7,7 @@
 </div>
 
 <div *ngIf = "!this.objectifManagerService.initializedGame; else elseBlock" class="Objectifs">
-    <!-- <br><br>
+    <br><br>
       <div *ngIf = "sentence[0]" class="objectif"> Le mode de jeu scrable LOG2990 va vous permettre</div>
       <div *ngIf = "sentence[1]" class="objectif"> de jouer une partie avec des objectifs à acomplir. </div>
       <div *ngIf = "sentence[2]" class="objectif"> Une fois acommplis, des points suplémentaires </div>
@@ -20,7 +20,7 @@
       <div *ngIf = "sentence[9]" class="objectif">  2. Il y a un objectif privé qui est différent de celui de</div>
       <div *ngIf = "sentence[10]" class="objectif"> votre adversaire. Vous le verez seulement si votre</div>
       <div *ngIf = "sentence[11]" class="objectif"> adversaire l'a atteint.</div>
-        <br>  -->
+        <br> 
       <div *ngIf = "sentence[0]" class= "d-flex flex-row justify-content-center align-item-center menu" >
         <div class="button" (click)="openDialog('soloGame')" mat-dialog-close>
             <img src="./assets/svg/robot.png" alt="robot-icon">

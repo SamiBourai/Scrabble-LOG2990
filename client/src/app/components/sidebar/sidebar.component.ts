@@ -45,10 +45,10 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         private reserveService: ReserveService,
         private virtualPlayerService: VirtualPlayerService,
         private mouseHandelingService: MouseHandelingService,
-        private timeService: TimeService,
         private commandManagerService: CommandManagerService,
         private tempCanvasService: TemporaryCanvasService,
         private validWordService: ValidWordService,
+        private timeService: TimeService,
         private socketManagementService: SocketManagementService,
         private easelLogicService: EaselLogiscticsService,
         private objectifMangerService: ObjectifManagerService,
@@ -72,7 +72,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.timeService.commandObs) {
             this.timeService.commandObs.subscribe((res) => {
                 setTimeout(() => {
-                    if (res === '!passer') this.updateMessageArray('passer');
+                    if (res === '!passer') {
+                        if (this.userService.isPlayerTurn()) {
+                            this.typeArea = res;
+                            this.manageCommands();
+                        } else this.updateMessageArray('!passer');
+                    }
                 }, 0);
             });
         }
