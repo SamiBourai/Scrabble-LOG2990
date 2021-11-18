@@ -51,14 +51,15 @@ export class UserService {
     isBonusBox: boolean;
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
-    realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean
+        );
     observableTurnToPlay: Observable<boolean>;
     reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     vrPlayerNamesBeginner: string[][] = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []]; // admin ici pour nom vr user
     vrPlayerNamesExpert: string[][] = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
     endOfGameCounter: number = 0;
     endOfGame: boolean;
-    endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     endOfGameObs: Observable<boolean>;
     firstMode: string = '';
 

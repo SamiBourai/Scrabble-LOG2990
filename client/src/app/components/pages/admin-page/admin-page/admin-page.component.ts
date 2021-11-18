@@ -14,6 +14,7 @@ import {
     THIRD_NAME,
 } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
+import { ScoresService } from '@app/services/score/scores.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
@@ -33,12 +34,13 @@ export class AdminPageComponent implements OnInit {
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
-    constructor(public userService: UserService, private database: DatabaseService) {}
+    constructor(public userService: UserService,public scoresService:ScoresService, private database: DatabaseService) {}
 
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
     }
+    resetBestScores(){}
 
     getPlayersNamesBeg() {
         const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG);
@@ -95,7 +97,7 @@ export class AdminPageComponent implements OnInit {
         addPlayerObs.subscribe(() => {
             this.getPlayersNamesBeg();
         })
-        
+
 
         //this.database.sendPlayer(collectionName, player);
         console.log('apres add fucntion');
@@ -106,7 +108,7 @@ export class AdminPageComponent implements OnInit {
         // let array;
         if (level === 'beginner') {
             // array = this.userService.vrPlayerNamesBeginner[1];
-            
+
             this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value);
             this.getPlayersNamesBeg();
             console.log('111');

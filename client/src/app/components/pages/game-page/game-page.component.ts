@@ -4,6 +4,7 @@ import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-gam
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
+import { ScoresService } from '@app/services/score/scores.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -30,6 +31,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
         private socketManagementService: SocketManagementService,
         private multiplayerModeService: MultiplayerModeService,
         public mouseHandlingService: MouseHandelingService,
+        private scoresService:ScoresService,
     ) {}
     detectSkipTurnBtn() {
         this.userService.userSkipingTurn = true;
@@ -84,6 +86,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.userService.vrUser.score += this.userService.realUser.easel.pointInEasel();
                     }
                     this.userService.endOfGame = true;
+                    this.scoresService.isUserResetDataObs.next(this.userService.endOfGame);
                     this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
                 }
             }, 0);

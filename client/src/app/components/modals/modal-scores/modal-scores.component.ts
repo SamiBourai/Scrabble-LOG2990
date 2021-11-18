@@ -1,63 +1,78 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Score } from '@app/classes/score';
-import { DATABASE_COLLECTION_CLASSIC } from '@app/constants/constants';
+import { DATABASE_COLLECTION_CLASSIC, DATABASE_COLLECTION_LOG2990 } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
-import { Observable } from 'rxjs';
-export interface PeriodicElement {
-    name: string;
-    position: number;
-    weight: number;
-    symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-    { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-    { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-    { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-    { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-    { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-    { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-    { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-    { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-    { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-    { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
+import { ScoresService } from '@app/services/score/scores.service';
+import { UserService } from '@app/services/user.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-modal-scores',
     templateUrl: './modal-scores.component.html',
     styleUrls: ['./modal-scores.component.scss'],
 })
-export class ModalScoresComponent implements OnInit, AfterViewInit {
+export class ModalScoresComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = ['name', 'score'];
-
-    dataSource = ELEMENT_DATA;
-
     arrayOfScoresClassicMode: Score[];
+    arrayOfScoresLog2990Mode: Score[];
+    private resetDataSub: Subscription;
 
-    arrayOfScoresLog2990Mode: unknown;
-    constructor(private databaseService: DatabaseService) {}
+    constructor(private databaseService: DatabaseService, private scoresService: ScoresService, private userService: UserService) {}
 
     ngOnInit(): void {
-        // this.getScores(DATABASE_COLLECTION_CLASSIC);
-        // console.log(this.arrayOfScoresClassicMode);
-        // this.arrayOfScoresLog2990Mode=this.getScores(DATABASE_COLLECTION_LOG2990);
-        // console.log(this.arrayOfScoresLog2990Mode);
+        this.addScores();
+        this.resetDataSub = this.scoresService.getIsUserResetDataObs.subscribe((res: boolean) => {
+            if (res) {
+                this.resetScores(DATABASE_COLLECTION_CLASSIC);
+                this.resetScores(DATABASE_COLLECTION_LOG2990);
+            }
+        });
+
+        this.getScoresMode(DATABASE_COLLECTION_CLASSIC);
+        this.getScoresMode(DATABASE_COLLECTION_LOG2990);
     }
-    ngAfterViewInit(): void {
-        this.getScores(DATABASE_COLLECTION_CLASSIC);
+    ngOnDestroy(): void {
+        this.resetDataSub.unsubscribe();
     }
 
-    getScores(collectionName: string): void {
+    private getScoresMode(collectionName: string): void {
         const scores: Observable<Score[]> = this.databaseService.getAllScores(collectionName);
         scores.subscribe((data) => {
-            // console.log(data[0]);
-            this.arrayOfScoresClassicMode = data.map((score) => {
-                return { name: score.name, score: score.score };
-                // this.arrayOfScoresClassicMode.push({name:score.name, score:score.score });
-            });
+            if (collectionName === DATABASE_COLLECTION_CLASSIC) {
+                this.arrayOfScoresClassicMode = data.map((score) => {
+                    return { name: score.name, score: score.score };
+                });
+            } else if (collectionName === DATABASE_COLLECTION_LOG2990) {
+                this.arrayOfScoresLog2990Mode = data.map((score) => {
+                    return { name: score.name, score: score.score };
+                });
+            }
         });
-        // this.dataSource = this.arrayOfScoresClassicMode;
-        console.log('salut: ', this.arrayOfScoresClassicMode);
+    }
+
+    private resetScores(collectionName: string): void {
+        const scores: Observable<Score[]> = this.databaseService.resetAllScores(collectionName);
+        scores.subscribe((data: Score[]) => {
+            if (collectionName === DATABASE_COLLECTION_CLASSIC) {
+                this.arrayOfScoresClassicMode = data.map((score) => {
+                    return { name: score.name, score: score.score };
+                });
+            } else if (collectionName === DATABASE_COLLECTION_LOG2990) {
+                this.arrayOfScoresLog2990Mode = data.map((score) => {
+                    return { name: score.name, score: score.score };
+                });
+            }
+        });
+    }
+
+    private addScores(): void {
+        let score:Score={name: this.userService.realUser.name, score:this.userService.realUser.score}
+        this.scoresService.getIsEndGame.subscribe((res: boolean) => {
+            if (res && (this.userService.playMode === 'soloGame' || this.userService.playMode === 'createMultiplayerGame')) {
+
+                this.databaseService.sendScore(DATABASE_COLLECTION_CLASSIC, score).subscribe();
+
+            }
+        });
     }
 }
