@@ -1,10 +1,12 @@
 // import { injectable } from "inversify";
 import { DEFAULT_SCORE } from '@app/classes/constants';
+import { LoadableDictionary } from '@app/classes/dictionary';
+import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import * as fs from 'fs';
 import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import { Score } from '../classes/score';
 
 // CHANGE the URL for your database information
 const DATABASE_URL = 'mongodb+srv://equipe303:equipe303@clusterscore.6eoob.mongodb.net/scrabble2990?retryWrites=true&w=majority';
@@ -107,8 +109,6 @@ export class DatabaseService {
 
     async addPlayer(collectionName: string, playerName: string): Promise<void> {
         const player: VirtualPlayer = { name: playerName };
-        console.log('bouda');
-
         await this.db.collection(collectionName).insertOne(player);
     }
 
@@ -132,5 +132,13 @@ export class DatabaseService {
         // else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = scoreObj;
 
         console.log('playerNames :', scoreObj);
+    }
+
+    async uploadFile(file: LoadableDictionary) {
+        const fileString = JSON.stringify(file);
+        fs.writeFile('./assets/' + file.title + '.json', fileString, (err) => {
+            if (err) throw err;
+            console.log('Results Received');
+        });
     }
 }

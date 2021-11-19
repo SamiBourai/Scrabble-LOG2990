@@ -1,8 +1,8 @@
-import { LoadableDictionary, DictionaryPresentation } from './../../../../classes/dictionary';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTable } from '@angular/material/table';
+import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import {
     COMMA,
     DATABASE_COLLECTION_VRNAMESBEG,
@@ -19,8 +19,7 @@ import { DatabaseService } from '@app/services/database.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
-import { MatTable } from '@angular/material/table';
-
+import { DictionaryPresentation, LoadableDictionary } from './../../../../classes/dictionary';
 
 const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal', description: 'le dictionnaire par defaut' }];
 @Component({
@@ -29,7 +28,7 @@ const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal
     styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent implements OnInit {
-    @ViewChild(MatTable, { static: true }) private table: MatTable<any>;
+    @ViewChild(MatTable, { static: true }) private table: MatTable<unknown>;
     @ViewChild('fileInput', { static: false }) private fileInput: ElementRef<HTMLInputElement>;
     selectable = true;
     removableBeg = true;
@@ -95,12 +94,17 @@ export class AdminPageComponent implements OnInit {
             if (typeof possibleResult === 'string') {
                 const dictionnary = ValidWordService.loadableDictToDict(JSON.parse(possibleResult));
                 this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
-                if (!this.isSameDictionnaryName(dictionnary.title))
+                if (!this.isSameDictionnaryName(dictionnary.title)) {
                     this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
-                else{
+                    console.log('SENT');
+                    this.database.sendDictionary(dictionnary as unknown as LoadableDictionary).subscribe((reject: number) => {
+                        console.log('rejected', reject);
+                    });
+                } else {
                     this.snackBar.open('Ce nom est deja utilise', 'Close');
                 }
                 this.table.renderRows();
+                console.log(dictionnary);
                 console.log(this.dataSource);
             }
         };
@@ -190,7 +194,7 @@ export class AdminPageComponent implements OnInit {
     }
 
     private isSameDictionnaryName(name: string) {
-        const dictionnatyNames:string[] = [];
+        const dictionnatyNames: string[] = [];
         for (const dic of this.dataSource) {
             dictionnatyNames.push(dic.title);
         }

@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import { Observable, of } from 'rxjs';
@@ -16,6 +17,7 @@ export class DatabaseService {
     private readonly SEND_URL_ADD_PLAYER: string = 'http://localhost:3000/api/database/addPlayer';
     private readonly SEND_URL_REMOVE_PLAYER: string = 'http://localhost:3000/api/database/removePlayer';
     private readonly SEND_URL_REMOVE_ALL_PLAYER: string = 'http://localhost:3000/api/database/removeAllPlayer';
+    private readonly SEND_URL_UPLOAD_DICTIONARY: string = 'http://localhost:3000/api/database/upload';
 
     constructor(private http: HttpClient) {}
 
@@ -64,6 +66,15 @@ export class DatabaseService {
     removeAllPlayer(collectionName: string): Observable<number> {
         const fullUrl = this.SEND_URL_REMOVE_ALL_PLAYER + '/' + collectionName;
         return this.http.delete<number>(fullUrl).pipe(
+            catchError((error: HttpErrorResponse) => {
+                return of(error.status);
+            }),
+        );
+    }
+
+    sendDictionary(file: LoadableDictionary): Observable<number> {
+        const fullUrl = this.SEND_URL_UPLOAD_DICTIONARY;
+        return this.http.post<number>(fullUrl, file).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
             }),

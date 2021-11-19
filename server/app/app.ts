@@ -10,7 +10,6 @@ import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
 import { DatabaseController } from './controllers/database.controller';
-
 @Service()
 export class Application {
     app: express.Application;

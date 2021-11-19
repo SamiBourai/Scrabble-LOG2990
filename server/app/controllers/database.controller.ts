@@ -96,5 +96,17 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
+
+        this.router.post('/upload', async (req: Request, res: Response) => {
+            console.log(req.body);
+            this.databaseService
+                .uploadFile(req.body)
+                .then(() => {
+                    res.sendStatus(CREATED_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
     }
 }
