@@ -79,6 +79,16 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
+    setToArrayString(tab: Set<string>[]) {
+        const strArray = [];
+        for (const element of tab) {
+            for (const item of element) {
+                strArray.push(item);
+            }
+        }
+        return strArray;
+    }
+
     onFileSelected() {
         // console.log('A', a);
 
@@ -96,16 +106,19 @@ export class AdminPageComponent implements OnInit {
                 this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
                 if (!this.isSameDictionnaryName(dictionnary.title)) {
                     this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
-                    console.log('SENT');
-                    this.database.sendDictionary(dictionnary as unknown as LoadableDictionary).subscribe((reject: number) => {
-                        console.log('rejected', reject);
-                    });
+                    this.database
+                        .sendDictionary({
+                            title: dictionnary.title,
+                            description: dictionnary.description,
+                            words: this.setToArrayString(dictionnary.words),
+                        } as unknown as LoadableDictionary)
+                        .subscribe((reject: number) => {
+                            console.log('rejected', reject);
+                        });
                 } else {
                     this.snackBar.open('Ce nom est deja utilise', 'Close');
                 }
                 this.table.renderRows();
-                console.log(dictionnary);
-                console.log(this.dataSource);
             }
         };
 

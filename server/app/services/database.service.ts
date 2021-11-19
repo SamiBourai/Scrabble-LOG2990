@@ -135,6 +135,7 @@ export class DatabaseService {
     }
 
     async uploadFile(file: LoadableDictionary) {
+        console.log(file);
         const fileString = JSON.stringify(file);
         fs.writeFile('./assets/' + file.title + '.json', fileString, (err) => {
             if (err) throw err;

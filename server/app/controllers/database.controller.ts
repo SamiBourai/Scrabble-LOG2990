@@ -98,7 +98,6 @@ export class DatabaseController {
         });
 
         this.router.post('/upload', async (req: Request, res: Response) => {
-            console.log(req.body);
             this.databaseService
                 .uploadFile(req.body)
                 .then(() => {
