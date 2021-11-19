@@ -137,9 +137,23 @@ export class DatabaseService {
     async uploadFile(file: LoadableDictionary) {
         console.log(file);
         const fileString = JSON.stringify(file);
-        fs.writeFile('./assets/' + file.title + '.json', fileString, (err) => {
+        fs.writeFile('./assets/Dictionaries/' + file.title + '.json', fileString, (err) => {
             if (err) throw err;
             console.log('Results Received');
         });
+        // this.filesArray();
     }
+
+    // async filesArray() {
+    //     const testFolder = './Dictionaries/';
+    //     const fs = require('fs');
+
+    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     fs.readdir(testFolder, (err: any, files: any) => {
+    //         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //         files.forEach((file: any) => {
+    //             console.log(file);
+    //         });
+    //     });
+    // }
 }
