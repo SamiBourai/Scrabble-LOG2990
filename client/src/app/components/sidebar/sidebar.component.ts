@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { UNDEFINED_INDEX, WAIT_TIME_3_SEC } from '@app/constants/constants';
+import { HELP_MAX_COMMAND, UNDEFINED_INDEX, WAIT_TIME_3_SEC } from '@app/constants/constants';
 import { CommandManagerService } from '@app/services/command-manager.service';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
@@ -31,12 +31,14 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     name: string;
     nameVr: string;
     errorMessage: string = '';
+    isHelpActivated:boolean;
     form = new FormGroup({
         message: new FormControl(''),
     });
     message: string;
     isDebug: boolean = false;
     toggleReserve: boolean = false;
+    private helpCommandCounter:number=0;
     constructor(
         private messageService: MessageService,
         private changeDetectorRef: ChangeDetectorRef,
@@ -122,8 +124,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
             }
         }
-        this.name = this.userService.getUserName();
-        this.nameVr = this.userService.getVrUserName();
+        this.name = this.userService.realUser.name;
+        this.nameVr = this.userService.vrUser.name;
         this.verifyInput();
     }
     isSkipButtonClicked() {
@@ -139,17 +141,24 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.typeArea) {
             switch (this.typeArea.split(' ', 1)[0]) {
                 case '!placer':
+                    // this.isHelpActivated=false;
                     if (this.commandManagerService.verifyCommand(this.messageService.command, this.userService.getPlayerEasel())) {
                         this.placeWord();
                     } else this.errorMessage = this.commandManagerService.errorMessage;
                     break;
                 case '!echanger':
+                    // this.isHelpActivated=false;
                     this.exchangeCommand();
                     break;
                 case '!passer':
+                    // this.isHelpActivated=false;
                     this.userService.detectSkipTurnBtn();
                     this.objectifMangerService.verifyObjectifs();
                     break;
+
+
+
+
             }
         }
     }
@@ -253,22 +262,35 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         }
     }
     private verifyInput() {
+
         if (this.messageService.isCommand(this.typeArea) && !this.messageService.isValid(this.typeArea) && this.userService.isPlayerTurn())
             this.errorMessage = 'commande invalide';
         else {
+
             switch (this.typeArea) {
                 case '!debug':
+                    this.hideHelpDiv();
                     this.isDebug = !this.isDebug;
                     break;
                 case '!reserve':
                     this.showReserve();
                     break;
+                case '!aide':
+                    this.helpCommandCounter++;
+                    this.isHelpActivated=true;
+                    break;
 
                 default:
+
                     if (!this.messageService.isCommand(this.typeArea)) this.updateMessageArray(this.typeArea);
                     break;
             }
         }
+    }
+    private hideHelpDiv():void{
+        if(this.helpCommandCounter>=HELP_MAX_COMMAND){
+            this.isHelpActivated=false;
+        };
     }
     private showReserve() {
         if (this.isDebug) {

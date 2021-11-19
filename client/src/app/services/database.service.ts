@@ -30,7 +30,7 @@ export class DatabaseService {
 
     getAllScores(collectionName: string): Observable<Score[]> {
         const fullUrl = this.GET_URL_ALL_DATA + '/' + collectionName;
-        return this.http.get<Score[]>(fullUrl).pipe();
+        return this.http.get<Score[]>(fullUrl);
     }
     resetAllScores(collectionName: string): Observable<Score[]> {
         const fullUrl:string = this.GET_URL_DEFAULT_DATA + '/' + collectionName;
