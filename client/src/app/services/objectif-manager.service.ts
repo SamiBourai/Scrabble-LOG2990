@@ -29,7 +29,6 @@ export class ObjectifManagerService {
         for (const objectif of this.publicObjectifs) {
             if (!objectif.completed) {
                 objectif.completed = this.isObjectifAchived(objectif.name, command ?? undefinedCommand, numberOfLetters ?? UNDEFINED_INDEX);
-                console.log(objectif);
             }
         }
         if (!this.privateObjectif.completed) {
@@ -38,7 +37,6 @@ export class ObjectifManagerService {
                 command ?? undefinedCommand,
                 numberOfLetters ?? UNDEFINED_INDEX,
             );
-            console.log(this.privateObjectif.completed);
         }
     }
 

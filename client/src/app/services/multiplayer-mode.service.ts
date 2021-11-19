@@ -65,6 +65,15 @@ export class MultiplayerModeService {
             });
 
             this.userService.passTurn = false;
+        } else if (this.userService.exchangeLetters) {
+            this.socketManagementService.emit('changeLetter', {
+                reason: this.userService.playMode,
+                gameName: this.userService.gameName,
+                reserve: JSON.stringify(Array.from(this.reserveService.letters)),
+                reserveSize: this.reserveService.reserveSize,
+            });
+
+            this.userService.exchangeLetters = false;
         }
     }
     getPlayedCommand(playedMethod: string) {
@@ -91,6 +100,15 @@ export class MultiplayerModeService {
             }
         });
     }
+    updateReserveChangeLetters(player: string) {
+        this.socketManagementService.listen(player).subscribe((data) => {
+            this.reserveService.redefineReserve(
+                data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
+                data.reserveSize ?? UNDEFINED_INDEX,
+            );
+        });
+    }
+
     sendReserve() {
         this.socketManagementService.reserveToserver(
             'updateReserveInServer',

@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { UNDEFINED_INDEX, WAIT_TIME_3_SEC } from '@app/constants/constants';
+import { ONE_SECOND_MS, UNDEFINED_INDEX, WAIT_TIME_3_SEC } from '@app/constants/constants';
 import { CommandManagerService } from '@app/services/command-manager.service';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { LettersService } from '@app/services/letters.service';
@@ -58,7 +58,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.reserveService.sizeObs) {
             this.reserveService.sizeObs.subscribe(() => {
                 setTimeout(() => {
-                    this.reserveLettersQuantity();
+                    if (this.toggleReserve) this.reserveLettersQuantity();
                 }, 0);
             });
         }
@@ -76,7 +76,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         if (this.userService.isPlayerTurn()) {
                             this.typeArea = res;
                             this.manageCommands();
-                        } else this.updateMessageArray('!passer');
+                        }
                     }
                 }, 0);
             });
@@ -163,7 +163,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.placeInTempCanvas(this.messageService.command);
                 setTimeout(() => {
                     this.commandManagerService.verifyWordsInDictionnary(this.messageService.command, this.userService.playMode);
-                    this.mouseHandelingService.clearAll();
+                    this.mouseHandelingService.clearAll(true);
                     this.placeWordIfValid();
                 }, WAIT_TIME_3_SEC);
         }
@@ -173,18 +173,24 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (command.direction === 'h') {
             for (const letter of command.word) {
                 this.tempCanvasService.drawRedFocus(pos, this.tempCanvasService.focusContext);
-                this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
-                    x: pos.x++,
-                    y: pos.y,
-                });
+
+                if (this.lettersService.tileIsEmpty(pos))
+                    this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
+                        x: pos.x,
+                        y: pos.y,
+                    });
+                pos.x++;
             }
         } else
             for (const letter of command.word) {
                 this.tempCanvasService.drawRedFocus(pos, this.tempCanvasService.focusContext);
-                this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
-                    x: pos.x,
-                    y: pos.y++,
-                });
+
+                if (this.lettersService.tileIsEmpty(pos))
+                    this.tempCanvasService.drawLetter(this.easelLogicService.tempGetLetter(letter, this.userService.getPlayerEasel()), {
+                        x: pos.x,
+                        y: pos.y,
+                    });
+                pos.y++;
             }
     }
     private placeWordIfValid() {
@@ -212,14 +218,18 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private endTurn(commandType: string, points: number) {
         switch (commandType) {
             case 'exchange':
-                if (this.userService.playMode !== 'soloGame') {
-                    this.userService.exchangeLetters = true;
-                    this.userService.playedObs.next(this.userService.exchangeLetters);
-                }
+                this.reserveService.sizeObs.next(this.reserveService.reserveSize);
                 this.objectifMangerService.verifyObjectifs(undefined, this.commandManagerService.numberOfLettersToExchange);
+                if (this.userService.playMode !== 'soloGame') {
+                    setTimeout(() => {
+                        this.userService.exchangeLetters = true;
+                        this.userService.playedObs.next(this.userService.exchangeLetters);
+                    }, ONE_SECOND_MS);
+                }
                 break;
             case 'placer':
                 if (this.errorMessage === '') {
+                    this.reserveService.sizeObs.next(this.reserveService.reserveSize);
                     if (this.userService.playMode !== 'soloGame') {
                         this.userService.chatCommandToSend = this.messageService.command;
                         this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);

@@ -40,10 +40,10 @@ export class EaselLogiscticsService {
     placeEaselLetters(easel: EaselObject): void {
         let counter = 0;
         for (const lett of easel.easelLetters) {
-            const img = new Image();
             const pos = counter;
-            img.src = lett.img;
             if (lett !== NOT_A_LETTER) {
+                const img = new Image();
+                img.src = lett.img;
                 img.onload = () => {
                     this.gridContext.drawImage(
                         img,
@@ -79,6 +79,7 @@ export class EaselLogiscticsService {
         for (const nb of easel.indexOfEaselLetters) {
             if (!this.reserveService.isReserveEmpty()) easel.add(this.reserveService.getRandomLetter(), nb);
             else {
+                console.log('NOT_A_LETTER');
                 easel.add(NOT_A_LETTER, nb);
                 easel.easelSize--;
             }

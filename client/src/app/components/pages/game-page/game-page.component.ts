@@ -37,6 +37,9 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     ngOnInit() {
         this.getLetter();
+        window.addEventListener('beforeunload', (event) => {
+            event.stopPropagation();
+        });
         if (this.userService.gameModeObs) {
             this.userService.gameModeObs.subscribe(() => {
                 setTimeout(() => {
@@ -84,8 +87,9 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     isUserEaselEmpty() {
         this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
             setTimeout(() => {
-                this.mouseHandlingService.clearAll();
+                this.mouseHandlingService.clearAll(false);
                 if (
+                    this.userService.playMode === 'soloGame' &&
                     this.remainingLetters === 0 &&
                     (this.userService.realUser.easel.getEaselSize() === 0 || this.virtualPlayerService.easel.getEaselSize() === 0)
                 ) {

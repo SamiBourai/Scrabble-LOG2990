@@ -48,7 +48,7 @@ export class CommandManagerService {
                 if (this.validFirstPosition(command) && this.isInEasel(command, playerEasel)) {
                     return true;
                 }
-            } else if (this.isWordAttachedToTheBoard(command) && this.isPlacableWord(command, playerEasel)) return true;
+            } else if (this.isPlacableWord(command, playerEasel) && this.isWordAttachedToTheBoard(command)) return true;
         }
         return false;
     }

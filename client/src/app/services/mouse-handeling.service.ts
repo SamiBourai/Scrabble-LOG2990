@@ -59,7 +59,7 @@ export class MouseHandelingService {
                 ' ' +
                 this.tempCanvasService.tempWord;
             this.commandObs.next(this.placeTempCommand);
-            this.resetSteps();
+            this.resetSteps(false);
             this.tempCanvasService.resetArrow();
         }
     }
@@ -97,25 +97,25 @@ export class MouseHandelingService {
             };
 
             if (this.mousePosition.x === this.previousClick.x && this.mousePosition.y === this.previousClick.y) {
-                this.resetSteps();
+                this.resetSteps(false);
                 this.tempCanvasService.switchArrow();
             } else {
-                this.resetSteps();
+                this.resetSteps(false);
                 this.tempCanvasService.resetArrow();
             }
             this.tempCanvasService.drawTileFocus(this.mousePosition);
             this.previousClick = { x: this.mousePosition.x, y: this.mousePosition.y };
         } else {
-            this.resetSteps();
+            this.resetSteps(false);
             this.tempCanvasService.resetArrow();
             this.previousClick = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
         }
     }
-    resetSteps() {
+    resetSteps(played: boolean) {
         this.firstBorderLetter = true;
         this.userService.getPlayerEasel().resetTempIndex();
         this.tempCanvasService.clearLayers();
-        this.easelLogic.placeEaselLetters(this.userService.getPlayerEasel());
+        if (!played) this.easelLogic.placeEaselLetters(this.userService.getPlayerEasel());
         this.tempCanvasService.tempWord = '';
     }
     easelClicked(event: MouseEvent) {
@@ -129,7 +129,7 @@ export class MouseHandelingService {
             for (const easelPosition of EASEL_POSITIONS) {
                 const indexCounter = easelIndex;
                 if (this.easelLogic.isBetween(easelPosition.letterRange, vec.x)) {
-                    this.resetSteps();
+                    this.resetSteps(false);
                     if (event.button === 0) {
                         this.lastWasRightClick = false;
                         if (!easelPosition.isClicked) {
@@ -201,9 +201,9 @@ export class MouseHandelingService {
         }
     }
 
-    clearAll() {
+    clearAll(played: boolean) {
         this.previousClick = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
-        this.resetSteps();
+        this.resetSteps(played);
         this.cancelByClick();
         this.tempCanvasService.easelContext.clearRect(0, 0, CANEVAS_WIDTH, CANEVAS_WIDTH);
     }

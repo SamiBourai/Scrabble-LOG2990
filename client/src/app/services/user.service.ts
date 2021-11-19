@@ -194,9 +194,17 @@ export class UserService {
     }
 
     getWinnerName(): string {
-        if (this.realUser.score > this.vrUser.score) return this.realUser.name;
-        else if (this.realUser.score < this.vrUser.score) return this.vrUser.name;
-        else return 'egale';
+        switch (this.playMode) {
+            case 'soloGame':
+                if (this.realUser.score > this.vrUser.score) return this.realUser.name;
+                else if (this.realUser.score < this.vrUser.score) return this.vrUser.name;
+                else return 'egale';
+
+            default:
+                if (this.realUser.score > this.joinedUser.score) return this.realUser.name;
+                else if (this.realUser.score < this.joinedUser.score) return this.joinedUser.name;
+                else return 'egale';
+        }
     }
 
     isPlayerTurn(): boolean {

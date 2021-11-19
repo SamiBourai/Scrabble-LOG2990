@@ -36,14 +36,15 @@ export class RealPlayerComponent implements OnInit {
             this.messageService.textMessageObs.subscribe(() => {
                 this.mutltiplayerModeService.sendMessage('sendMessage');
             });
+            this.mutltiplayerModeService.updateReserveChangeLetters('guestUserExchanged');
             this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
             this.mutltiplayerModeService.getMessageSend('getMessage');
             this.mutltiplayerModeService.playersLeftGamge();
+            this.mutltiplayerModeService.winnerObs.subscribe((response) => {
+                if (response) {
+                    this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+                }
+            });
         }
-        this.mutltiplayerModeService.winnerObs.subscribe((response) => {
-            if (response && this.userService.playMode === 'createMultiplayerGame') {
-                this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
-            }
-        });
     }
 }

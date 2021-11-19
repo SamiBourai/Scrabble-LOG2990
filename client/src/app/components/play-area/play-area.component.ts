@@ -72,7 +72,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                     }
                     break;
                 case 'Escape':
-                    this.mouseHandlingService.resetSteps();
+                    this.mouseHandlingService.resetSteps(true);
                     this.mouseHandlingService.previousClick = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
                     break;
                 default:

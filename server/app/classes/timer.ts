@@ -27,7 +27,6 @@ export class Timer {
             }
             if (this.stopTimer) {
                 clearInterval(intervalId);
-                console.log('timerstop');
             } else this.timerObs.next(this.timeUser);
         }, ONE_SECOND_MS);
     }

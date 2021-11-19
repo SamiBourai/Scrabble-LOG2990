@@ -1,4 +1,4 @@
-import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, ONE_SECOND_MS, SIX_TURN } from '@app/classes/constants';
+import { EASEL_LENGTH, FIVE_SEC_MS, NOT_A_LETTER, ONE_SECOND_MS, SIX_TURN } from '@app/classes/constants';
 import { GameObject } from '@app/classes/game-object';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/message-client';
@@ -62,12 +62,18 @@ export class SocketManagerService {
             });
             socket.on('creatorPlayed', (command: MessageClient) => {
                 this.games.get(command.gameName).creatorPlayer.score = command.user?.score ?? 0;
+                this.games.get(command.gameName).reserverServerSize = command.reserveSize;
+                this.games.get(command.gameName).creatorEasel = command.easel ?? [];
+                this.checkIfEndGame(this.games.get(command.gameName));
                 this.sio.to(command.gameName).emit('creatorPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
                 this.games.get(command.gameName).passTurn = 0;
             });
             socket.on('guestUserPlayed', (command: MessageClient) => {
                 this.games.get(command.gameName).guestPlayer.score = command.guestPlayer?.score ?? 0;
+                this.games.get(command.gameName).reserverServerSize = command.reserveSize;
+                this.games.get(command.gameName).joinEasel = command.easel ?? [];
+                this.checkIfEndGame(this.games.get(command.gameName));
                 this.sio.to(command.gameName).emit('guestUserPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
                 this.games.get(command.gameName).passTurn = 0;
@@ -88,14 +94,17 @@ export class SocketManagerService {
             socket.on('changeLetter', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.playerPlayed = true;
                 this.games.get(game.gameName).passTurn = 0;
-                this.sio.to(game.gameName).emit('updateAfterChange', game);
+                let sendTo = '';
+                if (game.reason === 'joinMultiplayerGame') sendTo = 'guestUserExchanged';
+                else sendTo = 'creatorUserExchanged';
+                this.sio.to(game.gameName).emit(sendTo, game);
             });
 
             socket.on('updateReserveInServer', (gameName: string, map: string, size: number, easel: Letter[]) => {
                 this.games.get(gameName).reserveServer = new Map(JSON.parse(map));
                 this.games.get(gameName).easel = easel;
                 this.games.get(gameName).reserverServerSize = size;
-                if (size === BOTH_EASEL_FILLED)
+                if (size === 16)
                     this.sio
                         .to(gameName)
                         .emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size, easel);
@@ -169,6 +178,13 @@ export class SocketManagerService {
     private checkIfEndGame(game: MessageClient) {
         this.games.get(game.gameName).passTurn++;
         if (this.games.get(game.gameName).passTurn === SIX_TURN) {
+            this.sio.to(game.gameName).emit('getWinner', game);
+        }
+        const letterJ = new Array<Letter>(this.games.get(game.gameName).joinEasel);
+        const joinEaselLengt = EASEL_LENGTH - letterJ.filter((lett) => lett === NOT_A_LETTER).length ?? 0;
+        const letterC = new Array<Letter>(this.games.get(game.gameName).creatorEasel);
+        const creatorEaselLengt = EASEL_LENGTH - letterC.filter((lett) => lett === NOT_A_LETTER).length ?? 0;
+        if (this.games.get(game.gameName).reserverServerSize === 0 && (joinEaselLengt === 0 || creatorEaselLengt === 0)) {
             this.sio.to(game.gameName).emit('getWinner', game);
         }
     }
