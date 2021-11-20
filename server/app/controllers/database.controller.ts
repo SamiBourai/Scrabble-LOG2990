@@ -108,11 +108,23 @@ export class DatabaseController {
                 });
         });
 
-        this.router.get('/getDictionary', async (req: Request, res: Response) => {
+        this.router.get('/dictionary/:title', async (req: Request, res: Response) => {
             this.databaseService
-                .filesArray()
+                .dictData(req.body)
                 .then(() => {
                     res.sendStatus(CREATED_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
+
+        this.router.get('/dictionaries', async (req: Request, res: Response) => {
+            this.databaseService
+                .dictMetadata()
+                .then((dicts) => {
+                    // res.sendStatus(OK_HTTP_STATUS).send(dicts);
+                    res.json(dicts);
                 })
                 .catch((error: Error) => {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);

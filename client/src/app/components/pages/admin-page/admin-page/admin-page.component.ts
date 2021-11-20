@@ -71,9 +71,11 @@ export class AdminPageComponent implements OnInit {
     }
 
     getDictionaries() {
-        const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary();
+        const dictionaryObs: Observable<LoadableDictionary[]> = this.database.getMetaDictionary();
         dictionaryObs.subscribe((data) => {
-            this.dataSource.push({ title: data.title, description: data.description });
+            data.forEach((dic) => {
+                this.dataSource.push({ title: dic.title, description: dic.description });
+            });
         });
         this.table.renderRows();
     }

@@ -3,11 +3,11 @@ import { DEFAULT_SCORE } from '@app/classes/constants';
 import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
-import * as fs from 'fs';
+import { PathLike, writeFile } from 'fs';
+import { readdir, readFile } from 'fs/promises';
 import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
 import { Service } from 'typedi';
-import * as util from 'util';
 
 // CHANGE the URL for your database information
 const DATABASE_URL = 'mongodb+srv://equipe303:equipe303@clusterscore.6eoob.mongodb.net/scrabble2990?retryWrites=true&w=majority';
@@ -138,35 +138,35 @@ export class DatabaseService {
 
     async uploadFile(file: LoadableDictionary) {
         const fileString = JSON.stringify(file);
-        fs.writeFile('./assets/Dictionaries/' + file.title + '.json', fileString, (err) => {
+        writeFile(`./assets/Dictionaries/${file.title}.json`, fileString, (err) => {
             if (err) throw err;
             console.log('Results Received');
         });
-        this.filesArray();
+        this.dictMetadata();
     }
 
-    async getDictionary(file: string) {
-        const read = util.promisify(fs.readFile);
-        const data: Buffer = await read('./assets/Dictionaries/' + file);
-        this.arrayOfAllDictionaries.push(data.toString() as unknown as LoadableDictionary);
-
-        // console.log(data.toString());
-
-        // return data.toString() as unknown as LoadableDictionary[];
+    async dictData(title: string) {
+        const data = await readFile(`./assets/Dictionaries/${title}.json`);
+        return JSON.parse(data.toString());
     }
 
-    async filesArray(): Promise<LoadableDictionary[]> {
-        const testFolder = './assets/Dictionaries/';
+    async dictMetadata(): Promise<LoadableDictionary[]> {
+        const testFolder = './assets/Dictionaries';
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        fs.readdir(testFolder, (err: any, files: any) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            files.forEach((file: string) => {
-                this.getDictionary(file);
-                console.log('ici' + this.arrayOfAllDictionaries);
-            });
+        const files = await readdir(testFolder);
+        console.log(files);
+        const paths = files.map((file) => `${testFolder}/${file}` as PathLike);
+        console.log(paths);
+
+        const a = paths.map(async (path) => readFile(path));
+        const b = await Promise.all(a);
+        const c = b.map((buffer) => buffer.toString());
+        const d = c.map((z) => JSON.parse(z));
+        const partialDicts = d.map((dict) => {
+            dict.words = [];
+            return dict;
         });
-
-        return this.arrayOfAllDictionaries;
+        console.log(partialDicts);
+        return partialDicts;
     }
 }
