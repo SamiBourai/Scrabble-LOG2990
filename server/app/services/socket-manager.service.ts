@@ -2,13 +2,10 @@ import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, ONE_SECOND_MS, SIX_TURN }
 import { GameObject } from '@app/classes/game-object';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/message-client';
-// import { Score } from '@app/classes/score';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
-// import { DatabaseService } from './database.service';
 import { ValidWordService } from './validate-words.service';
-
 
 @Service()
 export class SocketManagerService {
@@ -22,7 +19,6 @@ export class SocketManagerService {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createGame', (message: MessageClient) => {
-                console.log('socket');
                 const createdGame = new GameObject(
                     message.gameName,
                     message.aleatoryBonus ?? false,
@@ -77,11 +73,13 @@ export class SocketManagerService {
                 this.games.get(command.gameName).passTurn = 0;
             });
             socket.on('startTimer', (game: MessageClient) => {
-                this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
-                    game.timeConfig = this.games.get(game.gameName).timeConfig;
-                    game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer.creatorTurn };
-                    this.sio.to(game.gameName).emit('updateTime', game);
-                });
+                if (this.games.has(game.gameName)) {
+                    this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
+                        game.timeConfig = this.games.get(game.gameName).timeConfig;
+                        game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer.creatorTurn ?? false };
+                        this.sio.to(game.gameName).emit('updateTime', game);
+                    });
+                }
             });
             socket.on('passTurn', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.playerPlayed = true;
@@ -93,12 +91,14 @@ export class SocketManagerService {
                 this.sio.to(game.gameName).emit('updateAfterChange', game);
             });
 
-            socket.on('updateReserveInServer', (gameName: string, map: string, size: number) => {
+            socket.on('updateReserveInServer', (gameName: string, map: string, size: number, easel: Letter[]) => {
                 this.games.get(gameName).reserveServer = new Map(JSON.parse(map));
-
+                this.games.get(gameName).easel = easel;
                 this.games.get(gameName).reserverServerSize = size;
                 if (size === BOTH_EASEL_FILLED)
-                    this.sio.to(gameName).emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size);
+                    this.sio
+                        .to(gameName)
+                        .emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size, easel);
             });
 
             socket.on('sendReserveJoin', (gameName: string) => {
@@ -108,6 +108,7 @@ export class SocketManagerService {
                         'updateReserveInClient',
                         JSON.stringify(Array.from(this.games.get(gameName).reserveServer)),
                         this.games.get(gameName).reserverServerSize,
+                        this.games.get(gameName).easel,
                     );
             });
             socket.on('sendMessage', (message: MessageClient) => {
@@ -118,12 +119,18 @@ export class SocketManagerService {
                 message.winner = this.games.get(message.gameName).creatorPlayer.name;
                 setTimeout(() => {
                     this.sio.to(message.gameName).emit('getWinner', message);
+                    this.games.get(message.gameName).timer.stopTimer = true;
+                    this.updateDeletedGames(message);
+                    socket.disconnect();
                 }, FIVE_SEC_MS);
             });
             socket.on('userLeftGame', (message: MessageClient) => {
                 message.winner = this.games.get(message.gameName).guestPlayer.name;
                 setTimeout(() => {
                     this.sio.to(message.gameName).emit('getWinner', message);
+                    this.games.get(message.gameName).timer.stopTimer = true;
+                    this.updateDeletedGames(message);
+                    socket.disconnect();
                 }, FIVE_SEC_MS);
             });
             socket.on('userPassedInSoloMode', (message: MessageClient) => {
@@ -135,7 +142,6 @@ export class SocketManagerService {
             socket.on('verifyWord', (message: MessageClient) => {
                 const word: Letter[] = [];
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
-                console.log('verifyyy');
                 this.sio.to(message.gameName).emit('verifyWord', message);
             });
             socket.on('disconnect', () => {

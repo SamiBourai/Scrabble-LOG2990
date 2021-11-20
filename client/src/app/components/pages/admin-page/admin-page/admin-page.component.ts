@@ -13,7 +13,7 @@ import {
     FOURTH_NAME,
     SECOND_NAME,
     SIXTH_NAME,
-    THIRD_NAME,
+    THIRD_NAME
 } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
 import { UserService } from '@app/services/user.service';
@@ -50,6 +50,7 @@ export class AdminPageComponent implements OnInit {
         this.getPlayersNamesExp();
         this.getDictionaries();
     }
+    resetBestScores() {}
 
     getPlayersNamesBeg() {
         const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG);

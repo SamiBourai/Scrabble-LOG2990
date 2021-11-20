@@ -19,6 +19,7 @@
                         <div id="passer"></div>
                     </ng-container>
 
+
                     <div class="debugActive" *ngIf="isDebug">
                         <div *ngIf="userService.playMode==='soloGame'"  >
                             <p *ngFor="let cmd of arrayOfVrCommands">{{ '[' + nameVr + ']' + ' ' + cmd }}</p>
@@ -27,7 +28,39 @@
                         <div *ngFor="let i of arrayOfReserveLetters">
                             <p>{{ i }}</p>
                         </div></div>
+
                     </div>
+                    <ng-container *ngIf="isHelpActivated">
+                        <div id="aide">
+                            <div class="div">
+                                <p class="command-help" >Commandes :</p>
+                            </div>
+                            <div >
+                                  <p class="command-help">!placer {{'|ligne|'+'|colonne|'+'|direction|'+ ' '+'|mot|'}}:</p>
+                                  <p classe="command-description">Permet de placer un mot sur le plateau de jeu</p>
+                                  <p>ex: placement horizontal a la position h8: !placer h8h soir</p>
+                                  <p>ex: placement vertical a la position h8: !placer h8v mot</p>
+                            </div>
+                            <div>
+                                <p class="command-help">!echanger</p>
+                                <p>Permet d'échanger les lettres séléctionnés du chevalet avec la réserve si la réserve contient plus de 7 lettres</p>
+                            </div>
+                            <div>
+                                <p class="command-help">!passer</p>
+                                <p>Permet a l'utilisateur de passer son tour lorsque c'est a son tour de jouer</p>
+                            </div>
+
+                            <div>
+                                <p class="command-help">!debug</p>
+                                <p>Permet de voir les actions du joueur virtuel et de pouvoir utiliser la commande réserve</p>
+                            </div>
+                            <div>
+                                <p class="command-help">!reserve</p>
+                                <p>Permet d'afficher en ordre alphabétique le contenu de la réserve si le mode !debug est activé</p>
+                            </div>
+
+                        </div>
+                    </ng-container>
                     </div>
                 </div>
                 <hr />
@@ -38,7 +71,7 @@
                             <span class="input-group-text" id="inputGroup-sizing-default">Chat</span>
                         </div>
 
-                        <input     
+                        <input
                             formControlName="message"
                             maxlength="512"
                             [(ngModel)]="typeArea"
@@ -46,7 +79,7 @@
                             type="text"
                             class="form-control"
                             autofocus
-                            
+
                         />
 
                         <button mat-raised-button (click)="logMessage()">Ok</button>

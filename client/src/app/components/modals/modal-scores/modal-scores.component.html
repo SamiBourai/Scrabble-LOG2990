@@ -1,19 +1,11 @@
 
     <mat-card-title>Meilleurs scores du jeu :  </mat-card-title> <br>
     <mat-card-subtitle>Affichage des meilleurs scores du mode de jeu classique et mode de jeu LOG2990 : </mat-card-subtitle>
-
+    <hr>
   <mat-tab-group >
     <mat-tab label="Mode classique">
         <table mat-table [dataSource]="arrayOfScoresClassicMode" class="mat-elevation-z8">
 
-            <!--- Note that these columns can be defined in any order.
-                The actual rendered columns are set as a property on the row definition" -->
-
-            <!-- Position Column
-            <ng-container matColumnDef="">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let use of arrayOfNumber"> {{use}} </td>
-            </ng-container> -->
 
             <!-- Name Column -->
             <ng-container matColumnDef="name">
@@ -31,23 +23,12 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
         </table>
-        <br>
-        <br>
-        <button mat-raised-button color="primary" id="meilleursScoresButton">Riénitiliser les scores du mode de jeu log2990</button>
+
 
     </mat-tab>
     <mat-tab label="Mode LOG2990">
 
-        <table mat-table [dataSource]="arrayOfScoresClassicMode" class="mat-elevation-z8">
-
-            <!--- Note that these columns can be defined in any order.
-                The actual rendered columns are set as a property on the row definition" -->
-
-            <!-- Position Column -->
-            <!-- <ng-container matColumnDef="position">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let element"> {{0}} </td>
-            </ng-container> -->
+        <table mat-table [dataSource]="arrayOfScoresLog2990Mode" class="mat-elevation-z8">
 
             <!-- Name Column -->
             <ng-container matColumnDef="name">
@@ -65,11 +46,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
         </table>
-        <br>
-        <br>
-        <button mat-raised-button color="primary" id="meilleursScoresButton">Riénitiliser les scores du mode de jeu classique</button>
 
     </mat-tab>
   </mat-tab-group>
-
 

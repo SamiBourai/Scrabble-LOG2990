@@ -1,5 +1,5 @@
 // import { CREATED_HTTP_STATUS, NOT_FOUND_HTTP_STATUS, OK_HTTP_STATUS } from '@app/constants';
-import { CREATED_HTTP_STATUS, NOT_FOUND_HTTP_STATUS } from '@app/classes/constants';
+import { CREATED_HTTP_STATUS, DATABASE_COLLECTION_CLASSIC, DATABASE_COLLECTION_LOG2990, NOT_FOUND_HTTP_STATUS } from '@app/classes/constants';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import { DatabaseService } from '@app/services/database.service';
@@ -28,14 +28,20 @@ export class DatabaseController {
 
             try {
                 await this.databaseService.fetchDataReturn(req.params.collectionName);
-                res.json(this.databaseService.arrayOfAllClassicGameScores);
+                if(req.params.collectionName===DATABASE_COLLECTION_CLASSIC){
+                    res.json(this.databaseService.arrayOfAllClassicGameScores);
+                }else if(req.params.collectionName===DATABASE_COLLECTION_LOG2990){
+                    res.json(this.databaseService.arrayOfAllLog2990GameScores);
+                }
+                // res.json(this.databaseService.arrayOfAllClassicGameScores);
             } catch (error) {
                 res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
             }
         });
-        this.router.post('/Score/addScore', async (req: Request, res: Response) => {
+        this.router.post('/addScore/:collectionName/:name/:score', async (req: Request, res: Response) => {
+            let userScore:Score= {name:req.params.name, score: +req.params.score};
             this.databaseService
-                .addNewScore(req.body.score, req.body.collectionName)
+                .addNewScore(userScore, req.body.collectionName)
                 .then(() => {
                     res.sendStatus(CREATED_HTTP_STATUS).send();
                 })
@@ -43,9 +49,9 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
-        this.router.get('/Scores/resetAllScores', async (req: Request, res: Response) => {
+        this.router.get('/resetAllScores/:collectionName', async (req: Request, res: Response) => {
             this.databaseService
-                .resetAllScores(req.body.collectionName)
+                .resetAllScores(req.params.collectionName)
                 .then((scores: Score[]) => {
                     res.json(scores);
                 })

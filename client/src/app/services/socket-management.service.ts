@@ -44,24 +44,31 @@ export class SocketManagementService {
         this.socket.emit(eventName, message);
     }
 
-    reserveToserver(eventName: string, gameName: string, map: Map<Letter, number>, size: number) {
-        this.socket.emit(eventName, gameName, JSON.stringify(Array.from(map)), size);
+    reserveToserver(eventName: string, gameName: string, map: Map<Letter, number>, size: number, easel: Letter[]) {
+        this.socket.emit(eventName, gameName, JSON.stringify(Array.from(map)), size, easel);
     }
     reserveToClient() {
-        this.socket.on('updateReserveInClient', (map: string, size: number) => {
+        this.socket.on('updateReserveInClient', (map: string, size: number, easel: Letter[]) => {
             this.reserveService.redefineReserve(map, size);
+            this.userService.joinedUser.easel.easelLetters = easel;
         });
     }
     reserveToJoinOnfirstTurn(gameName: string) {
         this.socket.emit('sendReserveJoin', gameName);
 
-        this.socket.on('updateReserveInClient', (map: string, size: number) => {
+        this.socket.on('updateReserveInClient', (map: string, size: number, easel: Letter[]) => {
             if (this.first) {
                 this.first = false;
                 this.reserveService.redefineReserve(map, size);
                 this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
-
-                this.reserveToserver('updateReserveInServer', gameName, this.reserveService.letters, this.reserveService.reserveSize);
+                this.userService.realUser.easel.easelLetters = easel;
+                this.reserveToserver(
+                    'updateReserveInServer',
+                    gameName,
+                    this.reserveService.letters,
+                    this.reserveService.reserveSize,
+                    this.userService.getPlayerEasel().easelLetters,
+                );
             }
         });
     }

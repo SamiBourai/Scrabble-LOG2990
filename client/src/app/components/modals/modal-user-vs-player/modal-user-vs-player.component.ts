@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { LettersService } from '@app/services/letters.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
@@ -25,6 +26,7 @@ export class ModalUserVsPlayerComponent {
         public reserveService: ReserveService,
         private socketManagementService: SocketManagementService,
         public multiplayerService: MultiplayerModeService,
+        public objectifManagerService: ObjectifManagerService,
     ) {}
 
     getNameFromLocalStorage() {
@@ -52,7 +54,6 @@ export class ModalUserVsPlayerComponent {
         }
         this.getOne();
     }
-
     getOne() {
         window.location.assign('/home');
     }

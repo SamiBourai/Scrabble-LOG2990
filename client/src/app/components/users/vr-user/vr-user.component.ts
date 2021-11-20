@@ -28,8 +28,8 @@ export class VrUserComponent implements OnInit, OnDestroy {
     }
 
     setVrTurnToPlay() {
-        this.turnToPlaySubscription = this.userService.turnToPlayObs.subscribe(() => {
-            if (!this.userService.realUser.turnToPlay && !this.userService.endOfGame) {
+        this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
+            if (!this.userService.isPlayerTurn() && !this.userService.endOfGame) {
                 this.timeService.startTime('vrPlayer');
                 this.virtualPlayerService.manageVrPlayerActions();
             }

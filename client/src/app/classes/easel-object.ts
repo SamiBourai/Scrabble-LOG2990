@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { EASEL_LENGTH, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
 import { Letter } from './letter';
 
@@ -28,7 +27,7 @@ export class EaselObject {
                 first = false;
                 found = false;
                 for (let j = 0; j < EASEL_LENGTH; j++) {
-                    if (word.charAt(i) === this.easelLetters[j].charac && this.foundLetter[j] === false) {
+                    if (word.charAt(i) === this.easelLetters[j].charac && !this.foundLetter[j]) {
                         this.foundLetter[j] = true;
                         this.indexOfEaselLetters.push(j);
                         found = true;

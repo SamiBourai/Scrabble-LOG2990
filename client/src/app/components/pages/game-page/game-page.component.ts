@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { EaselObject } from '@app/classes/easel-object';
 import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
@@ -36,12 +37,22 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     ngOnInit() {
         this.getLetter();
+        if (this.userService.gameModeObs) {
+            this.userService.gameModeObs.subscribe(() => {
+                setTimeout(() => {
+                    if (this.userService.playMode === 'soloGame') {
+                        this.soloMode = true;
+                    }
+                }, 0);
+            });
+        }
         switch (this.userService.playMode) {
             case 'soloGame':
                 this.soloMode = true;
                 break;
             case 'createMultiplayerGame':
                 this.soloMode = false;
+                this.userService.joinedUser.easel = new EaselObject(false);
                 this.multiplayerModeService.beginGame();
                 break;
             case 'joinMultiplayerGame':
@@ -71,7 +82,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     isUserEaselEmpty() {
-        this.turnToPlaySubscription = this.userService.turnToPlayObs.subscribe(() => {
+        this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
             setTimeout(() => {
                 this.mouseHandlingService.clearAll();
                 if (
@@ -84,6 +95,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.userService.vrUser.score += this.userService.realUser.easel.pointInEasel();
                     }
                     this.userService.endOfGame = true;
+                    // this.scoresService.isUserResetDataObs.next(this.userService.endOfGame);
                     this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
                 }
             }, 0);

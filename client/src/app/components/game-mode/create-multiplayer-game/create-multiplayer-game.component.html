@@ -1,0 +1,118 @@
+<mat-card class="game-Configuration-Card">
+    <mat-card-title>Configuration de la partie multijoueurs </mat-card-title>
+</mat-card>
+<mat-stepper linear #stepper>
+    <mat-step [stepControl]="firstFormGroup">
+        <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Remplissez votre nom</ng-template>
+            <mat-form-field appearance="fill">
+                <mat-label>Nom</mat-label>
+                <input #message2 matInput placeholder="entrez votre prenom" formControlName="userNameMutiplayer"
+                    [(ngModel)]="playerName" required maxlength="15" />
+                <mat-hint align="end"> {{ message2.value?.length }} / 15</mat-hint>
+                <mat-hint class="no-error-hint" align="start"
+                    *ngIf="firstFormGroup.controls.userNameMutiplayer.valid; else invalidInput">
+                    &#9679; Le nom entré est valide !!! <br />
+                </mat-hint>
+                <ng-template #invalidInput>
+                    <mat-hint align="start" class="error-hint">
+                        &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
+                        &#9679; Le nom ne doit pas contenir d'espace <br />
+                        &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
+                    </mat-hint>
+                </ng-template>
+            </mat-form-field>
+            <br><br>
+            <hr>
+            <div class="container">
+                <div fxLayout="row">
+                    <div>
+                        <p class="multiplayerP-btn">Temps par tour :</p>
+                    </div>
+
+                    <div class="time-config">
+                        <button #minusBtn class="btn btn-primary" [disabled]="this.timeCounter === 0"
+                            (click)="onClickInMinusButton($event)">
+                            -
+                        </button>
+                    </div>
+                    <div class="time-config">
+                        <p class="form-control">{{ this.time.min | number: '2.0-0' }}</p>
+                    </div>
+
+                    <div class="time-config">
+                        <p class="form-control">{{ ':' }}</p>
+                    </div>
+                    <div>
+                        <p class="form-control">{{ this.time.sec | number: '2.0-0' }}</p>
+                    </div>
+                    <div class="time-config">
+                        <button #addBtn class="btn btn-primary" [disabled]="this.timeCounter === 9"
+                            (click)="onClickInAddButton($event)">
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <p><span class="multiplayerP">Mode de jeu :</span></p>
+            <div class="radio" *ngFor="let mode of modes">
+                <label>
+                    <input type="radio" name="gameMode" [value]="mode" checked
+                        (change)="randomBonusActivated($event)" />
+                    {{ mode }}
+                </label>
+            </div>
+            <p>
+                <span class="multiplayerP">Vous avez séléctionner le mode de jeu </span> <b
+                    class="multiplayerP-chosen">{{ chosenMode }}</b>
+            </p>
+            <hr />
+
+            <div>
+                <button mat-raised-button mat-dialog-close
+                    (click)="this.userService.isBonusBox=false">Annuler</button>
+                <button mat-raised-button color="primary" matStepperNext type="submit"
+                    [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid">Suivant</button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" [optional]="isOptional">
+        <form [formGroup]="secondFormGroup">
+            <ng-template matStepLabel>Créez une partie</ng-template>
+            <mat-form-field appearance="fill">
+                <mat-label>Nom de la partie</mat-label>
+                <input matInput formControlName="gameNameMutiplayer" placeholder="nom de la partie"
+                    [(ngModel)]="gameName" required />
+            </mat-form-field>
+            <div>
+                <button mat-button matStepperPrevious mat-raised-button (click)="this.chosenMode = this.modes[1]"
+                    color="accent">Retour</button>
+                <button mat-raised-button color="primary" matStepperNext (click)="createGame()">Suivant</button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Salle d'attente</ng-template>
+        <div *ngIf="guestName; else elseBlock">
+            <p class="multiplayerP">vous allez jouer contre l'utilisateur {{ guestName}}</p>
+            <app-scrable-log2990-modal *ngIf="modeLog2990" ></app-scrable-log2990-modal>
+            <button mat-button (click)="beginGame(true)" routerLink="/game" mat-dialog-close>Démarer la
+                partie</button>
+            <button mat-button (click)="beginGame(false)" mat-dialog-close>Annuler</button>
+        </div>
+        <ng-template #elseBlock>
+            <br />
+            <p class="multiplayerP">Patientez pour un utilisateur s'il vous plait</p>
+            <br />
+            <hr />
+            <mat-spinner></mat-spinner>
+            <div>
+                <button mat-button (click)="disconnectUser()" matStepperPrevious mat-raised-button
+                    color="accent" mat-dialog-close>Annuler</button>
+                <button mat-button (click)="passInSoloMode()" mat-raised-button color="primary" mat-dialog-close>Jouer une partie
+                    classique</button>
+            </div>
+        </ng-template>
+    </mat-step>
+</mat-stepper>

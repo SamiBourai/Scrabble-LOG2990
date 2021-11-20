@@ -1,5 +1,5 @@
 // import { injectable } from "inversify";
-import { DEFAULT_SCORE } from '@app/classes/constants';
+import { BEST_SCORES, DEFAULT_SCORE, MAX_OCCURANCY } from '@app/classes/constants';
 import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
@@ -7,6 +7,7 @@ import { PathLike, writeFile } from 'fs';
 import { readdir, readFile } from 'fs/promises';
 import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
+// import { map } from 'rxjs';
 import { Service } from 'typedi';
 
 // CHANGE the URL for your database information
@@ -36,11 +37,6 @@ export class DatabaseService {
         } catch {
             throw new Error('Database connection error');
         }
-        // this.resetAllScores(DATABASE_COLLECTION_LOG2990);
-        // this.removeDuplicatedDocument(DATABASE_COLLECTION_LOG2990);
-        this.removePlayer('virtualPlayerExpert', 'Messi1234');
-        this.fetchPlayer('virtualPlayerExpert');
-
         return this.client;
     }
     async closeConnection(): Promise<void> {
@@ -51,7 +47,6 @@ export class DatabaseService {
             .collection(collectionName)
             .find({})
             .sort({ score: -1 })
-            .limit(5)
             .toArray()
             .then((scores: Score[]) => {
                 return scores;
@@ -69,15 +64,11 @@ export class DatabaseService {
     }
     async fetchDataReturn(collectionName: string): Promise<void> {
         const arrayOfScoresPromises = await this.getAllScores(collectionName);
-        console.log('array 1 : ', arrayOfScoresPromises);
-        const scoreObj = arrayOfScoresPromises.map((res: Score) => {
+        const scoreObj: Score[] = arrayOfScoresPromises.map((res: Score) => {
             const returnedObj: Score = { name: res.name, score: res.score };
             return returnedObj;
         });
-        if (collectionName === DATABASE_COLLECTION_CLASSIC) this.arrayOfAllClassicGameScores = scoreObj;
-        else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = scoreObj;
-
-        console.log('array 2', scoreObj);
+        await this.deleteDuplicatedElement(scoreObj, collectionName);
     }
     async resetAllScores(collectionName: string): Promise<Score[]> {
         await this.db.collection(collectionName).deleteMany({});
@@ -86,17 +77,6 @@ export class DatabaseService {
         }
         await this.sortAllScores(collectionName);
         return this.getAllScores(collectionName);
-    }
-
-    async removeDuplicatedDocument(collectionName: string): Promise<void> {
-        this.db.collection(collectionName).aggregate([
-            {
-                $group: {
-                    _score: { score: '$_score' },
-                    dups: { $addToSet: '$_score' },
-                },
-            },
-        ]);
     }
 
     async getAllPlayers(collectionName: string): Promise<VirtualPlayer[]> {
@@ -130,8 +110,6 @@ export class DatabaseService {
             const returnedObj: VirtualPlayer = { name: res.name };
             return returnedObj;
         });
-        // if (collectionName === DATABASE_COLLECTION_CLASSIC) this.arrayOfAllClassicGameScores = scoreObj;
-        // else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = scoreObj;
 
         console.log('playerNames :', scoreObj);
     }
@@ -168,5 +146,19 @@ export class DatabaseService {
         });
         console.log(partialDicts);
         return partialDicts;
+    }
+    async deleteDuplicatedElement(arrayOfScores: Score[], collectionName: string) {
+        const sortedArray: Score[] = [];
+        let isAlreadyExist: number;
+        for (let i = 0; i < arrayOfScores.length; i++) {
+            isAlreadyExist = sortedArray.findIndex(
+                (scoreElement) => scoreElement.name === arrayOfScores[i].name && scoreElement.score === arrayOfScores[i].score,
+            );
+            if ((i === 0 || isAlreadyExist === -MAX_OCCURANCY) && sortedArray.length < BEST_SCORES) {
+                sortedArray.push(arrayOfScores[i]);
+            }
+        }
+        if (collectionName === DATABASE_COLLECTION_CLASSIC) this.arrayOfAllClassicGameScores = sortedArray;
+        else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = sortedArray;
     }
 }

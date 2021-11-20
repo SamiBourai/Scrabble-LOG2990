@@ -40,7 +40,7 @@ export class TimeService {
                         this.userService.detectSkipTurnBtn();
                         this.timeUser = { min: this.timeSave.min, sec: this.timeSave.sec };
                         clearInterval(intervalId);
-                    } else if (!this.userService.realUser.turnToPlay) {
+                    } else if (!this.userService.isPlayerTurn()) {
                         this.timeUser = { min: this.timeSave.min, sec: this.timeSave.sec };
                         clearInterval(intervalId);
                     }
