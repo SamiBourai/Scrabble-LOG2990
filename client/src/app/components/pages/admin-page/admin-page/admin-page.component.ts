@@ -13,9 +13,10 @@ import {
     FOURTH_NAME,
     SECOND_NAME,
     SIXTH_NAME,
-    THIRD_NAME
+    THIRD_NAME,
 } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
+import { ScoresService } from '@app/services/score/scores.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
@@ -43,7 +44,12 @@ export class AdminPageComponent implements OnInit {
 
     index = 0;
 
-    constructor(public userService: UserService, private database: DatabaseService, private snackBar: MatSnackBar) {}
+    constructor(
+        public userService: UserService,
+        private database: DatabaseService,
+        private snackBar: MatSnackBar,
+        public scoresService: ScoresService,
+    ) {}
 
     ngOnInit(): void {
         this.getPlayersNamesBeg();
