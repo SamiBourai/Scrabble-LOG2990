@@ -1,8 +1,9 @@
 <div class="content" *ngIf="!this.userService.isUserQuitGame">
-    <header class="header-user-vs-player">{{ getNameFromLocalStorage() }} vous jouerez contre ...</header>
-    <br />
+    <!-- <header class="header-user-vs-player">{{ getNameFromLocalStorage() }} vous jouerez contre ...</header> -->
+
+    <h1 class="text-white text-center">Partie Multijoueur</h1>
     <mat-card class="player-user-card" fxLayout="row">
-        <mat-card class="mart-card-players" fxLayout="row">
+        <mat-card style="margin-right: 15px;" fxLayout="row">
             <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
             <mat-card-header>
                 <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
@@ -27,9 +28,9 @@
     </mat-card>
 
     <mat-card-actions>
-        <div class="btn-user-player">
+        <div class="button-group justify-content-center">
             <button mat-raised-button mat-dialog-close>Annuler La Partie</button>
-            <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Démarrer La Partie</button>
+            <button mat-raised-button routerLink="/game" mat-dialog-close>Démarrer La Partie</button>
         </div>
     </mat-card-actions>
 </div>
@@ -48,7 +49,7 @@
                 Abandonner la partie
             </button>
             </div>
-            <ng-template #elseBlock>  
+            <ng-template #elseBlock>
                 <button  mat-raised-button color="primary" (click)="isUserReturnToMenu = true"
                 (click)="isUserAcceptQuit = true" (click)="setIsUserQuitGame()">
                 Abandonner la partie
@@ -70,9 +71,9 @@
                             src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg">
                         </ngx-avatar>
                     </mat-card>
-                
+
                     <hr />
-                
+
                     <mat-card-actions>
                         <div class="btn-user-player">
                             <button mat-raised-button mat-dialog-close color="primary" (click)="isUserReturnToMenu = false"
@@ -82,9 +83,9 @@
                         </div>
                     </mat-card-actions>
                 </div>
-                
+
                 </button>
-            </ng-template>    
+            </ng-template>
         </div>
     </mat-card-actions>
 </div>
