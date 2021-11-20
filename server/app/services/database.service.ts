@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
 import { Service } from 'typedi';
+import * as util from 'util';
 
 // CHANGE the URL for your database information
 const DATABASE_URL = 'mongodb+srv://equipe303:equipe303@clusterscore.6eoob.mongodb.net/scrabble2990?retryWrites=true&w=majority';
@@ -18,6 +19,7 @@ const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
 export class DatabaseService {
     arrayOfAllClassicGameScores: Score[] = [];
     arrayOfAllLog2990GameScores: Score[] = [];
+    arrayOfAllDictionaries: LoadableDictionary[] = [];
     private db: Db;
     private client: MongoClient;
 
@@ -135,25 +137,36 @@ export class DatabaseService {
     }
 
     async uploadFile(file: LoadableDictionary) {
-        console.log(file);
         const fileString = JSON.stringify(file);
         fs.writeFile('./assets/Dictionaries/' + file.title + '.json', fileString, (err) => {
             if (err) throw err;
             console.log('Results Received');
         });
-        // this.filesArray();
+        this.filesArray();
     }
 
-    // async filesArray() {
-    //     const testFolder = './Dictionaries/';
-    //     const fs = require('fs');
+    async getDictionary(file: string) {
+        const read = util.promisify(fs.readFile);
+        const data: Buffer = await read('./assets/Dictionaries/' + file);
+        this.arrayOfAllDictionaries.push(data.toString() as unknown as LoadableDictionary);
 
-    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     fs.readdir(testFolder, (err: any, files: any) => {
-    //         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //         files.forEach((file: any) => {
-    //             console.log(file);
-    //         });
-    //     });
-    // }
+        // console.log(data.toString());
+
+        // return data.toString() as unknown as LoadableDictionary[];
+    }
+
+    async filesArray(): Promise<LoadableDictionary[]> {
+        const testFolder = './assets/Dictionaries/';
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        fs.readdir(testFolder, (err: any, files: any) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            files.forEach((file: string) => {
+                this.getDictionary(file);
+                console.log('ici' + this.arrayOfAllDictionaries);
+            });
+        });
+
+        return this.arrayOfAllDictionaries;
+    }
 }

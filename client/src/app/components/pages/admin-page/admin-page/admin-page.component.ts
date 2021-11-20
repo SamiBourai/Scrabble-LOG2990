@@ -48,6 +48,7 @@ export class AdminPageComponent implements OnInit {
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
+        this.getDictionaries();
     }
 
     getPlayersNamesBeg() {
@@ -67,6 +68,14 @@ export class AdminPageComponent implements OnInit {
                 return e.name;
             });
         });
+    }
+
+    getDictionaries() {
+        const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary();
+        dictionaryObs.subscribe((data) => {
+            this.dataSource.push({ title: data.title, description: data.description });
+        });
+        this.table.renderRows();
     }
 
     addNameVrToList(level: string) {

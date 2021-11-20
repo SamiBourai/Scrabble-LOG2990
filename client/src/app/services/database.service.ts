@@ -18,6 +18,7 @@ export class DatabaseService {
     private readonly SEND_URL_REMOVE_PLAYER: string = 'http://localhost:3000/api/database/removePlayer';
     private readonly SEND_URL_REMOVE_ALL_PLAYER: string = 'http://localhost:3000/api/database/removeAllPlayer';
     private readonly SEND_URL_UPLOAD_DICTIONARY: string = 'http://localhost:3000/api/database/upload';
+    private readonly SEND_URL_GET_DICTIONARY: string = 'http://localhost:3000/api/database/getDictionary';
 
     constructor(private http: HttpClient) {}
 
@@ -79,5 +80,10 @@ export class DatabaseService {
                 return of(error.status);
             }),
         );
+    }
+
+    getDictionary(): Observable<LoadableDictionary> {
+        const fullUrl = this.SEND_URL_GET_DICTIONARY;
+        return this.http.get<LoadableDictionary>(fullUrl);
     }
 }
