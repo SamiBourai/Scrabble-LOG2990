@@ -4,8 +4,22 @@
     box-shadow: none !important;
 
 }
-.play-btn{
-    margin-top: 30Px;
+.button-group{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    button{
+        width: 150px;
+        border-radius: 20px;
+    }
+    button:last-child {
+        background-color: #2E4052;
+    }
+    button:last-child:enabled{
+        color: white;
+    }
 }
 
 .mat-form-field {
@@ -43,25 +57,19 @@ input[type="radio"] {
 	appearance:none;
 	width: 20px;
 	height: 20px;
-	border: 1px solid #3f51b5;
+	border: 1px solid #FF5800;
 	border-radius: 50%;
 	background-clip: content-box;
 	padding: 3px;
 }
 
 input[type="radio"]:checked {
-	background-color: #3f51b5;
+	background-color: #FF5800;
 }
 
-
-.multiplayerP-btn{
-
-    margin-top: 7%;
-    color: #3f51b5;
-    font-size: 19px;
-    font-weight: 450;
-}
-
+::placeholder {
+    color: #EFEFEF;
+  }
 
 .multiplayerP-chosen{
     color: red;
@@ -72,6 +80,13 @@ input[type="radio"]:checked {
 ::ng-deep{
     .mat-card{
         background-color: #312E2B;
+        color: #EFEFEF;
+    }
+    .mat-form-field-label {
+        color: #EFEFEF;
+    }
+    .mat-form-field.mat-focused .mat-form-field-label {
+        color: #EFEFEF;
     }
     .mat-card-title{
         color: #EFEFEF;
@@ -79,4 +94,26 @@ input[type="radio"]:checked {
     .mat-card-subtitle{
         color: #c0c0c0;
     }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: #f1864d;
+    }
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+        color: #FF5800;
+    }
+    .mat-mini-fab.mat-accent{
+        background-color: #FF5800;
+    }
+    .mat-mini-fab.mat-accent.mat-button-disabled,.mat-mini-fab.mat-button-disabled.mat-button-disabled{
+        background-color: #2E4052;
+    }
 }
+
+
+.time-label{
+    p{
+        margin: 0;
+    }
+}
+.tooltip-list {
+    white-space: pre;
+  }
