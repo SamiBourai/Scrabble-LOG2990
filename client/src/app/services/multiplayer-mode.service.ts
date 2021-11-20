@@ -46,6 +46,7 @@ export class MultiplayerModeService {
         if (place) {
             if (this.userService.chatCommandToSend) {
                 this.socketManagementService.emit(playMethod, {
+                    easel: this.userService.getPlayerEasel().easelLetters,
                     command: this.userService.chatCommandToSend,
                     gameName: this.userService.gameName,
                     user: { name: this.userService.realUser.name, score: this.userService.realUser.score },
@@ -64,24 +65,7 @@ export class MultiplayerModeService {
             });
 
             this.userService.passTurn = false;
-        } else if (this.userService.exchangeLetters) {
-            this.socketManagementService.emit('changeLetter', {
-                gameName: this.userService.gameName,
-                reserve: JSON.stringify(Array.from(this.reserveService.letters)),
-                reserveSize: this.reserveService.reserveSize,
-            });
-
-            this.userService.exchangeLetters = false;
         }
-    }
-
-    updateReserveChangeLetters() {
-        this.socketManagementService.listen('updateAfterChange').subscribe((data) => {
-            this.reserveService.redefineReserve(
-                data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
-                data.reserveSize ?? UNDEFINED_INDEX,
-            );
-        });
     }
     getPlayedCommand(playedMethod: string) {
         this.socketManagementService.listen(playedMethod).subscribe((data) => {
@@ -90,15 +74,18 @@ export class MultiplayerModeService {
                 data.reserve ?? JSON.stringify(Array.from(this.reserveService.letters)),
                 data.reserveSize ?? UNDEFINED_INDEX,
             );
+
             if (this.guestCommand.word !== 'invalid') {
                 this.lettersService.placeLettersWithDirection(this.guestCommand);
                 this.validWordService.usedWords = new Map(JSON.parse(data.usedWords ?? JSON.stringify(Array.from(this.validWordService.usedWords))));
             }
 
             if (playedMethod === 'guestUserPlayed') {
+                this.userService.joinedUser.easel.easelLetters = data.easel ?? [];
                 this.userService.realUser.turnToPlay = true;
                 this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
             } else {
+                this.userService.realUser.easel.easelLetters = data.easel ?? [];
                 this.userService.realUser.turnToPlay = false;
                 this.userService.realUser.score = data.user?.score ?? 0;
             }
@@ -110,6 +97,7 @@ export class MultiplayerModeService {
             this.userService.gameName,
             this.reserveService.letters,
             this.reserveService.reserveSize,
+            this.userService.getPlayerEasel().easelLetters,
         );
     }
     updateReserve() {
@@ -145,7 +133,6 @@ export class MultiplayerModeService {
         this.socketManagementService.listen('getWinner').subscribe((data) => {
             this.gotWinner = true;
             this.virtualPlayer.easel.easelLetters = data.easel ?? [];
-            this.userService.playMode = 'soloGame';
             this.winnerObs.next(this.gotWinner);
         });
     }

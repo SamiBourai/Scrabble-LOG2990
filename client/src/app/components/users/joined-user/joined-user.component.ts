@@ -22,20 +22,25 @@ export class JoinedUserComponent implements OnInit {
     ) {}
     ngOnInit() {
         this.timeService.startMultiplayerTimer();
-        this.userService.commandtoSendObs.subscribe(() => {
-            this.mutltiplayerModeService.play('guestUserPlayed', true);
-        });
-        this.userService.playedObs.subscribe(() => {
-            this.mutltiplayerModeService.play('guestUserPlayed', false);
-        });
-        this.messageService.textMessageObs.subscribe(() => {
-            this.mutltiplayerModeService.sendMessage('sendMessage');
-        });
-        this.mutltiplayerModeService.updateReserveChangeLetters();
-        this.mutltiplayerModeService.getPlayedCommand('creatorPlayed');
-        this.mutltiplayerModeService.getMessageSend('getMessage');
+        if (this.userService.playMode === 'joinMultiplayerGame') {
+            this.userService.commandtoSendObs.subscribe(() => {
+                this.mutltiplayerModeService.play('guestUserPlayed', true);
+            });
+            this.userService.playedObs.subscribe(() => {
+                this.mutltiplayerModeService.play('guestUserPlayed', false);
+            });
+            this.messageService.textMessageObs.subscribe(() => {
+                this.mutltiplayerModeService.sendMessage('sendMessage');
+            });
+            this.mutltiplayerModeService.getPlayedCommand('creatorPlayed');
+            this.mutltiplayerModeService.getMessageSend('getMessage');
 
-        this.mutltiplayerModeService.playersLeftGamge();
-        if (this.mutltiplayerModeService.gotWinner) this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+            this.mutltiplayerModeService.playersLeftGamge();
+            this.mutltiplayerModeService.winnerObs.subscribe((response) => {
+                if (response && this.userService.playMode === 'joinMultiplayerGame') {
+                    this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+                }
+            });
+        }
     }
 }

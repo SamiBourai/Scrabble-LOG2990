@@ -6,6 +6,7 @@ export class Timer {
     timerObs: Subject<{ min: number; sec: number }> = new Subject<{ min: number; sec: number }>();
     creatorTurn: boolean = false;
     playerPlayed: boolean = false;
+    stopTimer: boolean = false;
     constructor() {
         this.timerObs.subscribe((timer) => {
             this.timeUser = timer;
@@ -13,7 +14,7 @@ export class Timer {
         this.startTime();
     }
     startTime() {
-        setInterval(() => {
+        const intervalId = setInterval(() => {
             if (this.timeUser.sec - ONE_SECOND === -ONE_SECOND) {
                 this.timeUser.min -= ONE_MINUTE;
                 this.timeUser.sec = MINUTE_TURN;
@@ -24,8 +25,10 @@ export class Timer {
                 if (this.creatorTurn) this.creatorTurn = false;
                 else this.creatorTurn = true;
             }
-
-            this.timerObs.next(this.timeUser);
+            if (this.stopTimer) {
+                clearInterval(intervalId);
+                console.log('timerstop');
+            } else this.timerObs.next(this.timeUser);
         }, ONE_SECOND_MS);
     }
 }
