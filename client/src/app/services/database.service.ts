@@ -81,6 +81,14 @@ export class DatabaseService {
         );
     }
 
+    deleteDictionary(fileName: LoadableDictionary) {
+        console.log(fileName);
+
+        const fullUrl = this.SEND_URL_GET_DICTIONARY + '/' + fileName.title;
+        console.log(fullUrl);
+        return this.http.delete(fullUrl);
+    }
+
     getDictionary(title: string): Observable<LoadableDictionary> {
         const fullUrl = this.SEND_URL_GET_DICTIONARY + '/' + title;
         return this.http.get<LoadableDictionary>(fullUrl);

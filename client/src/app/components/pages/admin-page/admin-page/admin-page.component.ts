@@ -29,7 +29,7 @@ const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal
     styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent implements OnInit {
-    @ViewChild(MatTable, { static: true }) private table: MatTable<unknown>;
+    @ViewChild(MatTable, { static: true }) table: MatTable<unknown>;
     @ViewChild('fileInput', { static: false }) private fileInput: ElementRef<HTMLInputElement>;
     selectable = true;
     removableBeg = true;
@@ -46,7 +46,7 @@ export class AdminPageComponent implements OnInit {
 
     constructor(
         public userService: UserService,
-        private database: DatabaseService,
+        public database: DatabaseService,
         private snackBar: MatSnackBar,
         public scoresService: ScoresService,
     ) {}
@@ -87,6 +87,13 @@ export class AdminPageComponent implements OnInit {
         this.table.renderRows();
     }
 
+    deleteDic(dictionary: LoadableDictionary) {
+        this.database.deleteDictionary(dictionary).subscribe(() => {
+            const index = this.dataSource.indexOf({ title: dictionary.title, description: dictionary.description });
+            this.dataSource.splice(index, 1);
+            this.table.renderRows();
+        });
+    }
     addNameVrToList(level: string) {
         if (level === 'beginner') {
             // code
@@ -122,6 +129,8 @@ export class AdminPageComponent implements OnInit {
             if (typeof possibleResult === 'string') {
                 const dictionnary = ValidWordService.loadableDictToDict(JSON.parse(possibleResult));
                 this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
+                console.log(this.isSameDictionnaryName(dictionnary.title));
+
                 if (!this.isSameDictionnaryName(dictionnary.title)) {
                     this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
                     this.database
@@ -229,6 +238,7 @@ export class AdminPageComponent implements OnInit {
         for (const dic of this.dataSource) {
             dictionnatyNames.push(dic.title);
         }
+
         if (!dictionnatyNames.includes(name)) return false;
         return true;
     }

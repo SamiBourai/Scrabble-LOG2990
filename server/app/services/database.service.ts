@@ -4,7 +4,7 @@ import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import { PathLike, writeFile } from 'fs';
-import { readdir, readFile } from 'fs/promises';
+import { readdir, readFile, unlink } from 'fs/promises';
 import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
 // import { map } from 'rxjs';
@@ -105,13 +105,10 @@ export class DatabaseService {
 
     async fetchPlayer(collectionName: string): Promise<void> {
         const arrayOfScoresPromises = await this.getAllPlayers(collectionName);
-        // console.log('array 1 : ', arrayOfScoresPromises);
-        const scoreObj: VirtualPlayer[] = arrayOfScoresPromises.map((res: VirtualPlayer) => {
+        arrayOfScoresPromises.map((res: VirtualPlayer) => {
             const returnedObj: VirtualPlayer = { name: res.name };
             return returnedObj;
         });
-
-        console.log('playerNames :', scoreObj);
     }
 
     async uploadFile(file: LoadableDictionary) {
@@ -123,6 +120,11 @@ export class DatabaseService {
         this.dictMetadata();
     }
 
+    async deleteFile(fileName: string) {
+        console.log('File deleted');
+        await unlink(`./assets/Dictionaries/${fileName}.json`);
+    }
+
     async dictData(title: string) {
         const data = await readFile(`./assets/Dictionaries/${title}.json`);
         return JSON.parse(data.toString());
@@ -132,9 +134,9 @@ export class DatabaseService {
         const testFolder = './assets/Dictionaries';
 
         const files = await readdir(testFolder);
-        console.log(files);
+        // console.log(files);
         const paths = files.map((file) => `${testFolder}/${file}` as PathLike);
-        console.log(paths);
+        // console.log(paths);
 
         const a = paths.map(async (path) => readFile(path));
         const b = await Promise.all(a);
@@ -144,7 +146,7 @@ export class DatabaseService {
             dict.words = [];
             return dict;
         });
-        console.log(partialDicts);
+        // console.log(partialDicts);
         return partialDicts;
     }
     async deleteDuplicatedElement(arrayOfScores: Score[], collectionName: string) {

@@ -1,5 +1,11 @@
 // import { CREATED_HTTP_STATUS, NOT_FOUND_HTTP_STATUS, OK_HTTP_STATUS } from '@app/constants';
-import { CREATED_HTTP_STATUS, DATABASE_COLLECTION_CLASSIC, DATABASE_COLLECTION_LOG2990, NOT_FOUND_HTTP_STATUS } from '@app/classes/constants';
+import {
+    CREATED_HTTP_STATUS,
+    DATABASE_COLLECTION_CLASSIC,
+    DATABASE_COLLECTION_LOG2990,
+    NOT_FOUND_HTTP_STATUS,
+    NO_CONTENT_HTTP_STATUS,
+} from '@app/classes/constants';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import { DatabaseService } from '@app/services/database.service';
@@ -28,9 +34,9 @@ export class DatabaseController {
 
             try {
                 await this.databaseService.fetchDataReturn(req.params.collectionName);
-                if(req.params.collectionName===DATABASE_COLLECTION_CLASSIC){
+                if (req.params.collectionName === DATABASE_COLLECTION_CLASSIC) {
                     res.json(this.databaseService.arrayOfAllClassicGameScores);
-                }else if(req.params.collectionName===DATABASE_COLLECTION_LOG2990){
+                } else if (req.params.collectionName === DATABASE_COLLECTION_LOG2990) {
                     res.json(this.databaseService.arrayOfAllLog2990GameScores);
                 }
                 // res.json(this.databaseService.arrayOfAllClassicGameScores);
@@ -39,7 +45,7 @@ export class DatabaseController {
             }
         });
         this.router.post('/addScore/:collectionName/:name/:score', async (req: Request, res: Response) => {
-            let userScore:Score= {name:req.params.name, score: +req.params.score};
+            const userScore: Score = { name: req.params.name, score: +req.params.score };
             this.databaseService
                 .addNewScore(userScore, req.body.collectionName)
                 .then(() => {
@@ -114,11 +120,24 @@ export class DatabaseController {
                 });
         });
 
+        this.router.delete('/dictionary/:title', async (req: Request, res: Response) => {
+            console.log('1111111111111');
+
+            this.databaseService
+                .deleteFile(req.params.title)
+                .then(() => {
+                    res.sendStatus(NO_CONTENT_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
+
         this.router.get('/dictionary/:title', async (req: Request, res: Response) => {
             this.databaseService
-                .dictData(req.body)
-                .then(() => {
-                    res.sendStatus(CREATED_HTTP_STATUS).send();
+                .dictData(req.params.title)
+                .then((dict) => {
+                    res.json(dict);
                 })
                 .catch((error: Error) => {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);

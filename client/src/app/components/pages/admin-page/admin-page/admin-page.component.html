@@ -36,7 +36,8 @@
 
                           <ng-container matColumnDef="supprimer">
                             <th mat-header-cell *matHeaderCellDef> supprimer </th>
-                            <td mat-cell *matCellDef="let element"> <button mat-flat-button color="warn">Supprimer</button> </td>
+        this.table.renderRows();
+        <td mat-cell *matCellDef="let element"> <button mat-flat-button color="warn" (click)="deleteDic(element)">Supprimer</button> </td>
                           </ng-container>
                           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
