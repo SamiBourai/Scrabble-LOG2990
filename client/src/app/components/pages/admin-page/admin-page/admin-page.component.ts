@@ -1,15 +1,22 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import {
+    CLOSE_SNACKBAR,
     COMMA,
     DATABASE_COLLECTION_VRNAMESBEG,
     DATABASE_COLLECTION_VRNAMESEXP,
+    DATA_RESET_SUCCESFULLY,
     ENTER,
+    ERROR_HTTP,
     FIFTH_NAME,
     FIRST_NAME,
     FOURTH_NAME,
+    MAX_TIME_SNACKBAR,
     SECOND_NAME,
+    SERVER_NOT_RESPONDING,
     SIXTH_NAME,
     THIRD_NAME,
 } from '@app/constants/constants';
@@ -34,7 +41,7 @@ export class AdminPageComponent implements OnInit {
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
-    constructor(public userService: UserService,public scoresService:ScoresService, private database: DatabaseService) {}
+    constructor(public userService: UserService,public scoresService:ScoresService, private database: DatabaseService,   private snackBar:MatSnackBar) {}
 
     ngOnInit(): void {
         this.getPlayersNamesBeg();
@@ -167,4 +174,27 @@ export class AdminPageComponent implements OnInit {
         this.userService.vrPlayerNamesBeginner = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []];
         this.userService.vrPlayerNamesExpert = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
     }
+
+    setResetData():void{
+        this.scoresService.isUserResetData=true;
+        this.scoresService.getIsUserResetDataObs.next(this.scoresService.isUserResetData);
+        console.log('button reset a ete cliquer : ',this.scoresService.isUserResetData);
+
+    }
+
+    resetScores(collectionName: string): void {
+        const scores: Observable<Score[]> = this.database.resetAllScores(collectionName);
+        scores.subscribe(() => {
+
+            this.openSnackBar(DATA_RESET_SUCCESFULLY, CLOSE_SNACKBAR);
+        },
+        (rejected: number) => {
+            this.openSnackBar(ERROR_HTTP+rejected+SERVER_NOT_RESPONDING, CLOSE_SNACKBAR);
+
+        });
+    }
+    private openSnackBar(message: string, action: string):void {
+        this.snackBar.open(message, action, {duration: MAX_TIME_SNACKBAR});
+    }
+
 }

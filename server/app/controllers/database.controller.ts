@@ -39,9 +39,8 @@ export class DatabaseController {
             }
         });
         this.router.post('/addScore/:collectionName/:name/:score', async (req: Request, res: Response) => {
-            let userScore:Score= {name:req.params.name, score: +req.params.score};
             this.databaseService
-                .addNewScore(userScore, req.body.collectionName)
+               .addNewScore({name:req.params.name, score: +req.params.score}, req.params.collectionName)
                 .then(() => {
                     res.sendStatus(CREATED_HTTP_STATUS).send();
                 })
@@ -49,6 +48,7 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
+        
         this.router.get('/resetAllScores/:collectionName', async (req: Request, res: Response) => {
             this.databaseService
                 .resetAllScores(req.params.collectionName)

@@ -67,7 +67,7 @@
                     <div class="segment">
                         <button class="uploadButton" mat-flat-button color="warn" (click)="resetDictionaries()">Reset Dictionaries</button>
                         <button class="uploadButton" mat-flat-button color="warn" (click)="resetVPNames()">Reset Virtual Player Names</button>
-                        <button class="uploadButton" mat-flat-button color="warn" (click)="scoresService.isUserResetDataObs.next(true)" >Riénitiliser les meilleurs scores</button>
+                        <button class="uploadButton" mat-flat-button color="warn" (click)="resetScores('Score')" (click)="resetScores('scoreLog2990')" >Riénitiliser les meilleurs scores</button>
                     </div>
                 </mat-tab>
 

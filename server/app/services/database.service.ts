@@ -33,6 +33,7 @@ export class DatabaseService {
         } catch {
             throw new Error('Database connection error');
         }
+        // this.addNewScore();
         return this.client;
     }
     async closeConnection(): Promise<void> {
@@ -52,8 +53,10 @@ export class DatabaseService {
         return this.db;
     }
     async addNewScore(score: Score, collectionName: string): Promise<void> {
-        await this.db.collection(collectionName).insertOne(score);
-        this.sortAllScores(collectionName);
+        console.log('hey je suis la dedans');
+        let scoreX:Score={name:score.name, score:score.score};
+        await this.db.collection(collectionName).insertOne(scoreX);
+        // this.sortAllScores(collectionName);
     }
     async sortAllScores(collectionName: string): Promise<void> {
         this.db.collection(collectionName).find({}).sort({ score: -1 });
