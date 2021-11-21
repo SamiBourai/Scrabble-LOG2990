@@ -44,6 +44,7 @@ export class ModalUserNameComponent implements OnInit {
     chooseSoloMode: boolean = false;
     toolTip: string =
         "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace (3) Le nom doit avoir au min 8 caractere et max 15";
+    
 
     constructor(
         private dialogRef: MatDialog,
@@ -210,4 +211,7 @@ export class ModalUserNameComponent implements OnInit {
         this.chosenMode = this.modes[DEFAULT_MODE];
         this.userService.isBonusBox = false;
     }
+
+    
+
 }
