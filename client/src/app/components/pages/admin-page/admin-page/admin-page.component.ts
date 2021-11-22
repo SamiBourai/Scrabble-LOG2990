@@ -179,6 +179,11 @@ export class AdminPageComponent implements OnInit {
 
     resetDictionaries() {
         console.log('Dictionnaires reset!');
+        this.database.deleteAllDictionaries().subscribe(() => {
+            console.log(this.dataSource.length);
+            this.dataSource.splice(1);
+            this.table.renderRows();
+        });
     }
 
     resetVPNames() {

@@ -121,10 +121,21 @@ export class DatabaseController {
         });
 
         this.router.delete('/dictionary/:title', async (req: Request, res: Response) => {
+            this.databaseService
+                .deleteFile(req.params.title)
+                .then(() => {
+                    res.sendStatus(NO_CONTENT_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
+
+        this.router.delete('/dictionaries', async (req: Request, res: Response) => {
             console.log('1111111111111');
 
             this.databaseService
-                .deleteFile(req.params.title)
+                .deleteAllFile()
                 .then(() => {
                     res.sendStatus(NO_CONTENT_HTTP_STATUS).send();
                 })
@@ -145,6 +156,8 @@ export class DatabaseController {
         });
 
         this.router.get('/dictionaries', async (req: Request, res: Response) => {
+            console.log('22222222222');
+
             this.databaseService
                 .dictMetadata()
                 .then((dicts) => {

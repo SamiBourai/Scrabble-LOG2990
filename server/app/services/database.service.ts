@@ -125,6 +125,23 @@ export class DatabaseService {
         await unlink(`./assets/Dictionaries/${fileName}.json`);
     }
 
+    async deleteAllFile() {
+        const testFolder = './assets/Dictionaries';
+        console.log('11111111');
+
+        const files = await readdir(testFolder);
+        for (const file of files) {
+            console.log(file);
+
+            await unlink(`./assets/Dictionaries/${file}`);
+        }
+        // const paths = files.map((file) => `${testFolder}/${file}` as PathLike);
+        // paths.forEach((dic) => {
+        //     const a = paths.map(async (path) => readFile(path));
+        //     await unlink(`./assets/Dictionaries/${dic}.json`);
+        // });
+    }
+
     async dictData(title: string) {
         const data = await readFile(`./assets/Dictionaries/${title}.json`);
         return JSON.parse(data.toString());
@@ -136,6 +153,8 @@ export class DatabaseService {
         const files = await readdir(testFolder);
         // console.log(files);
         const paths = files.map((file) => `${testFolder}/${file}` as PathLike);
+        console.log(paths);
+
         // console.log(paths);
 
         const a = paths.map(async (path) => readFile(path));
