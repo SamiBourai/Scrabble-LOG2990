@@ -23,7 +23,7 @@
 
                           <ng-container matColumnDef="modifier">
                             <th mat-header-cell *matHeaderCellDef> modifier </th>
-                            <td mat-cell *matCellDef="let element"> <button mat-stroked-button color="primary">modifier</button> </td>
+                            <td mat-cell *matCellDef="let element"> <button mat-stroked-button color="primary" (click) = "openDialog('modifier',element)">modifier</button> </td>
                           </ng-container>
 
 

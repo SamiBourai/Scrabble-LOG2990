@@ -30,6 +30,7 @@ import { ScrableLog2990ModalComponent } from './components/modals/scrable-log299
 import { CreateMultiplayerGameComponent } from './components/game-mode/create-multiplayer-game/create-multiplayer-game.component';
 import { JoinMultiplayerGameComponent } from './components/game-mode/join-multiplayer-game/join-multiplayer-game.component';
 import { SoloGameComponent } from './components/game-mode/solo-game/solo-game.component';
+import { DialogBoxComponent } from './components/modals/dialog-box/dialog-box.component';
 
 /**
  * Main module that is used in main.ts.
@@ -59,6 +60,7 @@ import { SoloGameComponent } from './components/game-mode/solo-game/solo-game.co
         CreateMultiplayerGameComponent,
         JoinMultiplayerGameComponent,
         SoloGameComponent,
+        DialogBoxComponent,
     ],
     imports: [
         AppMaterialModule,

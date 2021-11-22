@@ -1,3 +1,7 @@
+
+
+
+import { MatDialog } from '@angular/material/dialog';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -21,6 +25,7 @@ import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
 import { DictionaryPresentation, LoadableDictionary } from './../../../../classes/dictionary';
+import { DialogBoxComponent } from '@app/components/modals/dialog-box/dialog-box.component';
 
 const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal', description: 'le dictionnaire par defaut' }];
 @Component({
@@ -49,12 +54,39 @@ export class AdminPageComponent implements OnInit {
         public database: DatabaseService,
         private snackBar: MatSnackBar,
         public scoresService: ScoresService,
+        public dialog: MatDialog,
     ) {}
 
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
         this.getDictionaries();
+    }
+
+    openDialog(action: string, obj: DictionaryPresentation) {
+        obj.action = action;
+        const dialogRef = this.dialog.open(DialogBoxComponent, {
+            width: '250px',
+            data: obj,
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result.event === 'modifier') {
+                this.updateRowData(result.data);
+            }
+        });
+    }
+
+    updateRowData(newDic: DictionaryPresentation) {
+        this.dataSource = this.dataSource.filter((value) => {
+            if (value.title === newDic.title || value.description === newDic.description) {
+                value.description = newDic.description;
+                value.title = newDic.title;
+                this.table.renderRows();
+            }
+
+            return true;
+        });
     }
     resetBestScores() {}
 
