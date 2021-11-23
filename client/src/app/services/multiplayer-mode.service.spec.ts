@@ -39,7 +39,7 @@ describe('MultiplayerModeService', () => {
 
     it('winnerOfGame', () => {
         const i = service.winnerOfGame;
-        expect(i).toEqual(service.winnerObs);
+        expect(i).toEqual(service.playerLeftObs);
     });
 
     it('beginGame false', () => {
@@ -399,7 +399,7 @@ describe('MultiplayerModeService', () => {
             gameStarted: true,
         };
         const spy = spyOn<any>(service['socketManagementService'], 'listen').and.returnValue(of(data));
-        const spy2 = spyOn<any>(service.winnerObs, 'next');
+        const spy2 = spyOn<any>(service.playerLeftObs, 'next');
         service.playersLeftGamge();
         expect(spy).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();

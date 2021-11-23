@@ -163,8 +163,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.placeInTempCanvas(this.messageService.command);
                 setTimeout(() => {
                     this.commandManagerService.verifyWordsInDictionnary(this.messageService.command, this.userService.playMode);
-                    this.mouseHandelingService.clearAll(true);
+
                     this.placeWordIfValid();
+                    this.mouseHandelingService.clearAll();
                 }, WAIT_TIME_3_SEC);
         }
     }

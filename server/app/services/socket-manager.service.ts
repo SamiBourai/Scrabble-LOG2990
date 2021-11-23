@@ -64,19 +64,22 @@ export class SocketManagerService {
                 this.games.get(command.gameName).creatorPlayer.score = command.user?.score ?? 0;
                 this.games.get(command.gameName).reserverServerSize = command.reserveSize;
                 this.games.get(command.gameName).creatorEasel = command.easel ?? [];
-                this.checkIfEndGame(this.games.get(command.gameName));
+
                 this.sio.to(command.gameName).emit('creatorPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
                 this.games.get(command.gameName).passTurn = 0;
+                this.checkIfEndGame(command);
             });
             socket.on('guestUserPlayed', (command: MessageClient) => {
                 this.games.get(command.gameName).guestPlayer.score = command.guestPlayer?.score ?? 0;
                 this.games.get(command.gameName).reserverServerSize = command.reserveSize;
                 this.games.get(command.gameName).joinEasel = command.easel ?? [];
-                this.checkIfEndGame(this.games.get(command.gameName));
+
                 this.sio.to(command.gameName).emit('guestUserPlayed', command);
                 this.games.get(command.gameName).timer.playerPlayed = true;
                 this.games.get(command.gameName).passTurn = 0;
+
+                this.checkIfEndGame(command);
             });
             socket.on('startTimer', (game: MessageClient) => {
                 if (this.games.has(game.gameName)) {
@@ -89,8 +92,10 @@ export class SocketManagerService {
             });
             socket.on('passTurn', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.playerPlayed = true;
-                this.checkIfEndGame(game);
+                this.games.get(game.gameName).passTurn++;
+                this.checkIfSixPass(game);
             });
+
             socket.on('changeLetter', (game: MessageClient) => {
                 this.games.get(game.gameName).timer.playerPlayed = true;
                 this.games.get(game.gameName).passTurn = 0;
@@ -153,6 +158,7 @@ export class SocketManagerService {
                 message.isValid = this.validWordService.verifyWord(message.word ?? word);
                 this.sio.to(message.gameName).emit('verifyWord', message);
             });
+
             socket.on('disconnect', () => {
                 socket.disconnect();
             });
@@ -175,17 +181,33 @@ export class SocketManagerService {
     private emitTime() {
         this.sio.sockets.emit('clock', new Date().toLocaleTimeString());
     }
-    private checkIfEndGame(game: MessageClient) {
-        this.games.get(game.gameName).passTurn++;
+    private checkIfSixPass(game: MessageClient) {
         if (this.games.get(game.gameName).passTurn === SIX_TURN) {
-            this.sio.to(game.gameName).emit('getWinner', game);
+            this.sio.to(game.gameName).emit('endOfGame', game);
+            this.games.get(game.gameName).timer.stopTimer = true;
         }
-        const letterJ = new Array<Letter>(this.games.get(game.gameName).joinEasel);
-        const joinEaselLengt = EASEL_LENGTH - letterJ.filter((lett) => lett === NOT_A_LETTER).length ?? 0;
-        const letterC = new Array<Letter>(this.games.get(game.gameName).creatorEasel);
-        const creatorEaselLengt = EASEL_LENGTH - letterC.filter((lett) => lett === NOT_A_LETTER).length ?? 0;
+    }
+    private checkIfEndGame(game: MessageClient) {
+        const joinEaselLengt = this.getEaselLength(this.games.get(game.gameName).joinEasel);
+        const creatorEaselLengt = this.getEaselLength(this.games.get(game.gameName).creatorEasel);
+        console.log('user', creatorEaselLengt);
+        console.log('join', joinEaselLengt);
+
         if (this.games.get(game.gameName).reserverServerSize === 0 && (joinEaselLengt === 0 || creatorEaselLengt === 0)) {
-            this.sio.to(game.gameName).emit('getWinner', game);
+            this.sio.to(game.gameName).emit('endOfGame', game);
+            console.log('endTheFcknGame');
+            this.games.get(game.gameName).timer.stopTimer = true;
         }
+    }
+
+    private getEaselLength(easel: Letter[]): number {
+        let length = EASEL_LENGTH;
+        if (easel)
+            for (const c of easel) {
+                if (c && c.charac === NOT_A_LETTER.charac) {
+                    length--;
+                }
+            }
+        return length;
     }
 }

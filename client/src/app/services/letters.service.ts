@@ -125,15 +125,15 @@ export class LettersService {
             if (
                 command.direction === 'h' &&
                 (!this.tileIsEmpty({ x: command.position.x + i, y: command.position.y }) ||
-                    !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y + 1 }) ||
-                    !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y - 1 }))
+                    (command.position.y - 1 < NB_TILES ? !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y + 1 }) : true) ||
+                    (command.position.y - 1 !== 0 ? !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y - 1 }) : true))
             )
                 return true;
             if (
                 command.direction === 'v' &&
                 (!this.tileIsEmpty({ x: command.position.x, y: command.position.y + i }) ||
-                    !this.tileIsEmpty({ x: command.position.x - 1, y: command.position.y + i }) ||
-                    !this.tileIsEmpty({ x: command.position.x + 1, y: command.position.y + i }))
+                    (command.position.x - 1 < NB_TILES ? !this.tileIsEmpty({ x: command.position.x - 1, y: command.position.y + i }) : true) ||
+                    (command.position.x - 1 !== 0 ? !this.tileIsEmpty({ x: command.position.x + 1, y: command.position.y + i }) : true))
             )
                 return true;
         }
@@ -143,6 +143,8 @@ export class LettersService {
     isWordStickedToAnother(command: ChatCommand): boolean {
         if (
             command.direction === 'h' &&
+            command.position.x - 1 !== 0 &&
+            command.position.x - 1 + command.word.length < NB_TILES &&
             (this.tiles[command.position.y - 1][command.position.x - 2].charac !== NOT_A_LETTER.charac ||
                 this.tiles[command.position.y - 1][command.position.x - 1 + command.word.length].charac !== NOT_A_LETTER.charac)
         )
@@ -150,6 +152,8 @@ export class LettersService {
 
         if (
             command.direction === 'v' &&
+            command.position.y - 1 !== 0 &&
+            command.position.y - 1 + command.word.length < NB_TILES &&
             (this.tiles[command.position.y - 2][command.position.x - 1].charac !== NOT_A_LETTER.charac ||
                 this.tiles[command.position.y - 1 + command.word.length][command.position.x - 1].charac !== NOT_A_LETTER.charac)
         )

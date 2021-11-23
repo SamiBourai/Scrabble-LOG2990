@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
+import { ShowEndgameInfoComponent } from '@app/components/modals/show-endgame-info/show-endgame-info.component';
 import { MessageService } from '@app/services/message.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { TimeService } from '@app/services/time.service';
@@ -40,9 +41,15 @@ export class RealPlayerComponent implements OnInit {
             this.mutltiplayerModeService.getPlayedCommand('guestUserPlayed');
             this.mutltiplayerModeService.getMessageSend('getMessage');
             this.mutltiplayerModeService.playersLeftGamge();
-            this.mutltiplayerModeService.winnerObs.subscribe((response) => {
+            this.mutltiplayerModeService.playerLeftObs.subscribe((response) => {
                 if (response) {
                     this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+                }
+            });
+            this.mutltiplayerModeService.endOfGame();
+            this.mutltiplayerModeService.gameDoneObs.subscribe((response) => {
+                if (response) {
+                    this.dialogRef.open(ShowEndgameInfoComponent);
                 }
             });
         }

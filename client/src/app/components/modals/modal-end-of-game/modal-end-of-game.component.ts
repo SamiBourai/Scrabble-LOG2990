@@ -12,7 +12,7 @@ export class ModalEndOfGameComponent implements OnInit {
 
     constructor(public multiplayerService: MultiplayerModeService, private userService: UserService) {}
     ngOnInit(): void {
-        this.multiplayerService.winnerOfGame.subscribe((response) => {
+        this.multiplayerService.playerLeftObs.subscribe((response) => {
             this.gotWinner = response;
         });
     }

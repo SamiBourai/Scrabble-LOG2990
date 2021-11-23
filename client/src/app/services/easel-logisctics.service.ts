@@ -84,7 +84,6 @@ export class EaselLogiscticsService {
                 easel.easelSize--;
             }
         }
-
         if (user) this.placeEaselLetters(easel);
     }
     fillEasel(easel: EaselObject, user: boolean): void {

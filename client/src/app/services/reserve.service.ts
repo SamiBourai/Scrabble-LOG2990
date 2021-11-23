@@ -21,6 +21,7 @@ export class ReserveService {
         const qty: number = (this.letters.get(save) ?? 0) - 1;
         this.letters.set(save, qty);
         this.reserveSize--;
+        this.sizeObs.next(this.reserveSize);
         return save;
     }
     getRandomKey(map: Map<Letter, number>): Letter {
@@ -44,6 +45,7 @@ export class ReserveService {
             }
         });
         this.reserveSize++;
+        this.sizeObs.next(this.reserveSize);
     }
 
     isReserveEmpty(): boolean {

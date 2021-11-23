@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { MessageServer } from '@app/classes/message-server';
 import { UNDEFINED_INDEX } from '@app/constants/constants';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { LettersService } from './letters.service';
 import { MessageService } from './message.service';
 import { ReserveService } from './reserve.service';
@@ -18,9 +18,10 @@ export class MultiplayerModeService {
     gameStarted: boolean = false;
     guestCommand: ChatCommand;
     first: boolean = true;
-    gotWinner: boolean = false;
-    winnerObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    observableWinner: Observable<boolean>;
+    playerLeft: boolean = false;
+    playerLeftObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    gameDone: boolean = false;
+    gameDoneObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     constructor(
         private socketManagementService: SocketManagementService,
@@ -30,12 +31,7 @@ export class MultiplayerModeService {
         private messageService: MessageService,
         private validWordService: ValidWordService,
         private virtualPlayer: VirtualPlayerService,
-    ) {
-        this.observableWinner = this.winnerObs.asObservable();
-    }
-    get winnerOfGame(): Observable<boolean> {
-        return this.winnerObs;
-    }
+    ) {}
 
     beginGame(): void {
         this.socketManagementService.listen('beginGame').subscribe((data) => {
@@ -49,8 +45,14 @@ export class MultiplayerModeService {
                     easel: this.userService.getPlayerEasel().easelLetters,
                     command: this.userService.chatCommandToSend,
                     gameName: this.userService.gameName,
-                    user: { name: this.userService.realUser.name, score: this.userService.realUser.score },
-                    guestPlayer: { name: this.userService.joinedUser.name, score: this.userService.joinedUser.score },
+                    user: {
+                        name: this.userService.realUser.name,
+                        score: this.userService.realUser.score,
+                    },
+                    guestPlayer: {
+                        name: this.userService.joinedUser.name,
+                        score: this.userService.joinedUser.score,
+                    },
                     usedWords: JSON.stringify(Array.from(this.validWordService.usedWords)),
                     reserve: JSON.stringify(Array.from(this.reserveService.letters)),
                     reserveSize: this.reserveService.reserveSize,
@@ -91,11 +93,15 @@ export class MultiplayerModeService {
 
             if (playedMethod === 'guestUserPlayed') {
                 this.userService.joinedUser.easel.easelLetters = data.easel ?? [];
+                //
                 this.userService.realUser.turnToPlay = true;
                 this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
+                console.log('join:', this.userService.joinedUser.score);
             } else {
                 this.userService.realUser.easel.easelLetters = data.easel ?? [];
+                //
                 this.userService.realUser.turnToPlay = false;
+                console.log('user:', this.userService.realUser.score);
                 this.userService.realUser.score = data.user?.score ?? 0;
             }
         });
@@ -149,9 +155,19 @@ export class MultiplayerModeService {
     }
     playersLeftGamge() {
         this.socketManagementService.listen('getWinner').subscribe((data) => {
-            this.gotWinner = true;
+            this.playerLeft = true;
             this.virtualPlayer.easel.easelLetters = data.easel ?? [];
-            this.winnerObs.next(this.gotWinner);
+            this.playerLeftObs.next(this.playerLeft);
+        });
+    }
+
+    endOfGame() {
+        this.socketManagementService.listen('endOfGame').subscribe(() => {
+            setTimeout(() => {
+                this.userService.endOfGame = true;
+                this.gameDone = true;
+                this.gameDoneObs.next(this.gameDone);
+            }, 0);
         });
     }
 }

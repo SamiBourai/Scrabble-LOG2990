@@ -1,0 +1,58 @@
+<div *ngIf="this.userService.endOfGame">
+    <div *ngIf="this.userService.playMode==='soloGame'; else elseBlock">
+        <mat-card class="card-not-playing" fxLayout="column" fxLayoutAlign="center center">
+            <mat-card-header>
+                <mat-card-title>**La partie est terminé!**</mat-card-title>
+                <mat-card-title class="score-time" *ngIf="this.userService.getWinnerName() !== 'egal'; elseBlock">
+                    {{ 'GAGNANT: ' + this.userService.getWinnerName() }}</mat-card-title
+                >
+                <ng-template #elseBlock>
+                    {{ this.userService.realUser.name + ' **EGALITE** ' + this.userService.vrUser.name }}</ng-template
+                >
+                <mat-card-subtitle class="score-time">
+                    {{ 'CHEVALET '+ this.userService.realUser.name+' :'}}</mat-card-subtitle
+                >
+                <mat-card-subtitle class="score-time">
+                <canvas id="canvas" class="easelOne" #easelOne [attr.width]="width" [attr.height]="height"></canvas>
+                </mat-card-subtitle>
+                <mat-card-subtitle class="score-time">
+                    {{ 'CHEVALET '+ this.userService.vrUser.name+' :'}}</mat-card-subtitle
+                > 
+                <mat-card-subtitle class="score-time">
+                <canvas id="canvas" class="easelTwo" #easelTwo [attr.width]="width" [attr.height]="height"></canvas>
+                </mat-card-subtitle
+                >
+            </mat-card-header>
+        </mat-card>
+    </div>
+ 
+    <ng-template #elseBlock>
+        <mat-card class="card-not-playing" fxLayout="col">
+            <mat-card-header>
+                <mat-card-title class="score-time" *ngIf="this.userService.getWinnerName() !== 'egal'; elseBlock">
+                    {{ 'GAGNANT: ' + this.userService.getWinnerName() }}</mat-card-title
+                >
+                <ng-template #elseBlock>
+                    {{ this.userService.realUser.name + ' **EGALITE** ' + this.userService.joinedUser.name }}</ng-template
+                >
+                <mat-card-subtitle class="score-time">
+                    {{ 'CHEVALET ' + this.userService.realUser.name+' :'  }}</mat-card-subtitle
+                >
+                <mat-card-subtitle class="score-time">
+                <canvas id="canvas" class="easelOne" #easelOne [attr.width]="width" [attr.height]="height"></canvas>
+                </mat-card-subtitle
+                >
+                <mat-card-subtitle class="score-time">
+                    {{ 'CHEVALET '+ this.userService.joinedUser.name+' :'}}</mat-card-subtitle
+                >
+                <mat-card-subtitle class="score-time">
+                <canvas id="canvas" class="easelTwo" #easelTwo [attr.width]="width" [attr.height]="height"></canvas>
+                </mat-card-subtitle
+                >
+            </mat-card-header>
+        </mat-card>
+    </ng-template>
+</div>
+
+<!-- <ng-template #elseBlock><button mat-raised-button color="accent" mat-dialog-close>Fermer</button></ng-template> -->
+

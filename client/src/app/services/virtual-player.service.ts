@@ -51,8 +51,7 @@ export class VirtualPlayerService {
         switch (this.playProbabilty()) {
             case 'placeWord':
                 setTimeout(() => {
-                    if (this.first) {
-                        this.first = false;
+                    if (this.lettersService.tileIsEmpty({ x: EASEL_LENGTH + 1, y: EASEL_LENGTH + 1 })) {
                         const words = this.validWordService.generateAllWordsPossible(this.easel.easelLetters);
                         for (const word of words) {
                             if (this.easel.contains(word)) {
@@ -110,7 +109,13 @@ export class VirtualPlayerService {
         this.skipTurn = false;
     }
     placeWordSteps(tempCommand: ChatCommand, word: string) {
-        this.commandToSend = '!placer ' + String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) + tempCommand.position.x + 'h ' + word;
+        this.commandToSend =
+            '!placer ' +
+            String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
+            tempCommand.position.x +
+            tempCommand.direction +
+            ' ' +
+            word;
         this.commandObs.next(this.commandToSend);
         this.commandToSend = '';
         this.vrScoreObs.next(this.vrPoints);
@@ -230,6 +235,8 @@ export class VirtualPlayerService {
         let found = false;
         const regEx = new RegExp(this.validWordService.generateRegEx(lett), 'g');
         const words: string[] = this.generateWords(letterIngrid);
+
+        console.log(regEx);
 
         for (const word of words) {
             if (this.fitsTheProb(word) && regEx.test(word)) {

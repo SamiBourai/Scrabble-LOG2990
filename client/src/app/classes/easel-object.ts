@@ -16,7 +16,14 @@ export class EaselObject {
     }
 
     getEaselSize(): number {
-        return EASEL_LENGTH - this.easelLetters.filter((easelLetters) => easelLetters === NOT_A_LETTER).length ?? 0;
+        let length = EASEL_LENGTH;
+        if (this.easelLetters)
+            for (const c of this.easelLetters) {
+                if (c && c.charac === NOT_A_LETTER.charac) {
+                    length--;
+                }
+            }
+        return length;
     }
 
     contains(word: string): boolean {

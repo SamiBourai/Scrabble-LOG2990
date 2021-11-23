@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EaselObject } from '@app/classes/easel-object';
-import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
+import { ShowEndgameInfoComponent } from '@app/components/modals/show-endgame-info/show-endgame-info.component';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
@@ -72,7 +72,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     openDialog() {
         this.endOfGameSubscription = this.userService.isEndOfGame.subscribe((response) => {
             if (response) {
-                this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+                this.dialogRef.open(ShowEndgameInfoComponent);
             }
         });
     }
@@ -87,7 +87,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     isUserEaselEmpty() {
         this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
             setTimeout(() => {
-                this.mouseHandlingService.clearAll(false);
+                this.mouseHandlingService.clearAll();
                 if (
                     this.userService.playMode === 'soloGame' &&
                     this.remainingLetters === 0 &&
@@ -98,8 +98,9 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
                     } else {
                         this.userService.vrUser.score += this.userService.realUser.easel.pointInEasel();
                     }
+
                     this.userService.endOfGame = true;
-                    this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
+                    this.dialogRef.open(ShowEndgameInfoComponent);
                 }
             }, 0);
         });
