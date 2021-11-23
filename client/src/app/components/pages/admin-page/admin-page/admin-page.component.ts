@@ -59,6 +59,8 @@ export class AdminPageComponent implements OnInit {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
         this.getDictionaries();
+        
+        
     }
 
     openDialog(action: string, obj: DictionaryPresentation) {
@@ -75,18 +77,23 @@ export class AdminPageComponent implements OnInit {
         });
     }
 
-    updateRowData(newDic: DictionaryPresentation) {
+    updateRowData(element: DictionaryPresentation) {
         this.dataSource = this.dataSource.filter((value) => {
-            if (value.title === newDic.title || value.description === newDic.description) {
-                console.log(value);
-                value.description = newDic.description;
-                value.title = newDic.title;
-                this.table.renderRows();
+            if (value.title === element.title || value.description === element.description) {
+                const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary(element.title);
+                dictionaryObs.subscribe((data) => {
+                    data.title = value.title;
+                    data.description = value.description;
+                    this.database.sendDictionary(data);
+                    this.getDictionaries();
+                    this.table.renderRows();
+                });
             }
 
             return true;
         });
     }
+
     resetBestScores() {}
 
     getPlayersNamesBeg() {
@@ -116,6 +123,7 @@ export class AdminPageComponent implements OnInit {
             });
         });
         this.table.renderRows();
+        console.log(this.arrayOfDictionnaries);
     }
 
     deleteDic(dictionary: LoadableDictionary) {
