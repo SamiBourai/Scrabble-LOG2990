@@ -1,6 +1,3 @@
-
-
-
 import { MatDialog } from '@angular/material/dialog';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
@@ -26,6 +23,7 @@ import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
 import { DictionaryPresentation, LoadableDictionary } from './../../../../classes/dictionary';
 import { DialogBoxComponent } from '@app/components/modals/dialog-box/dialog-box.component';
+import fileDownload from 'file-saver';
 
 const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal', description: 'le dictionnaire par defaut' }];
 @Component({
@@ -185,6 +183,16 @@ export class AdminPageComponent implements OnInit {
         reader.readAsText(files[0], 'UTF-8');
     }
 
+    download(dictionnary: LoadableDictionary) {
+        this.database.getDictionary(dictionnary.title).subscribe((dic: LoadableDictionary) => {
+            const strDictionnary = JSON.stringify(dic);
+
+            const blob = new Blob([strDictionnary as unknown as ArrayBuffer], { type: 'text/json; charset=utf-8' });
+
+            fileDownload.saveAs(blob, dic.title + '.json');
+        });
+    }
+
     add(event: MatChipInputEvent, level: string): void {
         const value = (event.value || '').trim();
         // let array;
@@ -281,3 +289,5 @@ export class AdminPageComponent implements OnInit {
         return true;
     }
 }
+
+
