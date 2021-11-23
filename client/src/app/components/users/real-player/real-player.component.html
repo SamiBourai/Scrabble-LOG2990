@@ -1,5 +1,6 @@
 <mat-card class="card-not-playing" fxLayout="row" *ngIf="this.userService.realUser.turnToPlay === false; else elseBlock">
-    <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
+    <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"
+    src="./assets/anonymeAvatarIcon.jpg"></ngx-avatar>
     <mat-card-header>
         <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
         <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
@@ -14,7 +15,7 @@
 
 <ng-template #elseBlock>
     <mat-card class="card-playing" fxLayout="row">
-        <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
+        <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"src="./assets/anonymeAvatarIcon.jpg"></ngx-avatar>
         <mat-card-header>
             <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
             <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>

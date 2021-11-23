@@ -1,10 +1,13 @@
 <div class="content" *ngIf="!this.userService.isUserQuitGame">
     <!-- <header class="header-user-vs-player">{{ getNameFromLocalStorage() }} vous jouerez contre ...</header> -->
 
-    <h1 class="text-white text-center">Partie Multijoueur</h1>
+    <h1 class="text-white text-center">Joueurs et informations</h1>
     <mat-card class="player-user-card" fxLayout="row">
         <mat-card style="margin-right: 15px;" fxLayout="row">
-            <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"></ngx-avatar>
+            <ngx-avatar class="avatar" size="50" name="{{ userService.realUser.name }}"
+            src="./assets/anonymeAvatarIcon.jpg">
+
+            </ngx-avatar>
             <mat-card-header>
                 <mat-card-title>{{ userService.realUser.name }}</mat-card-title>
                 <mat-card-subtitle>{{ userService.realUser.level }}</mat-card-subtitle>
@@ -22,7 +25,7 @@
                     this.timeService.timeVrPlayer.sec }}</mat-card-subtitle>
             </mat-card-header>
             <ngx-avatar class="avatar" size="50" name="{{ userService.vrUser.name }}"
-                src="https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg">
+                src="./assets/virtualPlayerRobot.jpg">
             </ngx-avatar>
         </mat-card>
     </mat-card>
