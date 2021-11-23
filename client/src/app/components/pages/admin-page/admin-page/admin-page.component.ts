@@ -80,6 +80,7 @@ export class AdminPageComponent implements OnInit {
     updateRowData(newDic: DictionaryPresentation) {
         this.dataSource = this.dataSource.filter((value) => {
             if (value.title === newDic.title || value.description === newDic.description) {
+                console.log(value);
                 value.description = newDic.description;
                 value.title = newDic.title;
                 this.table.renderRows();

@@ -19,10 +19,10 @@ export class DialogBoxComponent {
     constructor(
         public dialogRef: MatDialogRef<DialogBoxComponent>,
 
-        @Optional() @Inject(MAT_DIALOG_DATA) public data: DictionaryPresentation,
+        @Optional() @Inject(MAT_DIALOG_DATA) public dictionnary: DictionaryPresentation,
     ) {
-        console.log(data);
-        this.localData = { ...data };
+        console.log(dictionnary);
+        this.localData = dictionnary;
         this.action = this.localData.action;
     }
 
