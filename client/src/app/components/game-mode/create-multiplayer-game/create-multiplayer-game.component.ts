@@ -30,6 +30,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     isOptional = false;
     modeLog2990 = false;
+
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,

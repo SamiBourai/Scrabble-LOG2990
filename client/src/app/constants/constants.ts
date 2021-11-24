@@ -127,6 +127,7 @@ export const RANGE_Y: Pair = { min: 840, max: 887 };
 
 // sidebar
 export const COLUMN_RANGE = 16;
+export const HELP_MAX_COMMAND=2;
 // the length of the command !placer and !echanger
 export const PLACE_LENGTH = 7;
 export const SWAP_LENGTH = 9;
@@ -243,9 +244,29 @@ export const FIRST_POSITION_BOARD = { x: 8, y: 8 } as Vec2;
 
 export const DATABASE_COLLECTION_CLASSIC = 'Score';
 export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
+export const DATABASE_COLLECTION_VRNAMESBEG = 'virtualPlayerBeg';
+export const DATABASE_COLLECTION_VRNAMESEXP = 'virtualPlayerExpert';
 
 export const NUMBER_OF_SENTENCE = 12;
 export const TWO_SECOND_INTERVAL = 2300;
 
 export const NUMBER_OF_OBJECTIFS = 8;
 export const NUMBER_OF_PUBLIC_OBJECTIFS = 2;
+
+//COMPONENT SCORE
+export const MAX_TIME_SNACKBAR=3000;
+export const CLOSE_SNACKBAR='Fermer';
+export const SCORE_HAS_BEEN_SAVED='Votre score a été enregistré avec succès';
+export const ERROR_HTTP='Erreur ';
+export const SCORE_NOT_SAVED=': score non enregistré';
+export const SERVER_NOT_RESPONDING='Erreur: le serveur ne répond pas !';
+export const REQUEST_SUCCESFULLY_EXECUTED='Requette effectuée avec succès !';
+export const DATA_RESET_SUCCESFULLY='Les données ont été réinitilisé avec succès !'
+export const NAME_COLUMN='name';
+export const SCORE_COLUMN='score';
+
+
+
+
+
+

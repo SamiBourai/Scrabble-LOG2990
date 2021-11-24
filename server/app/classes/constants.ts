@@ -334,3 +334,9 @@ export const CREATED_HTTP_STATUS = 201;
 export const NO_CONTENT_HTTP_STATUS = 204;
 export const NOT_FOUND_HTTP_STATUS = 404;
 
+//database
+export const DATABASE_COLLECTION_CLASSIC = 'Score';
+export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
+export const BEST_SCORES=5;
+export const MAX_OCCURANCY=1;
+

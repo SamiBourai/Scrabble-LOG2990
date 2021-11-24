@@ -1,86 +1,107 @@
-import { injectable } from "inversify";
-import { Course } from "../classes/course";
-import { MongoClient, MongoClientOptions, Db } from "mongodb";
-import "reflect-metadata";
+// import { injectable } from "inversify";
+// import { BEST_SCORES, DEFAULT_SCORE, MAX_OCCURANCY } from '@app/classes/constants';
+// import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { DATABASE_COLLECTION_CLASSIC } from '@app/classes/constants';
+import { Score } from '@app/classes/score';
+import { expect } from 'chai';
+// import { ScoreTest } from '@app/classes/score';
+import {  Collection, MongoClient } from 'mongodb';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+// import 'reflect-metadata';
+// import { Score, ScoreTest } from '../classes/score';
+// import { Drawing } from '@common/communication/drawing';
+// import { expect } from 'chai';
+import { DatabaseService } from './database.service';
+describe('database service', () => {
+// tslint:disable:no-any
+const DATABASE_NAME = 'scrabble2990';
+let mongoServer: MongoMemoryServer;
+let collection: Collection<Score>;
+let clientTest: MongoClient;
+let databaseService: DatabaseService;
+// let db:Db;
+// let mongoServer:MongoMemoryServer;
+const score1: Score = {
+    name: 'test1',
+    // _id: '123456987654567',
+    score: 0
+};
 
-// CHANGE the URL for your database information
-const DATABASE_URL =
-  "mongodb+srv://Admin:admin12345@cluster0.hcrok.mongodb.net/<dbname>?retryWrites=true&w=majority";
-const DATABASE_NAME = "database";
-const DATABASE_COLLECTION = "courses";
+// const drawingTestTwo: ScoreTest = {
+//     name: 'test2',
+//     _id: 'dcfcdcdceew32332',
+//     score: 10,
 
-@injectable()
-export class DatabaseService {
-  private db: Db;
-  private client: MongoClient;
 
-  private options: MongoClientOptions = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  };
+// };
 
-  async start(url: string = DATABASE_URL): Promise<MongoClient | null> {
-    try {
-      let client = await MongoClient.connect(url, this.options);
-      this.client = client;
-      this.db = client.db(DATABASE_NAME);
-    } catch {
-      throw new Error("Database connection error")
-    }
+// const drawingTestFalse: ScoreTest = {
+//     name: '',
+//     _id: '',
+//     score: 10,
+// };
 
-    if (
-      (await this.db.collection(DATABASE_COLLECTION).countDocuments()) === 0
-    ) {
-      await this.populateDB();
-    }
-    return this.client;
-  }
 
-  async closeConnection(): Promise<void> {
-    return this.client.close();
-  }
+before(async () => {
+    mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+    await MongoClient.connect(mongoUri).then((client: MongoClient) => {
+        collection = client.db(DATABASE_NAME).collection(DATABASE_COLLECTION_CLASSIC);
+        // db = client.db(DATABASE_NAME)
+        clientTest = client;
+    });
+    databaseService = new DatabaseService();
+    // tslint:disable-next-line:no-string-literal
+    // databaseService['collection'] = collection;
 
-  async populateDB(): Promise<void> {
-    let courses: Course[] = [
-      {
-        name: "Object Oriented Programming",
-        credits: 3,
-        subjectCode: "INF1010",
-        teacher: "Samuel Kadoury",
-      },
-      {
-        name: "Intro to Software Engineering",
-        credits: 3,
-        subjectCode: "LOG1000",
-        teacher: "Bram Adams",
-      },
-      {
-        name: "Project I",
-        credits: 4,
-        subjectCode: "INF1900",
-        teacher: "Jerome Collin",
-      },
-      {
-        name: "Project II",
-        credits: 3,
-        subjectCode: "LOG2990",
-        teacher: "Levis Theriault",
-      },
-      {
-        name: "Web Semantics and Ontology",
-        credits: 2,
-        subjectCode: "INF8410",
-        teacher: "Michel Gagnon",
-      },
-    ];
+    // console.log(db.collection(DATABASE_COLLECTION_CLASSIC).countDocuments());
+    // databaseService.arrayOfAllClassicGameScores=[]
+    databaseService['collection'] = collection;
 
-    console.log("THIS ADDS DATA TO THE DATABASE, DO NOT USE OTHERWISE");
-    for (const course of courses) {
-      await this.db.collection(DATABASE_COLLECTION).insertOne(course);
-    }
-  }
+});
 
-  get database(): Db {
-    return this.db;
-  }
-}
+after(async () => {
+    // tslint:disable-next-line:no-string-literal
+    // await databaseService..deleteMany({});
+    // await clientTest.close();
+    // await db.collection('Score').deleteMany({});
+    await databaseService['collection'].deleteMany({});
+    await clientTest.close();
+    await mongoServer.stop();
+
+});
+
+
+    it('should get all Score stored in collection Scores', async () => {
+        // databaseService.addDrawing(drawingTest)
+        await databaseService.addNewScore(score1,DATABASE_COLLECTION_CLASSIC);
+
+        // const expectedDrawings: ScoreTest[] = new Array<ScoreTest>();
+        // expectedDrawings.push(score1);
+        return databaseService.getAllScores(DATABASE_COLLECTION_CLASSIC).then((result: Score[]) => {
+            // databaseService.deleteDrawing(drawingTestTwo._id);
+            return expect(result[0].name).to.equals(score1.name);
+        });
+    });
+
+    // it('should get one drawing', async () => {
+    //     databaseService.addDrawing(drawingTestTwo);
+    //     return databaseService.getDrawing(String(drawingTestTwo.name)).then((result: Drawing) => {
+    //         return expect(result.name).to.equals(drawingTestTwo.name);
+    //     });
+    // });
+
+    // it('should not add one drawing', async () => {
+    //     databaseService.addDrawing(drawingTestFalse);
+    //     return databaseService.getDrawing(String(drawingTestFalse.name)).then((result: Drawing) => {
+    //         return expect(result).to.equals(null);
+    //     });
+    // });
+
+    // it('should delete one drawing', async () => {
+    //     databaseService.deleteDrawing(String(drawingTestOne._id));
+    //     return databaseService.getDrawing(String(drawingTestOne._id)).then((result: Drawing) => {
+    //         return expect(result).to.equals(null);
+    //     });
+    // });
+});

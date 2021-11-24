@@ -58,7 +58,7 @@ export class UserService {
 
     endOfGameCounter: number = 0;
     endOfGame: boolean;
-    endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     endOfGameObs: Observable<boolean>;
     firstMode: string = '';
 

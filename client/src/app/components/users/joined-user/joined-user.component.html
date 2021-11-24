@@ -1,4 +1,4 @@
-<mat-card class="card-not-playing" fxLayout="row" *ngIf="this.userService.realUser.turnToPlay === true; else elseBlock">
+<mat-card class="card-not-playing" fxLayout="row" *ngIf="this.userService.realUser.turnToPlay; else elseBlock">
     <ngx-avatar class="avatar" size="50" name="{{ userService.joinedUser.name }}"></ngx-avatar>
     <mat-card-header>
         <mat-card-title>{{ userService.joinedUser.name }}</mat-card-title>

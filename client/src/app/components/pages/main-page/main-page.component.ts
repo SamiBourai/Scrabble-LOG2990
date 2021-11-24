@@ -15,6 +15,7 @@ import { map } from 'rxjs/operators';
 })
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
+    isNameSectionHide:boolean;
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     constructor(private readonly communicationService: CommunicationService, private dialogRef: MatDialog) {}

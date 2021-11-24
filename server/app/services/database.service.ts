@@ -1,10 +1,11 @@
-//import { injectable } from "inversify";
-import { Score } from '../classes/score';
-import { MongoClient, Db } from 'mongodb';
+// import { injectable } from "inversify";
+import { BEST_SCORES, DEFAULT_SCORE, MAX_OCCURANCY } from '@app/classes/constants';
+import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
+// import { map } from 'rxjs';
 import { Service } from 'typedi';
-import { DEFAULT_SCORE } from '@app/classes/constants';
-import { VirtualPlayer} from '@app/classes/virtualPlayers';
+import { Score } from '../classes/score';
 
 // CHANGE the URL for your database information
 const DATABASE_URL = 'mongodb+srv://equipe303:equipe303@clusterscore.6eoob.mongodb.net/scrabble2990?retryWrites=true&w=majority';
@@ -26,19 +27,13 @@ export class DatabaseService {
 
     async start(url: string = DATABASE_URL): Promise<MongoClient | null> {
         try {
-            let client = await MongoClient.connect(url);
+            const client = await MongoClient.connect(url);
             this.client = client;
             this.db = client.db(DATABASE_NAME);
         } catch {
             throw new Error('Database connection error');
         }
-        // this.resetAllScores(DATABASE_COLLECTION_LOG2990);
-        // this.removeDuplicatedDocument(DATABASE_COLLECTION_LOG2990);
-        // this.addPlayer('virtualPlayerExpert', '3aziz1234');
-        // this.fetchPlayer('virtualPlayerExpert');
-        // // this.removePlayer('virtualPlayerExpert', 'Messi1234');
-        // this.fetchPlayer('virtualPlayerExpert');
-
+        // this.addNewScore();
         return this.client;
     }
     async closeConnection(): Promise<void> {
@@ -49,7 +44,6 @@ export class DatabaseService {
             .collection(collectionName)
             .find({})
             .sort({ score: -1 })
-            .limit(5)
             .toArray()
             .then((scores: Score[]) => {
                 return scores;
@@ -59,82 +53,75 @@ export class DatabaseService {
         return this.db;
     }
     async addNewScore(score: Score, collectionName: string): Promise<void> {
-        await this.db.collection(collectionName).insertOne(score);
-        this.sortAllScores(collectionName);
+        console.log('hey je suis la dedans');
+        let scoreX:Score={name:score.name, score:score.score};
+        await this.db.collection(collectionName).insertOne(scoreX);
+        // this.sortAllScores(collectionName);
     }
     async sortAllScores(collectionName: string): Promise<void> {
         this.db.collection(collectionName).find({}).sort({ score: -1 });
     }
     async fetchDataReturn(collectionName: string): Promise<void> {
-        let arrayOfScoresPromises = await this.getAllScores(collectionName);
-        console.log('array 1 : ', arrayOfScoresPromises);
-        const scoreObj = arrayOfScoresPromises.map((res: Score) => {
+        const arrayOfScoresPromises = await this.getAllScores(collectionName);
+        let scoreObj: Score[] = arrayOfScoresPromises.map((res: Score) => {
             const returnedObj: Score = { name: res.name, score: res.score };
             return returnedObj;
         });
-        if (collectionName === DATABASE_COLLECTION_CLASSIC) this.arrayOfAllClassicGameScores = scoreObj;
-        else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = scoreObj;
-
-        console.log('array 2', scoreObj);
+        await this.deleteDuplicatedElement(scoreObj, collectionName);
     }
     async resetAllScores(collectionName: string): Promise<Score[]> {
         await this.db.collection(collectionName).deleteMany({});
-        for (let score of DEFAULT_SCORE) {
+        for (const score of DEFAULT_SCORE) {
             await this.db.collection(collectionName).insertOne(score);
         }
         await this.sortAllScores(collectionName);
         return this.getAllScores(collectionName);
     }
 
-    async removeDuplicatedDocument(collectionName: string):Promise<void>{
-        this.db.collection(collectionName).aggregate([
-            {$group: {
-                _score: { score: '$_score' },
-                dups: { $addToSet: '$_score'  },
-             }
-            }
-        ]);
+    async getAllPlayers(collectionName: string): Promise<VirtualPlayer[]> {
+        return this.db
+            .collection(collectionName)
+            .find({})
+            .toArray()
+            .then((names: VirtualPlayer[]) => {
+                return names;
+            });
     }
 
-    async getAllPlayers(collectionName:string):Promise<VirtualPlayer[]>{
-        return this.db.collection(collectionName)
-        .find({})
-        .toArray()
-        .then((names: VirtualPlayer[]) => {
-            return names;
-        });
-    }
-
-    async addPlayer(collectionName:string, playerName:string):Promise<void>{
-        let player:VirtualPlayer={name:playerName};
+    async addPlayer(collectionName: string, playerName: string): Promise<void> {
+        const player: VirtualPlayer = { name: playerName };
         await this.db.collection(collectionName).insertOne(player);
     }
 
-    // async removePlayer(collectionName:string, playerName:string):Promise<VirtualPlayer>{
-    //     let player:VirtualPlayer={name:playerName};
-    //     return this.db.collection(collectionName).findOneAndDelete(({player}))
-    // }
-    // async removePlayer(collectionName:string, playerName:string): Promise<void> {
-    //     return this.collection(collectionName)
-    //     .findOneAndDelete({ subjectCode: sbjCode })
-    //     .then((res:FindAndModifyWriteOpResultObject<Course>) => {
-    //     if(!res.value){ throw new Error("Could not find course"); }
-    //     })
-    //     .catch(() => {throw new Error("Failed to delete course");});
-    //     }
+    async removePlayer(collectionName: string, playerName: string): Promise<void> {
+        const player: VirtualPlayer = { name: playerName };
+        await this.db.collection(collectionName).deleteOne(player);
+    }
 
     async fetchPlayer(collectionName: string): Promise<void> {
-        let arrayOfScoresPromises = await this.getAllPlayers(collectionName);
+        const arrayOfScoresPromises = await this.getAllPlayers(collectionName);
         // console.log('array 1 : ', arrayOfScoresPromises);
-        const scoreObj:VirtualPlayer[] = arrayOfScoresPromises.map((res: VirtualPlayer) => {
+        const scoreObj: VirtualPlayer[] = arrayOfScoresPromises.map((res: VirtualPlayer) => {
             const returnedObj: VirtualPlayer = { name: res.name };
             return returnedObj;
         });
-        // if (collectionName === DATABASE_COLLECTION_CLASSIC) this.arrayOfAllClassicGameScores = scoreObj;
-        // else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = scoreObj;
 
         console.log('playerNames :', scoreObj);
     }
+    async deleteDuplicatedElement(arrayOfScores: Score[], collectionName:string) {
+        let sortedArray: Score[] = [];
+        let isAlreadyExist: number;
+        for (let i: number = 0; i < arrayOfScores.length; i++) {
+            isAlreadyExist = sortedArray.findIndex(
+                (scoreElement) => scoreElement.name === arrayOfScores[i].name && scoreElement.score === arrayOfScores[i].score,
+            );
+            if ((i === 0 || isAlreadyExist === -MAX_OCCURANCY) && sortedArray.length <BEST_SCORES) {
+                sortedArray.push(arrayOfScores[i]);
+            }
+        }
+        if (collectionName === DATABASE_COLLECTION_CLASSIC) this.arrayOfAllClassicGameScores = sortedArray;
+        else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = sortedArray;
 
+    }
 
 }

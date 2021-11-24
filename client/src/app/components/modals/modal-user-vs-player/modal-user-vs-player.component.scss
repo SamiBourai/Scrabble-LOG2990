@@ -1,3 +1,4 @@
+
 .header-user-vs-player{
     text-align: center;
     font-weight: 500;
@@ -26,11 +27,14 @@
 }
 
 
-mart-card-players{
-
-    border: none !important;
-    box-shadow: none !important;
-    background-color: #e5e5f7;
+::ng-deep{
+    .mat-card>.mat-card{
+        background-color: #2E4052;
+        border: 3px solid #FF5800;
+        color: white;
+        border-radius: 20px;
+        width: 290px;
+    }
 }
 
 .score-time{
@@ -40,6 +44,20 @@ mart-card-players{
 }
 
 
-.avatar{
-
+.button-group{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    button{
+        width: 150px;
+        border-radius: 20px;
+    }
+    button:last-child {
+        background-color: #2E4052;
+    }
+    button:last-child:enabled{
+        color: white;
+    }
 }

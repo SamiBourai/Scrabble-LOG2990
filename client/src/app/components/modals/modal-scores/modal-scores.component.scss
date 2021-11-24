@@ -1,45 +1,39 @@
 table {
     width: 100%;
 }
+.mat-table{
+    color: rgba(0, 0, 0, 0.87);
+    background-color: #312E2B;
+}
 
-mat-card {
-    width: 100%;
+.mat-card-title{
+    color: #ff5800;
+}
+.mat-card-subtitle{
+    color: #EFEFEF;
+    font-size: large;
 }
 
 
+.mat-tab-label {
+    color: #EFEFEF;
+    background-color: #312E2B;
+    font-size: large;
+}
 
 
-.mat-column-name  {
-    word-wrap: break-word !important;
-    white-space: unset !important;
-    flex: 0 0 28% !important;
-    width: 60% !important;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    font-size: larger;
-    font-weight: 200;
-
-    word-break: break-word;
-
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-  }
+.mat-column-name {
+    text-align: left;
+    font-size: large;
+    color: #EFEFEF;
+}
+.mat-column-score {
+    text-align: left;
+    font-size: large;
+    color: #EFEFEF;
+}
+.mat-icon{
+    vertical-align: middle;
+}
 
 
-  .mat-column-score  {
-    word-wrap: break-word !important;
-    white-space: unset !important;
-    flex: 0 0 28% !important;
-    width: 40% !important;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-
-    word-break: break-word;
-
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-  }
