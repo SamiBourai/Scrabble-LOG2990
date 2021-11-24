@@ -70,7 +70,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.openDialog();
     }
     openDialog() {
-        this.endOfGameSubscription = this.userService.isEndOfGame.subscribe((response) => {
+        this.userService.endOfGameBehaviorSubject.subscribe((response) => {
             if (response) {
                 this.dialogRef.open(ShowEndgameInfoComponent);
             }

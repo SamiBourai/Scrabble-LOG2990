@@ -31,6 +31,11 @@ export class TimeService {
         switch (playerTurn) {
             case 'user': {
                 const intervalId = setInterval(() => {
+                    if (this.userService.endOfGame) {
+                        clearInterval(intervalId);
+                        return;
+                    }
+
                     if (this.timeUser.sec - ONE_SECOND === -ONE_SECOND) {
                         this.timeUser.min -= ONE_MINUTE;
                         this.timeUser.sec = MINUTE_TURN;
@@ -49,6 +54,10 @@ export class TimeService {
             }
             case 'vrPlayer': {
                 const intervalId = setInterval(() => {
+                    if (this.userService.endOfGame) {
+                        clearInterval(intervalId);
+                        return;
+                    }
                     if (this.timeVrPlayer.sec - ONE_SECOND === -ONE_SECOND) {
                         this.timeVrPlayer.min -= ONE_MINUTE;
                         this.timeVrPlayer.sec = MINUTE_TURN;

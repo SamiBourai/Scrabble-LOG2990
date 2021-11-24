@@ -280,7 +280,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.showReserve();
                     break;
                 case '!aide':
-                    this.isHelpActivated = true;
+                    this.isHelpActivated = !this.isHelpActivated;
                     break;
 
                 default:

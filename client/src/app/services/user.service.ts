@@ -58,15 +58,14 @@ export class UserService {
 
     endOfGameCounter: number = 0;
     endOfGame: boolean;
-    endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
-    endOfGameObs: Observable<boolean>;
+    endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     firstMode: string = '';
 
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableCommandToSend = this.commandtoSendObs.asObservable();
         this.observablePlayed = this.playedObs.asObservable();
         this.vrSkipingTurn = false;
-        this.endOfGameObs = this.endOfGameBehaviorSubject.asObservable();
+
         const first = this.chooseFirstToPlay();
         this.realUser = {
             name: this.getUserName(),
@@ -177,9 +176,6 @@ export class UserService {
         this.realUserTurnObs.next(this.realUser.turnToPlay);
     }
 
-    get isEndOfGame(): Observable<boolean> {
-        return this.endOfGameBehaviorSubject;
-    }
     scoreRealPlayer(): number {
         return this.realUser.score;
     }
