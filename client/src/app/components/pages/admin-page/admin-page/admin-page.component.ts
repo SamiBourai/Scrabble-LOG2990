@@ -23,7 +23,7 @@ import { ValidWordService } from '@app/services/valid-word.service';
 import { Observable } from 'rxjs';
 import { DictionaryPresentation, LoadableDictionary } from './../../../../classes/dictionary';
 import { DialogBoxComponent } from '@app/components/modals/dialog-box/dialog-box.component';
-import fileDownload from 'file-saver';
+import { saveAs } from 'file-saver';
 
 const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal', description: 'le dictionnaire par defaut' }];
 @Component({
@@ -59,8 +59,6 @@ export class AdminPageComponent implements OnInit {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
         this.getDictionaries();
-        
-        
     }
 
     openDialog(action: string, obj: DictionaryPresentation) {
@@ -154,20 +152,17 @@ export class AdminPageComponent implements OnInit {
     }
 
     onFileSelected() {
-        // console.log('A', a);
-
         const files = this.fileInput.nativeElement.files;
         if (files === null) {
             return;
         }
-
         const reader = new FileReader();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         reader.onload = (e) => {
-            const possibleResult = e.target?.result;
-            if (typeof possibleResult === 'string') {
+            const possibleResult = e.target?.result as string;
+            if (this.validateJson(possibleResult) && typeof possibleResult === 'string') {
                 const dictionnary = ValidWordService.loadableDictToDict(JSON.parse(possibleResult));
                 this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
+                this.snackBar.open('televersement reuissi', 'Close');
                 console.log(this.isSameDictionnaryName(dictionnary.title));
 
                 if (!this.isSameDictionnaryName(dictionnary.title)) {
@@ -185,6 +180,8 @@ export class AdminPageComponent implements OnInit {
                     this.snackBar.open('Ce nom est deja utilise', 'Close');
                 }
                 this.table.renderRows();
+            } else {
+                this.snackBar.open('veuillez selectionner un fichier json', 'Close');
             }
         };
 
@@ -194,10 +191,8 @@ export class AdminPageComponent implements OnInit {
     download(dictionnary: LoadableDictionary) {
         this.database.getDictionary(dictionnary.title).subscribe((dic: LoadableDictionary) => {
             const strDictionnary = JSON.stringify(dic);
-
             const blob = new Blob([strDictionnary as unknown as ArrayBuffer], { type: 'text/json; charset=utf-8' });
-
-            fileDownload.saveAs(blob, dic.title + '.json');
+            saveAs(blob, dic.title + '.json');
         });
     }
 
@@ -296,6 +291,13 @@ export class AdminPageComponent implements OnInit {
         if (!dictionnatyNames.includes(name)) return false;
         return true;
     }
+
+    private validateJson(data: string) {
+        try {
+            JSON.parse(data);
+        } catch {
+            return false;
+        }
+        return true;
+    }
 }
-
-
