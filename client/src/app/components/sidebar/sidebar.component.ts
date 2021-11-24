@@ -108,6 +108,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.changeDetectorRef.detectChanges();
     }
     logMessage() {
+        this.userService.getPlayerEasel().resetVariables();
         this.errorMessage = '';
         this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
         this.errorMessage = '';
@@ -127,6 +128,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.name = this.userService.realUser.name;
         this.nameVr = this.userService.vrUser.name;
         this.verifyInput();
+        this.typeArea = '';
     }
     isSkipButtonClicked() {
         if (this.messageService.skipTurnIsPressed) {
