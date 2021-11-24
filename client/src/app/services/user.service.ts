@@ -232,4 +232,6 @@ export class UserService {
             easel: this.getPlayerEasel(),
         };
     }
+
+    
 }

@@ -11,7 +11,7 @@ import { catchError } from 'rxjs/operators';
 export class DatabaseService {
 
 
-    private readonly SEND_URL: string = 'http://localhost:3000/api/database/addScore';
+    private readonly SEND_URL: string = 'http://localhost:3000/mounib/zebi/addScore';
     private readonly GET_URL_ALL_DATA: string = 'http://localhost:3000/api/database/Scores';
     private readonly GET_URL_DEFAULT_DATA: string = 'http://localhost:3000/api/database/resetAllScores';
     private readonly GET_URL_ALL_PLAYERS: string = 'http://localhost:3000/api/database/vrNames';

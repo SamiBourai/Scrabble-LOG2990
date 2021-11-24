@@ -58,6 +58,7 @@ export class CommandManagerService {
         switch (true) {
             case wordInDictionnay && points !== 0:
                 this.wordIsValid = true;
+
                 break;
             case wordInDictionnay && points === 0:
                 this.errorMessage = 'les mots engendrés par votre placement ne sont pas dans le dictionnaire';

@@ -15,6 +15,7 @@ import {
     SERVER_NOT_RESPONDING,
 } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
+import { UserService } from '@app/services/user.service';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -30,11 +31,19 @@ export class ModalScoresComponent implements OnInit, OnDestroy {
     isPlayerAdd: boolean;
     private unsubscribeFromGet1: Subscription;
     // private unsubscribeFromGet2: Subscription;
-    constructor(private databaseService: DatabaseService, private snackBar: MatSnackBar) {}
+    constructor(private databaseService: DatabaseService, private snackBar: MatSnackBar, private userService:UserService) {}
 
     ngOnInit() {
         this.getScoresMode(DATABASE_COLLECTION_CLASSIC);
         this.getScoresMode(DATABASE_COLLECTION_LOG2990);
+
+        this.userService.endOfGameBehaviorSubject.subscribe((response:boolean)=>{
+            // console.log('end game est true');
+            if(response)
+                this.addScores();
+
+
+        })
     }
     ngOnDestroy(): void {
         this.unsubscribeFromGet1.unsubscribe();
@@ -56,6 +65,11 @@ export class ModalScoresComponent implements OnInit, OnDestroy {
             },
         );
     }
+
+    // mode solo ->  enregistrer le score du user si pas abandonner
+    // mode multi -> enregistrer score des deux si fin de partie normalize
+    //             -> enregitrer score du joiner si user abandonne
+
     private openSnackBar(message: string, action: string): void {
         this.snackBar.open(message, action, { duration: MAX_TIME_SNACKBAR });
     }

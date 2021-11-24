@@ -17,6 +17,8 @@ export class ModalEndOfGameComponent implements OnInit {
         });
     }
     setIsUserQuitGame(): void {
+        // this.userService.endOfGame=true;
+
         window.location.assign('/home');
     }
 

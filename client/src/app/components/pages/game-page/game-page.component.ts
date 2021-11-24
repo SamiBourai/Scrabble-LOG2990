@@ -100,7 +100,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
 
                     this.userService.endOfGame = true;
-                    this.dialogRef.open(ShowEndgameInfoComponent);
+                    this.userService.endOfGameBehaviorSubject.next(this.userService.endOfGame );
                 }
             }, 0);
         });

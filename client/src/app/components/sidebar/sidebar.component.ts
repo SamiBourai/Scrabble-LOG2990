@@ -108,6 +108,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         this.changeDetectorRef.detectChanges();
     }
     logMessage() {
+        this.userService.getPlayerEasel().resetVariables();;
         this.errorMessage = '';
         this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
         this.errorMessage = '';
@@ -124,9 +125,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
             }
         }
+
         this.name = this.userService.realUser.name;
         this.nameVr = this.userService.vrUser.name;
         this.verifyInput();
+        this.typeArea='';
     }
     isSkipButtonClicked() {
         if (this.messageService.skipTurnIsPressed) {
@@ -141,7 +144,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.typeArea) {
             switch (this.typeArea.split(' ', 1)[0]) {
                 case '!placer':
-                    // this.isHelpActivated=false;
+                    this.commandManagerService.wordIsValid=false;
                     if (this.commandManagerService.verifyCommand(this.messageService.command, this.userService.getPlayerEasel())) {
                         this.placeWord();
                     } else this.errorMessage = this.commandManagerService.errorMessage;

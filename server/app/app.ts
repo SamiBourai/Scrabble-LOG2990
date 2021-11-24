@@ -45,6 +45,7 @@ export class Application {
         this.app.use('/api/example', this.exampleController.router);
         this.app.use('/api/date', this.dateController.router);
         this.app.use('/api/database', this.databaseController.router);
+        this.app.use('/mounib/zebi', this.databaseController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });
