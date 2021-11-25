@@ -2,6 +2,7 @@ import { EASEL_LENGTH, LETTERS_RESERVE_QTY, PARAMETERS_OF_SWAP } from '@app/clas
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
 import { Letter } from './letters';
+import { Objectifs } from './Objectifs';
 import { Vec2 } from './vec2';
 
 export class GameObject {
@@ -19,11 +20,14 @@ export class GameObject {
     guestPlayer: Player = { name: 'default', score: 0, easelLetters: EASEL_LENGTH };
     creatorPlayer: Player = { name: 'default', score: 0, easelLetters: EASEL_LENGTH };
     arrayOfBonusBox = new Array<Vec2[]>();
-    constructor(gameName: string, aleatoryBonus: boolean, creatorPlayer: Player, sec: number, min: number) {
+    modeLog2990: boolean = false;
+    objectifs = new Array<Objectifs>();
+    constructor(gameName: string, aleatoryBonus: boolean, creatorPlayer: Player, sec: number, min: number, modeLog2990: boolean) {
         this.gameName = gameName;
         this.aleatoryBonus = aleatoryBonus;
         this.creatorPlayer = { name: creatorPlayer.name, score: creatorPlayer.score, easelLetters: creatorPlayer.score };
         this.timeConfig = { min, sec };
+        this.modeLog2990 = modeLog2990;
     }
     setTimer() {
         this.timer = new Timer();

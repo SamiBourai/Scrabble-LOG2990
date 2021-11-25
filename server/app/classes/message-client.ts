@@ -1,5 +1,6 @@
 import { ChatCommand } from './chat-command';
 import { Letter } from './letters';
+import { Objectifs } from './Objectifs';
 import { Vec2 } from './vec2';
 export interface MessageClient {
     gameName: string;
@@ -23,4 +24,7 @@ export interface MessageClient {
     reserveSize?: number;
     easel?: Letter[];
     easelSize?: number;
+    modeLog2990?: boolean;
+    objectifs?: Objectifs[];
+    achivedObjectif?: Objectifs;
 }

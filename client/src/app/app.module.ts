@@ -16,8 +16,14 @@ import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AvatarModule } from 'ngx-avatar';
+import { CreateMultiplayerGameComponent } from './components/game-mode/create-multiplayer-game/create-multiplayer-game.component';
+import { JoinMultiplayerGameComponent } from './components/game-mode/join-multiplayer-game/join-multiplayer-game.component';
+import { SoloGameComponent } from './components/game-mode/solo-game/solo-game.component';
 import { ModalEndOfGameComponent } from './components/modals/modal-end-of-game/modal-end-of-game.component';
 import { ModalScoresComponent } from './components/modals/modal-scores/modal-scores.component';
+import { ObjectifAchivedComponent } from './components/modals/objectif-achived/objectif-achived.component';
+import { ScrableLog2990ModalComponent } from './components/modals/scrable-log2990-modal/scrable-log2990-modal.component';
+import { ShowEndgameInfoComponent } from './components/modals/show-endgame-info/show-endgame-info.component';
 import { AdminPageComponent } from './components/pages/admin-page/admin-page/admin-page.component';
 import { JoinedUserComponent } from './components/users/joined-user/joined-user.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
@@ -26,11 +32,6 @@ import { VrUserComponent } from './components/users/vr-user/vr-user.component';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-word.service';
 import { WordPointsService } from './services/word-points.service';
-import { ScrableLog2990ModalComponent } from './components/modals/scrable-log2990-modal/scrable-log2990-modal.component';
-import { CreateMultiplayerGameComponent } from './components/game-mode/create-multiplayer-game/create-multiplayer-game.component';
-import { JoinMultiplayerGameComponent } from './components/game-mode/join-multiplayer-game/join-multiplayer-game.component';
-import { SoloGameComponent } from './components/game-mode/solo-game/solo-game.component';
-import { ShowEndgameInfoComponent } from './components/modals/show-endgame-info/show-endgame-info.component';
 
 /**
  * Main module that is used in main.ts.
@@ -61,6 +62,7 @@ import { ShowEndgameInfoComponent } from './components/modals/show-endgame-info/
         JoinMultiplayerGameComponent,
         SoloGameComponent,
         ShowEndgameInfoComponent,
+        ObjectifAchivedComponent,
     ],
     imports: [
         AppMaterialModule,

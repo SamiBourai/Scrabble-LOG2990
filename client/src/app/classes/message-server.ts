@@ -1,5 +1,6 @@
 import { ChatCommand } from './chat-command';
 import { Letter } from './letter';
+import { Objectifs } from './objectifs';
 import { Vec2 } from './vec2';
 
 export interface MessageServer {
@@ -24,4 +25,7 @@ export interface MessageServer {
     reserveSize?: number;
     easel?: Letter[];
     easelSize?: number;
+    modeLog2990?: boolean;
+    objectifs?: Objectifs[];
+    achivedObjectif?: Objectifs;
 }

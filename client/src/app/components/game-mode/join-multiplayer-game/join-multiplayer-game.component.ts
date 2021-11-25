@@ -48,7 +48,7 @@ export class JoinMultiplayerGameComponent implements OnInit {
     generateRooms(): void {
         const intervalId = setInterval(() => {
             if (this.roomJoined) clearInterval(intervalId);
-            else this.socketManagementService.emit('generateAllRooms');
+            else this.socketManagementService.emit('generateAllRooms', { gameName: 'default', modeLog2990: this.objectifManagerService.log2990Mode });
             this.socketManagementService.getRooms().subscribe((data) => {
                 this.rooms = data;
                 if (this.rooms.length === 0) this.isEmptyRoom = true;
@@ -58,8 +58,11 @@ export class JoinMultiplayerGameComponent implements OnInit {
     }
     joinGame(room: MessageServer): void {
         this.multiplayerModeService.setGameInformations(room, this.playerName);
+        if (this.objectifManagerService.log2990Mode) {
+            this.objectifManagerService.choosedObjectifs = room.objectifs?.slice() ?? this.objectifManagerService.choosedObjectifs;
+            this.objectifManagerService.generateObjectifs(this.userService.playMode);
+        }
         this.roomJoined = true;
-        this.userService.isBonusBox = room.aleatoryBonus ?? false;
     }
     gameAccepted(): void {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {

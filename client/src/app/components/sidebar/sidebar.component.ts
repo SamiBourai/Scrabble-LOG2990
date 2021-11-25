@@ -110,7 +110,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     logMessage() {
         this.errorMessage = '';
         this.typeArea = this.messageService.replaceSpecialChar(this.typeArea);
-        this.errorMessage = '';
         const validPlay = this.messageService.isCommand(this.typeArea) && this.messageService.isValid(this.typeArea) && !this.userService.endOfGame;
         if (validPlay) {
             switch (this.userService.isPlayerTurn()) {
@@ -132,7 +131,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.messageService.skipTurnIsPressed) {
             this.messageService.skipTurnIsPressed = !this.messageService.skipTurnIsPressed;
             this.updateMessageArray('!passer');
-            this.objectifMangerService.verifyObjectifs();
+            this.verifyObjectifs('pass');
             return true;
         }
         return false;
@@ -141,19 +140,17 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         if (this.typeArea) {
             switch (this.typeArea.split(' ', 1)[0]) {
                 case '!placer':
-                    // this.isHelpActivated=false;
                     if (this.commandManagerService.verifyCommand(this.messageService.command, this.userService.getPlayerEasel())) {
                         this.placeWord();
                     } else this.errorMessage = this.commandManagerService.errorMessage;
                     break;
                 case '!echanger':
-                    // this.isHelpActivated=false;
                     this.exchangeCommand();
                     break;
                 case '!passer':
-                    // this.isHelpActivated=false;
                     this.userService.detectSkipTurnBtn();
-                    this.objectifMangerService.verifyObjectifs();
+                    this.objectifMangerService.passTurnCounter++;
+                    this.verifyObjectifs('pass');
                     break;
             }
         }
@@ -202,6 +199,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private placeWordIfValid() {
         if (this.commandManagerService.playerScore !== 0) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
+            this.verifyObjectifs('play');
         } else {
             this.errorMessage = this.commandManagerService.errorMessage;
         }
@@ -225,13 +223,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
         switch (commandType) {
             case 'exchange':
                 this.reserveService.sizeObs.next(this.reserveService.reserveSize);
-                this.objectifMangerService.verifyObjectifs(undefined, this.commandManagerService.numberOfLettersToExchange);
                 if (this.userService.playMode !== 'soloGame') {
                     setTimeout(() => {
                         this.userService.exchangeLetters = true;
                         this.userService.playedObs.next(this.userService.exchangeLetters);
                     }, ONE_SECOND_MS);
                 }
+                this.verifyObjectifs('exchange');
                 break;
             case 'placer':
                 if (this.errorMessage === '') {
@@ -241,7 +239,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                         this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
                     }
                     this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
-                    this.objectifMangerService.verifyObjectifs(this.messageService.command);
+                    this.objectifMangerService.passTurnCounter = 0;
                 } else {
                     this.typeArea = this.typeArea + ' (la validation du mot a échoué)';
                     this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
@@ -282,7 +280,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 case '!aide':
                     this.isHelpActivated = !this.isHelpActivated;
                     break;
-
                 default:
                     if (!this.messageService.isCommand(this.typeArea)) this.updateMessageArray(this.typeArea);
                     break;
@@ -305,5 +302,23 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
             this.arrayOfReserveLetters.push(s);
         });
+    }
+    private verifyObjectifs(command: string) {
+        if (this.objectifMangerService.log2990Mode) {
+            switch (command) {
+                case 'pass':
+                    this.objectifMangerService.passTurnCounter++;
+                    this.objectifMangerService.verifyObjectifs(true);
+                    break;
+                case 'play':
+                    this.objectifMangerService.passTurnCounter = 0;
+                    this.objectifMangerService.verifyObjectifs(true, this.messageService.command);
+                    break;
+                case 'exchange':
+                    this.objectifMangerService.passTurnCounter = 0;
+                    this.objectifMangerService.verifyObjectifs(true, undefined, this.commandManagerService.numberOfLettersToExchange);
+                    break;
+            }
+        }
     }
 }

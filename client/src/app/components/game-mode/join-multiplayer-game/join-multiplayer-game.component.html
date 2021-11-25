@@ -53,9 +53,6 @@
             <ng-template #elseBlock>
                 <div *ngIf="!requestAccepted; else elseBlock">Le joueur n'a pas encore démarer la partie!</div>
                 <ng-template #elseBlock>
-                    <div *ngIf="objectifManagerService.log2990Mode">
-                    <app-scrable-log2990-modal></app-scrable-log2990-modal>
-                    </div>
                     <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Rejoindre la
                         partie</button>
                 </ng-template>

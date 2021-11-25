@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { DEFAULT_MODE, DEFAULT_TIME, LVL_JV, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -26,6 +27,7 @@ export class SoloGameComponent implements OnInit {
         public userService: UserService,
         private timeService: TimeService,
         private virtualPlayerService: VirtualPlayerService,
+        private objectifManagerService: ObjectifManagerService,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInAddButton(event: Event) {
@@ -63,6 +65,7 @@ export class SoloGameComponent implements OnInit {
                 Validators.maxLength(MAX_LENGTH),
             ]),
         });
+        if (this.objectifManagerService.log2990Mode) this.objectifManagerService.generateObjectifs('soloGame');
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);

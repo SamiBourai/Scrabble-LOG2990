@@ -1,10 +1,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
@@ -29,8 +31,6 @@ export class CreateMultiplayerGameComponent implements OnInit {
     timeCounter: number = DEFAULT_TIME;
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     isOptional = false;
-    modeLog2990 = false;
-
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,
@@ -38,6 +38,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
         private socketManagementService: SocketManagementService,
         private timeService: TimeService,
         private multiplayerModeService: MultiplayerModeService,
+        public objectifManagerService: ObjectifManagerService,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
@@ -115,12 +116,18 @@ export class CreateMultiplayerGameComponent implements OnInit {
         this.openDialogOfVrUser();
     }
     createGame(): void {
-        this.socketManagementService.emit('createGame', {
+        const game: MessageServer = {
             user: { name: this.playerName },
             gameName: this.gameName,
             timeConfig: { min: this.time.min, sec: this.time.sec },
             aleatoryBonus: this.userService.isBonusBox,
-        });
+            modeLog2990: this.objectifManagerService.log2990Mode,
+        };
+        if (this.objectifManagerService.log2990Mode) {
+            this.objectifManagerService.generateObjectifs(this.userService.playMode);
+            game.objectifs = this.objectifManagerService.choosedObjectifs;
+        }
+        this.socketManagementService.emit('createGame', game);
         this.userService.realUser.name = this.playerName;
         this.userService.gameName = this.gameName;
     }

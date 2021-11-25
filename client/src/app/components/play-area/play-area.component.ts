@@ -7,6 +7,7 @@ import { GridService } from '@app/services/grid.service';
 import { LettersService } from '@app/services/letters.service';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
@@ -45,6 +46,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private dialogRef: MatDialog,
         private multiplayer: MultiplayerModeService,
         private virtualPlayer: VirtualPlayerService,
+        private objectifManagerService: ObjectifManagerService,
         public reserveService: ReserveService,
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') {
@@ -131,6 +133,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     quitGame() {
+        if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
         window.location.assign('/home');
     }
     disableButton(event: string): boolean {
