@@ -1,4 +1,4 @@
-import { DictionaryPresentation } from './../../../../../../server/app/classes/dictionary';
+import { DictionaryPresentation } from './../../../classes/dictionary';
 import { Component, Inject, Optional } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -14,7 +14,7 @@ export interface UsersData {
 })
 export class DialogBoxComponent {
     action: string;
-    localData: any;
+    localData: DictionaryPresentation;
 
     constructor(
         public dialogRef: MatDialogRef<DialogBoxComponent>,
@@ -23,7 +23,7 @@ export class DialogBoxComponent {
     ) {
         console.log(dictionnary);
         this.localData = dictionnary;
-        this.action = this.localData.action;
+        this.action = this.localData.action as string;
     }
 
     doAction() {

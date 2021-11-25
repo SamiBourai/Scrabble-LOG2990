@@ -131,15 +131,6 @@ export class AdminPageComponent implements OnInit {
             this.table.renderRows();
         });
     }
-    addNameVrToList(level: string) {
-        if (level === 'beginner') {
-            // code
-        } else if (level === 'expert') {
-            // code
-        } else {
-            return;
-        }
-    }
 
     setToArrayString(tab: Set<string>[]) {
         const strArray = [];
