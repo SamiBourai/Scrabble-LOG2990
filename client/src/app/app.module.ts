@@ -19,6 +19,7 @@ import { AvatarModule } from 'ngx-avatar';
 import { CreateMultiplayerGameComponent } from './components/game-mode/create-multiplayer-game/create-multiplayer-game.component';
 import { JoinMultiplayerGameComponent } from './components/game-mode/join-multiplayer-game/join-multiplayer-game.component';
 import { SoloGameComponent } from './components/game-mode/solo-game/solo-game.component';
+import { DialogBoxComponent } from './components/modals/dialog-box/dialog-box.component';
 import { ModalEndOfGameComponent } from './components/modals/modal-end-of-game/modal-end-of-game.component';
 import { ModalScoresComponent } from './components/modals/modal-scores/modal-scores.component';
 import { ObjectifAchivedComponent } from './components/modals/objectif-achived/objectif-achived.component';
@@ -63,6 +64,7 @@ import { WordPointsService } from './services/word-points.service';
         SoloGameComponent,
         ShowEndgameInfoComponent,
         ObjectifAchivedComponent,
+        DialogBoxComponent,
     ],
     imports: [
         AppMaterialModule,

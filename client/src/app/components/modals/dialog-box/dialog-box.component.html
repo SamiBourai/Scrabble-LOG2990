@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>modifier le dictionnaire</h1>
+<div mat-dialog-content>
+  <mat-form-field >
+    <input placeholder="{{action}} le titre" matInput [(ngModel)]="localData.title">
+  </mat-form-field>
+  <mat-form-field >
+    <input placeholder="{{action}} la description" matInput [(ngModel)]="localData.description">
+  </mat-form-field>
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doAction()">{{action}}</button>
+  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+</div>
