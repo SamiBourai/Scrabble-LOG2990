@@ -1,11 +1,15 @@
 // import { injectable } from "inversify";
 // import { BEST_SCORES, DEFAULT_SCORE, MAX_OCCURANCY } from '@app/classes/constants';
 // import { VirtualPlayer } from '@app/classes/virtualPlayers';
-import { DATABASE_COLLECTION_CLASSIC } from '@app/classes/constants';
+// import { DATABASE_COLLECTION__CLASSIC_CLASSIC } from '@app/classes/constants';
+// import { DATABASE_COLLECTION__CLASSIC_CLASSIC } from '@app/classes/constants';
+import { DATABASE_COLLECTION_LOG2990, DATABASE_COLLECTION_VRNAMESBEG } from '@app/classes/constants';
 import { Score } from '@app/classes/score';
-import { expect } from 'chai';
+import { VirtualPlayer } from '@app/classes/virtualPlayers';
+// import { deepEqual } from 'assert';
+import {  expect } from 'chai';
 // import { ScoreTest } from '@app/classes/score';
-import {  Collection, MongoClient } from 'mongodb';
+import {Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 // import 'reflect-metadata';
 // import { Score, ScoreTest } from '../classes/score';
@@ -13,95 +17,176 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 // import { expect } from 'chai';
 import { DatabaseService } from './database.service';
 describe('database service', () => {
-// tslint:disable:no-any
-const DATABASE_NAME = 'scrabble2990';
-let mongoServer: MongoMemoryServer;
-let collection: Collection<Score>;
-let clientTest: MongoClient;
-let databaseService: DatabaseService;
-// let db:Db;
-// let mongoServer:MongoMemoryServer;
-const score1: Score = {
-    name: 'test1',
-    // _id: '123456987654567',
-    score: 0
-};
+    // tslint:disable:no-any
+    const DATABASE_NAME = 'scrabble2990';
+    const DATABASE_COLLECTION__CLASSIC: string = 'Score';
+    // const DATABASE_COLLECTION__LOG2990: string = 'scoreLog2990';
+    let mongoServer: MongoMemoryServer;
+    // let collection: Collection<any>;
+    // let clientTest: MongoClient;
+    let databaseService: DatabaseService;
+    let db: Db;
+    // let mongoServer:MongoMemoryServer;
+    const score1: Score = {
+        name: 'test1',
+        score: 0,
+    };
+    const score2: Score = {
+        name: 'test2',
+        score: 1,
+    };
+    const score3: Score = {
+        name: 'test3',
+        score: 2,
+    };
 
-// const drawingTestTwo: ScoreTest = {
-//     name: 'test2',
-//     _id: 'dcfcdcdceew32332',
-//     score: 10,
+    // const virtualPlayer1:VirtualPlayer={
+    //     name:'sami'
+    // }
+    // const virtualPlayer2:VirtualPlayer={
+    //     name:'mounib'
+    // }
 
 
-// };
 
-// const drawingTestFalse: ScoreTest = {
-//     name: '',
-//     _id: '',
-//     score: 10,
-// };
-
-
-before(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await MongoClient.connect(mongoUri).then((client: MongoClient) => {
-        collection = client.db(DATABASE_NAME).collection(DATABASE_COLLECTION_CLASSIC);
-        // db = client.db(DATABASE_NAME)
-        clientTest = client;
+    before(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        const mongoUri = mongoServer.getUri();
+        await MongoClient.connect(mongoUri).then((client: MongoClient) => {
+            // collection = client.db(DATABASE_NAME).collection(DATABASE_COLLECTION__CLASSIC);
+            db = client.db(DATABASE_NAME);
+            // console.log(collection, 'collection printed');
+            // db = client.db(DATABASE_NAME)
+            // clientTest = client;
+        });
+        databaseService = new DatabaseService();
+        // tslint:disable-next-line:no-string-literal
+        databaseService['db'] = db;
     });
-    databaseService = new DatabaseService();
-    // tslint:disable-next-line:no-string-literal
-    // databaseService['collection'] = collection;
 
-    // console.log(db.collection(DATABASE_COLLECTION_CLASSIC).countDocuments());
-    // databaseService.arrayOfAllClassicGameScores=[]
-    databaseService['collection'] = collection;
+    after(async () => {
+        // tslint:disable-next-line:no-string-literal
 
-});
+        // await clientTest.close();
+        await databaseService.closeConnection();
+        await mongoServer.stop();
+    });
+    afterEach(()=>{
+        databaseService['db'].collection(DATABASE_COLLECTION__CLASSIC).deleteMany({});
+        databaseService['db'].collection(DATABASE_COLLECTION_VRNAMESBEG).deleteMany({});
 
-after(async () => {
-    // tslint:disable-next-line:no-string-literal
-    // await databaseService..deleteMany({});
-    // await clientTest.close();
-    // await db.collection('Score').deleteMany({});
-    await databaseService['collection'].deleteMany({});
-    await clientTest.close();
-    await mongoServer.stop();
+    })
 
-});
+    it('should return a client when connection is established', async () => {
 
-
-    it('should get all Score stored in collection Scores', async () => {
-        // databaseService.addDrawing(drawingTest)
-        await databaseService.addNewScore(score1,DATABASE_COLLECTION_CLASSIC);
-
-        // const expectedDrawings: ScoreTest[] = new Array<ScoreTest>();
-        // expectedDrawings.push(score1);
-        return databaseService.getAllScores(DATABASE_COLLECTION_CLASSIC).then((result: Score[]) => {
-            // databaseService.deleteDrawing(drawingTestTwo._id);
-            return expect(result[0].name).to.equals(score1.name);
+        return databaseService.start(mongoServer.getUri()).then((result: MongoClient) => {
+            return expect( result.db(DATABASE_NAME).collection(DATABASE_COLLECTION__CLASSIC).collectionName).to.equals(DATABASE_COLLECTION__CLASSIC);
         });
     });
 
-    // it('should get one drawing', async () => {
-    //     databaseService.addDrawing(drawingTestTwo);
-    //     return databaseService.getDrawing(String(drawingTestTwo.name)).then((result: Drawing) => {
-    //         return expect(result.name).to.equals(drawingTestTwo.name);
-    //     });
-    // });
+    it('should throw an error when connection is note established', async (done) => {
+        try {
+            databaseService.start('salut')
+        }
+        catch(err) {
+            expect(err).to.eql(new Error('Database connection error'));
+        }
+        done();
+    });
 
-    // it('should not add one drawing', async () => {
-    //     databaseService.addDrawing(drawingTestFalse);
-    //     return databaseService.getDrawing(String(drawingTestFalse.name)).then((result: Drawing) => {
-    //         return expect(result).to.equals(null);
-    //     });
-    // });
+    it('should get all Score stored in collection Scores', async () => {
+        await databaseService.addNewScore(score1, DATABASE_COLLECTION__CLASSIC);
+        return databaseService.getAllScores(DATABASE_COLLECTION__CLASSIC).then((result: Score[]) => {
+            return expect(result[0].name).to.equals(score1.name);
+        });
+    });
+    it('should get all Score stored in collection Scores in case Scores is empty', async () => {
+        return databaseService.getAllScores(DATABASE_COLLECTION__CLASSIC).then((result: Score[]) => {
+            return expect(result[0]).to.be.undefined;
+        });
+    });
 
-    // it('should delete one drawing', async () => {
-    //     databaseService.deleteDrawing(String(drawingTestOne._id));
-    //     return databaseService.getDrawing(String(drawingTestOne._id)).then((result: Drawing) => {
-    //         return expect(result).to.equals(null);
-    //     });
-    // });
+    it('should return the bd', async () => {
+        // databaseService['db'].collection(DATABASE_COLLECTION__CLASSIC).deleteMany({});
+        const bdTest:Db= databaseService.database;
+        expect(bdTest.collection(DATABASE_COLLECTION__CLASSIC).collectionName).to.equal(DATABASE_COLLECTION__CLASSIC);
+    });
+    it('should sort all scores in the bd by score proprety', async () => {
+
+
+        await databaseService.addNewScore(score1, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.addNewScore(score2, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.addNewScore(score3, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.sortAllScores(DATABASE_COLLECTION__CLASSIC);
+
+        return databaseService.getAllScores(DATABASE_COLLECTION__CLASSIC).then((result: Score[]) => {
+            return expect(result[0].score).to.equals(score3.score);
+
+        });
+    });
+    it('should sort all scores in the bd by score proprety', async () => {
+
+        await databaseService.addNewScore(score1, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.addNewScore(score2, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.addNewScore(score3, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.addNewScore(score3, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.addNewScore(score3, DATABASE_COLLECTION__CLASSIC);
+        await databaseService.fetchDataReturn(DATABASE_COLLECTION__CLASSIC);
+        expect(databaseService.arrayOfAllClassicGameScores[0].name).to.equal(score3.name)
+        expect(databaseService.arrayOfAllClassicGameScores[2].name).to.equal(score1.name)
+        expect(databaseService.arrayOfAllClassicGameScores[1].name).to.equal(score2.name)
+    });
+
+    it('should get all virtual players added to the collection virtual player Names ', async () => {
+
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'sami');
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'estarossa');
+
+        return databaseService.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG).then(( virtualPlayers : VirtualPlayer[] )=>{
+            return expect(virtualPlayers[0].name).to.be.equal('sami');
+       })
+    });
+    it('should remove the given vr player name ', async () => {
+
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'sami');
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'estarossa');
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'marouane');
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'blk');
+
+        databaseService.removePlayer(DATABASE_COLLECTION_VRNAMESBEG,'sami');
+
+        return databaseService.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG).then(( virtualPlayers : VirtualPlayer[] )=>{
+
+            return expect(virtualPlayers.length).to.equal(3);
+       })
+    });
+    it('should remove the given vr player name ', async () => {
+
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'sami');
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'estarossa');
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'marouane');
+        databaseService.addPlayer(DATABASE_COLLECTION_VRNAMESBEG,'blk');
+
+        databaseService.removePlayer(DATABASE_COLLECTION_VRNAMESBEG,'sami');
+
+        return databaseService.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG).then(( virtualPlayers : VirtualPlayer[] )=>{
+
+            return expect(virtualPlayers.length).to.equal(3);
+       })
+    });
+
+
+    it('should delete all duplicated element get from database', async () => {
+        const scoreX:Score={name:'sami92i', score: 10}
+        const scoreY:Score={name:'yyaa', score: 9}
+        const scoreZ:Score={name:'sami92i', score: 10}
+        const scoreA:Score={name:'blk', score: 10}
+        const scoreB:Score={name:'yaris', score: 1}
+        const arrayOfScore:Score[]= [scoreX,scoreA,scoreZ, scoreY,  score3,  score2,scoreB, score1];
+        databaseService.deleteDuplicatedElement(arrayOfScore, DATABASE_COLLECTION_LOG2990);
+        expect(databaseService.arrayOfAllLog2990GameScores.length).to.equal(5);
+    });
+
+
+
 });

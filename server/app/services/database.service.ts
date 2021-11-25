@@ -56,7 +56,6 @@ export class DatabaseService {
         console.log('hey je suis la dedans');
         let scoreX:Score={name:score.name, score:score.score};
         await this.db.collection(collectionName).insertOne(scoreX);
-        // this.sortAllScores(collectionName);
     }
     async sortAllScores(collectionName: string): Promise<void> {
         this.db.collection(collectionName).find({}).sort({ score: -1 });
@@ -98,16 +97,16 @@ export class DatabaseService {
         await this.db.collection(collectionName).deleteOne(player);
     }
 
-    async fetchPlayer(collectionName: string): Promise<void> {
-        const arrayOfScoresPromises = await this.getAllPlayers(collectionName);
-        // console.log('array 1 : ', arrayOfScoresPromises);
-        const scoreObj: VirtualPlayer[] = arrayOfScoresPromises.map((res: VirtualPlayer) => {
-            const returnedObj: VirtualPlayer = { name: res.name };
-            return returnedObj;
-        });
+    // async fetchPlayer(collectionName: string): Promise<void> {
+    //     const arrayOfScoresPromises = await this.getAllPlayers(collectionName);
+    //     // console.log('array 1 : ', arrayOfScoresPromises);
+    //     const scoreObj: VirtualPlayer[] = arrayOfScoresPromises.map((res: VirtualPlayer) => {
+    //         const returnedObj: VirtualPlayer = { name: res.name };
+    //         return returnedObj;
+    //     });
 
-        console.log('playerNames :', scoreObj);
-    }
+    //     console.log('playerNames :', scoreObj);
+    // }
     async deleteDuplicatedElement(arrayOfScores: Score[], collectionName:string) {
         let sortedArray: Score[] = [];
         let isAlreadyExist: number;
