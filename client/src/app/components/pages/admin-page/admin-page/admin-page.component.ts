@@ -41,13 +41,18 @@ export class AdminPageComponent implements OnInit {
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
-    constructor(public userService: UserService,public scoresService:ScoresService, private database: DatabaseService,   private snackBar:MatSnackBar) {}
+    constructor(
+        public userService: UserService,
+        public scoresService: ScoresService,
+        private database: DatabaseService,
+        private snackBar: MatSnackBar,
+    ) {}
 
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
     }
-    resetBestScores(){}
+    resetBestScores() {}
 
     getPlayersNamesBeg() {
         const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG);
@@ -98,17 +103,6 @@ export class AdminPageComponent implements OnInit {
     // getNames(): Observable<string[][]> {
     //     // return this.http.get();
     // }
-    private addPlayerToDatabase(collectionName: string, player: string): void {
-        const addPlayerObs: Observable<number> = this.database.sendPlayer(collectionName, player);
-        console.log('add function');
-        addPlayerObs.subscribe(() => {
-            this.getPlayersNamesBeg();
-        })
-
-
-        //this.database.sendPlayer(collectionName, player);
-        console.log('apres add fucntion');
-    }
 
     add(event: MatChipInputEvent, level: string): void {
         const value = (event.value || '').trim();
@@ -175,26 +169,34 @@ export class AdminPageComponent implements OnInit {
         this.userService.vrPlayerNamesExpert = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
     }
 
-    setResetData():void{
-        this.scoresService.isUserResetData=true;
+    setResetData(): void {
+        this.scoresService.isUserResetData = true;
         this.scoresService.getIsUserResetDataObs.next(this.scoresService.isUserResetData);
-        console.log('button reset a ete cliquer : ',this.scoresService.isUserResetData);
-
+        console.log('button reset a ete cliquer : ', this.scoresService.isUserResetData);
     }
 
     resetScores(collectionName: string): void {
         const scores: Observable<Score[]> = this.database.resetAllScores(collectionName);
-        scores.subscribe(() => {
-
-            this.openSnackBar(DATA_RESET_SUCCESFULLY, CLOSE_SNACKBAR);
-        },
-        (rejected: number) => {
-            this.openSnackBar(ERROR_HTTP+rejected+SERVER_NOT_RESPONDING, CLOSE_SNACKBAR);
-
+        scores.subscribe(
+            () => {
+                this.openSnackBar(DATA_RESET_SUCCESFULLY, CLOSE_SNACKBAR);
+            },
+            (rejected: number) => {
+                this.openSnackBar(ERROR_HTTP + rejected + SERVER_NOT_RESPONDING, CLOSE_SNACKBAR);
+            },
+        );
+    }
+    private openSnackBar(message: string, action: string): void {
+        this.snackBar.open(message, action, { duration: MAX_TIME_SNACKBAR });
+    }
+    private addPlayerToDatabase(collectionName: string, player: string): void {
+        const addPlayerObs: Observable<number> = this.database.sendPlayer(collectionName, player);
+        console.log('add function');
+        addPlayerObs.subscribe(() => {
+            this.getPlayersNamesBeg();
         });
-    }
-    private openSnackBar(message: string, action: string):void {
-        this.snackBar.open(message, action, {duration: MAX_TIME_SNACKBAR});
-    }
 
+        // this.database.sendPlayer(collectionName, player);
+        console.log('apres add fucntion');
+    }
 }

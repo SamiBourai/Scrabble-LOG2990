@@ -72,7 +72,7 @@ export class VirtualPlayerService {
                     }
                     switch (this.wordPlacedInScrable) {
                         case false:
-                            if (this.expert) {
+                            if (this.expert && this.reserveService.reserveSize !== 0) {
                                 this.tradeLetterSteps();
                             } else {
                                 this.passTurnSteps();
@@ -84,7 +84,9 @@ export class VirtualPlayerService {
                             this.skipTurn = false;
                             break;
                     }
+                    console.log('     ');
                 }, WAIT_TIME_3_SEC);
+
                 break;
             case 'exchangeLetters':
                 setTimeout(() => {
@@ -157,7 +159,7 @@ export class VirtualPlayerService {
     }
     private fitsTheProb(word: string): boolean {
         const points = this.caclculateGeneratedWordPoints(word);
-        if (this.expert) return true;
+
         switch (this.probWordScore) {
             case '{0,6}':
                 if (points > ZERO_POINTS && points <= SIX_POINTS) {
@@ -233,13 +235,12 @@ export class VirtualPlayerService {
 
     private findValidWord(lett: Letter[], letterIngrid: Letter[], direction: string, x: number, y: number): boolean {
         let found = false;
-        const regEx = new RegExp(this.validWordService.generateRegEx(lett), 'g');
+        const regEx = new RegExp(this.validWordService.generateRegEx(lett));
         const words: string[] = this.generateWords(letterIngrid);
 
-        console.log(regEx);
-
         for (const word of words) {
-            if (this.fitsTheProb(word) && regEx.test(word)) {
+            this.easel.resetVariables();
+            if ((!this.expert ? this.fitsTheProb(word) : true) && regEx.test(word)) {
                 const pos = this.findPositionInRange(word, lett);
                 if (pos !== UNDEFINED_INDEX) {
                     let tempCommand: ChatCommand;
@@ -282,14 +283,13 @@ export class VirtualPlayerService {
                 }
                 if (j === word.length - 1 && equal)
                     if (
-                        boarLetters[i + j + 1].charac === NOT_A_LETTER.charac &&
-                        i !== 0 &&
-                        boarLetters[i - 1].charac === NOT_A_LETTER.charac &&
+                        (i + j < NB_TILES - 1 ? boarLetters[i + j + 1].charac === NOT_A_LETTER.charac : true) &&
+                        (i !== 0 ? boarLetters[i - 1].charac === NOT_A_LETTER.charac : true) &&
                         reRightCounter !== 0
                     )
                         posInit = i;
             }
-            if (posInit !== DEFAULT_POS && reRightCounter !== word.length) {
+            if (posInit !== DEFAULT_POS && reRightCounter < word.length) {
                 break;
             } else {
                 reRightCounter = 0;

@@ -96,12 +96,10 @@ export class MultiplayerModeService {
                 //
                 this.userService.realUser.turnToPlay = true;
                 this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
-                console.log('join:', this.userService.joinedUser.score);
             } else {
                 this.userService.realUser.easel.easelLetters = data.easel ?? [];
                 //
                 this.userService.realUser.turnToPlay = false;
-                console.log('user:', this.userService.realUser.score);
                 this.userService.realUser.score = data.user?.score ?? 0;
             }
         });

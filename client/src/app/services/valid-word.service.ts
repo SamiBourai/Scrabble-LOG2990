@@ -4,7 +4,7 @@ import { ChatCommand } from '@app/classes/chat-command';
 import { Dictionary, LoadableDictionary } from '@app/classes/dictionary';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES, NOT_A_LETTER, UNDEFINED_INDEX } from '@app/constants/constants';
+import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES, NOT_A_LETTER } from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -15,7 +15,6 @@ import { WordPointsService } from './word-points.service';
     providedIn: 'root',
 })
 export class ValidWordService {
-    matchWords: string[] = [];
     concatWord: string = '';
     isWordValid: boolean = false;
     usedWords = new Map<string, Vec2[]>();
@@ -53,60 +52,81 @@ export class ValidWordService {
     }
 
     generateRegEx(lett: Letter[]): string {
+        let regEx = '';
         let concat = '(^';
-
-        let lastWasEmpty = true;
-        let spotDefine = false;
-        let metLetter = false;
+        let newRange = new Array<Letter>();
+        const allRegEx = new Array<string>();
+        let lastIsLetter = false;
         for (let i = 0; i < lett.length; i++) {
-            if (spotDefine) {
-                const save: string = concat.slice();
-                concat += '$)|';
-                concat += save;
-                spotDefine = false;
-            }
-
-            if (lett[i].charac === NOT_A_LETTER.charac) {
-                concat += '.';
-
-                if (i !== lett.length - 1) {
-                    if (!metLetter) {
-                        concat += '?';
-                    } else if (lett[i + 1].charac === NOT_A_LETTER.charac) {
-                        concat += '?';
-                        spotDefine = true;
-                    } else if (lett[i + 1].charac !== NOT_A_LETTER.charac) {
-                        let spaceCounter = 0;
-                        while (concat.charAt(concat.length - 1) !== '}') {
-                            if (concat.charAt(concat.length - 1) === '.') {
-                                spaceCounter++;
-                            }
-                            concat = concat.slice(0, UNDEFINED_INDEX);
+            switch (lett[i]) {
+                case NOT_A_LETTER:
+                    if (lastIsLetter) {
+                        concat += '$)';
+                        allRegEx.push(concat);
+                        concat = concat.slice(0, -2);
+                        let counterSpace = 0;
+                        let j = i;
+                        while (j < lett.length && lett[j] === NOT_A_LETTER) {
+                            counterSpace++;
+                            j++;
                         }
-                        for (let k = 0; k < spaceCounter; k++) concat += '.';
+                        let save = concat;
+                        if (j !== lett.length) {
+                            newRange = lett.slice();
+                            newRange.splice(0, i + 1);
+                            regEx = this.generateRegEx(newRange);
+                        }
+                        switch (counterSpace) {
+                            case 1:
+                                if (j !== lett.length) concat += '.';
+                                else {
+                                    concat += '.?$)';
+                                    allRegEx.push(concat);
+                                }
+
+                                break;
+                            default:
+                                while (counterSpace > 1) {
+                                    save += '.';
+                                    concat += '.?';
+                                    counterSpace--;
+                                }
+                                concat += '$)';
+                                allRegEx.push(concat);
+                                concat = concat.slice(0, -2);
+                                if (j !== lett.length) {
+                                    save += '.';
+                                    concat = save;
+                                } else {
+                                    concat += '.?$)';
+                                    allRegEx.push(concat);
+                                }
+                                break;
+                        }
+                        i = j - 1;
+                    } else {
+                        concat += '.?';
                     }
-                }
-                lastWasEmpty = true;
-            } else {
-                metLetter = true;
-                concat += lett[i].charac;
-                if (i !== lett.length - 1)
-                    if (lett[i + 1].charac === NOT_A_LETTER.charac) {
-                        concat += '{1}';
-                        spotDefine = true;
+                    lastIsLetter = false;
+                    break;
+                default:
+                    concat += lett[i].charac + '{1}';
+                    if (i === lett.length - 1) {
+                        concat += '$)';
+                        allRegEx.push(concat);
                     }
-                lastWasEmpty = false;
+                    lastIsLetter = true;
+                    break;
             }
         }
-        if (lastWasEmpty) {
-            concat += '?$)';
-        } else {
-            concat += '{1}$)';
-        }
-        return concat;
+        if (regEx !== '') regEx += '|';
+        for (const reg of allRegEx) regEx += reg + '|';
+        regEx = regEx.slice(0, -1);
+        return regEx;
     }
 
     generateAllWordsPossible(word: Letter[]): string[] {
+        const matchWords: string[] = [];
         for (const letter of word) {
             this.concatWord += letter.charac;
         }
@@ -119,14 +139,14 @@ export class ValidWordService {
                     if (i === dictionaryWord.length) {
                         const match = regex.test(dictionaryWord);
                         if (match) {
-                            this.matchWords.push(dictionaryWord);
+                            matchWords.push(dictionaryWord);
                         }
                     }
                 }
             }
         }
         this.concatWord = '';
-        return this.matchWords;
+        return matchWords;
     }
 
     readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand, playMode: string): number {

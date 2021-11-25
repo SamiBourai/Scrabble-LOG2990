@@ -49,7 +49,6 @@ export class ReserveService {
     }
 
     isReserveEmpty(): boolean {
-        console.log(this.reserveSize, ' sizeR');
         return this.reserveSize === 0;
     }
     redefineReserve(map: string, size: number) {

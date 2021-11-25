@@ -79,7 +79,6 @@ export class EaselLogiscticsService {
         for (const nb of easel.indexOfEaselLetters) {
             if (!this.reserveService.isReserveEmpty()) easel.add(this.reserveService.getRandomLetter(), nb);
             else {
-                console.log('NOT_A_LETTER');
                 easel.add(NOT_A_LETTER, nb);
                 easel.easelSize--;
             }
