@@ -188,7 +188,7 @@ export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
     [I, MIN_SWAP_LENGTH],
     [J, 1],
     [K, 1],
-    [L, FIFTEEN],
+    [L, FIVE],
     [M, 3],
     [N, SIX],
     [O, SIX],

@@ -224,7 +224,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private endTurn(commandType: string, points: number) {
         switch (commandType) {
             case 'exchange':
-                this.reserveService.sizeObs.next(this.reserveService.reserveSize);
                 if (this.userService.playMode !== 'soloGame') {
                     setTimeout(() => {
                         this.userService.exchangeLetters = true;
@@ -235,13 +234,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 break;
             case 'placer':
                 if (this.errorMessage === '') {
-                    this.reserveService.sizeObs.next(this.reserveService.reserveSize);
+                    this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
                     if (this.userService.playMode !== 'soloGame') {
                         this.userService.chatCommandToSend = this.messageService.command;
                         this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
                     }
-                    this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
-                    this.objectifMangerService.passTurnCounter = 0;
                 } else {
                     this.typeArea = this.typeArea + ' (la validation du mot a échoué)';
                     this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };

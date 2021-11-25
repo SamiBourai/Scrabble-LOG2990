@@ -1,4 +1,4 @@
-import { EASEL_LENGTH, LETTERS_RESERVE_QTY, PARAMETERS_OF_SWAP } from '@app/classes/constants';
+import { EASEL_LENGTH, LETTERS_RESERVE_QTY, PARAMETERS_OF_SWAP, RESERVE_SIZE } from '@app/classes/constants';
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
 import { Letter } from './letters';
@@ -10,7 +10,7 @@ export class GameObject {
     gameName: string = '';
     timer: Timer;
     reserveServer = new Map<Letter, number>(LETTERS_RESERVE_QTY);
-    reserverServerSize: number = 30;
+    reserverServerSize: number = RESERVE_SIZE;
     creatorEasel = new Array<Letter>(EASEL_LENGTH);
     joinEasel = new Array<Letter>(EASEL_LENGTH);
     endOfGame: boolean = false;

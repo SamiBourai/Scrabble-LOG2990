@@ -1,4 +1,4 @@
-import { EASEL_LENGTH, FIVE_SEC_MS, NOT_A_LETTER, ONE_SECOND_MS, SIX_TURN } from '@app/classes/constants';
+import { BOTH_EASEL_FILLED, EASEL_LENGTH, FIVE_SEC_MS, NOT_A_LETTER, ONE_SECOND_MS, SIX_TURN } from '@app/classes/constants';
 import { GameObject } from '@app/classes/game-object';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/message-client';
@@ -87,7 +87,7 @@ export class SocketManagerService {
                 if (this.games.has(game.gameName)) {
                     this.games.get(game.gameName).timer.timerObs.subscribe((value: { min: number; sec: number }) => {
                         game.timeConfig = this.games.get(game.gameName).timeConfig;
-                        game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer.creatorTurn ?? false };
+                        game.timer = { min: value.min, sec: value.sec, userTurn: this.games.get(game.gameName).timer?.creatorTurn ?? false };
                         this.sio.to(game.gameName).emit('updateTime', game);
                     });
                 }
@@ -111,7 +111,7 @@ export class SocketManagerService {
                 this.games.get(gameName).reserveServer = new Map(JSON.parse(map));
                 this.games.get(gameName).easel = easel;
                 this.games.get(gameName).reserverServerSize = size;
-                if (size === 16)
+                if (size === BOTH_EASEL_FILLED)
                     this.sio
                         .to(gameName)
                         .emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size, easel);
