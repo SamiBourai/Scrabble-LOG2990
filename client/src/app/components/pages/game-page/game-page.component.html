@@ -2,7 +2,6 @@
     <div class="side-bar">
         <app-sidebar id="sideBar" ></app-sidebar>
     </div>
-
     <div class="play-area">
         <app-play-area></app-play-area>
     </div>
@@ -10,7 +9,9 @@
         <div>
             <p class="chronometer-title">{{ 'Lettre restante : ' + this.remainingLetters }}</p>
         </div>
-
+        <div *ngIf ="objectifManagerService.log2990Mode">
+            <app-scrable-log2990-modal></app-scrable-log2990-modal>
+        </div>
         <div fxLayout="col">
             <div>
                 <app-real-player></app-real-player>

@@ -17,12 +17,13 @@ import {
     TWELVE_POINTS,
     UNDEFINED_INDEX,
     WAIT_TIME_3_SEC,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
+import { ObjectifManagerService } from './objectif-manager.service';
 import { ValidWordService } from './valid-word.service';
 @Injectable({ providedIn: 'root' })
 export class VirtualPlayerService {
@@ -44,6 +45,7 @@ export class VirtualPlayerService {
         private validWordService: ValidWordService,
         private lettersService: LettersService,
         private easelLogic: EaselLogiscticsService,
+        private objectifMangerService: ObjectifManagerService,
     ) {}
     manageVrPlayerActions(): void {
         this.skipTurn = false;
@@ -117,6 +119,10 @@ export class VirtualPlayerService {
         this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
         this.wordPlacedInScrable = true;
         this.easelLogic.refillEasel(this.easel, false);
+        if (this.objectifMangerService.log2990Mode) {
+            this.objectifMangerService.vrPassTurnCounter = 0;
+            this.objectifMangerService.verifyObjectifs(false, tempCommand);
+        }
     }
     private playProbabilty(): string {
         const probability: string[] = [
@@ -143,6 +149,10 @@ export class VirtualPlayerService {
         this.commandToSend = '';
         this.played = true;
         this.skipTurn = true;
+        if (this.objectifMangerService.log2990Mode) {
+            this.objectifMangerService.vrPassTurnCounter++;
+            this.objectifMangerService.verifyObjectifs(false);
+        }
     }
 
     private caclculateGeneratedWordPoints(word: string): number {
@@ -185,6 +195,10 @@ export class VirtualPlayerService {
             this.commandToSend += this.easel.easelLetters[i].charac;
             this.easel.add(this.reserveService.getRandomLetter(), i);
             this.reserveService.reFillReserve(letterTemp);
+        }
+        if (this.objectifMangerService.log2990Mode) {
+            this.objectifMangerService.vrPassTurnCounter = 0;
+            this.objectifMangerService.verifyObjectifs(false, undefined, numberOfLettersToExchange);
         }
     }
     private generateProb(): void {

@@ -25,8 +25,8 @@ export class ModalUserVsPlayerComponent {
         public virtualPlayerService: VirtualPlayerService,
         public reserveService: ReserveService,
         private socketManagementService: SocketManagementService,
+        private objectifManagerService: ObjectifManagerService,
         public multiplayerService: MultiplayerModeService,
-        public objectifManagerService: ObjectifManagerService,
     ) {}
 
     getNameFromLocalStorage() {
@@ -53,6 +53,7 @@ export class ModalUserVsPlayerComponent {
                 break;
         }
         this.getOne();
+        if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
     }
     getOne() {
         window.location.assign('/home');

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
@@ -30,11 +31,13 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
         private socketManagementService: SocketManagementService,
         private multiplayerModeService: MultiplayerModeService,
         public mouseHandlingService: MouseHandelingService,
+        public objectifManagerService: ObjectifManagerService,
     ) {}
     detectSkipTurnBtn() {
         this.userService.userSkipingTurn = true;
     }
     ngOnInit() {
+        this.objectifManagerService.initializedGame = true;
         this.getLetter();
         switch (this.userService.playMode) {
             case 'soloGame':

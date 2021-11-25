@@ -130,6 +130,7 @@ export class MultiplayerModeService {
         this.userService.joinedUser.name = playerName;
         this.userService.joinedUser.guestPlayer = true;
         this.userService.gameName = room.gameName;
+        this.userService.isBonusBox = room.aleatoryBonus ?? false;
     }
     getMessageSend(method: string) {
         this.socketManagementService.listen(method).subscribe((data) => {

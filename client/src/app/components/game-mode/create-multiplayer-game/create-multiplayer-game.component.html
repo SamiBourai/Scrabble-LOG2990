@@ -96,17 +96,17 @@
         <ng-template matStepLabel>Salle d'attente</ng-template>
         <div *ngIf="guestName; else elseBlock">
             <p class="multiplayerP">vous allez jouer contre l'utilisateur {{ guestName}}</p>
-            <app-scrable-log2990-modal *ngIf="modeLog2990" ></app-scrable-log2990-modal>
             <button mat-button (click)="beginGame(true)" routerLink="/game" mat-dialog-close>Démarer la
                 partie</button>
             <button mat-button (click)="beginGame(false)" mat-dialog-close>Annuler</button>
         </div>
         <ng-template #elseBlock>
-            <br />
-            <p class="multiplayerP">Patientez pour un utilisateur s'il vous plait</p>
-            <br />
+            <p class="multiplayerP"></p>
             <hr />
-            <mat-spinner></mat-spinner>
+            <div class="loading-container">
+                <div class="loading"></div>
+                <div id="loading-text">Patientez pour un utilisateur s'il vous plait</div>
+            </div>
             <div>
                 <button mat-button (click)="disconnectUser()" matStepperPrevious mat-raised-button
                     color="accent" mat-dialog-close>Annuler</button>

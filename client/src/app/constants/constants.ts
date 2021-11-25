@@ -243,9 +243,23 @@ export const FIRST_POSITION_BOARD = { x: 8, y: 8 } as Vec2;
 
 export const DATABASE_COLLECTION_CLASSIC = 'Score';
 export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
-
+// log2990Mode
 export const NUMBER_OF_SENTENCE = 12;
 export const TWO_SECOND_INTERVAL = 2300;
 
 export const NUMBER_OF_OBJECTIFS = 8;
 export const NUMBER_OF_PUBLIC_OBJECTIFS = 2;
+export const FILL_BOX_DEFINITION = 'placé un mot dans les cases D4 D5 D6 D7 D8 de la grille pour un bonus de 50 points';
+export const PASS_4_TIMES_DEFINITION = 'passer son tour 4 fois de suite pour un bonus de 15 points';
+export const EXCHANGE_ALL_LETTERS_DEFINITION = 'échanger toutes les lettres du chevalet pour un bonus de 10 points';
+export const PLACE_X_OR_Z_DEFINITION = 'placé un mot contenant la lettre Z ou X pour un bonus de 40 points';
+export const PLACE_3_CONSONANTS_DEFINITION = 'placé un mot contenant un minimum de 3 consonnes pour un bonus de 10 points';
+export const WORD_TO_PLACE_DEFINITION = 'placé le mot "bonus" pour un bonus de 20 points';
+export const PLACE_IN_A1_DEFINITION = 'placé un mot dont la première lettre est contenue dans la position A1 de la grille';
+export const PLACE_NUMBER_DEFINITION = 'placé le mot "deux" ou "trois" pour un bonus qui va multiplier le score par le chiffre placé';
+export const BONUS_MULTIPLICATOR_2 = 2;
+export const BONUS_MULTIPLICATOR_3 = 3;
+export const PASS_TURN_OBJECTIF_CONDITION = 4;
+export const POSITION_FILL_BOX_CONDITION: Vec2 = { x: 4, y: 4 };
+export const WORD_LENGHT_FILL_BOX_CONDITION = 5;
+export const NUMBER_OF_CONSONNANT_CONDITION = 3;

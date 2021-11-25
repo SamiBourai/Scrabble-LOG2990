@@ -52,7 +52,7 @@ export class UserService {
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    observableTurnToPlay: Observable<boolean>;
+    observableTurnToPlay: Observable<boolean> = new Observable<boolean>();
     reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     vrPlayerNamesBeginner: string[][] = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []]; // admin ici pour nom vr user
     vrPlayerNamesExpert: string[][] = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
@@ -145,7 +145,6 @@ export class UserService {
     setVrName() {
         if (this.virtualPlayer.expert) {
             do {
-                // this.vrUser.name = EXPERT_NAMES[Math.floor(Math.random() * EXPERT_NAMES.length)];
                 this.vrUser.name = this.chooseRandomNameExp();
             } while (this.vrUser.name === this.realUser.name);
             localStorage.setItem('vrUserName', this.vrUser.name);
