@@ -2,7 +2,6 @@
     <mat-card-header>
         <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
         <mat-card-subtitle>{{ userService.vrUser.level }}</mat-card-subtitle>
-        <mat-card-subtitle class="score-time"> Temps par tour : {{ userService.vrUser.round }} </mat-card-subtitle>
         <mat-card-subtitle class="score-time"> Score : {{ userService.vrUser.score }} </mat-card-subtitle>
         <mat-card-subtitle class="score-time" *ngIf="this.virtualPlayerService.easel.getEaselSize() < 7">Lettre dans
             chevalet : {{ this.virtualPlayerService.easel.getEaselSize() }}</mat-card-subtitle>
@@ -21,7 +20,6 @@
         </ngx-avatar>
         <mat-card-title>{{ userService.vrUser.name }}</mat-card-title>
         <mat-card-subtitle>{{ userService.vrUser.level }}</mat-card-subtitle>
-        <mat-card-subtitle class="score-time"> Temps par tour : {{ userService.vrUser.round }} </mat-card-subtitle>
         <mat-card-subtitle class="score-time"> Score : {{ userService.vrUser.score }} </mat-card-subtitle>
         <mat-card-subtitle class="score-time" *ngIf="this.virtualPlayerService.easel.getEaselSize() <7;">Lettre dans
             chevalet : {{ this.virtualPlayerService.easel.getEaselSize() }}</mat-card-subtitle>

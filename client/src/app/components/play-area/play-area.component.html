@@ -4,7 +4,16 @@
     oncontextmenu="return false"
     class="d-flex flex-row mt-3 h-100"
 >
-    <div class="d-flex flex-column justify-content-center align-items-center play-btn-grp" (click)="this.mouseHandlingService.clearAll()">
+
+ <div class="d-flex flex-column justify-content-center align-items-center play-btn-grp" (click)="this.mouseHandlingService.clearAll()">
+                <app-real-player></app-real-player>
+                <div *ngIf="soloMode; else elseBlock">
+                    <app-vr-user></app-vr-user>
+                </div>
+                <ng-template #elseBlock>
+                    <app-joined-user></app-joined-user>
+                </ng-template>
+
         <button mat-raised-button (click)="detectGameQuit()" (click)="openDialogOfVrUser()">Abandonner</button>
         <button mat-raised-button [disabled]="!userService.isPlayerTurn()" (click)="mouseHandlingService.placeTempWord()">Placer</button>
         <button
@@ -28,7 +37,7 @@
         </button>
     </div>
 
-    <div style="width: 950px; position: relative;">
+    <div style="width: 750px; position: relative;">
         <canvas id="canvas" class="firstLayer" #gridCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas id="tempCanvas" class="secondLayer" #tempCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas id="focusCanvas" class="thirdLayer" #focusCanvas [attr.width]="width" [attr.height]="height"></canvas>
@@ -41,5 +50,6 @@
             [attr.height]="height"
         ></canvas>
     </div>
+
 </div>
 

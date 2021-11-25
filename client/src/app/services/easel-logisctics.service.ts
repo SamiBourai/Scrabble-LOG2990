@@ -32,9 +32,8 @@ export class EaselLogiscticsService {
         return coords1;
     }
 
-    isBetween(pair: Pair, number: number) {
-        if (number >= pair.min && number <= pair.max) return true;
-        return false;
+    isBetween(pair: Pair, number: number): boolean {
+        return number >= pair.min && number <= pair.max;
     }
 
     placeEaselLetters(easel: EaselObject): void {

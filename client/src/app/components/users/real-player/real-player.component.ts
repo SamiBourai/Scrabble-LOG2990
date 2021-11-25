@@ -22,7 +22,8 @@ export class RealPlayerComponent implements OnInit {
     ) {}
     ngOnInit() {
         if (this.userService.playMode === 'soloGame') {
-            this.userService.turnToPlayObs.subscribe(() => {
+            this.userService.turnToPlayObs.subscribe((val) => {
+                if (!val) return;
                 if (this.userService.realUser.turnToPlay && !this.userService.endOfGame && this.userService.playMode === 'soloGame')
                     this.timeService.startTime('user');
             });

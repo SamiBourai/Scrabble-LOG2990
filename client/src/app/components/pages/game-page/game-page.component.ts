@@ -2,9 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
 import { MouseHandelingService } from '@app/services/mouse-handeling.service';
-import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ReserveService } from '@app/services/reserve.service';
-import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 import { Subscription } from 'rxjs';
@@ -27,8 +25,8 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
         private reserverService: ReserveService,
         private dialogRef: MatDialog,
         public virtualPlayerService: VirtualPlayerService,
-        private socketManagementService: SocketManagementService,
-        private multiplayerModeService: MultiplayerModeService,
+        // private socketManagementService: SocketManagementService,
+        // private multiplayerModeService: MultiplayerModeService,
         public mouseHandlingService: MouseHandelingService,
     ) {}
     detectSkipTurnBtn() {
@@ -37,17 +35,17 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit() {
         this.getLetter();
 
-        switch (this.userService.playMode) {
-            case 'createMultiplayerGame':
-                this.soloMode = false;
-                this.multiplayerModeService.beginGame();
-                break;
-            case 'joinMultiplayerGame':
-                this.soloMode = false;
-                this.socketManagementService.emit('guestInGamePage', { gameName: this.userService.gameName });
-                this.multiplayerModeService.beginGame();
-                break;
-        }
+        // switch (this.userService.playMode) {
+        //     case 'createMultiplayerGame':
+        //         this.soloMode = false;
+        //         this.multiplayerModeService.beginGame();
+        //         break;
+        //     case 'joinMultiplayerGame':
+        //         this.soloMode = false;
+        //         this.socketManagementService.emit('guestInGamePage', { gameName: this.userService.gameName });
+        //         this.multiplayerModeService.beginGame();
+        //         break;
+        // }
         this.isUserEaselEmpty();
     }
     ngAfterViewInit() {

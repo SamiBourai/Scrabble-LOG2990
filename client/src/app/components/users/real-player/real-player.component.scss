@@ -12,45 +12,47 @@
 
 .card-playing {
     border: 2px solid black;
-    border-color: #FF5800;
-
+    border-color: #ff5800;
 }
 
-::ng-deep{
-    .mat-card{
-        background-color: #312E2B;
-        color: #EFEFEF;
+::ng-deep {
+    .mat-card {
+        background-color: #312e2b;
+        color: #efefef;
         border-radius: 10px;
         margin-bottom: 8px;
+        width: 260px;
     }
     .mat-form-field-label {
-        color: #EFEFEF;
+        color: #efefef;
     }
     .mat-form-field.mat-focused .mat-form-field-label {
-        color: #EFEFEF;
+        color: #efefef;
     }
-    .mat-card-title{
-        color: #EFEFEF;
+    .mat-card-title {
+        color: #efefef;
     }
-    .mat-card-subtitle{
+    .mat-card-subtitle {
         color: #c0c0c0;
     }
     .mat-form-field-appearance-outline .mat-form-field-outline {
         color: #f1864d;
     }
     .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
-        color: #FF5800;
+        color: #ff5800;
     }
-    .mat-mini-fab.mat-accent{
-        background-color: #FF5800;
+    .mat-mini-fab.mat-accent {
+        background-color: #ff5800;
     }
-    .mat-mini-fab.mat-accent.mat-button-disabled,.mat-mini-fab.mat-button-disabled.mat-button-disabled{
-        background-color: #2E4052;
+    .mat-mini-fab.mat-accent.mat-button-disabled,
+    .mat-mini-fab.mat-button-disabled.mat-button-disabled {
+        background-color: #2e4052;
     }
-    .mat-stepper-horizontal{
-        background-color: #312E2B;
+    .mat-stepper-horizontal {
+        background-color: #312e2b;
     }
-    .mat-progress-spinner circle, .mat-spinner circle{
-        stroke: #FF5800;
+    .mat-progress-spinner circle,
+    .mat-spinner circle {
+        stroke: #ff5800;
     }
 }

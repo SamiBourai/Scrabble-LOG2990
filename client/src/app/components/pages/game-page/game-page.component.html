@@ -1,16 +1,10 @@
 <div class="container" fxLayout="row">
     <app-play-area></app-play-area>
+
     <div class="d-flex flex-column">
+        <app-sidebar id="sideBar" (click)="this.mouseHandlingService.clearAll()"></app-sidebar>
         <div class="d-flex flex-column" (click)="this.mouseHandlingService.clearAll()" >
                 <p class="chronometer-title">{{ 'Lettre restante : ' + this.remainingLetters }}</p>
-
-                <app-real-player></app-real-player>
-                <div *ngIf="soloMode; else elseBlock">
-                    <app-vr-user></app-vr-user>
-                </div>
-                <ng-template #elseBlock>
-                    <app-joined-user></app-joined-user>
-                </ng-template>
                 <mat-card class="" *ngIf="this.userService.endOfGame">
                     <mat-card-header>
                         <mat-card-title class="score-time" *ngIf="this.userService.getWinnerName() !== 'egal'; elseBlock">
@@ -25,7 +19,7 @@
                 </mat-card>
 
         </div>
-        <app-sidebar id="sideBar" (click)="this.mouseHandlingService.clearAll()"></app-sidebar>
+
 
     </div>
 </div>

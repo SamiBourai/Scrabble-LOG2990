@@ -1,5 +1,6 @@
 import { MousePosition } from '@app/classes/mouse-position';
 import { Vec2 } from '@app/classes/vec2';
+import { BOARD_WIDTH, LEFTSPACE, NB_TILES } from './constants';
 
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },
@@ -141,13 +142,13 @@ export const DEFAULT_PINK_BOX: Vec2[] = [
 ];
 
 export const EASEL_POSITIONS: MousePosition[] = [
-    { letterRange: { min: 264, max: 313 }, index: 0, isClicked: false },
-    { letterRange: { min: 315, max: 371 }, index: 1, isClicked: false },
-    { letterRange: { min: 373, max: 424 }, index: 2, isClicked: false },
-    { letterRange: { min: 426, max: 478 }, index: 3, isClicked: false },
-    { letterRange: { min: 480, max: 531 }, index: 4, isClicked: false },
-    { letterRange: { min: 534, max: 584 }, index: 5, isClicked: false },
-    { letterRange: { min: 586, max: 637 }, index: 6, isClicked: false },
+    { letterRange: { min: LEFTSPACE + 4 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 5 * (BOARD_WIDTH / NB_TILES) }, index: 0, isClicked: false },
+    { letterRange: { min: LEFTSPACE + 5 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 6 * (BOARD_WIDTH / NB_TILES) }, index: 1, isClicked: false },
+    { letterRange: { min: LEFTSPACE + 6 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 7 * (BOARD_WIDTH / NB_TILES) }, index: 2, isClicked: false },
+    { letterRange: { min: LEFTSPACE + 7 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 8 * (BOARD_WIDTH / NB_TILES) }, index: 3, isClicked: false },
+    { letterRange: { min: LEFTSPACE + 8 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 9 * (BOARD_WIDTH / NB_TILES) }, index: 4, isClicked: false },
+    { letterRange: { min: LEFTSPACE + 9 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 10 * (BOARD_WIDTH / NB_TILES) }, index: 5, isClicked: false },
+    { letterRange: { min: LEFTSPACE + 10 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 11 * (BOARD_WIDTH / NB_TILES) }, index: 6, isClicked: false },
 ];
 
 export const ALL_BONUS_BOX: Vec2[] = [
