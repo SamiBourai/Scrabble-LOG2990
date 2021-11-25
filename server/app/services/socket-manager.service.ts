@@ -30,13 +30,15 @@ export class SocketManagerService {
                     },
                     message.timeConfig?.sec ?? 0,
                     message.timeConfig?.min ?? 0,
+                    message.modeLog2990 ?? false,
                 );
+                if (message.modeLog2990) createdGame.objectifs = message.objectifs ?? createdGame.objectifs;
                 socket.join(message.gameName);
                 this.games.set(message.gameName, createdGame);
                 this.rooms.push(message);
             });
-            socket.on('generateAllRooms', () => {
-                socket.emit('createdGames', this.rooms);
+            socket.on('generateAllRooms', (message: MessageClient) => {
+                socket.emit('createdGames', this.generateRooms(message));
             });
             socket.on('joinRoom', (game: MessageClient) => {
                 socket.join(game.gameName);
@@ -113,6 +115,9 @@ export class SocketManagerService {
                     this.sio
                         .to(gameName)
                         .emit('updateReserveInClient', JSON.stringify(Array.from(this.games.get(gameName).reserveServer)), size, easel);
+            });
+            socket.on('objectifAchived', (objectif: MessageClient) => {
+                this.sio.to(objectif.gameName).emit('objectifAchived', objectif);
             });
 
             socket.on('sendReserveJoin', (gameName: string) => {
@@ -205,5 +210,14 @@ export class SocketManagerService {
                 }
             }
         return length;
+    }
+    private generateRooms(message: MessageClient): MessageClient[] {
+        const rooms: MessageClient[] = [];
+        for (const room of this.rooms) {
+            if (message.modeLog2990 === room.modeLog2990) {
+                rooms.push(room);
+            }
+        }
+        return rooms;
     }
 }

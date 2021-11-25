@@ -127,7 +127,7 @@ export const RANGE_Y: Pair = { min: 840, max: 887 };
 
 // sidebar
 export const COLUMN_RANGE = 16;
-export const HELP_MAX_COMMAND=2;
+export const HELP_MAX_COMMAND = 2;
 // the length of the command !placer and !echanger
 export const PLACE_LENGTH = 7;
 export const SWAP_LENGTH = 9;
@@ -177,32 +177,32 @@ export const TWO_LETTER = 2;
 export const THREE_LETTER = 3;
 
 export const LETTERS_RESERVE_QTY = new Map<Letter, number>([
-    // [A, SWAP_LENGTH],
-    // [B, 2],
-    // [C, 2],
-    // [D, 3],
+    [A, SWAP_LENGTH],
+    [B, 2],
+    [C, 2],
+    [D, 3],
     [E, FIFTEEN],
-    // [F, 2],
-    // [G, 2],
-    // [H, 2],
-    // [I, MIN_SWAP_LENGTH],
-    // [J, 1],
-    // [K, 1],
+    [F, 2],
+    [G, 2],
+    [H, 2],
+    [I, MIN_SWAP_LENGTH],
+    [J, 1],
+    [K, 1],
     [L, FIFTEEN],
-    // [M, 3],
-    // [N, SIX],
-    // [O, SIX],
-    // [P, 2],
-    // [Q, 1],
-    // [R, SIX],
-    // [S, SIX],
-    // [T, SIX],
-    // [U, SIX],
-    // [V, 2],
-    // [W, 1],
-    // [X, 1],
-    // [Y, 1],
-    // [Z, 1],
+    [M, 3],
+    [N, SIX],
+    [O, SIX],
+    [P, 2],
+    [Q, 1],
+    [R, SIX],
+    [S, SIX],
+    [T, SIX],
+    [U, SIX],
+    [V, 2],
+    [W, 1],
+    [X, 1],
+    [Y, 1],
+    [Z, 1],
 ]);
 // modal user name validator
 export const MAX_LENGTH = 15;
@@ -247,26 +247,34 @@ export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
 export const DATABASE_COLLECTION_VRNAMESBEG = 'virtualPlayerBeg';
 export const DATABASE_COLLECTION_VRNAMESEXP = 'virtualPlayerExpert';
 
+// log2990Mode
 export const NUMBER_OF_SENTENCE = 12;
 export const TWO_SECOND_INTERVAL = 2300;
-
 export const NUMBER_OF_OBJECTIFS = 8;
 export const NUMBER_OF_PUBLIC_OBJECTIFS = 2;
+export const FILL_BOX_DEFINITION = 'placé un mot dans les cases D4 D5 D6 D7 D8 de la grille pour un bonus de 50 points';
+export const PASS_4_TIMES_DEFINITION = 'passer son tour 4 fois de suite pour un bonus de 15 points';
+export const EXCHANGE_ALL_LETTERS_DEFINITION = 'échanger toutes les lettres du chevalet pour un bonus de 10 points';
+export const PLACE_X_OR_Z_DEFINITION = 'placé un mot contenant la lettre Z ou X pour un bonus de 40 points';
+export const PLACE_3_CONSONANTS_DEFINITION = 'placé un mot contenant un minimum de 3 consonnes pour un bonus de 10 points';
+export const WORD_TO_PLACE_DEFINITION = 'placé le mot "bonus" pour un bonus de 20 points';
+export const PLACE_IN_A1_DEFINITION = 'placé un mot dont la première lettre est contenue dans la position A1 de la grille';
+export const PLACE_NUMBER_DEFINITION = 'placé le mot "deux" ou "trois" pour un bonus qui va multiplier le score par le chiffre placé';
+export const BONUS_MULTIPLICATOR_2 = 2;
+export const BONUS_MULTIPLICATOR_3 = 3;
+export const PASS_TURN_OBJECTIF_CONDITION = 4;
+export const POSITION_FILL_BOX_CONDITION: Vec2 = { x: 4, y: 4 };
+export const WORD_LENGHT_FILL_BOX_CONDITION = 5;
+export const NUMBER_OF_CONSONNANT_CONDITION = 3;
 
-//COMPONENT SCORE
-export const MAX_TIME_SNACKBAR=3000;
-export const CLOSE_SNACKBAR='Fermer';
-export const SCORE_HAS_BEEN_SAVED='Votre score a été enregistré avec succès';
-export const ERROR_HTTP='Erreur ';
-export const SCORE_NOT_SAVED=': score non enregistré';
-export const SERVER_NOT_RESPONDING='Erreur: le serveur ne répond pas !';
-export const REQUEST_SUCCESFULLY_EXECUTED='Requette effectuée avec succès !';
-export const DATA_RESET_SUCCESFULLY='Les données ont été réinitilisé avec succès !'
-export const NAME_COLUMN='name';
-export const SCORE_COLUMN='score';
-
-
-
-
-
-
+// COMPONENT SCORE
+export const MAX_TIME_SNACKBAR = 3000;
+export const CLOSE_SNACKBAR = 'Fermer';
+export const SCORE_HAS_BEEN_SAVED = 'Votre score a été enregistré avec succès';
+export const ERROR_HTTP = 'Erreur ';
+export const SCORE_NOT_SAVED = ': score non enregistré';
+export const SERVER_NOT_RESPONDING = 'Erreur: le serveur ne répond pas !';
+export const REQUEST_SUCCESFULLY_EXECUTED = 'Requette effectuée avec succès !';
+export const DATA_RESET_SUCCESFULLY = 'Les données ont été réinitilisé avec succès !';
+export const NAME_COLUMN = 'name';
+export const SCORE_COLUMN = 'score';

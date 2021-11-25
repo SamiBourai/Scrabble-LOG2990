@@ -12,7 +12,7 @@ import {
     SIXTH_NAME,
     SIX_TURN,
     THIRD_NAME,
-    UNDEFINED_INDEX,
+    UNDEFINED_INDEX
 } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
@@ -51,7 +51,6 @@ export class UserService {
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
     reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     vrPlayerNamesBeginner: string[][] = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []]; // admin ici pour nom vr user
     vrPlayerNamesExpert: string[][] = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
@@ -143,7 +142,6 @@ export class UserService {
     setVrName() {
         if (this.virtualPlayer.expert) {
             do {
-                // this.vrUser.name = EXPERT_NAMES[Math.floor(Math.random() * EXPERT_NAMES.length)];
                 this.vrUser.name = this.chooseRandomNameExp();
             } while (this.vrUser.name === this.realUser.name);
             localStorage.setItem('vrUserName', this.vrUser.name);

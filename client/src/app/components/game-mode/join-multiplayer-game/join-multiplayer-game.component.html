@@ -53,9 +53,6 @@
             <ng-template #elseBlock>
                 <div *ngIf="!requestAccepted; else elseBlock">Le joueur n'a pas encore démarer la partie!</div>
                 <ng-template #elseBlock>
-                    <div *ngIf="objectifManagerService.log2990Mode">
-                    <app-scrable-log2990-modal></app-scrable-log2990-modal>
-                    </div>
                     <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Rejoindre la
                         partie</button>
                 </ng-template>
@@ -67,6 +64,7 @@
         <div>
             <br />
             <button mat-button matStepperPrevious mat-raised-button color="accent">Retour</button>
+            <button *ngIf = "rooms?.length !== 0" id = "randomButton"  mat-button  mat-raised-button  color="accent" [disabled] = ' rooms?.length === 1 || disableBtn'  (click) = randomGame()>placement aleatoire</button>
         </div>
     </mat-step>
 </mat-stepper>
