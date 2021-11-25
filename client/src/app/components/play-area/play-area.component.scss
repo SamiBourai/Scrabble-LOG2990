@@ -1,5 +1,4 @@
 #canvas {
-    position: fixed;
     border: 1px solid black;
     background-color: #f3f3f3;
     border-radius: 10px;
@@ -41,9 +40,6 @@
     margin-bottom: 1%;
     width: auto;
 }
-.div {
-    margin: 5% 50% 0% 10%;
-}
 
 .swapSection {
     position: relative;
@@ -77,4 +73,14 @@
     font-family: Roboto, 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 500;
+}
+
+.play-btn-grp{
+    margin-right: 30px;
+    button{
+        width: 150px;
+        margin-bottom: 10px;
+        background-color: #FF5800;
+
+    }
 }

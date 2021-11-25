@@ -1,28 +1,17 @@
 <div class="container" fxLayout="row">
-    <div class="side-bar">
-        <app-sidebar id="sideBar" (click)="this.mouseHandlingService.clearAll()"></app-sidebar>
-    </div>
+    <app-play-area></app-play-area>
+    <div class="d-flex flex-column">
+        <div class="d-flex flex-column" (click)="this.mouseHandlingService.clearAll()" >
+                <p class="chronometer-title">{{ 'Lettre restante : ' + this.remainingLetters }}</p>
 
-    <div class="play-area">
-        <app-play-area></app-play-area>
-    </div>
-    <div class="right-div-information" (click)="this.mouseHandlingService.clearAll()" fxLayout="column" fxLayoutAlign="center center">
-        <div>
-            <p class="chronometer-title">{{ 'Lettre restante : ' + this.remainingLetters }}</p>
-        </div>
-
-        <div fxLayout="col">
-            <div>
                 <app-real-player></app-real-player>
-            </div>
-            <div *ngIf="soloMode; else elseBlock">
-                <app-vr-user></app-vr-user>
-            </div>
-            <ng-template #elseBlock>
-                <app-joined-user></app-joined-user>
-            </ng-template>
-            <div>
-                <mat-card class="card-not-playing" fxLayout="col" *ngIf="this.userService.endOfGame">
+                <div *ngIf="soloMode; else elseBlock">
+                    <app-vr-user></app-vr-user>
+                </div>
+                <ng-template #elseBlock>
+                    <app-joined-user></app-joined-user>
+                </ng-template>
+                <mat-card class="" *ngIf="this.userService.endOfGame">
                     <mat-card-header>
                         <mat-card-title class="score-time" *ngIf="this.userService.getWinnerName() !== 'egal'; elseBlock">
                             {{ 'GAGNANT: ' + this.userService.getWinnerName() }}</mat-card-title
@@ -34,7 +23,9 @@
                         >
                     </mat-card-header>
                 </mat-card>
-            </div>
+
         </div>
+        <app-sidebar id="sideBar" (click)="this.mouseHandlingService.clearAll()"></app-sidebar>
+
     </div>
 </div>

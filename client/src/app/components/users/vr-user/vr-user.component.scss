@@ -11,8 +11,46 @@
 }
 
 .card-playing {
-    border: 10px solid black;
-    border-color: rgb(13, 216, 40);
-    background-color: #e5e5f7;
-    border-radius: 10px;
+    border: 2px solid black;
+    border-color: #FF5800;
+
+}
+
+::ng-deep{
+    .mat-card{
+        background-color: #312E2B;
+        color: #EFEFEF;
+        border-radius: 10px;
+
+    }
+    .mat-form-field-label {
+        color: #EFEFEF;
+    }
+    .mat-form-field.mat-focused .mat-form-field-label {
+        color: #EFEFEF;
+    }
+    .mat-card-title{
+        color: #EFEFEF;
+    }
+    .mat-card-subtitle{
+        color: #c0c0c0;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: #f1864d;
+    }
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+        color: #FF5800;
+    }
+    .mat-mini-fab.mat-accent{
+        background-color: #FF5800;
+    }
+    .mat-mini-fab.mat-accent.mat-button-disabled,.mat-mini-fab.mat-button-disabled.mat-button-disabled{
+        background-color: #2E4052;
+    }
+    .mat-stepper-horizontal{
+        background-color: #312E2B;
+    }
+    .mat-progress-spinner circle, .mat-spinner circle{
+        stroke: #FF5800;
+    }
 }
