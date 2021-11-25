@@ -65,7 +65,9 @@ export class AdminPageComponent implements OnInit {
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
+        console.log('avant le ngOnit');
         this.getDictionaries();
+        console.log('apres le ngOnit');
     }
 
     openDialog(action: string, obj: DictionaryPresentation) {
@@ -83,24 +85,37 @@ export class AdminPageComponent implements OnInit {
     }
 
     updateRowData(element: DictionaryPresentation) {
+        let oldName = localStorage.getItem('dic') as string;
+        oldName = oldName.slice(1, -1);
+        console.log(oldName);
+
         this.dataSource = this.dataSource.filter((value) => {
             if (value.title === element.title || value.description === element.description) {
-                const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary(element.title);
+                console.log('1111111111');
+                // this.database
+                //     .sendDictionary({
+                //         title: element.title,
+                //         description: element.description,
+                //         words: [],
+                //     } as unknown as LoadableDictionary)
+                //     .subscribe();
+
+                const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary(element.title, oldName);
+                console.log('2222222222');
+
                 dictionaryObs.subscribe((data) => {
+                    console.log('333333333');
                     const dictionary = ValidWordService.loadableDictToDict(data);
                     dictionary.title = value.title;
                     dictionary.description = value.description;
                     console.log(dictionary);
 
                     this.database
-                        .sendDictionary(
-                            {
-                                title: dictionary.title,
-                                description: dictionary.description,
-                                words: this.setToArrayString(dictionary.words),
-                            } as unknown as LoadableDictionary,
-                            element.title,
-                        )
+                        .sendDictionary({
+                            title: dictionary.title,
+                            description: dictionary.description,
+                            words: this.setToArrayString(dictionary.words),
+                        } as unknown as LoadableDictionary)
                         .subscribe();
                     this.table.renderRows();
                 });
@@ -133,7 +148,10 @@ export class AdminPageComponent implements OnInit {
         const dictionaryObs: Observable<LoadableDictionary[]> = this.database.getMetaDictionary();
         dictionaryObs.subscribe((data) => {
             data.forEach((dic) => {
+                console.log('avant marche');
+
                 this.dataSource.push({ title: dic.title, description: dic.description });
+                console.log('apres marche');
             });
         });
         this.table.renderRows();

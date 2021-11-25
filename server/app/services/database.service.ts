@@ -4,7 +4,7 @@ import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
 import { PathLike, writeFile } from 'fs';
-import { readdir, readFile, unlink } from 'fs/promises';
+import { readdir, readFile, rename, unlink } from 'fs/promises';
 import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
 // import { map } from 'rxjs';
@@ -114,21 +114,10 @@ export class DatabaseService {
         });
     }
 
-    async uploadFile(file: LoadableDictionary, oldName?: string) {
+    async uploadFile(file: LoadableDictionary) {
+        console.log('0000000000000');
+
         const fileString = JSON.stringify(file);
-        const testFolder = './assets/Dictionaries';
-        const files = await readdir(testFolder);
-        let found = false;
-        files.map((dic) => {
-            // if(i )s
-            while (!found) {
-                if (dic === `${file.title}.json`) {
-                    console.log('trouvé');
-                    found = true;
-                    break;
-                }
-            }
-        });
         writeFile(`./assets/Dictionaries/${file.title}.json`, fileString, (err) => {
             if (err) throw err;
             console.log('Results Received');
@@ -158,7 +147,18 @@ export class DatabaseService {
         // });
     }
 
-    async dictData(title: string) {
+    async dictData(title: string, oldName?: string) {
+        const testFolder = './assets/Dictionaries';
+        const files = await readdir(testFolder);
+        let found = false;
+        files.map((dic) => {
+            if (dic === `${oldName}.json`) found = true;
+        });
+        if (found) {
+            console.log('11111111111111');
+
+            await rename(`./assets/Dictionaries/${oldName}.json`, `./assets/Dictionaries/${title}.json`);
+        }
         const data = await readFile(`./assets/Dictionaries/${title}.json`);
         return JSON.parse(data.toString());
     }

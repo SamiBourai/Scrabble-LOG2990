@@ -1,6 +1,6 @@
-import { DictionaryPresentation } from './../../../classes/dictionary';
 import { Component, Inject, Optional } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DictionaryPresentation } from './../../../classes/dictionary';
 
 export interface UsersData {
     name: string;
@@ -22,6 +22,7 @@ export class DialogBoxComponent {
         @Optional() @Inject(MAT_DIALOG_DATA) public dictionnary: DictionaryPresentation,
     ) {
         console.log(dictionnary);
+        localStorage.setItem('dic',JSON.stringify(dictionnary.title))
         this.localData = dictionnary;
         this.action = this.localData.action as string;
     }

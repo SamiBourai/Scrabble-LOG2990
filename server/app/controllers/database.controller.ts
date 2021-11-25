@@ -99,9 +99,9 @@ export class DatabaseController {
                 });
         });
 
-        this.router.post('/upload/:oldName?', async (req: Request, res: Response) => {
+        this.router.post('/upload', async (req: Request, res: Response) => {
             this.databaseService
-                .uploadFile(req.body, req.params.oldName ?? '')
+                .uploadFile(req.body)
                 .then(() => {
                     res.sendStatus(CREATED_HTTP_STATUS).send();
                 })
@@ -132,9 +132,9 @@ export class DatabaseController {
                 });
         });
 
-        this.router.get('/dictionary/:title', async (req: Request, res: Response) => {
+        this.router.get('/dictionary/:title/:oldName?', async (req: Request, res: Response) => {
             this.databaseService
-                .dictData(req.params.title)
+                .dictData(req.params.title, req.params.oldName ?? '')
                 .then((dict) => {
                     res.json(dict);
                 })

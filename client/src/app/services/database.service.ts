@@ -72,8 +72,8 @@ export class DatabaseService {
         );
     }
 
-    sendDictionary(file: LoadableDictionary, oldName?: string): Observable<number> {
-        const fullUrl = this.SEND_URL_UPLOAD_DICTIONARY + '/' + (oldName ?? '');
+    sendDictionary(file: LoadableDictionary): Observable<number> {
+        const fullUrl = this.SEND_URL_UPLOAD_DICTIONARY;
         return this.http.post<number>(fullUrl, file).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
@@ -91,8 +91,8 @@ export class DatabaseService {
         return this.http.delete(fullUrl);
     }
 
-    getDictionary(title: string): Observable<LoadableDictionary> {
-        const fullUrl = this.SEND_URL_GET_DICTIONARY + '/' + title;
+    getDictionary(title: string, oldName?: string): Observable<LoadableDictionary> {
+        const fullUrl = this.SEND_URL_GET_DICTIONARY + '/' + title + '/' + (oldName ?? '');
         return this.http.get<LoadableDictionary>(fullUrl);
     }
 
