@@ -8,7 +8,6 @@ export interface DictionaryPresentation {
     title: string;
     description: string;
     words?: string[];
-    action?: string;
 }
 
 export interface LoadableDictionary {
@@ -16,3 +15,4 @@ export interface LoadableDictionary {
     description: string;
     words: string[];
 }
+

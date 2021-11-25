@@ -10,7 +10,6 @@ import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
 import { DatabaseController } from './controllers/database.controller';
-
 @Service()
 export class Application {
     app: express.Application;
@@ -54,7 +53,11 @@ export class Application {
     private config(): void {
         // Middlewares configuration
         this.app.use(logger('dev'));
-        this.app.use(express.json());
+        this.app.use(
+            express.json({
+                limit: '10mb',
+            }),
+        );
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(cors());

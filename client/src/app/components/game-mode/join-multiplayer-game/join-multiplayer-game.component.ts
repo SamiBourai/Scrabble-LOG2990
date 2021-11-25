@@ -24,6 +24,7 @@ export class JoinMultiplayerGameComponent implements OnInit {
     requestAccepted: boolean = false;
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
+    disableBtn:boolean = false;
     constructor(
         public userService: UserService,
         private formBuilder: FormBuilder,
@@ -69,4 +70,12 @@ export class JoinMultiplayerGameComponent implements OnInit {
             this.requestAccepted = data.gameAccepted ?? false;
         });
     }
+
+    randomGame(){
+        const randomGame = this.rooms[Math.floor(Math.random() * this.rooms.length)];
+        this.joinGame(randomGame);
+        console.log('salut')
+        this.disableBtn = true;
+    }
+
 }
