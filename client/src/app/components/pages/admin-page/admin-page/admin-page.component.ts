@@ -87,38 +87,39 @@ export class AdminPageComponent implements OnInit {
     updateRowData(element: DictionaryPresentation) {
         let oldName = localStorage.getItem('dic') as string;
         oldName = oldName.slice(1, -1);
-        console.log(oldName);
+        const tableName: DictionaryPresentation[] = [];
+        console.log(this.dataSource);
 
         this.dataSource = this.dataSource.filter((value) => {
             if (value.title === element.title || value.description === element.description) {
-                console.log('1111111111');
-                // this.database
-                //     .sendDictionary({
-                //         title: element.title,
-                //         description: element.description,
-                //         words: [],
-                //     } as unknown as LoadableDictionary)
-                //     .subscribe();
+                console.log(value.title);
 
-                const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary(element.title, oldName);
-                console.log('2222222222');
+                console.log(tableName);
+                if (!this.isSameDictionnaryName(value.title, tableName)) {
+                    for (const i of this.dataSource) {
+                        tableName.push(i);
+                    }
 
-                dictionaryObs.subscribe((data) => {
-                    console.log('333333333');
-                    const dictionary = ValidWordService.loadableDictToDict(data);
-                    dictionary.title = value.title;
-                    dictionary.description = value.description;
-                    console.log(dictionary);
+                    const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary(element.title, oldName);
 
-                    this.database
-                        .sendDictionary({
-                            title: dictionary.title,
-                            description: dictionary.description,
-                            words: this.setToArrayString(dictionary.words),
-                        } as unknown as LoadableDictionary)
-                        .subscribe();
-                    this.table.renderRows();
-                });
+                    dictionaryObs.subscribe((data) => {
+                        const dictionary = ValidWordService.loadableDictToDict(data);
+                        dictionary.title = value.title;
+                        dictionary.description = value.description;
+
+                        this.database
+                            .sendDictionary({
+                                title: dictionary.title,
+                                description: dictionary.description,
+                                words: this.setToArrayString(dictionary.words),
+                            } as unknown as LoadableDictionary)
+                            .subscribe();
+                        this.table.renderRows();
+                    });
+                } else {
+                    element.title = oldName;
+                    this.snackBar.open('Ce nom est deja utilisé', 'Close');
+                }
             }
 
             return true;
@@ -188,7 +189,7 @@ export class AdminPageComponent implements OnInit {
                 this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
                 this.snackBar.open('Téléversement réussi', 'Close');
 
-                if (!this.isSameDictionnaryName(dictionnary.title)) {
+                if (!this.isSameDictionnaryName(dictionnary.title, this.dataSource)) {
                     this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
                     this.database
                         .sendDictionary({
@@ -311,11 +312,15 @@ export class AdminPageComponent implements OnInit {
         return true;
     }
 
-    private isSameDictionnaryName(name: string) {
+    private isSameDictionnaryName(name: string, tableName: DictionaryPresentation[]) {
         const dictionnatyNames: string[] = [];
-        for (const dic of this.dataSource) {
+        console.log('AAA', JSON.stringify(tableName));
+
+        for (const dic of tableName) {
             dictionnatyNames.push(dic.title);
+            // console.log(dictionnatyNames);
         }
+        console.log('BBB', JSON.stringify(dictionnatyNames));
 
         if (!dictionnatyNames.includes(name)) return false;
         return true;
