@@ -17,4 +17,14 @@ export class SocketMock {
     emit(event: string, ...params: any): void {
         return;
     }
+
+    peerSideEmit(event: string, ...params: any) {
+        if (!this.callbacks.has(event)) {
+            return;
+        }
+
+        for (const callback of this.callbacks.get(event)!) {
+            callback(params);
+        }
+    }
 }
