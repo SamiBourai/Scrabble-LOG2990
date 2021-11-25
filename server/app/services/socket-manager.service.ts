@@ -190,12 +190,8 @@ export class SocketManagerService {
     private checkIfEndGame(game: MessageClient) {
         const joinEaselLengt = this.getEaselLength(this.games.get(game.gameName).joinEasel);
         const creatorEaselLengt = this.getEaselLength(this.games.get(game.gameName).creatorEasel);
-        console.log('user', creatorEaselLengt);
-        console.log('join', joinEaselLengt);
-
         if (this.games.get(game.gameName).reserverServerSize === 0 && (joinEaselLengt === 0 || creatorEaselLengt === 0)) {
             this.sio.to(game.gameName).emit('endOfGame', game);
-            console.log('endTheFcknGame');
             this.games.get(game.gameName).timer.stopTimer = true;
         }
     }

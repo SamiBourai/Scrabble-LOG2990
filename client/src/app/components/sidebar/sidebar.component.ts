@@ -126,7 +126,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             }
         }
         this.name = this.userService.realUser.name;
-        this.nameVr = this.userService.vrUser.name;
+
         this.verifyInput();
         this.typeArea = '';
     }
