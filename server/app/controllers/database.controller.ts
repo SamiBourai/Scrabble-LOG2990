@@ -99,9 +99,9 @@ export class DatabaseController {
                 });
         });
 
-        this.router.post('/upload', async (req: Request, res: Response) => {
+        this.router.post('/upload/:oldName?', async (req: Request, res: Response) => {
             this.databaseService
-                .uploadFile(req.body)
+                .uploadFile(req.body, req.params.oldName ?? '')
                 .then(() => {
                     res.sendStatus(CREATED_HTTP_STATUS).send();
                 })

@@ -87,10 +87,21 @@ export class AdminPageComponent implements OnInit {
             if (value.title === element.title || value.description === element.description) {
                 const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary(element.title);
                 dictionaryObs.subscribe((data) => {
-                    data.title = value.title;
-                    data.description = value.description;
-                    this.database.sendDictionary(data);
-                    this.getDictionaries();
+                    const dictionary = ValidWordService.loadableDictToDict(data);
+                    dictionary.title = value.title;
+                    dictionary.description = value.description;
+                    console.log(dictionary);
+
+                    this.database
+                        .sendDictionary(
+                            {
+                                title: dictionary.title,
+                                description: dictionary.description,
+                                words: this.setToArrayString(dictionary.words),
+                            } as unknown as LoadableDictionary,
+                            element.title,
+                        )
+                        .subscribe();
                     this.table.renderRows();
                 });
             }

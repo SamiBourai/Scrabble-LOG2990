@@ -72,8 +72,8 @@ export class DatabaseService {
         );
     }
 
-    sendDictionary(file: LoadableDictionary): Observable<number> {
-        const fullUrl = this.SEND_URL_UPLOAD_DICTIONARY;
+    sendDictionary(file: LoadableDictionary, oldName?: string): Observable<number> {
+        const fullUrl = this.SEND_URL_UPLOAD_DICTIONARY + '/' + (oldName ?? '');
         return this.http.post<number>(fullUrl, file).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);

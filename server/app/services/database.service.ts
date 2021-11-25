@@ -58,7 +58,7 @@ export class DatabaseService {
     }
     async addNewScore(score: Score, collectionName: string): Promise<void> {
         console.log('hey je suis la dedans');
-        let scoreX:Score={name:score.name, score:score.score};
+        const scoreX: Score = { name: score.name, score: score.score };
         await this.db.collection(collectionName).insertOne(scoreX);
         // this.sortAllScores(collectionName);
     }
@@ -114,8 +114,21 @@ export class DatabaseService {
         });
     }
 
-    async uploadFile(file: LoadableDictionary) {
+    async uploadFile(file: LoadableDictionary, oldName?: string) {
         const fileString = JSON.stringify(file);
+        const testFolder = './assets/Dictionaries';
+        const files = await readdir(testFolder);
+        let found = false;
+        files.map((dic) => {
+            // if(i )s
+            while (!found) {
+                if (dic === `${file.title}.json`) {
+                    console.log('trouvé');
+                    found = true;
+                    break;
+                }
+            }
+        });
         writeFile(`./assets/Dictionaries/${file.title}.json`, fileString, (err) => {
             if (err) throw err;
             console.log('Results Received');
@@ -154,11 +167,7 @@ export class DatabaseService {
         const testFolder = './assets/Dictionaries';
 
         const files = await readdir(testFolder);
-        // console.log(files);
         const paths = files.map((file) => `${testFolder}/${file}` as PathLike);
-        console.log(paths);
-
-        // console.log(paths);
 
         const a = paths.map(async (path) => readFile(path));
         const b = await Promise.all(a);
