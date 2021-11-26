@@ -41,8 +41,6 @@ export class MultiplayerModeService {
     play(playMethod: string, place: boolean): void {
         if (place) {
             if (this.userService.chatCommandToSend) {
-                console.log(this.userService.realUser.score, 'user');
-                console.log(this.userService.joinedUser.score, 'join');
                 this.socketManagementService.emit(playMethod, {
                     easel: this.userService.getPlayerEasel().easelLetters,
                     command: this.userService.chatCommandToSend,
@@ -95,18 +93,14 @@ export class MultiplayerModeService {
 
             if (playedMethod === 'guestUserPlayed') {
                 this.userService.joinedUser.easel.easelLetters = data.easel ?? [];
-                //
-                console.log(data.guestPlayer?.score);
+
                 this.userService.realUser.turnToPlay = true;
                 this.userService.joinedUser.score = data.guestPlayer?.score ?? 0;
-                console.log(this.userService.joinedUser.score);
             } else {
                 this.userService.realUser.easel.easelLetters = data.easel ?? [];
-                //
-                console.log(data.user?.score);
+
                 this.userService.realUser.turnToPlay = false;
                 this.userService.realUser.score = data.user?.score ?? 0;
-                console.log(this.userService.realUser.score);
             }
         });
     }

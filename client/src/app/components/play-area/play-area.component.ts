@@ -33,9 +33,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     @ViewChild('tempCanvas', { static: false }) private tempCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('focusCanvas', { static: false }) private focusCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('easelCanvas', { static: false }) private easelCanvas!: ElementRef<HTMLCanvasElement>;
-
-    private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
     soloMode: boolean = true;
+    private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
+
     constructor(
         private tempCanvasService: TemporaryCanvasService,
         private readonly gridService: GridService,
@@ -102,6 +102,18 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
+        window.addEventListener('beforeunload', (event) => {
+            event.stopPropagation();
+        });
+        if (this.userService.gameModeObs) {
+            this.userService.gameModeObs.subscribe(() => {
+                setTimeout(() => {
+                    if (this.userService.playMode === 'soloGame') {
+                        this.soloMode = true;
+                    }
+                }, 0);
+            });
+        }
         switch (this.userService.playMode) {
             case 'createMultiplayerGame':
                 this.soloMode = false;
