@@ -33,13 +33,6 @@ export class SocketManagementService {
             });
         });
     }
-    validateWord(eventName: string): Observable<MessageServer> {
-        return new Observable<MessageServer>((subscriber) => {
-            this.socket.on(eventName, (data: MessageServer) => {
-                subscriber.next(data);
-            });
-        });
-    }
     emit(eventName: string, message?: MessageServer) {
         this.socket.emit(eventName, message);
     }
