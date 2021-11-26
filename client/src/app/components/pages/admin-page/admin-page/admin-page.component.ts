@@ -65,9 +65,7 @@ export class AdminPageComponent implements OnInit {
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
-        console.log('avant le ngOnit');
         this.getDictionaries();
-        console.log('apres le ngOnit');
     }
 
     openDialog(action: string, obj: DictionaryPresentation) {
@@ -85,16 +83,13 @@ export class AdminPageComponent implements OnInit {
     }
 
     updateRowData(element: DictionaryPresentation) {
+        const minusOne = -1;
         let oldName = localStorage.getItem('dic') as string;
-        oldName = oldName.slice(1, -1);
+        oldName = oldName.slice(1, minusOne);
         const tableName: DictionaryPresentation[] = [];
-        console.log(this.dataSource);
 
         this.dataSource = this.dataSource.filter((value) => {
             if (value.title === element.title || value.description === element.description) {
-                console.log(value.title);
-
-                console.log(tableName);
                 if (!this.isSameDictionnaryName(value.title, tableName)) {
                     for (const i of this.dataSource) {
                         tableName.push(i);
@@ -149,10 +144,7 @@ export class AdminPageComponent implements OnInit {
         const dictionaryObs: Observable<LoadableDictionary[]> = this.database.getMetaDictionary();
         dictionaryObs.subscribe((data) => {
             data.forEach((dic) => {
-                console.log('avant marche');
-
                 this.dataSource.push({ title: dic.title, description: dic.description });
-                console.log('apres marche');
             });
         });
         this.table.renderRows();
@@ -306,14 +298,9 @@ export class AdminPageComponent implements OnInit {
 
     private isSameDictionnaryName(name: string, tableName: DictionaryPresentation[]) {
         const dictionnatyNames: string[] = [];
-        console.log('AAA', JSON.stringify(tableName));
-
         for (const dic of tableName) {
             dictionnatyNames.push(dic.title);
-            // console.log(dictionnatyNames);
         }
-        console.log('BBB', JSON.stringify(dictionnatyNames));
-
         if (!dictionnatyNames.includes(name)) return false;
         return true;
     }
