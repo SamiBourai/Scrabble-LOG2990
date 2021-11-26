@@ -1,8 +1,20 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Score } from '@app/classes/score';
-import { BOARD_WIDTH, CLOSE_SNACKBAR, DATABASE_COLLECTION_CLASSIC, EASEL_LENGTH, ERROR_HTTP, MAX_TIME_SNACKBAR, NB_TILES, SCORE_HAS_BEEN_SAVED, SCORE_NOT_SAVED } from '@app/constants/constants';
+import {
+    BOARD_WIDTH,
+    CLOSE_SNACKBAR,
+    DATABASE_COLLECTION_CLASSIC,
+    DATABASE_COLLECTION_LOG2990,
+    EASEL_LENGTH,
+    ERROR_HTTP,
+    MAX_TIME_SNACKBAR,
+    NB_TILES,
+    SCORE_HAS_BEEN_SAVED,
+    SCORE_NOT_SAVED,
+} from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ShowEaselEndGameService } from '@app/services/show-easel-end-game.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -17,16 +29,21 @@ export class ShowEndgameInfoComponent implements AfterViewInit, OnInit {
     @ViewChild('easelTwo', { static: false }) private easelTwo!: ElementRef<HTMLCanvasElement>;
 
     private canvasSize = { x: EASEL_LENGTH * (BOARD_WIDTH / NB_TILES), y: BOARD_WIDTH / NB_TILES };
-    constructor(private showEasel: ShowEaselEndGameService, public userService: UserService, private virtualPlayer: VirtualPlayerService,private snackBar: MatSnackBar, private databaseService:DatabaseService) {}
-    ngOnInit():void{
-        this.userService.endOfGameBehaviorSubject.subscribe((response:boolean)=>{
-            console.log('end game', response);
-            setTimeout(()=>{
-                if(response)
-                    this.addScores();
-            },0)
-
-        })
+    constructor(
+        private showEasel: ShowEaselEndGameService,
+        public userService: UserService,
+        private virtualPlayer: VirtualPlayerService,
+        private snackBar: MatSnackBar,
+        private databaseService: DatabaseService,
+        private objectifService: ObjectifManagerService,
+    ) {}
+    ngOnInit(): void {
+        this.userService.endOfGameBehaviorSubject.subscribe((response: boolean) => {
+            
+            setTimeout(() => {
+                if (response) this.addScores();
+            }, 0);
+        });
     }
     ngAfterViewInit(): void {
         this.showEasel.easelOneCtx = this.easelOne.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -37,6 +54,19 @@ export class ShowEndgameInfoComponent implements AfterViewInit, OnInit {
 
         this.showEasel.drawHand(this.showEasel.easelTwoCtx);
         this.showEasel.drawHand(this.showEasel.easelOneCtx);
+    }
+    addScores(): void {
+        const collectionConcerned: string = this.objectifService.log2990Mode ? DATABASE_COLLECTION_LOG2990 : DATABASE_COLLECTION_CLASSIC;
+
+        const score: Score = { name: this.userService.realUser.name, score: this.userService.realUser.score };
+        this.databaseService.sendScore(collectionConcerned, score).subscribe(
+            () => {
+                this.openSnackBar(SCORE_HAS_BEEN_SAVED, CLOSE_SNACKBAR);
+            },
+            (reject: number) => {
+                this.openSnackBar(ERROR_HTTP + reject + SCORE_NOT_SAVED, CLOSE_SNACKBAR);
+            },
+        );
     }
 
     get width(): number {
@@ -49,20 +79,4 @@ export class ShowEndgameInfoComponent implements AfterViewInit, OnInit {
     private openSnackBar(message: string, action: string): void {
         this.snackBar.open(message, action, { duration: MAX_TIME_SNACKBAR });
     }
-
-    addScores(): void {
-        // A REMPLACER QUAND FIN DE PARTIE VA MARCHER
-        const score: Score = { name: 'Mounib', score: 10 };
-        this.databaseService.sendScore(DATABASE_COLLECTION_CLASSIC, score).subscribe(
-            () => {
-                this.openSnackBar(SCORE_HAS_BEEN_SAVED, CLOSE_SNACKBAR);
-            },
-            (reject: number) => {
-                this.openSnackBar(ERROR_HTTP + reject + SCORE_NOT_SAVED, CLOSE_SNACKBAR);
-            },
-        );
-    }
-
-
-
 }
