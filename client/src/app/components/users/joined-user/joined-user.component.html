@@ -3,10 +3,9 @@
     <mat-card-header>
         <mat-card-title>{{ userService.joinedUser.name }}</mat-card-title>
         <mat-card-subtitle>{{ userService.joinedUser.level }}</mat-card-subtitle>
-        <mat-card-subtitle class="score-time">Temps par tour : {{ userService.joinedUser.round }}</mat-card-subtitle>
         <mat-card-subtitle class="score-time">Score : {{ this.userService.joinedUser.score }}</mat-card-subtitle>
         <mat-card-subtitle class="score-time" *ngIf="this.userService.joinedUser.easel.getEaselSize() < 7"
-            >letter dans chevalet : {{ this.userService.joinedUser.easel.getEaselSize() }}</mat-card-subtitle 
+            >letter dans chevalet : {{ this.userService.joinedUser.easel.getEaselSize() }}</mat-card-subtitle
         >
         <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeGuestPlayer.min }}:{{ this.timeService.timeGuestPlayer.sec }}</mat-card-subtitle>
     </mat-card-header>
@@ -18,7 +17,6 @@
         <mat-card-header>
             <mat-card-title>{{ userService.joinedUser.name }}</mat-card-title>
             <mat-card-subtitle>{{ userService.joinedUser.level }}</mat-card-subtitle>
-            <mat-card-subtitle class="score-time">Temps par tour : {{ userService.joinedUser.round }}</mat-card-subtitle>
             <mat-card-subtitle class="score-time">Score : {{ this.userService.joinedUser.score }}</mat-card-subtitle>
             
             <mat-card-subtitle class="score-time"  *ngIf="this.userService.joinedUser.easel.getEaselSize() < 7"

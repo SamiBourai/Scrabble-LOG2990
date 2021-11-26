@@ -179,7 +179,7 @@ export class GridService {
         }
     }
     private drawBonusBox(): void {
-        this.gridContext.font = 'bold 15px system-ui';
+        this.gridContext.font = 'bold 12px system-ui';
         for (const v of this.arrayOfBonusBox[0]) {
             this.gridContext.fillStyle = 'red';
             this.drawBonus(v, 'MOT  X3');

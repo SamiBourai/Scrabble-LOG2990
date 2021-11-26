@@ -119,8 +119,11 @@ export class MouseHandelingService {
         this.tempCanvasService.tempWord = '';
     }
     easelClicked(event: MouseEvent) {
+        console.log(event.offsetX, event.offsetY);
         const vec = this.easelLogic.showCoords(event);
-        const rangeEasleValid = this.easelLogic.isBetween(RANGE_Y, vec.y) && this.easelLogic.isBetween({ min: 264, max: 637 }, vec.x);
+        const rangeEasleValid =
+            this.easelLogic.isBetween(RANGE_Y, vec.y) &&
+            this.easelLogic.isBetween({ min: LEFTSPACE + 4 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 11 * (BOARD_WIDTH / NB_TILES) }, vec.x);
         const rangeSwapButtonValid = this.easelLogic.isBetween(SWAP_BUTTON_RANGE_X, vec.x) && this.easelLogic.isBetween(SWAP_BUTTON_RANGE_Y, vec.y);
         let easelIndex = 0;
         if (rangeEasleValid || rangeSwapButtonValid) {

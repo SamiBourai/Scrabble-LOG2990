@@ -48,8 +48,8 @@ export const MAX_LINES = 15;
 export const MIN_LINES = 0;
 export const UNDEFINED_INDEX = -1;
 // grid-service
-export const BOARD_WIDTH = 800;
-export const BOARD_HEIGHT = 800;
+export const BOARD_WIDTH = 600;
+export const BOARD_HEIGHT = 600;
 export const NB_LETTER_HAND = 7;
 export const HAND_POSITION_START = 4;
 export const HAND_POSITION_END = 11;
@@ -58,8 +58,8 @@ export const ADJUSTEMENT_TOPSPACE = 5;
 export const H_ARROW = '→';
 export const V_ARROW = '↓';
 // play-area-comp
-export const CANEVAS_WIDTH = 900;
-export const CANEVAS_HEIGHT = 900;
+export const CANEVAS_WIDTH = 700;
+export const CANEVAS_HEIGHT = 700;
 export const NB_TILES = 15;
 export const TOPSPACE = 25;
 export const LEFTSPACE = 50;
@@ -123,7 +123,7 @@ export const SWAP_BUTTON_RANGE_X = { min: 3, max: 85 };
 export const SWAP_BUTTON_RANGE_Y = { min: 4, max: 29 };
 export const EASEL_RANGE = { min: 264, max: 637 };
 
-export const RANGE_Y: Pair = { min: 840, max: 887 };
+export const RANGE_Y: Pair = { min: TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2, max: TOPSPACE + BOARD_HEIGHT + TOPSPACE / 2 + BOARD_HEIGHT / NB_TILES };
 
 // sidebar
 export const COLUMN_RANGE = 16;

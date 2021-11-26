@@ -2,28 +2,42 @@
     (contextmenu)="mouseHandlingService.easelClicked($event)"
     (click)="mouseHandlingService.easelClicked($event)"
     oncontextmenu="return false"
-    class="grid-container"
-    fxLayout="column"
+    class="d-flex flex-row mt-3 h-100"
 >
-    <div class="button-up" (click)="this.mouseHandlingService.clearAll()" fxLayout="row">
-        <div class="div">
-            <button mat-raised-button color="accent" (click)="quitGame()">Quitter la partie</button>
-        </div>
-        <div class="div">
-            <button #skipTurn id="btn" mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">
-                Passer son tour
-            </button>
-            <button mat-fab color="accent" [disabled]="!userService.isPlayerTurn()" (click)="mouseHandlingService.placeTempWord()">
-                <mat-icon>play_circle_outline</mat-icon>
-            </button>
-        </div>
-        <div class="div">
-            <button mat-raised-button color="accent" (click)="detectGameQuit()"
-                (click)="openDialogOfVrUser()">Abandonner</button>
-        </div>
+
+ <div class="d-flex flex-column justify-content-center align-items-center play-btn-grp" (click)="this.mouseHandlingService.clearAll()">
+                <app-real-player></app-real-player>
+                <div *ngIf="soloMode; else elseBlock">
+                    <app-vr-user></app-vr-user>
+                </div>
+                <ng-template #elseBlock>
+                    <app-joined-user></app-joined-user>
+                </ng-template>
+
+        <button mat-raised-button (click)="detectGameQuit()" (click)="openDialogOfVrUser()">Abandonner</button>
+        <button mat-raised-button [disabled]="!userService.isPlayerTurn()" (click)="mouseHandlingService.placeTempWord()">Placer</button>
+        <button
+            mat-raised-button
+            [disabled]="disableButton('exchange') || this.reserveService.reserveSize < 7"
+            (click)="mouseHandlingService.swapByClick()"
+        >
+            Echanger
+        </button>
+        <button #skipTurn id="btn" mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">
+            Passer
+        </button>
+        <button
+            mat-raised-button
+            color="primary"
+            id="cancelButton"
+            [disabled]="disableButton('cancel')"
+            (click)="mouseHandlingService.cancelByClick()"
+        >
+            Annuler
+        </button>
     </div>
 
-    <div>
+    <div style="width: 750px; position: relative;">
         <canvas id="canvas" class="firstLayer" #gridCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas id="tempCanvas" class="secondLayer" #tempCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas id="focusCanvas" class="thirdLayer" #focusCanvas [attr.width]="width" [attr.height]="height"></canvas>
@@ -36,21 +50,6 @@
             [attr.height]="height"
         ></canvas>
     </div>
+
 </div>
 
-<div class="swapSection">
-    <button
-        mat-raised-button
-        color="primary"
-        id="swapButton"
-        [disabled]="disableButton('exchange') || this.reserveService.reserveSize < 7"
-        (click)="mouseHandlingService.swapByClick()"
-    >
-        echanger
-    </button>
-</div>
-<div class="cancelSection">
-    <button mat-raised-button color="primary" id="cancelButton" [disabled]="disableButton('cancel')" (click)="mouseHandlingService.cancelByClick()">
-        annuler
-    </button>
-</div>

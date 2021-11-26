@@ -9,6 +9,7 @@ import { MouseHandelingService } from '@app/services/mouse-handeling.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ReserveService } from '@app/services/reserve.service';
+import { SocketManagementService } from '@app/services/socket-management.service';
 import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
@@ -34,7 +35,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     @ViewChild('easelCanvas', { static: false }) private easelCanvas!: ElementRef<HTMLCanvasElement>;
 
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
-
+    soloMode: boolean = true;
     constructor(
         private tempCanvasService: TemporaryCanvasService,
         private readonly gridService: GridService,
@@ -48,6 +49,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private virtualPlayer: VirtualPlayerService,
         private objectifManagerService: ObjectifManagerService,
         public reserveService: ReserveService,
+        private socketManagerService: SocketManagementService,
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') {
             if (this.userService.playMode === 'soloGame') {
@@ -60,6 +62,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         } else {
             this.multiplayer.getJoinReserve();
         }
+        this.pvs.loadDictionary().then(() => {
+            // promise to fill dictionnary
+        });
     }
     @HostListener('window:keydown', ['$event'])
     spaceEvent(event: KeyboardEvent) {
@@ -97,9 +102,17 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        this.pvs.loadDictionary().then(() => {
-            // promise to fill dictionnary
-        });
+        switch (this.userService.playMode) {
+            case 'createMultiplayerGame':
+                this.soloMode = false;
+                this.multiplayer.beginGame();
+                break;
+            case 'joinMultiplayerGame':
+                this.soloMode = false;
+                this.socketManagerService.emit('guestInGamePage', { gameName: this.userService.gameName });
+                this.multiplayer.beginGame();
+                break;
+        }
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

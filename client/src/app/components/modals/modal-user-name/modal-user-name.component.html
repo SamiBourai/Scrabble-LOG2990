@@ -19,30 +19,29 @@
                 </mat-form-field>
             </div>
 
-                <div class="d-flex flex-row align-items-center justify-content-start">
+            <div class="d-flex flex-row align-items-center justify-content-start">
 
-                    <h3 class="text-white" style="margin:0px;">Temps par tour :</h3>
+                <h3 class="text-white" style="margin:0px;">Temps par tour :</h3>
 
-                        <div class="d-flex flex-row align-items-center justify-content-evenly" style="width: 200px;">
-                        <button mat-mini-fab #minusBtn [disabled]="this.timeCounter === 0"
-                            (click)="onClickInMinusButton($event)">
-                            <mat-icon>remove</mat-icon>
-                        </button>
+                    <div class="d-flex flex-row align-items-center justify-content-evenly" style="width: 200px;">
+                    <button mat-mini-fab #minusBtn [disabled]="this.timeCounter === 0"
+                        (click)="onClickInMinusButton($event)">
+                        <mat-icon>remove</mat-icon>
+                    </button>
 
-                        <div class="time-label d-flex flex-row">
-                            <p>{{ this.time.min | number: '2.0-0' }}</p>
-                            <p>{{ ':' }}</p>
-                            <p>{{ this.time.sec | number: '2.0-0' }}</p>
-                        </div>
+                    <div class="time-label d-flex flex-row">
+                        <p>{{ this.time.min | number: '2.0-0' }}</p>
+                        <p>{{ ':' }}</p>
+                        <p>{{ this.time.sec | number: '2.0-0' }}</p>
+                    </div>
 
+                    <button mat-mini-fab #addBtn [disabled]="this.timeCounter === 9"
+                        (click)="onClickInAddButton($event)">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                    </div>
 
-                        <button mat-mini-fab #addBtn [disabled]="this.timeCounter === 9"
-                            (click)="onClickInAddButton($event)">
-                            <mat-icon>add</mat-icon>
-                        </button>
-                        </div>
-
-                </div>
+            </div>
 
            <div class="d-flex flex-row align-items-center justify-content-start" style="margin-top: 10px;">
             <h3 style="margin-bottom: 0;">Mode de jeu :</h3>
@@ -78,93 +77,78 @@
         <mat-step [stepControl]="firstFormGroup">
             <form [formGroup]="firstFormGroup">
                 <ng-template matStepLabel>Remplissez votre nom</ng-template>
-                <mat-form-field appearance="fill">
-                    <mat-label>Nom</mat-label>
-                    <input #message2 matInput placeholder="entrez votre prenom" formControlName="userNameMutiplayer"
-                        [(ngModel)]="playerName" required maxlength="15" />
-                    <mat-hint align="end"> {{ message2.value?.length }} / 15</mat-hint>
-                    <mat-hint class="no-error-hint" align="start"
-                        *ngIf="firstFormGroup.controls.userNameMutiplayer.valid; else invalidInput">
-                        &#9679; Le nom entré est valide !!! <br />
-                    </mat-hint>
-                    <ng-template #invalidInput>
-                        <mat-hint align="start" class="error-hint">
-                            &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
-                            &#9679; Le nom ne doit pas contenir d'espace <br />
-                            &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
+                <div class="mb-2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Name</mat-label>
+                        <input class="text-white" #message2 matInput placeholder="entrez votre prenom" formControlName="userNameMutiplayer"
+                            [(ngModel)]="playerName" required maxlength="15" />
+                        <mat-hint class="text-white" align="end"> {{ message2.value?.length }} / 15</mat-hint>
+                        <mat-hint class="no-error-hint" align="start"
+                            *ngIf="firstFormGroup.controls.userNameMutiplayer.valid">
+                            &#9679; Le nom entré est valide !!! <br />
                         </mat-hint>
-                    </ng-template>
-                </mat-form-field>
-                <br><br>
-                <hr>
-                <div class="container">
-                    <div fxLayout="row">
-                        <div>
-                            <p class="multiplayerP-btn">Temps par tour :</p>
+                        <mat-icon matSuffix mat-icon-button matTooltipPosition="right" class="text-white" [matTooltip]="toolTip" matTooltipClass="tooltip-list">info</mat-icon>
+                    </mat-form-field>
+                </div>
+
+                <div class="d-flex flex-row align-items-center justify-content-start">
+                    <h3 class="text-white" style="margin:0px;">Temps par tour :</h3>
+                        <div class="d-flex flex-row align-items-center justify-content-evenly" style="width: 200px;">
+                        <button mat-mini-fab #minusBtn [disabled]="this.timeCounter === 0"
+                            (click)="onClickInMinusButton($event)">
+                            <mat-icon>remove</mat-icon>
+                        </button>
+
+                        <div class="time-label d-flex flex-row text-white">
+                            <p>{{ this.time.min | number: '2.0-0' }}</p>
+                            <p>{{ ':' }}</p>
+                            <p>{{ this.time.sec | number: '2.0-0' }}</p>
                         </div>
 
-                        <div class="time-config">
-                            <button #minusBtn class="btn btn-primary" [disabled]="this.timeCounter === 0"
-                                (click)="onClickInMinusButton($event)">
-                                -
-                            </button>
+                        <button mat-mini-fab #addBtn [disabled]="this.timeCounter === 9"
+                            (click)="onClickInAddButton($event)">
+                            <mat-icon>add</mat-icon>
+                        </button>
                         </div>
-                        <div class="time-config">
-                            <p class="form-control">{{ this.time.min | number: '2.0-0' }}</p>
-                        </div>
+                </div>
 
-                        <div class="time-config">
-                            <p class="form-control">{{ ':' }}</p>
-                        </div>
-                        <div>
-                            <p class="form-control">{{ this.time.sec | number: '2.0-0' }}</p>
-                        </div>
-                        <div class="time-config">
-                            <button #addBtn class="btn btn-primary" [disabled]="this.timeCounter === 9"
-                                (click)="onClickInAddButton($event)">
-                                +
-                            </button>
-                        </div>
+
+                <div class="d-flex flex-row align-items-center justify-content-start text-white" style="margin-top: 10px;">
+                    <h3 style="margin-bottom: 0;">Mode de jeu :</h3>
+                    <div *ngFor="let mode of modes">
+                        <label class="d-flex flex-row align-items-center justify-content-start" style="margin-left: 10px;">
+                            <input type="radio" style="margin-right: 3px; " name="gameMode" [value]="mode" checked
+                                (change)="randomBonusActivated($event)" />
+                            {{ mode }}
+                        </label>
                     </div>
                 </div>
-                <br />
-                <p><span class="multiplayerP">Mode de jeu :</span></p>
-                <div class="radio" *ngFor="let mode of modes">
-                    <label>
-                        <input type="radio" name="gameMode" [value]="mode" checked
-                            (change)="randomBonusActivated($event)" />
-                        {{ mode }}
-                    </label>
-                </div>
-                <p>
-                    <span class="multiplayerP">Vous avez séléctionner le mode de jeu </span> <b
-                        class="multiplayerP-chosen">{{ chosenMode }}</b>
-                </p>
-                <hr />
 
-                <div>
-                    <button mat-raised-button mat-dialog-close
+                <div class="button-group mt-3">
+                    <button mat-raised-button mat-dialog-close style="margin-right: 10px;"
                         (click)="this.userService.isBonusBox=false">Annuler</button>
                     <button mat-raised-button color="primary" matStepperNext type="submit"
                         [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid">Suivant</button>
                 </div>
             </form>
         </mat-step>
+
         <mat-step [stepControl]="secondFormGroup" [optional]="isOptional">
             <form [formGroup]="secondFormGroup">
                 <ng-template matStepLabel>Créez une partie</ng-template>
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="outline">
                     <mat-label>Nom de la partie</mat-label>
-                    <input matInput formControlName="gameNameMutiplayer" placeholder="nom de la partie"
+                    <input class="text-white" matInput formControlName="gameNameMutiplayer" placeholder="nom de la partie"
                         [(ngModel)]="gameName" required />
                 </mat-form-field>
-                <div>
-                    <button mat-button matStepperPrevious mat-raised-button (click)="this.chosenMode = this.modes[1]"
-                        color="accent">Retour</button>
-                    <button mat-raised-button color="primary" matStepperNext (click)="createGame()">Suivant</button>
+                <div class="button-group mt-3">
+                    <button mat-button matStepperPrevious mat-raised-button (click)="this.chosenMode = this.modes[1]" style="margin-right: 10px;"
+                        >Retour</button>
+                    <button mat-raised-button matStepperNext (click)="createGame()">Suivant</button>
                 </div>
             </form>
         </mat-step>
+
         <mat-step>
             <ng-template matStepLabel>Salle d'attente</ng-template>
             <div *ngIf="guestName; else elseBlock">
@@ -174,15 +158,12 @@
                 <button mat-button (click)="beginGame(false)" mat-dialog-close>Annuler</button>
             </div>
             <ng-template #elseBlock>
-                <br />
-                <p class="multiplayerP">Patientez pour un utilisateur s'il vous plait</p>
-                <br />
-                <hr />
+                <h2 class="text-white">Recherche d'une partie</h2>
                 <mat-spinner></mat-spinner>
-                <div>
-                    <button mat-button (click)="disconnectUser()" matStepperPrevious mat-raised-button
-                        color="accent" mat-dialog-close>Annuler</button>
-                    <button mat-button (click)="passInSoloMode()" mat-raised-button color="primary" mat-dialog-close>Jouer une partie
+                <div class="button-group mt-3">
+                    <button mat-button (click)="disconnectUser()" matStepperPrevious mat-raised-button style="margin-right: 10px;"
+                        mat-dialog-close>Annuler</button>
+                    <button mat-button (click)="passInSoloMode()" mat-raised-button mat-dialog-close>Partie
                         classique</button>
                 </div>
             </ng-template>

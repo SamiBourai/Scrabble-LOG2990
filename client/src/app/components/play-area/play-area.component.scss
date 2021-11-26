@@ -1,5 +1,4 @@
 #canvas {
-    position: fixed;
     border: 1px solid black;
     background-color: #f3f3f3;
     border-radius: 10px;
@@ -7,7 +6,7 @@
 }
 .grid-container {
     position: relative;
-    margin-top: 2%;
+    margin-top: 1%;
     display: flex;
 }
 
@@ -41,24 +40,12 @@
     margin-bottom: 1%;
     width: auto;
 }
-.div {
-    margin: 5% 50% 0% 10%;
-}
 
 .swapSection {
     position: relative;
     right: 0%;
     top: 85%;
     margin-top: 1%;
-    margin-bottom: 1%;
-    width: auto;
-}
-
-.cancelSection {
-    position: relative;
-    left: 200%;
-    top: 80%;
-    margin-top: 5%;
     margin-bottom: 1%;
     width: auto;
 }
@@ -77,4 +64,14 @@
     font-family: Roboto, 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 500;
+}
+
+.play-btn-grp {
+    margin-right: 30px;
+    button {
+        width: 120px;
+        height: 25px;
+        margin-bottom: 5px;
+        background-color: #ff5800;
+    }
 }
