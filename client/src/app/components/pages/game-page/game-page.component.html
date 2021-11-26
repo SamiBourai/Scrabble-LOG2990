@@ -1,31 +1,9 @@
 <div class="container" fxLayout="row">
-    <div class="side-bar">
-        <app-sidebar id="sideBar"></app-sidebar>
-    </div>
-    <div class="play-area">
-        <app-play-area></app-play-area>
-    </div>
-    <div class="right-div-information" (click)="this.mouseHandlingService.clearAll()" fxLayout="column" fxLayoutAlign="center">
-        <div>
-            <p class="chronometer-title">{{ 'Lettre restante : ' + this.remainingLetters }}</p>
-        </div>
-        <div *ngIf ="objectifManagerService.log2990Mode">
-            <app-scrable-log2990-modal></app-scrable-log2990-modal>
-        </div>
-        <div fxLayout="col">
-            <div>
-                <app-real-player></app-real-player>
-            </div>
-            <div *ngIf="soloMode; else elseBlock">
-                <app-vr-user></app-vr-user>
-            </div>
-            <ng-template #elseBlock>
-                <app-joined-user></app-joined-user>
-            </ng-template>
+    <app-play-area></app-play-area>
 
-          
-        </div>
-
-
+    <div class="d-flex flex-column">
+    <app-scrable-log2990-modal *ngIf= "objectifManagerService.log2990Mode"></app-scrable-log2990-modal>
+        <app-sidebar id="sideBar" (click)="this.mouseHandlingService.clearAll()"></app-sidebar>
+      
     </div>
 </div>

@@ -6,6 +6,10 @@
 >
 
  <div class="d-flex flex-column justify-content-center align-items-center play-btn-grp" (click)="this.mouseHandlingService.clearAll()">
+    <div class="d-flex flex-column" (click)="this.mouseHandlingService.clearAll()" >
+        <p class="chronometer-title">{{ 'Lettres restantes : ' + this.remainingLetters }}</p>
+       
+</div>
                 <app-real-player></app-real-player>
                 <div *ngIf="soloMode; else elseBlock">
                     <app-vr-user></app-vr-user>

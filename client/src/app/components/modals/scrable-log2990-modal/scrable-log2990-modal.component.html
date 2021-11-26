@@ -46,8 +46,8 @@
                             <div class="card-front">
                                 <div class="pricing-wrap">
                                     <h4 class="mb-5"> Voici les objectifs publics: </h4>
-                                    <p class="mb-4" >1.cet objectif consiste à {{getObjectifs()[0]}}</p>
-                                    <p class="mb-4">2.cet objectif consiste à {{getObjectifs()[1]}}</p>
+                                    <p class="mb-4" >1.{{getObjectifs()[0]}}</p>
+                                    <p class="mb-4">2.{{getObjectifs()[1]}}</p>
                                     <p class="mb-1"><i class="uil uil-location-pin-alt size-22"></i></p>
                                 </div>
                               </div>
@@ -55,8 +55,8 @@
                                 <div class="pricing-wrap">
                                 <div class="pricing-wrap">
                                     <h4 class="mb-5">objectif(s) privé(s) : </h4>
-                                    <p class="mb-4">cet objectif consiste à {{getObjectifs()[2]}}</p>
-                                    <p class="mb-4"  *ngIf="this.objectifManagerService.opponentPrivateObjectif.completed">cet objectif consiste à {{this.objectifManagerService.opponentPrivateObjectif.definition}}. (objectif privé de votre adversaire)</p>
+                                    <p class="mb-4">{{getObjectifs()[2]}}</p>
+                                    <p class="mb-4"  *ngIf="this.objectifManagerService.opponentPrivateObjectif.completed">{{this.objectifManagerService.opponentPrivateObjectif.definition}}. (objectif privé de votre adversaire)</p>
                                     <p class="mb-1"><i class="uil uil-location-pin-alt size-22"></i></p> 
                                   </div>
                                

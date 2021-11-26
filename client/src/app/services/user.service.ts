@@ -12,7 +12,7 @@ import {
     SIXTH_NAME,
     SIX_TURN,
     THIRD_NAME,
-    UNDEFINED_INDEX
+    UNDEFINED_INDEX,
 } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
@@ -229,5 +229,16 @@ export class UserService {
             turnToPlay: this.isPlayerTurn(),
             easel: this.getPlayerEasel(),
         };
+    }
+
+    getScore(): number {
+        if (this.playMode === 'joinMultiplayerGame') {
+            return this.joinedUser.score;
+        } else return this.realUser.score;
+    }
+    getPlayerName(): string {
+        if (this.playMode === 'joinMultiplayerGame') {
+            return this.joinedUser.name;
+        } else return this.realUser.name;
     }
 }

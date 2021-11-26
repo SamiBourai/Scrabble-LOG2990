@@ -17,7 +17,7 @@ import {
     TWELVE_POINTS,
     UNDEFINED_INDEX,
     WAIT_TIME_3_SEC,
-    ZERO_POINTS
+    ZERO_POINTS,
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';

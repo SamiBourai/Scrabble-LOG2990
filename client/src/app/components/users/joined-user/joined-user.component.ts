@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalEndOfGameComponent } from '@app/components/modals/modal-end-of-game/modal-end-of-game.component';
-import { ShowEndgameInfoComponent } from '@app/components/modals/show-endgame-info/show-endgame-info.component';
 import { MessageService } from '@app/services/message.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { TimeService } from '@app/services/time.service';
@@ -45,11 +44,6 @@ export class JoinedUserComponent implements OnInit {
             });
 
             this.mutltiplayerModeService.endOfGame();
-            this.mutltiplayerModeService.gameDoneObs.subscribe((response) => {
-                if (response) {
-                    this.dialogRef.open(ShowEndgameInfoComponent);
-                }
-            });
         }
     }
 }

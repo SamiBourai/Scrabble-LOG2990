@@ -20,8 +20,6 @@ export class MultiplayerModeService {
     first: boolean = true;
     playerLeft: boolean = false;
     playerLeftObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    gameDone: boolean = false;
-    gameDoneObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
     constructor(
         private socketManagementService: SocketManagementService,
@@ -164,8 +162,7 @@ export class MultiplayerModeService {
         this.socketManagementService.listen('endOfGame').subscribe(() => {
             setTimeout(() => {
                 this.userService.endOfGame = true;
-                this.gameDone = true;
-                this.gameDoneObs.next(this.gameDone);
+                this.userService.endOfGameBehaviorSubject.next(this.userService.endOfGame);
             }, 0);
         });
     }

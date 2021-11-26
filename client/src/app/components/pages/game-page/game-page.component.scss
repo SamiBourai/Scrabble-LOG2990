@@ -24,28 +24,6 @@
     width: 500px;
 }
 
-.chronometer-title {
-    clear: both;
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: center;
-    background: #312e2b;
-    color: #fff;
-    display: inline-block;
-    text-align: center;
-    border-radius: 3%;
-    margin-top: 15px;
-    margin-bottom: 2%;
-    margin-left: 1%;
-    margin-right: 1%;
-    font-family: Roboto, 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 5px;
-    border-radius: 10px;
-}
-
 ::ng-deep {
     .mat-card {
         background-color: #312e2b;

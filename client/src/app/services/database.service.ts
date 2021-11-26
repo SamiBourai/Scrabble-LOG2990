@@ -1,10 +1,22 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import {
+    CLOSE_SNACKBAR,
+    DATABASE_COLLECTION_CLASSIC,
+    DATABASE_COLLECTION_LOG2990,
+    ERROR_HTTP,
+    MAX_TIME_SNACKBAR,
+    SCORE_HAS_BEEN_SAVED,
+    SCORE_NOT_SAVED,
+} from '@app/constants/constants';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ObjectifManagerService } from './objectif-manager.service';
+import { UserService } from './user.service';
 
 @Injectable({
     providedIn: 'root',
@@ -21,7 +33,12 @@ export class DatabaseService {
     private readonly SEND_URL_GET_DICTIONARY: string = 'http://localhost:3000/api/database/dictionary';
     private readonly SEND_URL_GET_DICTIONARIES: string = 'http://localhost:3000/api/database/dictionaries';
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient,
+        private snackBar: MatSnackBar,
+        private objectifService: ObjectifManagerService,
+        private userService: UserService,
+    ) {}
 
     sendScore(collectionName: string, score: Score): Observable<number> {
         const fullUrl: string = this.SEND_URL + '/' + collectionName + '/' + score.name + '/' + score.score;
@@ -99,5 +116,21 @@ export class DatabaseService {
     getMetaDictionary(): Observable<LoadableDictionary[]> {
         const fullUrl = this.SEND_URL_GET_DICTIONARIES;
         return this.http.get<LoadableDictionary[]>(fullUrl);
+    }
+    addScores(): void {
+        const collectionConcerned: string = this.objectifService.log2990Mode ? DATABASE_COLLECTION_LOG2990 : DATABASE_COLLECTION_CLASSIC;
+
+        const score: Score = { name: this.userService.getPlayerName(), score: this.userService.getScore() };
+        this.sendScore(collectionConcerned, score).subscribe(
+            () => {
+                this.openSnackBar(SCORE_HAS_BEEN_SAVED, CLOSE_SNACKBAR);
+            },
+            (reject: number) => {
+                this.openSnackBar(ERROR_HTTP + reject + SCORE_NOT_SAVED, CLOSE_SNACKBAR);
+            },
+        );
+    }
+    private openSnackBar(message: string, action: string): void {
+        this.snackBar.open(message, action, { duration: MAX_TIME_SNACKBAR });
     }
 }

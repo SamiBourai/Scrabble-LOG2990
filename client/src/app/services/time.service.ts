@@ -16,6 +16,8 @@ export class TimeService {
     timeGuestPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
     timeStarted: boolean = false;
     command: string = '';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    intervalIdX: any;
     commandObs = new BehaviorSubject<string>('');
     constructor(
         private userService: UserService,
@@ -28,6 +30,8 @@ export class TimeService {
     }
 
     startTime(playerTurn: string) {
+        clearInterval(this.intervalIdX);
+
         switch (playerTurn) {
             case 'user': {
                 const intervalId = setInterval(() => {
@@ -45,11 +49,9 @@ export class TimeService {
                         this.userService.detectSkipTurnBtn();
                         this.timeUser = { min: this.timeSave.min, sec: this.timeSave.sec };
                         clearInterval(intervalId);
-                    } else if (!this.userService.isPlayerTurn()) {
-                        this.timeUser = { min: this.timeSave.min, sec: this.timeSave.sec };
-                        clearInterval(intervalId);
                     }
                 }, ONE_SECOND_MS);
+                this.intervalIdX = intervalId;
                 break;
             }
             case 'vrPlayer': {
@@ -75,6 +77,7 @@ export class TimeService {
                         clearInterval(intervalId);
                     }
                 }, ONE_SECOND_MS);
+                this.intervalIdX = intervalId;
                 break;
             }
         }

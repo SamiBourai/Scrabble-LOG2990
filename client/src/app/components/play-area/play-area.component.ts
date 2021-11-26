@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { ShowEndgameInfoComponent } from '@app/components/modals/show-endgame-info/show-endgame-info.component';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, UNDEFINED_INDEX } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -14,6 +15,7 @@ import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
+import { Subscription } from 'rxjs';
 
 export enum MouseButton {
     Left = 0,
@@ -28,13 +30,16 @@ export enum MouseButton {
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
 })
-export class PlayAreaComponent implements AfterViewInit, OnInit {
+export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('tempCanvas', { static: false }) private tempCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('focusCanvas', { static: false }) private focusCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('easelCanvas', { static: false }) private easelCanvas!: ElementRef<HTMLCanvasElement>;
     soloMode: boolean = true;
+    remainingLetters: number = 0;
     private canvasSize = { x: CANEVAS_WIDTH, y: CANEVAS_HEIGHT };
+    private numberOfLetterSubscription: Subscription;
+    private turnToPlaySubscription: Subscription;
 
     constructor(
         private tempCanvasService: TemporaryCanvasService,
@@ -50,6 +55,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         private objectifManagerService: ObjectifManagerService,
         public reserveService: ReserveService,
         private socketManagerService: SocketManagementService,
+        public virtualPlayerService: VirtualPlayerService,
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') {
             if (this.userService.playMode === 'soloGame') {
@@ -102,9 +108,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
     }
 
     ngOnInit() {
-        window.addEventListener('beforeunload', (event) => {
-            event.stopPropagation();
-        });
+        this.getRemainingLetter();
+
         if (this.userService.gameModeObs) {
             this.userService.gameModeObs.subscribe(() => {
                 setTimeout(() => {
@@ -125,6 +130,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
                 this.multiplayer.beginGame();
                 break;
         }
+        this.isUserEaselEmpty();
     }
     ngAfterViewInit(): void {
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -140,6 +146,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
         this.gridService.drawGrid();
         this.gridService.drawHand();
         this.gridCanvas.nativeElement.focus();
+    }
+    getRemainingLetter() {
+        this.numberOfLetterSubscription = this.reserveService.size.subscribe((res) => {
+            setTimeout(() => {
+                this.remainingLetters = res;
+            }, 0);
+        });
     }
     get width(): number {
         return this.canvasSize.x;
@@ -170,5 +183,30 @@ export class PlayAreaComponent implements AfterViewInit, OnInit {
             if (this.userService.playMode !== 'joinMultiplayerGame') return !this.userService.realUser.turnToPlay;
             else return this.userService.realUser.turnToPlay;
         }
+    }
+    isUserEaselEmpty() {
+        this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
+            setTimeout(() => {
+                this.mouseHandlingService.clearAll();
+                if (
+                    this.userService.playMode === 'soloGame' &&
+                    this.remainingLetters === 0 &&
+                    (this.userService.realUser.easel.getEaselSize() === 0 || this.virtualPlayerService.easel.getEaselSize() === 0)
+                ) {
+                    if (this.userService.realUser.easel.getEaselSize() === 0) {
+                        this.userService.realUser.score += this.virtualPlayerService.easel.pointInEasel();
+                    } else {
+                        this.userService.vrUser.score += this.userService.realUser.easel.pointInEasel();
+                    }
+
+                    this.userService.endOfGame = true;
+                    this.dialogRef.open(ShowEndgameInfoComponent);
+                }
+            }, 0);
+        });
+    }
+    ngOnDestroy(): void {
+        this.numberOfLetterSubscription.unsubscribe();
+        this.turnToPlaySubscription.unsubscribe();
     }
 }

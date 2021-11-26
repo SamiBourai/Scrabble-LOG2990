@@ -22,7 +22,7 @@ export class VrUserComponent implements OnInit, OnDestroy {
     }
 
     getScoreVrPlayer() {
-        this.scoreSubscription = this.virtualPlayerService.vrScoreObs.subscribe((score) => {
+        this.virtualPlayerService.vrScoreObs.subscribe((score) => {
             this.userService.vrUser.score += score;
         });
     }
@@ -30,6 +30,7 @@ export class VrUserComponent implements OnInit, OnDestroy {
     setVrTurnToPlay() {
         this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
             if (!this.userService.isPlayerTurn() && !this.userService.endOfGame) {
+                this.timeService.timeUser = { min: this.timeService.timeSave.min, sec: this.timeService.timeSave.sec };
                 this.timeService.startTime('vrPlayer');
                 this.virtualPlayerService.manageVrPlayerActions();
             }
