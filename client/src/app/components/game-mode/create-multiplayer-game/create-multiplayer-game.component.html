@@ -69,6 +69,17 @@
             </p>
             <hr />
 
+            <p><span class="multiplayerP">Dictionnaires :</span></p>
+       <div class = "form-group">
+           <select (change)="selectedDictionnary($event)" class = "form-control">
+               <option *ngFor = "let d of dictionnaries">
+                   {{d.title}}
+               </option>
+           </select>
+       </div>
+       <span class="multiplayerP">Vous avez séléctionner le dictionnaire </span> <b
+                class="multiplayerP-chosen"> {{chosenDictionnary}}</b>
+
             <div>
                 <button mat-raised-button mat-dialog-close
                     (click)="this.userService.isBonusBox=false">Annuler</button>

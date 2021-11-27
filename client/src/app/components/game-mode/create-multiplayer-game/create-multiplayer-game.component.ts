@@ -1,10 +1,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { DictionaryPresentation } from '@app/classes/dictionary';
 import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
-import { DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
+import { DEFAULT_DICTIONNARY, DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
+import { DatabaseService } from '@app/services/database.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
@@ -28,6 +30,8 @@ export class CreateMultiplayerGameComponent implements OnInit {
     gameName: string = '';
     modes: string[] = MODES;
     chosenMode: string = MODES[DEFAULT_MODE];
+    chosenDictionnary: string = DEFAULT_DICTIONNARY.title;
+    dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     timeCounter: number = DEFAULT_TIME;
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     isOptional = false;
@@ -39,6 +43,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
         private timeService: TimeService,
         private multiplayerModeService: MultiplayerModeService,
         public objectifManagerService: ObjectifManagerService,
+        private database: DatabaseService,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
@@ -139,5 +144,20 @@ export class CreateMultiplayerGameComponent implements OnInit {
         if (!response) {
             this.disconnectUser();
         }
+    }
+
+    getDictionnaries() {
+        this.database.getMetaDictionary().subscribe((dictionnaries) => {
+            for (const dic of dictionnaries) {
+                this.dictionnaries.push(dic);
+            }
+
+            console.log(this.dictionnaries);
+        });
+    }
+
+    selectedDictionnary(event: Event): void {
+        this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
+        console.log(this.chosenDictionnary);
     }
 }

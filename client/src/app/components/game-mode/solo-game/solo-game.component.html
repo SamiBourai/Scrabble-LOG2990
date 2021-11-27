@@ -85,9 +85,8 @@
         <p><span class="multiplayerP">Dictionnaires :</span></p>
        <div class = "form-group">
            <select (change)="selectedDictionnary($event)" class = "form-control">
-               
-               <option *ngFor = "let d of dictionnariesName">
-                   {{d}}
+               <option *ngFor = "let d of dictionnaries">
+                   {{d.title}}
                </option>
            </select>
        </div>

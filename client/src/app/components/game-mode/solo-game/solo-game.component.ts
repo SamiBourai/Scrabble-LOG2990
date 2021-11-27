@@ -25,9 +25,8 @@ export class SoloGameComponent implements OnInit {
     lvls: string[] = LVL_JV;
     chosenMode: string = MODES[DEFAULT_MODE];
     chosenDictionnary: string = DEFAULT_DICTIONNARY.title;
-    modes: string[] = MODES;
-    dictionnariesName: string[] = [DEFAULT_DICTIONNARY.title];
     dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
+    modes: string[] = MODES;
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,
@@ -114,15 +113,14 @@ export class SoloGameComponent implements OnInit {
         this.database.getMetaDictionary().subscribe((dictionnaries) => {
             for (const dic of dictionnaries) {
                 this.dictionnaries.push(dic);
-                this.dictionnariesName.push(dic.title);
             }
-            
+
             console.log(this.dictionnaries);
         });
     }
 
-    selectedDictionnary(event:any): void {
-        this.chosenDictionnary = event.target.value;
+    selectedDictionnary(event: Event): void {
+        this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
         console.log(this.chosenDictionnary);
     }
 }
