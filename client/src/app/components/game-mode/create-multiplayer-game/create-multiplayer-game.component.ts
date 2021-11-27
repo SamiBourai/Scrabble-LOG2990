@@ -97,6 +97,9 @@ export class CreateMultiplayerGameComponent implements OnInit {
             this.guestName = room.guestPlayer?.name ?? 'default';
             this.multiplayerModeService.setGuestPlayerInfromation(this.guestName);
         });
+        this.getDictionnaries();
+        this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
+        console.log(this.chosenDictionnary);
     }
     randomBonusActivated(event: Event): void {
         this.chosenMode = (event.target as HTMLInputElement)?.value;
@@ -151,7 +154,6 @@ export class CreateMultiplayerGameComponent implements OnInit {
             for (const dic of dictionnaries) {
                 this.dictionnaries.push(dic);
             }
-
             console.log(this.dictionnaries);
         });
     }
