@@ -51,7 +51,7 @@ describe('SocketManagerService', () => {
     } as unknown as io.BroadcastOperator<DefaultEventsMap>;
     beforeEach(() => {
         clock = useFakeTimers();
-        gameObject = new GameObject('test', false, { name: 'sami', score: 10, easelLetters: 7 }, 0, 0);
+        gameObject = new GameObject('test', false, { name: 'sami', score: 10, easelLetters: 7 }, 0, 0, false);
         timer = new Timer();
         timer.playerPlayed = false;
         validateWordService = createStubInstance(ValidWordService);

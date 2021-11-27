@@ -36,19 +36,23 @@
                                 <p class="command-help" >Commandes :</p>
                             </div>
                             <div >
+                                <p class="command-help">!aide </p>
+                                <p>Affiche ce message</p>
+                          </div>
+                            <div >
                                   <p class="command-help">!placer {{'|ligne|'+'|colonne|'+'|direction|'+ ' '+'|mot|'}}:</p>
                                   <p classe="command-description">Permet de placer un mot sur le plateau de jeu</p>
-                                  <p classe="command-description">ex: placement horizontal a la position h8: !placer h8h soir</p>
-                                  <p classe="command-description">ex: placement vertical a la position h8: !placer h8v mot</p>
+                                  <p classe="command-description">ex: placement horizontal à la position h8: !placer h8h soir</p>
+                                  <p classe="command-description">ex: placement vertical à la position h8: !placer h8v mot</p>
                             </div>
                             <div>
                                 <p class="command-help">!echanger</p>
-                                <p classe="command-description">Permet d'échanger les lettres séléctionnés du chevalet avec la réserve si la réserve contient plus de 7 lettres</p>
+                                <p classe="command-description">Permet d'échanger les lettres séléctionnées du chevalet avec la réserve, si la réserve contient plus de 7 lettres</p>
                                 <p classe="command-description">ex. si le chevalet contient a,b,c,d,e,f,g, on peut !echanger abcd</p>
                             </div>
                             <div>
                                 <p class="command-help">!passer</p>
-                                <p classe="command-description">Permet a l'utilisateur de passer son tour lorsque c'est a son tour de jouer</p>
+                                <p classe="command-description">Permet à l'utilisateur de passer son tour lorsque c'est à son tour de jouer</p>
                             </div>
 
                             <div>
@@ -64,7 +68,6 @@
                     </ng-container>
                     </div>
                 </div>
-                <hr />
 
                 <div class="chatBar">
                     <div class="input-group mb-3">
@@ -84,8 +87,6 @@
                         />
 
                         <button mat-raised-button (click)="logMessage()">Ok</button>
-
-
                         <mat-hint id="hint" align="end">{{ message.value.length }} / 512 </mat-hint>
                     </div>
                 </div>

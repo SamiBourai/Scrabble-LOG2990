@@ -1,91 +1,45 @@
-<div  *ngIf = "!this.objectifManagerService.initializedGame">
-<h1 data-shadow='dang!'>mode LOG2990</h1>
-<div class="Objectifs">
-    <br><br>
-      <div *ngIf = "sentence[0]" class="objectif"> Le mode de jeu scrable LOG2990 va vous permettre</div>
-      <div *ngIf = "sentence[1]" class="objectif"> de jouer une partie avec des objectifs à acomplir. </div>
-      <div *ngIf = "sentence[2]" class="objectif"> Une fois acommplis, des points suplémentaires </div>
-      <div *ngIf = "sentence[3]" class="objectif"> seront ajouter à votre score. Il y a 2 types d'objectifs,</div>
-      <div *ngIf = "sentence[4]" class="objectif"> les publics et les privés générés aléatoirement :</div><br><br>
-      <div *ngIf = "sentence[5]" class="objectif"> 1. Il y a deux objectifs publics et ils sont partagés</div>
-      <div *ngIf = "sentence[6]" class="objectif"> et votre adversaire. Celui qui les atteint en premier aura</div>
-      <div *ngIf = "sentence[7]" class="objectif"> les points bonus dans son score et ils ne seront plus </div>
-      <div *ngIf = "sentence[8]" class="objectif"> atteignables par la suite.</div><br><br>
-      <div *ngIf = "sentence[9]" class="objectif">  2. Il y a un objectif privé qui est différent de celui de</div>
-      <div *ngIf = "sentence[10]" class="objectif"> votre adversaire. Vous le verez seulement si votre</div>
-      <div *ngIf = "sentence[11]" class="objectif"> adversaire l'a atteint.</div>
-        <br> 
-      <div *ngIf = "sentence[0]" class= "d-flex flex-row justify-content-center align-item-center menu" >
+<div *ngIf="!this.objectifManagerService.initializedGame">
+    <h1 data-shadow="dang!">Mode LOG2990</h1>
+    <div class="d-flex flex-row justify-content-center align-item-center menu">
         <div class="button" (click)="openDialog('soloGame')" mat-dialog-close>
-            <img src="./assets/svg/robot.png" alt="robot-icon">
+            <img src="./assets/svg/robot.png" alt="robot-icon" />
             <p>Jouer contre un ordinateur</p>
         </div>
-    
+
         <div class="button" (click)="openDialog('createMultiplayerGame')" mat-dialog-close>
-            <img src="./assets/svg/smart-human.png" alt="create-icon">
+            <img src="./assets/svg/smart-human.png" alt="create-icon" />
             <p>Créer une partie multijoueur</p>
         </div>
-    
-        <div class="button" (click)="openDialog('joinMultiplayerGame') " mat-dialog-close>
-            <img src="./assets/svg/link.png" alt="robot-icon">
+
+        <div class="button" (click)="openDialog('joinMultiplayerGame')" mat-dialog-close>
+            <img src="./assets/svg/link.png" alt="robot-icon" />
             <p>Joindre une partie multijoueur</p>
         </div>
     </div>
 </div>
-</div>
-<div *ngIf="this.objectifManagerService.initializedGame && !objectifManagerService.objectifAchived ">
-<div class="section over-hide">
-    <div class="container">
-        <div class="row full-height justify-content-center">
-            <div class="col-12 text-center align-self-center py-5">
-                <div class="section text-center py-5 py-md-0">
-                      <input class="pricing" type="checkbox" id="pricing" name="pricing"/>
-                      <label for="pricing"><span class="block-diff">Public&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Privé</span></label>
-                    <div class="card-3d-wrap mx-auto">
-                        <div class="card-3d-wrapper">
-                            <div class="card-front">
-                                <div class="pricing-wrap">
-                                    <h4 class="mb-5"> Voici les objectifs publics: </h4>
-                                    <p class="mb-4" >1.{{getObjectifs()[0]}}</p>
-                                    <p class="mb-4">2.{{getObjectifs()[1]}}</p>
-                                    <p class="mb-1"><i class="uil uil-location-pin-alt size-22"></i></p>
-                                </div>
-                              </div>
-                            <div class="card-back">
-                                <div class="pricing-wrap">
-                                <div class="pricing-wrap">
-                                    <h4 class="mb-5">objectif(s) privé(s) : </h4>
-                                    <p class="mb-4">{{getObjectifs()[2]}}</p>
-                                    <p class="mb-4"  *ngIf="this.objectifManagerService.opponentPrivateObjectif.completed">{{this.objectifManagerService.opponentPrivateObjectif.definition}}. (objectif privé de votre adversaire)</p>
-                                    <p class="mb-1"><i class="uil uil-location-pin-alt size-22"></i></p> 
-                                  </div>
-                               
-                              </div>
-                           
-                          </div>
-                      </div>
-                    
-                  </div>
-              </div>
-          </div>
-    </div>
-</div>
-</div>
-</div>
+
+<mat-card *ngIf="this.objectifManagerService.initializedGame && !objectifManagerService.objectifAchived">
+    <mat-card-title>Objectifs de la partie!</mat-card-title>
+    <mat-tab-group>
+        <mat-tab label="Publics">
+            <div>
+                <p class="mb-4">1.{{ getObjectifs()[0] }}</p>
+                <p class="mb-4">2.{{ getObjectifs()[1] }}</p>
+            </div>
+        </mat-tab>
+        <mat-tab label="Privés">
+            <div>
+                <p class="mb-4">{{ getObjectifs()[2] }}</p>
+                <p class="mb-4" *ngIf="this.objectifManagerService.opponentPrivateObjectif.completed">
+                    {{ this.objectifManagerService.opponentPrivateObjectif.definition }}. (objectif privé de votre adversaire)
+                </p>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</mat-card>
+
+
 <div *ngIf="objectifManagerService.objectifAchived">
     <app-objectif-achived></app-objectif-achived>
 </div>
-    
 
-
-      <!-- <div class="objectif"> permettre de jouer une partie avec des objectifs à acomplir.</div>
-      <div class="objectif"> permettre de jouer une partie avec des objectifs à acomplir.</div> -->
-<!-- </div>
-<div *ngIf = "sentence[5]" class="publicObjectifs">
-        
-</div>
-<div *ngIf = "sentence[9]" class="privateObjectifs">
-        <div *ngIf = "sentence[9]" class="objectif">  2. Il y a un objectif privé qui est différent de</div>
-        <div *ngIf = "sentence[10]" class="objectif">  celui de votre adversaire. Vous le verez </div>
-        <div *ngIf = "sentence[11]" class="objectif"> seulement si votre adversaire l'a atteint.</div>
-</div>  -->

@@ -305,25 +305,25 @@ export const FIVE_SEC_MS = 5000;
 export const BOTH_EASEL_FILLED = 86;
 
 // database constants
-export const DEFAULT_SCORE:Score[] = [
+export const DEFAULT_SCORE: Score[] = [
     {
-        name: "joueur par defaut - 1",
+        name: 'joueur par defaut - 1',
         score: 1,
     },
     {
-        name: "joueur par defaut - 2",
+        name: 'joueur par defaut - 2',
         score: 2,
     },
     {
-        name: "joueur par defaut - 3",
+        name: 'joueur par defaut - 3',
         score: 3,
     },
     {
-        name: "joueur par defaut -4",
+        name: 'joueur par defaut -4',
         score: 4,
     },
     {
-        name: "joueur par defaut -5",
+        name: 'joueur par defaut -5',
         score: 5,
     },
 ];
@@ -334,9 +334,9 @@ export const CREATED_HTTP_STATUS = 201;
 export const NO_CONTENT_HTTP_STATUS = 204;
 export const NOT_FOUND_HTTP_STATUS = 404;
 
-//database
+// database
 export const DATABASE_COLLECTION_CLASSIC = 'Score';
 export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
-export const BEST_SCORES=5;
-export const MAX_OCCURANCY=1;
-
+export const DATABASE_COLLECTION_VRNAMESBEG = 'virtualPlayerBeg';
+export const BEST_SCORES = 5;
+export const MAX_OCCURANCY = 1;
