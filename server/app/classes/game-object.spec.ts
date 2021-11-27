@@ -26,7 +26,7 @@ describe('GameObject', () => {
         };
 
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        gameObject = new GameObject('game1', false, player1, 0, 0);
+        gameObject = new GameObject('game1', false, player1, 0, 0, false);
         gameObject.timer = timer;
     });
     // afterEach(async () => {

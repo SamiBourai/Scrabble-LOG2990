@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageServer } from '@app/classes/message-server';
 import { GameInitializationComponent } from '@app/components/modals/game-initialization/game-initialization.component';
-import { NUMBER_OF_SENTENCE, TWO_SECOND_INTERVAL, UNDEFINED_INDEX } from '@app/constants/constants';
+import { UNDEFINED_INDEX } from '@app/constants/constants';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
@@ -12,8 +12,6 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./scrable-log2990-modal.component.scss'],
 })
 export class ScrableLog2990ModalComponent implements OnInit {
-    indexSentence: number = 0;
-    sentence = new Array<boolean>(NUMBER_OF_SENTENCE);
     constructor(
         private dialogRef: MatDialog,
         private userService: UserService,
@@ -22,14 +20,6 @@ export class ScrableLog2990ModalComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.sentence[this.indexSentence] = true;
-        if (!this.objectifManagerService.initializedGame) {
-            const interValID = setInterval(() => {
-                this.indexSentence++;
-                this.sentence[this.indexSentence] = true;
-                if (this.indexSentence === NUMBER_OF_SENTENCE) clearInterval(interValID);
-            }, TWO_SECOND_INTERVAL);
-        }
         this.socketManagementService.listen('objectifAchived').subscribe((objectif: MessageServer) => {
             if (objectif && !this.objectifManagerService.objectifAchived) {
                 this.objectifManagerService.objectifAchived = true;

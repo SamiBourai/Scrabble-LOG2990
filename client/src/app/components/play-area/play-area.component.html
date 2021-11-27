@@ -4,44 +4,38 @@
     oncontextmenu="return false"
     class="d-flex flex-row mt-3 h-100"
 >
+    <div class="d-flex flex-column justify-content-center align-items-center play-btn-grp" (click)="this.mouseHandlingService.clearAll()">
+        <div class="d-flex flex-column" (click)="this.mouseHandlingService.clearAll()">
+            <p class="chronometer-title">{{ 'Lettres restantes : ' + this.remainingLetters }}</p>
+        </div>
+        <app-real-player></app-real-player>
+        <div *ngIf="soloMode; else elseBlock">
+            <app-vr-user></app-vr-user>
+        </div>
+        <ng-template #elseBlock>
+            <app-joined-user></app-joined-user>
+        </ng-template>
 
- <div class="d-flex flex-column justify-content-center align-items-center play-btn-grp" (click)="this.mouseHandlingService.clearAll()">
-    <div class="d-flex flex-column" (click)="this.mouseHandlingService.clearAll()" >
-        <p class="chronometer-title">{{ 'Lettres restantes : ' + this.remainingLetters }}</p>
-       
-</div>
-                <app-real-player></app-real-player>
-                <div *ngIf="soloMode; else elseBlock">
-                    <app-vr-user></app-vr-user>
-                </div>
-                <ng-template #elseBlock>
-                    <app-joined-user></app-joined-user>
-                </ng-template>
+        <button mat-raised-button color="primary" [disabled]="!userService.isPlayerTurn()" (click)="mouseHandlingService.placeTempWord()">
+            Placer
+        </button>
 
-        <button mat-raised-button (click)="detectGameQuit()" (click)="openDialogOfVrUser()">Abandonner</button>
-        <button mat-raised-button [disabled]="!userService.isPlayerTurn()" (click)="mouseHandlingService.placeTempWord()">Placer</button>
+        <button #skipTurn mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">Passer</button>
+        <br />
         <button
+            color="primary"
             mat-raised-button
             [disabled]="disableButton('exchange') || this.reserveService.reserveSize < 7"
             (click)="mouseHandlingService.swapByClick()"
         >
             Echanger
         </button>
-        <button #skipTurn id="btn" mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">
-            Passer
-        </button>
-        <button
-            mat-raised-button
-            color="primary"
-            id="cancelButton"
-            [disabled]="disableButton('cancel')"
-            (click)="mouseHandlingService.cancelByClick()"
-        >
-            Annuler
-        </button>
+        <button mat-raised-button color="primary" [disabled]="disableButton('cancel')" (click)="mouseHandlingService.cancelByClick()">Annuler</button>
+        <br />
+        <button mat-raised-button color="primary" (click)="detectGameQuit()" (click)="openDialogOfVrUser()">Abandonner</button>
     </div>
 
-    <div style="width: 750px; position: relative;">
+    <div style="width: 750px; position: relative">
         <canvas id="canvas" class="firstLayer" #gridCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas id="tempCanvas" class="secondLayer" #tempCanvas [attr.width]="width" [attr.height]="height"></canvas>
         <canvas id="focusCanvas" class="thirdLayer" #focusCanvas [attr.width]="width" [attr.height]="height"></canvas>
@@ -54,6 +48,4 @@
             [attr.height]="height"
         ></canvas>
     </div>
-
 </div>
-

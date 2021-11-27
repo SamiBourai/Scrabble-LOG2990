@@ -24,7 +24,6 @@ import {
     THIRD_NAME,
 } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
-import { ScoresService } from '@app/services/score/scores.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { saveAs } from 'file-saver';
@@ -58,7 +57,7 @@ export class AdminPageComponent implements OnInit {
         public userService: UserService,
         public database: DatabaseService,
         private snackBar: MatSnackBar,
-        public scoresService: ScoresService,
+        // public scoresService: ScoresService,
         public dialog: MatDialog,
     ) {}
 
@@ -257,8 +256,8 @@ export class AdminPageComponent implements OnInit {
     }
 
     setResetData(): void {
-        this.scoresService.isUserResetData = true;
-        this.scoresService.getIsUserResetDataObs.next(this.scoresService.isUserResetData);
+        this.userService.isUserResetData = true;
+        this.userService.getIsUserResetDataObs.next(this.userService.isUserResetData);
     }
 
     resetScores(collectionName: string): void {

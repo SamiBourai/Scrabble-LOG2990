@@ -1,0 +1,34 @@
+::ng-deep {
+    .mat-form-field-label {
+        color: #efefef;
+    }
+    .mat-form-field.mat-focused .mat-form-field-label {
+        color: #efefef;
+    }
+    .mat-card-title {
+        color: #efefef;
+    }
+    .mat-card-subtitle {
+        color: #c0c0c0;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: #f1864d;
+    }
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+        color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent {
+        background-color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent.mat-button-disabled,
+    .mat-mini-fab.mat-button-disabled.mat-button-disabled {
+        background-color: #2e4052;
+    }
+}
+.mat-card {
+    background-color: #312e2b;
+    color: #efefef;
+    width: 100%;
+    height: 40%;
+    border: none;
+}
