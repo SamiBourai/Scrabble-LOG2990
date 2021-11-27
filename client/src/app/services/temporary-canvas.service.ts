@@ -12,7 +12,7 @@ import {
     SIX,
     TOPSPACE,
     UNDEFINED_INDEX,
-    V_ARROW
+    V_ARROW,
 } from '@app/constants/constants';
 import { LettersService } from './letters.service';
 
@@ -100,7 +100,11 @@ export class TemporaryCanvasService {
     findNextEmptyTile(): boolean {
         while (!this.letterService.tileIsEmpty(this.previousTile)) {
             this.addLetterFromGrid(this.letterService.tiles[this.previousTile.y - 1][this.previousTile.x - 1].charac);
-            if (this.previousTile.x === NB_TILES || this.previousTile.y === NB_TILES) return false;
+            if (this.previousTile.x === NB_TILES || this.previousTile.y === NB_TILES) {
+                this.drawArrow(this.previousTile);
+                this.drawRedFocus(this.previousTile, this.focusContext);
+                return false;
+            }
         }
         return true;
     }

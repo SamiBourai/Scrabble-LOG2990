@@ -30,8 +30,8 @@ export class ReserveService {
         let counter = 0;
         for (const key of keys) {
             for (let i = 0; i < (map.get(key) ?? 0); i++) {
-                counter++;
                 if (counter === random) return key;
+                counter++;
             }
         }
 

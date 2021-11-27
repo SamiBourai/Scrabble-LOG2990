@@ -119,7 +119,6 @@ export class MouseHandelingService {
         this.tempCanvasService.tempWord = '';
     }
     easelClicked(event: MouseEvent) {
-        console.log(event.offsetX, event.offsetY);
         const vec = this.easelLogic.showCoords(event);
         const rangeEasleValid =
             this.easelLogic.isBetween(RANGE_Y, vec.y) &&
