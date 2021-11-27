@@ -1,3 +1,6 @@
+import { DEFAULT_DICTIONNARY } from './../../../constants/constants';
+import { DatabaseService } from '@app/services/database.service';
+import { DictionaryPresentation } from './../../../../../../server/app/classes/dictionary';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,14 +24,19 @@ export class SoloGameComponent implements OnInit {
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     lvls: string[] = LVL_JV;
     chosenMode: string = MODES[DEFAULT_MODE];
+    chosenDictionnary: string = DEFAULT_DICTIONNARY.title;
     modes: string[] = MODES;
+    dictionnariesName: string[] = [DEFAULT_DICTIONNARY.title];
+    dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,
         private timeService: TimeService,
         private virtualPlayerService: VirtualPlayerService,
         private objectifManagerService: ObjectifManagerService,
+        private database: DatabaseService,
     ) {}
+
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInAddButton(event: Event) {
         event.preventDefault();
@@ -66,6 +74,11 @@ export class SoloGameComponent implements OnInit {
             ]),
         });
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.generateObjectifs('soloGame');
+        this.getDictionnaries();
+        this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
+        console.log(this.chosenDictionnary);
+
+        if (this.chosenDictionnary === undefined) this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -95,5 +108,21 @@ export class SoloGameComponent implements OnInit {
         }
         this.chosenMode = this.modes[DEFAULT_MODE];
         this.userService.isBonusBox = false;
+    }
+
+    getDictionnaries() {
+        this.database.getMetaDictionary().subscribe((dictionnaries) => {
+            for (const dic of dictionnaries) {
+                this.dictionnaries.push(dic);
+                this.dictionnariesName.push(dic.title);
+            }
+            
+            console.log(this.dictionnaries);
+        });
+    }
+
+    selectedDictionnary(event:any): void {
+        this.chosenDictionnary = event.target.value;
+        console.log(this.chosenDictionnary);
     }
 }

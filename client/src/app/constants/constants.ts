@@ -1,3 +1,4 @@
+import { DictionaryPresentation } from './../../../../server/app/classes/dictionary';
 import { Letter } from '@app/classes/letter';
 import { GameTime } from '@app/classes/time';
 import { Vec2 } from '@app/classes/vec2';
@@ -24,6 +25,7 @@ export const LVL_JV: string[] = ['Expert', 'Normal'];
 export const EXPERT_NAMES: string[] = ['Tahanus-23000', 'WorldValidator', 'KoneQuePlacerSeulement'];
 export const DEFAULT_TIME = 1;
 export const DEFAULT_MODE = 1;
+export const DEFAULT_DICTIONNARY:DictionaryPresentation = { title: 'dictionnaire principal', description: 'le dictionnaire par defaut' };
 // user-service
 export const FIRST_NAME = 'Bobby1234';
 export const SECOND_NAME = 'Martin1234';
