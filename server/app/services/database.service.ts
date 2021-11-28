@@ -9,6 +9,7 @@ import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
 // import { map } from 'rxjs';
 import { Service } from 'typedi';
+import { ValidWordService } from './validate-words.service';
 
 // CHANGE the URL for your database information
 const DATABASE_URL = 'mongodb+srv://equipe303:equipe303@clusterscore.6eoob.mongodb.net/scrabble2990?retryWrites=true&w=majority';
@@ -23,6 +24,8 @@ export class DatabaseService {
     arrayOfAllDictionaries: LoadableDictionary[] = [];
     private db: Db;
     private client: MongoClient;
+
+    constructor(private validateWordService: ValidWordService) {}
 
     //   private options: MongoClientOptions = {
     //     useNewUrlParser: true,
@@ -193,5 +196,11 @@ export class DatabaseService {
         }
         if (collectionName === DATABASE_COLLECTION_CLASSIC) this.arrayOfAllClassicGameScores = sortedArray;
         else if (collectionName === DATABASE_COLLECTION_LOG2990) this.arrayOfAllLog2990GameScores = sortedArray;
+    }
+
+    async getChosenDic(chosenDictionary: string) {
+        if (chosenDictionary === 'dictionnaire principal') this.validateWordService.chosenDic.length = 0;
+        else this.validateWordService.chosenDic[0] = chosenDictionary;
+        console.log(this.validateWordService.chosenDic);
     }
 }

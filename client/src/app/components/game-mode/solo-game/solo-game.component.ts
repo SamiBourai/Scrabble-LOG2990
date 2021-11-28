@@ -1,17 +1,16 @@
-import { DEFAULT_DICTIONNARY } from './../../../constants/constants';
-import { DatabaseService } from '@app/services/database.service';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DictionaryPresentation } from '@app/classes/dictionary';
 import { GameTime } from '@app/classes/time';
 import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
-import { DEFAULT_MODE, DEFAULT_TIME, LVL_JV, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
+import { DatabaseService } from '@app/services/database.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
-import { DictionaryPresentation } from '@app/classes/dictionary';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { DEFAULT_DICTIONNARY, DEFAULT_MODE, DEFAULT_TIME, LVL_JV, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from './../../../constants/constants';
 
 @Component({
     selector: 'app-solo-game',
@@ -147,7 +146,7 @@ export class SoloGameComponent implements OnInit {
         }
         console.log(names);
         if (names.includes(this.chosenDictionnary)) localStorage.setItem('chosenDictionnarySolo', this.chosenDictionnary);
-        else{
+        else {
             this.snackBar.open('Ce dictionnaire a ete supprime', 'Close');
         }
     }

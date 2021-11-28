@@ -161,6 +161,6 @@ export class CreateMultiplayerGameComponent implements OnInit {
     selectedDictionnary(event: Event): void {
         this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
         console.log(this.chosenDictionnary);
-        localStorage.setItem('chosenDictionnaryMultiplayer', this.chosenDictionnary);
+        this.database.sendChosenDic(this.chosenDictionnary);
     }
 }

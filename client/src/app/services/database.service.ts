@@ -32,6 +32,7 @@ export class DatabaseService {
     private readonly SEND_URL_UPLOAD_DICTIONARY: string = 'http://localhost:3000/api/database/upload';
     private readonly SEND_URL_GET_DICTIONARY: string = 'http://localhost:3000/api/database/dictionary';
     private readonly SEND_URL_GET_DICTIONARIES: string = 'http://localhost:3000/api/database/dictionaries';
+    private readonly SEND_URL_LOCAL_STORAGE: string = 'http://localhost:3000/api/database/localStorage';
 
     constructor(
         private http: HttpClient,
@@ -116,6 +117,11 @@ export class DatabaseService {
     getMetaDictionary(): Observable<LoadableDictionary[]> {
         const fullUrl = this.SEND_URL_GET_DICTIONARIES;
         return this.http.get<LoadableDictionary[]>(fullUrl);
+    }
+
+    sendChosenDic(chosenDictionnary: string): Observable<string> {
+        const fullUrl = this.SEND_URL_LOCAL_STORAGE + '/' + chosenDictionnary;
+        return this.http.post<string>(fullUrl, chosenDictionnary);
     }
     addScores(): void {
         const collectionConcerned: string = this.objectifService.log2990Mode ? DATABASE_COLLECTION_LOG2990 : DATABASE_COLLECTION_CLASSIC;

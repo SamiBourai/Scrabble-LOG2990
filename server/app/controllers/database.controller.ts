@@ -153,5 +153,16 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
+
+        this.router.post('/localStorage/:chosenDictionary', async (req: Request, res: Response) => {
+            this.databaseService
+                .getChosenDic(req.params.chosenDictionary)
+                .then(() => {
+                    res.sendStatus(CREATED_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
     }
 }
