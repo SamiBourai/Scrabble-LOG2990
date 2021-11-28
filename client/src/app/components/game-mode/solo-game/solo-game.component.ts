@@ -12,6 +12,7 @@ import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
+
 @Component({
     selector: 'app-solo-game',
     templateUrl: './solo-game.component.html',
@@ -73,11 +74,9 @@ export class SoloGameComponent implements OnInit {
             ]),
         });
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.generateObjectifs('soloGame');
-        this.getDictionnaries();
+        this.getDictionnaries(this.dictionnaries);
         this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
         console.log(this.chosenDictionnary);
-
-        if (this.chosenDictionnary === undefined) this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -109,18 +108,19 @@ export class SoloGameComponent implements OnInit {
         this.userService.isBonusBox = false;
     }
 
-    getDictionnaries() {
+    getDictionnaries(dictionnaryArray: DictionaryPresentation[]) {
         this.database.getMetaDictionary().subscribe((dictionnaries) => {
             for (const dic of dictionnaries) {
-                this.dictionnaries.push(dic);
+                dictionnaryArray.push(dic);
             }
-
-            console.log(this.dictionnaries);
+            console.log(dictionnaryArray);
         });
     }
 
     selectedDictionnary(event: Event): void {
         this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
         console.log(this.chosenDictionnary);
+        console.log(this.dictionnaries);
+        localStorage.setItem('chosenDictionnarySolo', this.chosenDictionnary);
     }
 }
