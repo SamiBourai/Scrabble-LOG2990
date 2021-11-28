@@ -84,7 +84,7 @@
         <!-- <button (click) = getDictionnaries()>allo</button> -->
         <p><span class="multiplayerP">Dictionnaires :</span></p>
        <div class = "form-group">
-           <select (change)="selectedDictionnary($event)" class = "form-control">
+           <select (change)=" getDictionnariesDelete(); selectedDictionnary($event)" class = "form-control">
                <option *ngFor = "let d of dictionnaries">
                    {{d.title}}
                </option>

@@ -1,6 +1,5 @@
 import { DEFAULT_DICTIONNARY } from './../../../constants/constants';
 import { DatabaseService } from '@app/services/database.service';
-import { DictionaryPresentation } from './../../../../../../server/app/classes/dictionary';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +10,8 @@ import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
-
+import { DictionaryPresentation } from '@app/classes/dictionary';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-solo-game',
@@ -27,6 +27,7 @@ export class SoloGameComponent implements OnInit {
     chosenMode: string = MODES[DEFAULT_MODE];
     chosenDictionnary: string = DEFAULT_DICTIONNARY.title;
     dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
+    updateDics: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     modes: string[] = MODES;
     constructor(
         private dialogRef: MatDialog,
@@ -35,6 +36,7 @@ export class SoloGameComponent implements OnInit {
         private virtualPlayerService: VirtualPlayerService,
         private objectifManagerService: ObjectifManagerService,
         private database: DatabaseService,
+        private snackBar: MatSnackBar,
     ) {}
 
     @HostListener('document:click.minusBtn', ['$eventX'])
@@ -117,10 +119,36 @@ export class SoloGameComponent implements OnInit {
         });
     }
 
+    getDictionnariesDelete() {
+        // const dictionnaryNames = [];
+        this.updateDics = [DEFAULT_DICTIONNARY];
+        this.database.getMetaDictionary().subscribe((dictionnaries) => {
+            for (const dic of dictionnaries) {
+                this.updateDics.push(dic);
+            }
+
+            localStorage.setItem('updateDics', JSON.stringify(this.updateDics));
+        });
+        // for(const dic of this.updateDics){
+        //     dictionnaryNames.push(dic.title);
+        // }
+        // console.log(dictionnaryNames);
+    }
+
     selectedDictionnary(event: Event): void {
+        const names = [];
         this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
         console.log(this.chosenDictionnary);
         console.log(this.dictionnaries);
-        localStorage.setItem('chosenDictionnarySolo', this.chosenDictionnary);
+        const updatedDictionnariesInString = localStorage.getItem('updateDics') as string;
+        const updatedDictionnaries: DictionaryPresentation[] = JSON.parse(updatedDictionnariesInString);
+        for (const dic of updatedDictionnaries) {
+            names.push(dic.title);
+        }
+        console.log(names);
+        if (names.includes(this.chosenDictionnary)) localStorage.setItem('chosenDictionnarySolo', this.chosenDictionnary);
+        else{
+            this.snackBar.open('Ce dictionnaire a ete supprime', 'Close');
+        }
     }
 }
