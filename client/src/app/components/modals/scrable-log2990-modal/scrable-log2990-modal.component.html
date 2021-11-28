@@ -1,5 +1,8 @@
 <div *ngIf="!this.objectifManagerService.initializedGame">
-    <h1 data-shadow="dang!">Mode LOG2990</h1>
+    <mat-card-title>Mode LOG2990</mat-card-title> <br />
+    <mat-card-subtitle>Choisissez une des options suivantes :</mat-card-subtitle>
+    <br />
+    <br />
     <div class="d-flex flex-row justify-content-center align-item-center menu">
         <div class="button" (click)="openDialog('soloGame')" mat-dialog-close>
             <img src="./assets/svg/robot.png" alt="robot-icon" />
@@ -38,8 +41,6 @@
     </mat-tab-group>
 </mat-card>
 
-
 <div *ngIf="objectifManagerService.objectifAchived">
     <app-objectif-achived></app-objectif-achived>
 </div>
-

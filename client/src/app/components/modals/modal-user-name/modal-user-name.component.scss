@@ -72,6 +72,9 @@ input[type='radio']:checked {
     font-size: 19px;
     font-weight: 450;
 }
+.mat-card-title {
+    color: #ff5800;
+}
 
 ::ng-deep {
     .mat-dialog-container {
@@ -80,7 +83,6 @@ input[type='radio']:checked {
 
     .mat-card {
         background-color: #312e2b;
-        color: #efefef;
     }
     .mat-form-field-label {
         color: #efefef;
@@ -88,9 +90,7 @@ input[type='radio']:checked {
     .mat-form-field.mat-focused .mat-form-field-label {
         color: #efefef;
     }
-    .mat-card-title {
-        color: #efefef;
-    }
+
     .mat-card-subtitle {
         color: #c0c0c0;
     }

@@ -22,6 +22,9 @@ export class SoloGameComponent implements OnInit {
     lvls: string[] = LVL_JV;
     chosenMode: string = MODES[DEFAULT_MODE];
     modes: string[] = MODES;
+    toolTip: string =
+        "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace (3) Le nom doit avoir au min 8 caractere et max 15";
+
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,

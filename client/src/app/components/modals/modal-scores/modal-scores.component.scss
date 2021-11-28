@@ -34,6 +34,13 @@ table {
     vertical-align: middle;
 }
 
+.mat-dialog-container {
+    background-color: #312e2b;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+}
+
 ::ng-deep {
     .mat-card {
         background-color: #312e2b;

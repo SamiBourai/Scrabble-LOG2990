@@ -5,6 +5,7 @@ import { ModalScoresComponent } from './modal-scores.component';
 describe('ModalScoresComponent', () => {
   let component: ModalScoresComponent;
   let fixture: ComponentFixture<ModalScoresComponent>;
+  
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

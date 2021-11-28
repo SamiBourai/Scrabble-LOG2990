@@ -10,8 +10,6 @@ import {
     NAME_COLUMN,
     REQUEST_SUCCESFULLY_EXECUTED,
     SCORE_COLUMN,
-    SCORE_HAS_BEEN_SAVED,
-    SCORE_NOT_SAVED,
     SERVER_NOT_RESPONDING,
 } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
@@ -41,21 +39,6 @@ export class ModalScoresComponent implements OnInit, OnDestroy {
         // this.unsubscribeFromGet2.unsubscribe();
     }
 
-    addScores(): void {
-        // A REMPLACER QUAND FIN DE PARTIE VA MARCHER
-        const score: Score = { name: 'sami', score: 6 };
-        this.databaseService.sendScore(DATABASE_COLLECTION_CLASSIC, score).subscribe(
-            () => {
-                this.openSnackBar(SCORE_HAS_BEEN_SAVED, CLOSE_SNACKBAR);
-
-                this.getScoresMode(DATABASE_COLLECTION_CLASSIC);
-                this.getScoresMode(DATABASE_COLLECTION_LOG2990);
-            },
-            (reject: number) => {
-                this.openSnackBar(ERROR_HTTP + reject + SCORE_NOT_SAVED, CLOSE_SNACKBAR);
-            },
-        );
-    }
     private openSnackBar(message: string, action: string): void {
         this.snackBar.open(message, action, { duration: MAX_TIME_SNACKBAR });
     }

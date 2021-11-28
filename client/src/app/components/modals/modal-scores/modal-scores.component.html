@@ -1,56 +1,41 @@
-
-    <mat-card-title>Meilleurs scores du jeu :  </mat-card-title> <br>
-    <mat-card-subtitle>Affichage des meilleurs scores du mode de jeu classique et mode de jeu LOG2990 : </mat-card-subtitle>
-    <hr>
-  <mat-tab-group >
+<mat-card-title>Meilleurs scores du jeu : </mat-card-title> <br />
+<mat-card-subtitle>Affichage des meilleurs scores du mode de jeu classique et mode de jeu LOG2990 : </mat-card-subtitle>
+<hr />
+<mat-tab-group>
     <mat-tab label="Mode classique">
         <table mat-table [dataSource]="arrayOfScoresClassicMode" class="mat-elevation-z8">
-
-
             <!-- Name Column -->
             <ng-container matColumnDef="name">
-
-            <th mat-header-cell *matHeaderCellDef> <mat-icon>face</mat-icon> Nom </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                <th mat-header-cell *matHeaderCellDef><mat-icon>face</mat-icon> Nom</th>
+                <td mat-cell *matCellDef="let element">{{ element.name }}</td>
             </ng-container>
 
             <!-- Weight Column -->
             <ng-container matColumnDef="score">
-            <th mat-header-cell *matHeaderCellDef> Score </th>
-            <td mat-cell *matCellDef="let element"> {{element.score}} </td>
+                <th mat-header-cell *matHeaderCellDef>Score</th>
+                <td mat-cell *matCellDef="let element">{{ element.score }}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
-
-
     </mat-tab>
     <mat-tab label="Mode LOG2990">
-
         <table mat-table [dataSource]="arrayOfScoresLog2990Mode" class="mat-elevation-z8">
-
             <!-- Name Column -->
             <ng-container matColumnDef="name">
-
-            <th mat-header-cell *matHeaderCellDef><mat-icon>face</mat-icon> Nom </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                <th mat-header-cell *matHeaderCellDef><mat-icon>face</mat-icon> Nom</th>
+                <td mat-cell *matCellDef="let element">{{ element.name }}</td>
             </ng-container>
 
             <!-- Weight Column -->
             <ng-container matColumnDef="score">
-            <th mat-header-cell *matHeaderCellDef> Score </th>
-            <td mat-cell *matCellDef="let element"> {{element.score}} </td>
+                <th mat-header-cell *matHeaderCellDef>Score</th>
+                <td mat-cell *matCellDef="let element">{{ element.score }}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
-
     </mat-tab>
-  </mat-tab-group>
-
-
-  <button mat-raised-button color="primary" (click)="addScores()">Primary</button>
+</mat-tab-group>
