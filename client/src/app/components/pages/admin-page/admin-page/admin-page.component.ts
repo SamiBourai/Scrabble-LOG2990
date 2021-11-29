@@ -212,7 +212,6 @@ export class AdminPageComponent implements OnInit {
 
     add(event: MatChipInputEvent, level: string): void {
         const value = (event.value || '').trim();
-        // let array;
         if (level === 'beginner') {
             if (this.verifyValidity(value)) this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, value);
             this.getPlayersNamesBeg();
@@ -220,7 +219,6 @@ export class AdminPageComponent implements OnInit {
             if (this.verifyValidity(value)) this.addPlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, value);
             this.getPlayersNamesExp();
         }
-        // Clear the input value
         event.chipInput?.clear();
     }
 

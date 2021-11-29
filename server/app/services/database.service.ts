@@ -153,14 +153,16 @@ export class DatabaseService {
     async dictData(title: string, oldName?: string) {
         const testFolder = './assets/Dictionaries';
         const files = await readdir(testFolder);
-        let found = false;
-        files.map((dic) => {
-            if (dic === `${oldName}.json`) found = true;
-        });
-        if (found) {
-            console.log('11111111111111');
+        if (oldName) {
+            let found = false;
+            files.map((dic) => {
+                if (dic === `${oldName}.json`) found = true;
+            });
+            if (found) {
+                console.log('11111111111111');
 
-            await rename(`./assets/Dictionaries/${oldName}.json`, `./assets/Dictionaries/${title}.json`);
+                await rename(`./assets/Dictionaries/${oldName}.json`, `./assets/Dictionaries/${title}.json`);
+            }
         }
         const data = await readFile(`./assets/Dictionaries/${title}.json`);
         return JSON.parse(data.toString());
@@ -201,6 +203,7 @@ export class DatabaseService {
     async getChosenDic(chosenDictionary: string) {
         if (chosenDictionary === 'dictionnaire principal') this.validateWordService.chosenDic.length = 0;
         else this.validateWordService.chosenDic[0] = chosenDictionary;
+        await this.validateWordService.loadDictionary(this.validateWordService.chosenDic);
         console.log(this.validateWordService.chosenDic);
     }
 }
