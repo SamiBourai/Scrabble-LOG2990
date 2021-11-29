@@ -1,7 +1,7 @@
-<div class="container" fxLayout="row">
+<div class="d-flex justify-content-center" fxLayout="row">
     <app-play-area></app-play-area>
 
-    <div class="d-flex flex-column">
+    <div class="d-flex flex-column align-items-center">
         <app-scrable-log2990-modal *ngIf="objectifManagerService.log2990Mode"></app-scrable-log2990-modal>
         <app-sidebar id="sideBar" (click)="this.mouseHandlingService.clearAll()"></app-sidebar>
     </div>
