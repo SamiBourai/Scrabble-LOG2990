@@ -1,70 +1,91 @@
 <mat-card class="game-Configuration-Card">
     <mat-card-title>Joindre une partie</mat-card-title>
+    <mat-card-subtitle>Entrez les informations nécessaires afin de début de la partie :</mat-card-subtitle>
 </mat-card>
 <mat-stepper linear #stepper>
     <mat-step [stepControl]="firstFormGroup">
         <form [formGroup]="firstFormGroup">
-            <ng-template matStepLabel>Remplissez votre nom</ng-template>
-            <mat-form-field appearance="fill">
+            <ng-template matStepLabel>Informations</ng-template>
+            <mat-form-field appearance="outline">
                 <mat-label>Nom</mat-label>
-                <input #messageGuest matInput placeholder="Last name, First name"
-                    formControlName="guestFormControl" [(ngModel)]="playerName" required />
+                <input
+                    class="user-name-input"
+                    #messageGuest
+                    matInput
+                    placeholder="Ex. Sami1234"
+                    formControlName="guestFormControl"
+                    [(ngModel)]="playerName"
+                    required
+                    maxlength="15"
+                />
                 <mat-hint align="end"> {{ messageGuest.value?.length }} / 15</mat-hint>
 
-                <mat-hint class="no-error-hint" align="start"
-                    *ngIf="firstFormGroup.controls.guestFormControl.valid; else guestInputInvalid">
+                <mat-hint class="no-error-hint" align="start" *ngIf="firstFormGroup.controls.guestFormControl.valid">
                     &#9679; Le nom entré est valide !!! <br />
                 </mat-hint>
-                <ng-template #guestInputInvalid>
-                    <mat-hint align="start" class="error-hint">
-                        &#9679; Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! <br />
-                        &#9679; Le nom ne doit pas contenir d'espace <br />
-                        &#9679; Le nom doit avoir au min 8 caractere et max 15!! <br />
-                    </mat-hint>
-                </ng-template>
-
+                <mat-icon matSuffix mat-icon-button matTooltipPosition="right" [matTooltip]="toolTip" matTooltipClass="tooltip-list">info</mat-icon>
             </mat-form-field>
-            <br><br>
-            <hr>
-            <div>
-                <button mat-raised-button color="primary" matStepperNext>Suivant</button>
-            </div>
+            <p>
+                <mat-card-actions>
+                    <div class="button-group">
+                        <button mat-raised-button mat-dialog-close>Annuler</button>
+                        <button mat-raised-button matStepperNext>Suivant</button>
+                    </div>
+                </mat-card-actions>
+            </p>
         </form>
     </mat-step>
 
     <mat-step>
-        <ng-template matStepLabel>voir les parties</ng-template>
+        <ng-template matStepLabel>Parties</ng-template>
         <div *ngIf="!isEmptyRoom; else elseBlock">
             <div *ngIf="!roomJoined; else elseBlock">
-                <p class="multiplayerP">cliquez sur la partie que vous voulez rejoindre</p>
+                <mat-card-title>Cliquez sur la partie que vous voulez rejoindre</mat-card-title>
                 <table id="ht" align="center" width="400" class="table-striped table-hover">
                     <thead class="header">
-                        <th class="contentCell">nom du client</th>
-                        <th class="contentCell">nom de la partie</th>
+                        <th class="contentCell">Nom du joueur</th>
+                        <th class="contentCell">Nom de la partie</th>
                     </thead>
                     <tbody>
                         <tr *ngFor="let room of rooms">
-                            <td class="contentCell" (click)="joinGame(room)">{{ room.user?.name ?? 'default'}}</td>
+                            <td class="contentCell" (click)="joinGame(room)">{{ room.user?.name ?? 'default' }}</td>
                             <td class="contentCell" (click)="joinGame(room)">{{ room.gameName }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <ng-template #elseBlock>
-                <div *ngIf="!requestAccepted; else elseBlock">Le joueur n'a pas encore démarer la partie!</div>
+                <div *ngIf="!requestAccepted; else elseBlock">Le joueur n'a pas encore démarer la partie, veuillez patienter !!</div>
                 <ng-template #elseBlock>
-                    <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Rejoindre la
-                        partie</button>
+                    <p>
+                        <mat-card-actions
+                            ><div class="button-group">
+                                <button mat-raised-button color="primary" routerLink="/game" mat-dialog-close>Rejoindre la partie</button>
+                            </div>
+                        </mat-card-actions>
+                    </p>
                 </ng-template>
             </ng-template>
         </div>
         <ng-template #elseBlock>
-            <p class="multiplayerP">Il n'y a pas de partie en ce moment!</p>
+            <mat-card-subtitle>Il n'y a pas de partie en ce moment !!</mat-card-subtitle>
         </ng-template>
-        <div>
-            <br />
-            <button mat-button matStepperPrevious mat-raised-button color="accent">Retour</button>
-            <button *ngIf = "rooms?.length !== 0" id = "randomButton"  mat-button  mat-raised-button  color="accent" [disabled] = ' rooms?.length === 1 || disableBtn'  (click) = randomGame()>placement aleatoire</button>
-        </div>
+        <p>
+            <mat-card-actions
+                ><div class="button-group">
+                    <button mat-button matStepperPrevious mat-raised-button>Retour</button>
+                    <button
+                        *ngIf="rooms?.length !== 0"
+                        id="randomButton"
+                        mat-button
+                        mat-raised-button
+                        [disabled]="rooms?.length === 1 || disableBtn"
+                        (click)="randomGame()"
+                    >
+                        placement aleatoire
+                    </button>
+                </div>
+            </mat-card-actions>
+        </p>
     </mat-step>
 </mat-stepper>

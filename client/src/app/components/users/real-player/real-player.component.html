@@ -7,6 +7,6 @@
         <mat-card-subtitle class="score-time" *ngIf="this.userService.realUser.easel.getEaselSize() < 7">
             Lettre dans chevalet : {{ this.userService.realUser.easel.getEaselSize() }}</mat-card-subtitle
         >
-        <mat-card-subtitle class="score-time">Temps : {{ this.timeService.timeUser.min }}:{{ this.timeService.timeUser.sec }}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time">Temps : {{ this.timeService.timeUser.min | number: '2.0-0' }}:{{ this.timeService.timeUser.sec |  number: '2.0-0'}}</mat-card-subtitle>
     </mat-card-header>
 </mat-card>

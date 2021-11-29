@@ -28,6 +28,9 @@ export class SoloGameComponent implements OnInit {
     dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     updateDics: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     modes: string[] = MODES;
+    toolTip: string =
+        "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace (3) Le nom doit avoir au min 8 caractere et max 15";
+
     constructor(
         private dialogRef: MatDialog,
         public userService: UserService,

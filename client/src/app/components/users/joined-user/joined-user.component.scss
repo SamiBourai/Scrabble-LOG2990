@@ -1,7 +1,7 @@
 .card-not-playing {
     border: none !important;
     box-shadow: none !important;
-    background-color: #e5f7ed;
+    background-color: #312e2b;
 }
 
 .score-time {
@@ -11,14 +11,48 @@
 }
 
 .card-playing {
-    border: 4px solid black;
+    border: 2px solid black;
     border-color: rgb(0, 255, 21);
-    background-color: #e5e5f7;
-    border-radius: 10px;
 }
 
 ::ng-deep {
     .mat-card {
+        background-color: #312e2b;
+        color: #efefef;
+        border-radius: 10px;
+        margin-bottom: 8px;
         width: 260px;
+    }
+    .mat-form-field-label {
+        color: #efefef;
+    }
+    .mat-form-field.mat-focused .mat-form-field-label {
+        color: #efefef;
+    }
+    .mat-card-title {
+        color: #efefef;
+    }
+    .mat-card-subtitle {
+        color: #c0c0c0;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: #f1864d;
+    }
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+        color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent {
+        background-color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent.mat-button-disabled,
+    .mat-mini-fab.mat-button-disabled.mat-button-disabled {
+        background-color: #2e4052;
+    }
+    .mat-stepper-horizontal {
+        background-color: #312e2b;
+    }
+    .mat-progress-spinner circle,
+    .mat-spinner circle {
+        stroke: #ff5800;
     }
 }

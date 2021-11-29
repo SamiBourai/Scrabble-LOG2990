@@ -4,7 +4,6 @@ main {
 }
 
 mat-toolbar {
-
     position: sticky;
     top: 0;
     z-index: 1;
@@ -24,7 +23,6 @@ mat-toolbar {
     > * {
         margin-top: 20px;
     }
-
 }
 
 @media (min-width: 768px) {
@@ -46,7 +44,6 @@ mat-toolbar {
 }
 
 .banner {
-
     display: grid;
     grid-template-columns: 50px auto;
     justify-content: center;
@@ -55,11 +52,9 @@ mat-toolbar {
         display: flex;
         justify-content: center;
     }
-
 }
 
 .theme-selector {
-
     position: relative;
 
     .fav-icon {
@@ -73,10 +68,8 @@ mat-toolbar {
         justify-content: center;
         flex-wrap: wrap;
 
-        >* {
+        > * {
             margin: auto 10px;
         }
-
     }
-
 }

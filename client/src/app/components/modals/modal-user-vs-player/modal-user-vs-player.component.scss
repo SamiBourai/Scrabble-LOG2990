@@ -1,66 +1,88 @@
-
-.header-user-vs-player{
+.header-user-vs-player {
     text-align: center;
     font-weight: 500;
     font-size: 24px;
     color: #3f51b5;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
     pointer-events: auto;
 }
 
-.player-user-card{
+.player-user-card {
     border: none !important;
     box-shadow: none !important;
 }
 
-.mat-card-image{
-
+.mat-card-image {
     display: block;
-
 }
 
-.span-player{
+.span-player {
     text-align: center;
     color: var(--globalColorThemeFull);
     font-family: var(--globalSecondaryFont);
     font-weight: 800;
 }
 
-
-::ng-deep{
-    .mat-card>.mat-card{
-        background-color: #2E4052;
-        border: 3px solid #FF5800;
+::ng-deep {
+    .mat-card > .mat-card {
+        background-color: #2e4052;
+        border: 3px solid #ff5800;
         color: white;
         border-radius: 20px;
         width: 290px;
     }
-
 }
 
-.score-time{
+.mat-card-title {
+    color: #ff5800;
+}
+
+::ng-deep {
+    .mat-form-field-label {
+        color: #efefef;
+    }
+    .mat-form-field.mat-focused .mat-form-field-label {
+        color: #efefef;
+    }
+
+    .mat-card-subtitle {
+        color: #c0c0c0;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: #f1864d;
+    }
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+        color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent {
+        background-color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent.mat-button-disabled,
+    .mat-mini-fab.mat-button-disabled.mat-button-disabled {
+        background-color: #2e4052;
+    }
+}
+
+.score-time {
     font-size: 1rem;
     font-weight: 300;
     font-weight: bold;
 }
 
-
-.button-group{
-    margin-top: 10px;
+.button-group {
+    margin-top: 5px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    button{
+    button {
         width: 150px;
         border-radius: 20px;
     }
     button:last-child {
-        background-color: #2E4052;
+        background-color: #2e4052;
     }
-    button:last-child:enabled{
+    button:last-child:enabled {
         color: white;
     }
 }
-
-

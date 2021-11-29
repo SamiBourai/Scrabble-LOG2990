@@ -31,6 +31,7 @@
         "base64-arraybuffer": "^1.0.1",
         "bootstrap": "^5.1.1",
         "denque": "^2.0.1",
+        "file-saver": "^2.0.5",
         "font": "0.0.4",
         "font-awesome": "^4.7.0",
         "fzstd": "0.0.3",

@@ -247,6 +247,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 break;
         }
         if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
+
         this.userService.endOfGameCounter = 0;
         this.updateMessageArray(this.typeArea);
     }
@@ -284,6 +285,8 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
             }
         }
+        this.nameVr = this.userService.vrUser.name;
+        this.name = this.userService.realUser.name;
     }
     private showReserve() {
         if (this.isDebug) {

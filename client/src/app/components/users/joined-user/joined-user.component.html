@@ -1,3 +1,4 @@
+
 <mat-card class="card-not-playing" fxLayout="row" *ngIf="this.userService.realUser.turnToPlay; else elseBlock">
     <ngx-avatar class="avatar" size="50" name="{{ userService.joinedUser.name }}"></ngx-avatar>
     <mat-card-header>
@@ -7,7 +8,7 @@
         <mat-card-subtitle class="score-time" *ngIf="this.userService.joinedUser.easel.getEaselSize() < 7"
             >letter dans chevalet : {{ this.userService.joinedUser.easel.getEaselSize() }}</mat-card-subtitle
         >
-        <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeGuestPlayer.min }}:{{ this.timeService.timeGuestPlayer.sec }}</mat-card-subtitle>
+        <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeGuestPlayer.min | number: '2.0-0' }}:{{ this.timeService.timeGuestPlayer.sec | number: '2.0-0' }}</mat-card-subtitle>
     </mat-card-header>
 </mat-card>
 
@@ -18,10 +19,10 @@
             <mat-card-title>{{ userService.joinedUser.name }}</mat-card-title>
             <mat-card-subtitle>{{ userService.joinedUser.level }}</mat-card-subtitle>
             <mat-card-subtitle class="score-time">Score : {{ this.userService.joinedUser.score }}</mat-card-subtitle>
-            
+
             <mat-card-subtitle class="score-time"  *ngIf="this.userService.joinedUser.easel.getEaselSize() < 7"
                 >letter dans chevalet : {{ this.userService.joinedUser.easel.getEaselSize()}}</mat-card-subtitle>
-            <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeGuestPlayer.min }}:{{ this.timeService.timeGuestPlayer.sec }}</mat-card-subtitle>
+            <mat-card-subtitle class="score-time">temps : {{ this.timeService.timeGuestPlayer.min | number: '2.0-0' }}:{{ this.timeService.timeGuestPlayer.sec | number: '2.0-0' }}</mat-card-subtitle>
         </mat-card-header>
     </mat-card>
 </ng-template>

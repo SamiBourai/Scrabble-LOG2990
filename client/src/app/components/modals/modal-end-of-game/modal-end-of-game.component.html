@@ -1,24 +1,18 @@
 <mat-card class="modalEndGame">
     <mat-card-title>**La partie est terminé!**</mat-card-title>
-    <mat-card-subtitle></mat-card-subtitle>
 </mat-card>
 <div *ngIf="gotWinner; else elseBlock">
-        <header class="header-user-vs-player">Vous avez gagné la partie, car votre adversaire a abandonné!! </header>
+    <mat-card-title class="header-user-vs-player">Vous avez gagné la partie, car votre adversaire a abandonné!!</mat-card-title>
     <br />
     <br />
     <hr />
+    <p>
         <mat-card-actions>
-            <div class="btn-user-player">
-                <button mat-raised-button mat-dialog-close color="primary" 
-                    (click)="setIsUserQuitGame()">
-                    Retour à la page principale
-                </button>
-                <button mat-raised-button mat-dialog-close color="primary" 
-                    (click)="joinVrPlayer()">
-                    Continuer contre un JV
-                </button>
+            <div class="button-group">
+                <button mat-raised-button mat-dialog-close (click)="setIsUserQuitGame()">Retour à la page principale</button>
+                <button mat-raised-button mat-dialog-close (click)="joinVrPlayer()">Continuer contre le joueur virtuel</button>
             </div>
         </mat-card-actions>
-    </div>
+    </p>
+</div>
 <ng-template #elseBlock><button mat-raised-button color="accent" mat-dialog-close>Fermer</button></ng-template>
-

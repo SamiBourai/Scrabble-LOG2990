@@ -27,11 +27,6 @@ export class DatabaseService {
 
     constructor(private validateWordService: ValidWordService) {}
 
-    //   private options: MongoClientOptions = {
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true,
-    //   };
-
     async start(url: string = DATABASE_URL): Promise<MongoClient | null> {
         try {
             const client = await MongoClient.connect(url);
@@ -60,7 +55,6 @@ export class DatabaseService {
         return this.db;
     }
     async addNewScore(score: Score, collectionName: string): Promise<void> {
-        console.log('hey je suis la dedans');
         const scoreX: Score = { name: score.name, score: score.score };
         await this.db.collection(collectionName).insertOne(scoreX);
         // this.sortAllScores(collectionName);
@@ -109,45 +103,25 @@ export class DatabaseService {
         await this.db.collection(collectionName).deleteMany({});
     }
 
-    async fetchPlayer(collectionName: string): Promise<void> {
-        const arrayOfScoresPromises = await this.getAllPlayers(collectionName);
-        arrayOfScoresPromises.map((res: VirtualPlayer) => {
-            const returnedObj: VirtualPlayer = { name: res.name };
-            return returnedObj;
-        });
-    }
-
     async uploadFile(file: LoadableDictionary) {
-        console.log('0000000000000');
-
         const fileString = JSON.stringify(file);
         writeFile(`./assets/Dictionaries/${file.title}.json`, fileString, (err) => {
             if (err) throw err;
-            console.log('Results Received');
         });
         this.dictMetadata();
     }
 
     async deleteFile(fileName: string) {
-        console.log('File deleted');
         await unlink(`./assets/Dictionaries/${fileName}.json`);
     }
 
     async deleteAllFile() {
         const testFolder = './assets/Dictionaries';
-        console.log('11111111');
 
         const files = await readdir(testFolder);
         for (const file of files) {
-            console.log(file);
-
             await unlink(`./assets/Dictionaries/${file}`);
         }
-        // const paths = files.map((file) => `${testFolder}/${file}` as PathLike);
-        // paths.forEach((dic) => {
-        //     const a = paths.map(async (path) => readFile(path));
-        //     await unlink(`./assets/Dictionaries/${dic}.json`);
-        // });
     }
 
     async dictData(title: string, oldName?: string) {
@@ -182,7 +156,6 @@ export class DatabaseService {
             dict.words = [];
             return dict;
         });
-        // console.log(partialDicts);
         return partialDicts;
     }
     async deleteDuplicatedElement(arrayOfScores: Score[], collectionName: string) {
@@ -204,6 +177,5 @@ export class DatabaseService {
         if (chosenDictionary === 'dictionnaire principal') this.validateWordService.chosenDic.length = 0;
         else this.validateWordService.chosenDic[0] = chosenDictionary;
         await this.validateWordService.loadDictionary(this.validateWordService.chosenDic);
-        console.log(this.validateWordService.chosenDic);
     }
 }

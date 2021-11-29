@@ -52,7 +52,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
         private dialogRef: MatDialog,
         private multiplayer: MultiplayerModeService,
         private virtualPlayer: VirtualPlayerService,
-        private objectifManagerService: ObjectifManagerService,
+        public objectifManagerService: ObjectifManagerService,
         public reserveService: ReserveService,
         private socketManagerService: SocketManagementService,
         public virtualPlayerService: VirtualPlayerService,

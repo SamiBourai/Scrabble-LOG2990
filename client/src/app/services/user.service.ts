@@ -60,6 +60,8 @@ export class UserService {
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     firstMode: string = '';
 
+    isUserResetData: boolean;
+    isUserResetDataObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableCommandToSend = this.commandtoSendObs.asObservable();
         this.observablePlayed = this.playedObs.asObservable();
@@ -240,5 +242,9 @@ export class UserService {
         if (this.playMode === 'joinMultiplayerGame') {
             return this.joinedUser.name;
         } else return this.realUser.name;
+    }
+
+    get getIsUserResetDataObs(): BehaviorSubject<boolean> {
+        return this.isUserResetDataObs;
     }
 }

@@ -2,11 +2,11 @@
     position: relative;
     border: 1px solid black;
     overflow-y: auto;
-    width: 350px;
-    height: 500px;
+    width: 22rem;
+    height: 28.5rem;
     margin-top: 15px;
     // margin-bottom: 50%;=
-    background-color: #f3f3f3;
+    background-color: #312e2b;
     border-radius: 10px;
     box-shadow: 5px 5px 10px black;
 }
@@ -45,14 +45,14 @@ hr {
 #turn {
     color: red;
 }
-.command-help{
+.command-help {
     color: green;
     font-size: 15px;
     font-weight: bold;
 }
-.command-description{
-    color: black;
-    font-size: 20px;
+.command-description {
+    color: white;
+    font-size: 15px;
     font-weight: bold;
 }
 

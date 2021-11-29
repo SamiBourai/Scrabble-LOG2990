@@ -1,38 +1,59 @@
-img{
+img {
     width: 100px;
     height: 100px;
     margin: 20px;
 }
 
-p{
-    color: #EFEFEF;
+p {
+    color: #efefef;
     padding: 0px 15px;
 }
 
-.button{
+.button {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #2E4052;
+    background-color: #2e4052;
     border-radius: 20px;
 }
-.button:hover{
+.button:hover {
     background-color: #3d5369;
     cursor: pointer;
 }
 
-.button:nth-child(2){
+.button:nth-child(2) {
     margin-left: 15px;
     margin-right: 15px;
 }
 
-
-::ng-deep{
+::ng-deep {
     .mat-dialog-container {
-        background-color: #312E2B;
+        background-color: #312e2b;
         border-radius: 20px;
         display: flex;
         align-items: center;
+    }
+}
+
+::ng-deep {
+    .mat-card-title {
+        color: #ff5800;
+    }
+    .mat-card-subtitle {
+        color: #c0c0c0;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: #f1864d;
+    }
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+        color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent {
+        background-color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent.mat-button-disabled,
+    .mat-mini-fab.mat-button-disabled.mat-button-disabled {
+        background-color: #2e4052;
     }
 }

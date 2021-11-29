@@ -38,7 +38,7 @@ export class JoinedUserComponent implements OnInit {
 
             this.mutltiplayerModeService.playersLeftGamge();
             this.mutltiplayerModeService.playerLeftObs.subscribe((response) => {
-                if (response) {
+                if (response && !this.userService.endOfGame) {
                     this.dialogRef.open(ModalEndOfGameComponent, { disableClose: true });
                 }
             });

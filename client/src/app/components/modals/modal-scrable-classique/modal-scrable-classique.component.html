@@ -1,16 +1,21 @@
-<div class= "d-flex flex-row justify-content-center align-item-center menu" >
-    <div class="button" (click)="openDialog('soloGame')" mat-dialog-close>
-        <img src="../../../../assets/svg/robot.png" alt="robot-icon">
-        <p>Jouer contre un ordinateur</p>
-    </div>
+<div>
+    <mat-card-title>Mode Classique</mat-card-title> <br />
+    <mat-card-subtitle>Choisissez une des options suivantes :</mat-card-subtitle> <br />
+    <br />
+    <div class="d-flex flex-row justify-content-center align-item-center menu">
+        <div class="button" (click)="openDialog('soloGame')" mat-dialog-close>
+            <img src="../../../../assets/svg/robot.png" alt="robot-icon" />
+            <p>Jouer contre un ordinateur</p>
+        </div>
 
-    <div class="button" (click)="openDialog('createMultiplayerGame')" mat-dialog-close>
-        <img src="../../../../assets/svg/smart-human.png" alt="create-icon">
-        <p>Créer une partie multijoueur</p>
-    </div>
+        <div class="button" (click)="openDialog('createMultiplayerGame')" mat-dialog-close>
+            <img src="../../../../assets/svg/smart-human.png" alt="create-icon" />
+            <p>Créer une partie multijoueur</p>
+        </div>
 
-    <div class="button" (click)="openDialog('joinMultiplayerGame')" mat-dialog-close>
-        <img src="../../../../assets/svg/link.png" alt="robot-icon">
-        <p>Joindre une partie multijoueur</p>
+        <div class="button" (click)="openDialog('joinMultiplayerGame')" mat-dialog-close>
+            <img src="../../../../assets/svg/link.png" alt="robot-icon" />
+            <p>Joindre une partie multijoueur</p>
+        </div>
     </div>
 </div>

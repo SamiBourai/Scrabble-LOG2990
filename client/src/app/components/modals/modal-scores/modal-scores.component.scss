@@ -1,39 +1,81 @@
 table {
     width: 100%;
 }
-.mat-table{
+.mat-table {
     color: rgba(0, 0, 0, 0.87);
-    background-color: #312E2B;
+    background-color: #312e2b;
 }
 
-.mat-card-title{
+.mat-card-title {
     color: #ff5800;
 }
-.mat-card-subtitle{
-    color: #EFEFEF;
+.mat-card-subtitle {
+    color: #efefef;
     font-size: large;
 }
-
 
 .mat-tab-label {
-    color: #EFEFEF;
-    background-color: #312E2B;
+    color: #efefef;
+    background-color: #312e2b;
     font-size: large;
 }
-
 
 .mat-column-name {
     text-align: left;
     font-size: large;
-    color: #EFEFEF;
+    color: #efefef;
 }
 .mat-column-score {
     text-align: left;
     font-size: large;
-    color: #EFEFEF;
+    color: #efefef;
 }
-.mat-icon{
+.mat-icon {
     vertical-align: middle;
 }
 
+.mat-dialog-container {
+    background-color: #312e2b;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+}
 
+::ng-deep {
+    .mat-card {
+        background-color: #312e2b;
+        color: #efefef;
+    }
+    .mat-form-field-label {
+        color: #efefef;
+    }
+    .mat-form-field.mat-focused .mat-form-field-label {
+        color: #efefef;
+    }
+    .mat-card-title {
+        color: #efefef;
+    }
+    .mat-card-subtitle {
+        color: #c0c0c0;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        color: #f1864d;
+    }
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+        color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent {
+        background-color: #ff5800;
+    }
+    .mat-mini-fab.mat-accent.mat-button-disabled,
+    .mat-mini-fab.mat-button-disabled.mat-button-disabled {
+        background-color: #2e4052;
+    }
+    .mat-stepper-horizontal {
+        background-color: #312e2b;
+    }
+    .mat-progress-spinner circle,
+    .mat-spinner circle {
+        stroke: #ff5800;
+    }
+}

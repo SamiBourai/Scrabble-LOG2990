@@ -24,7 +24,10 @@ export class JoinMultiplayerGameComponent implements OnInit {
     requestAccepted: boolean = false;
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
-    disableBtn:boolean = false;
+    disableBtn: boolean = false;
+    toolTip: string =
+        "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace (3) Le nom doit avoir au min 8 caractere et max 15";
+
     constructor(
         public userService: UserService,
         private formBuilder: FormBuilder,
@@ -71,11 +74,9 @@ export class JoinMultiplayerGameComponent implements OnInit {
         });
     }
 
-    randomGame(){
+    randomGame() {
         const randomGame = this.rooms[Math.floor(Math.random() * this.rooms.length)];
         this.joinGame(randomGame);
-        console.log('salut')
         this.disableBtn = true;
     }
-
 }
