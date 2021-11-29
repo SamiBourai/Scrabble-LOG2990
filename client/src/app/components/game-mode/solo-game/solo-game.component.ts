@@ -10,7 +10,17 @@ import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
-import { DEFAULT_DICTIONNARY, DEFAULT_MODE, DEFAULT_TIME, LVL_JV, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from './../../../constants/constants';
+import {
+    DEFAULT_DICTIONNARY,
+    DEFAULT_MODE,
+    DEFAULT_TIME,
+    LVL_JV,
+    MAX_LENGTH,
+    MIN_LENGTH,
+    MODES,
+    TIME_CHOICE,
+    USER_NAME_RULES,
+} from './../../../constants/constants';
 
 @Component({
     selector: 'app-solo-game',
@@ -28,8 +38,9 @@ export class SoloGameComponent implements OnInit {
     dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     updateDics: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     modes: string[] = MODES;
-    toolTip: string =
-        "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace (3) Le nom doit avoir au min 8 caractere et max 15";
+    isDeleted: boolean = false;
+    isNextBtnClicked: boolean = false;
+    toolTip: string = USER_NAME_RULES;
 
     constructor(
         private dialogRef: MatDialog,
@@ -80,7 +91,6 @@ export class SoloGameComponent implements OnInit {
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.generateObjectifs('soloGame');
         this.getDictionnaries(this.dictionnaries);
         this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
-        console.log(this.chosenDictionnary);
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -112,17 +122,37 @@ export class SoloGameComponent implements OnInit {
         this.userService.isBonusBox = false;
     }
 
-    getDictionnaries(dictionnaryArray: DictionaryPresentation[]) {
+    getDictionnaries(dictionnaryArray: DictionaryPresentation[]): void {
         this.database.getMetaDictionary().subscribe((dictionnaries) => {
             for (const dic of dictionnaries) {
                 dictionnaryArray.push(dic);
             }
-            console.log(dictionnaryArray);
         });
     }
 
-    getDictionnariesDelete() {
-        // const dictionnaryNames = [];
+    selectedDictionnary(event: Event): void {
+        this.isDeleted = false;
+        const names = [];
+        this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
+        const updatedDictionnariesInString = localStorage.getItem('updateDics') as string;
+        const updatedDictionnaries: DictionaryPresentation[] = JSON.parse(updatedDictionnariesInString);
+        for (const dic of updatedDictionnaries) {
+            names.push(dic.title);
+        }
+
+        if (names.includes(this.chosenDictionnary)) {
+            // this.database.sendChosenDic(this.chosenDictionnary).subscribe();
+            this.snackBar.dismiss();
+        } else if (!names.includes(this.chosenDictionnary) && !this.isNextBtnClicked) {
+            this.isDeleted = true;
+            this.snackBar.open('Ce dictionnaire a ete supprimé', 'Fermer');
+        }
+    }
+    enableBtn(): void {
+        this.isNextBtnClicked = !this.isNextBtnClicked;
+    }
+
+    getDictionnariesDelete(): void {
         this.updateDics = [DEFAULT_DICTIONNARY];
         this.database.getMetaDictionary().subscribe((dictionnaries) => {
             for (const dic of dictionnaries) {
@@ -131,26 +161,5 @@ export class SoloGameComponent implements OnInit {
 
             localStorage.setItem('updateDics', JSON.stringify(this.updateDics));
         });
-        // for(const dic of this.updateDics){
-        //     dictionnaryNames.push(dic.title);
-        // }
-        // console.log(dictionnaryNames);
-    }
-
-    selectedDictionnary(event: Event): void {
-        const names = [];
-        this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
-        console.log(this.chosenDictionnary);
-        console.log(this.dictionnaries);
-        const updatedDictionnariesInString = localStorage.getItem('updateDics') as string;
-        const updatedDictionnaries: DictionaryPresentation[] = JSON.parse(updatedDictionnariesInString);
-        for (const dic of updatedDictionnaries) {
-            names.push(dic.title);
-        }
-        console.log(names);
-        if (names.includes(this.chosenDictionnary)) localStorage.setItem('chosenDictionnarySolo', this.chosenDictionnary);
-        else {
-            this.snackBar.open('Ce dictionnaire a ete supprime', 'Close');
-        }
     }
 }

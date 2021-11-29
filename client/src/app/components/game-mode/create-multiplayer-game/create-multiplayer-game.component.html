@@ -61,6 +61,15 @@
                 </div>
             </div>
 
+            <h3 style="margin-bottom: 0">Dictionnaires :</h3>
+       <div class = "form-group">
+           <select (change)="getDictionnariesDelete(); selectedDictionnary($event);" class = "form-control">
+               <option  *ngFor = "let d of dictionnaries">
+                   {{d.title}}
+               </option>
+           </select>
+       </div>
+
             <p>
                 <mat-card-actions>
                     <div class="button-group">
@@ -73,23 +82,10 @@
             </p>
             <hr />
 
-            <p><span class="multiplayerP">Dictionnaires :</span></p>
-       <div class = "form-group">
-           <select (change)="selectedDictionnary($event)" class = "form-control">
-               <option *ngFor = "let d of dictionnaries">
-                   {{d.title}}
-               </option>
-           </select>
-       </div>
-       <span class="multiplayerP">Vous avez séléctionner le dictionnaire </span> <b
-                class="multiplayerP-chosen"> {{chosenDictionnary}}</b>
+            
+      
 
-            <div>
-                <button mat-raised-button mat-dialog-close
-                    (click)="this.userService.isBonusBox=false">Annuler</button>
-                <button mat-raised-button color="primary" matStepperNext type="submit"
-                    [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid">Suivant</button>
-            </div>
+           
         </form>
     </mat-step>
 

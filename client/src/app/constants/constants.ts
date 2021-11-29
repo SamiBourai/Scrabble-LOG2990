@@ -25,7 +25,7 @@ export const LVL_JV: string[] = ['Expert', 'Normal'];
 export const EXPERT_NAMES: string[] = ['Tahanus-23000', 'WorldValidator', 'KoneQuePlacerSeulement'];
 export const DEFAULT_TIME = 1;
 export const DEFAULT_MODE = 1;
-export const DEFAULT_DICTIONNARY:DictionaryPresentation = { title: 'dictionnaire principal', description: 'le dictionnaire par defaut' };
+export const DEFAULT_DICTIONNARY: DictionaryPresentation = { title: 'dictionnaire principal', description: 'le dictionnaire par defaut' };
 // user-service
 export const FIRST_NAME = 'Bobby1234';
 export const SECOND_NAME = 'Martin1234';
@@ -254,20 +254,25 @@ export const NUMBER_OF_SENTENCE = 12;
 export const TWO_SECOND_INTERVAL = 2300;
 export const NUMBER_OF_OBJECTIFS = 8;
 export const NUMBER_OF_PUBLIC_OBJECTIFS = 2;
-export const FILL_BOX_DEFINITION = 'placé un mot dans les cases D4 D5 D6 D7 D8 : 50 points';
+export const FILL_BOX_DEFINITION = 'placer un mot dans les cases D4 D5 D6 D7 D8 : 50 points';
 export const PASS_4_TIMES_DEFINITION = 'passer son tour 4 fois de suite : 15 points';
 export const EXCHANGE_ALL_LETTERS_DEFINITION = 'échanger toutes les lettres du chevalet : 10 points';
-export const PLACE_X_OR_Z_DEFINITION = 'placé un mot contenant la lettre Z ou X : 40 points';
-export const PLACE_3_CONSONANTS_DEFINITION = 'placé un mot contenant un minimum de 3 consonnes : 10 points';
-export const WORD_TO_PLACE_DEFINITION = 'placé le mot "bonus" : 20 points';
-export const PLACE_IN_A1_DEFINITION = 'placé un mot a la position A1 : 50 points';
-export const PLACE_NUMBER_DEFINITION = 'placé le mot "deux" ou "trois" : x-mots';
+export const PLACE_X_OR_Z_DEFINITION = 'placer un mot contenant la lettre Z ou X : 40 points';
+export const PLACE_3_CONSONANTS_DEFINITION = 'placer un mot contenant un minimum de 3 consonnes : 10 points';
+export const WORD_TO_PLACE_DEFINITION = 'placer le mot "bonus" : 20 points';
+export const PLACE_IN_A1_DEFINITION = 'placer un mot a la position A1 : 50 points';
+export const PLACE_NUMBER_DEFINITION = 'placer le mot "deux" ou "trois" : x-mots';
 export const BONUS_MULTIPLICATOR_2 = 2;
 export const BONUS_MULTIPLICATOR_3 = 3;
 export const PASS_TURN_OBJECTIF_CONDITION = 4;
 export const POSITION_FILL_BOX_CONDITION: Vec2 = { x: 4, y: 4 };
 export const WORD_LENGHT_FILL_BOX_CONDITION = 5;
 export const NUMBER_OF_CONSONNANT_CONDITION = 3;
+
+// userName
+export const USER_NAME_VALIDATION_1 = "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace";
+export const USER_NAME_VALIDATION_2 = ' (3) Le nom doit avoir au min 8 caractere et max 15';
+export const USER_NAME_RULES = USER_NAME_VALIDATION_1 + USER_NAME_VALIDATION_2;
 
 // COMPONENT SCORE
 export const MAX_TIME_SNACKBAR = 3000;

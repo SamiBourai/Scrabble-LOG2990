@@ -1,3 +1,5 @@
+import { USER_NAME_RULES } from './../../../constants/constants';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,8 +37,10 @@ export class CreateMultiplayerGameComponent implements OnInit {
     timeCounter: number = DEFAULT_TIME;
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     isOptional = false;
-    toolTip: string =
-        "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace (3) Le nom doit avoir au min 8 caractere et max 15";
+    isNextBtnClicked: boolean = false;
+    isDeleted: boolean = false;
+    updateDics: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
+    toolTip: string = USER_NAME_RULES;
 
     constructor(
         private dialogRef: MatDialog,
@@ -47,6 +51,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
         private multiplayerModeService: MultiplayerModeService,
         public objectifManagerService: ObjectifManagerService,
         private database: DatabaseService,
+        private snackBar: MatSnackBar,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
@@ -102,7 +107,6 @@ export class CreateMultiplayerGameComponent implements OnInit {
         });
         this.getDictionnaries();
         this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
-        console.log(this.chosenDictionnary);
     }
     randomBonusActivated(event: Event): void {
         this.chosenMode = (event.target as HTMLInputElement)?.value;
@@ -157,12 +161,40 @@ export class CreateMultiplayerGameComponent implements OnInit {
             for (const dic of dictionnaries) {
                 this.dictionnaries.push(dic);
             }
-            console.log(this.dictionnaries);
         });
     }
 
     selectedDictionnary(event: Event): void {
+        this.isDeleted = false;
+        const names = [];
         this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
-        this.database.sendChosenDic(this.chosenDictionnary).subscribe();
+        const updatedDictionnariesInString = localStorage.getItem('updateDics') as string;
+        const updatedDictionnaries: DictionaryPresentation[] = JSON.parse(updatedDictionnariesInString);
+        for (const dic of updatedDictionnaries) {
+            names.push(dic.title);
+        }
+
+        if (names.includes(this.chosenDictionnary)) {
+            this.database.sendChosenDic(this.chosenDictionnary).subscribe();
+            this.snackBar.dismiss();
+        } else if (!names.includes(this.chosenDictionnary) && !this.isNextBtnClicked) {
+            this.isDeleted = true;
+            this.snackBar.open('Ce dictionnaire a ete supprimé', 'Fermer');
+        }
+    }
+
+    enableBtn() {
+        this.isNextBtnClicked = !this.isNextBtnClicked;
+    }
+
+    getDictionnariesDelete() {
+        this.updateDics = [DEFAULT_DICTIONNARY];
+        this.database.getMetaDictionary().subscribe((dictionnaries) => {
+            for (const dic of dictionnaries) {
+                this.updateDics.push(dic);
+            }
+
+            localStorage.setItem('updateDics', JSON.stringify(this.updateDics));
+        });
     }
 }

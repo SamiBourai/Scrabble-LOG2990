@@ -73,7 +73,7 @@
                 </div>
             </div>
             <!-- <button (click) = getDictionnaries()>allo</button> -->
-            <p><span class="multiplayerP">Dictionnaires :</span></p>
+            <h3 style="margin-bottom: 0;color:white">Dictionnaires :</h3>
             <div class="form-group">
                 <select (change)="getDictionnariesDelete(); selectedDictionnary($event)" class="form-control">
                     <option *ngFor="let d of dictionnaries">
@@ -86,7 +86,7 @@
                 <mat-card-actions>
                     <div class="button-group">
                         <button mat-raised-button mat-dialog-close (click)="this.userService.isBonusBox = false">Annuler</button>
-                        <button mat-raised-button [disabled]="userFormGroup.controls.userName.invalid" mat-dialog-close type="submit">Suivant</button>
+                        <button mat-raised-button (click) = "enableBtn();" [disabled]="userFormGroup.controls.userName.invalid || isDeleted === true" mat-dialog-close type="submit">Suivant</button>
                     </div>
                 </mat-card-actions>
             </p>

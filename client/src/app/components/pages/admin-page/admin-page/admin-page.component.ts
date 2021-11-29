@@ -112,7 +112,7 @@ export class AdminPageComponent implements OnInit {
                     });
                 } else {
                     element.title = oldName;
-                    this.snackBar.open('Ce nom est deja utilisé', 'Close');
+                    this.snackBar.open('Ce nom est deja utilisé', 'Fermer');
                 }
             }
 
@@ -139,7 +139,7 @@ export class AdminPageComponent implements OnInit {
         });
     }
 
-    getDictionaries() {
+    getDictionaries(): void {
         const dictionaryObs: Observable<LoadableDictionary[]> = this.database.getMetaDictionary();
         dictionaryObs.subscribe((data) => {
             data.forEach((dic) => {
@@ -157,7 +157,7 @@ export class AdminPageComponent implements OnInit {
         });
     }
 
-    setToArrayString(tab: Set<string>[]) {
+    setToArrayString(tab: Set<string>[]): string[] {
         const strArray = [];
         for (const element of tab) {
             for (const item of element) {
@@ -167,7 +167,7 @@ export class AdminPageComponent implements OnInit {
         return strArray;
     }
 
-    onFileSelected() {
+    onFileSelected(): void {
         const files = this.fileInput.nativeElement.files;
         if (files === null) {
             return;
@@ -178,7 +178,7 @@ export class AdminPageComponent implements OnInit {
             if (this.validateJson(possibleResult) && typeof possibleResult === 'string') {
                 const dictionnary = ValidWordService.loadableDictToDict(JSON.parse(possibleResult));
                 this.arrayOfDictionnaries.push(dictionnary as unknown as LoadableDictionary);
-                this.snackBar.open('Téléversement réussi', 'Close');
+                this.snackBar.open('Téléversement réussi', 'Fermer');
 
                 if (!this.isSameDictionnaryName(dictionnary.title, this.dataSource)) {
                     this.dataSource.push({ title: dictionnary.title, description: dictionnary.description });
@@ -190,18 +190,18 @@ export class AdminPageComponent implements OnInit {
                         } as unknown as LoadableDictionary)
                         .subscribe();
                 } else {
-                    this.snackBar.open('Ce nom est deja utilisé', 'Close');
+                    this.snackBar.open('Ce nom est deja utilisé', 'Fermer');
                 }
                 this.table.renderRows();
             } else {
-                this.snackBar.open('Veuillez séléctionner un fichier JSON', 'Close');
+                this.snackBar.open('Veuillez séléctionner un fichier JSON', 'Fermer');
             }
         };
 
         reader.readAsText(files[0], 'UTF-8');
     }
 
-    download(dictionnary: LoadableDictionary) {
+    download(dictionnary: LoadableDictionary): void {
         this.database.getDictionary(dictionnary.title).subscribe((dic: LoadableDictionary) => {
             const strDictionnary = JSON.stringify(dic);
             const blob = new Blob([strDictionnary as unknown as ArrayBuffer], { type: 'text/json; charset=utf-8' });
@@ -293,7 +293,7 @@ export class AdminPageComponent implements OnInit {
         return true;
     }
 
-    private isSameDictionnaryName(name: string, tableName: DictionaryPresentation[]) {
+    private isSameDictionnaryName(name: string, tableName: DictionaryPresentation[]): boolean {
         const dictionnatyNames: string[] = [];
         for (const dic of tableName) {
             dictionnatyNames.push(dic.title);
