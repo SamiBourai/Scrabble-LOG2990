@@ -13,7 +13,6 @@ import { ReserveService } from '@app/services/reserve.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
-import { ValidWordService } from '@app/services/valid-word.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 import { Subscription } from 'rxjs';
 
@@ -48,7 +47,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
         private readonly lettersService: LettersService,
         readonly easelLogisticsService: EaselLogiscticsService,
         public userService: UserService,
-        private readonly pvs: ValidWordService,
         private dialogRef: MatDialog,
         private multiplayer: MultiplayerModeService,
         private virtualPlayer: VirtualPlayerService,
@@ -68,9 +66,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
         } else {
             this.multiplayer.getJoinReserve();
         }
-        this.pvs.loadDictionary().then(() => {
-            // promise to fill dictionnary
-        });
     }
     @HostListener('window:keydown', ['$event'])
     spaceEvent(event: KeyboardEvent) {

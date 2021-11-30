@@ -9,6 +9,7 @@ import { DatabaseService } from '@app/services/database.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
+import { ValidWordService } from '@app/services/valid-word.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 import {
     DEFAULT_DICTIONNARY,
@@ -50,6 +51,7 @@ export class SoloGameComponent implements OnInit {
         private objectifManagerService: ObjectifManagerService,
         private database: DatabaseService,
         private snackBar: MatSnackBar,
+        private validWordService: ValidWordService,
     ) {}
 
     @HostListener('document:click.minusBtn', ['$eventX'])
@@ -141,7 +143,8 @@ export class SoloGameComponent implements OnInit {
         }
 
         if (names.includes(this.chosenDictionnary)) {
-            // this.database.sendChosenDic(this.chosenDictionnary).subscribe();
+            if (this.chosenDictionnary === 'dictionnaire principal') this.validWordService.loadDictionary();
+            else this.validWordService.loadDictionary(this.chosenDictionnary);
             this.snackBar.dismiss();
         } else if (!names.includes(this.chosenDictionnary) && !this.isNextBtnClicked) {
             this.isDeleted = true;

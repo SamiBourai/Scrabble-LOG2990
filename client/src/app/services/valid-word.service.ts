@@ -19,6 +19,7 @@ export class ValidWordService {
     isWordValid: boolean = false;
     usedWords = new Map<string, Vec2[]>();
     private readonly utf8Decoder = new TextDecoder('UTF-8');
+    private readonly SEND_URL_GET_DICTIONARY: string = 'http://localhost:3000/api/database/dictionary';
 
     private dictionary: Dictionary;
 
@@ -26,10 +27,6 @@ export class ValidWordService {
 
     static loadableDictToDict({ title, description, words }: LoadableDictionary) {
         const letterIndexes = new Array<number[]>();
-
-        // Diviser les mots en differentes lites selon leur premieres
-        // lettres en utilisant l'indice.
-        // On suppose que les mots sont en ordres alphabetiques
         let tailLetter = words[0].charCodeAt(0);
         let tail = 0;
         for (let head = 0; head < words.length; ++head) {
@@ -41,12 +38,22 @@ export class ValidWordService {
             }
         }
         letterIndexes.push([tail, words.length]);
-
+        console.log({ title, description, words: letterIndexes.map(([t, h]) => new Set(words.slice(t, h))) } as Dictionary);
         return { title, description, words: letterIndexes.map(([t, h]) => new Set(words.slice(t, h))) } as Dictionary;
     }
 
-    async loadDictionary() {
-        const loadableDictionaryObs = this.getLoadableDictionary();
+    getDictionary(title: string, oldName?: string): Observable<LoadableDictionary> {
+        const fullUrl = this.SEND_URL_GET_DICTIONARY + '/' + title + '/' + (oldName ?? '');
+        return this.http.get<LoadableDictionary>(fullUrl);
+    }
+
+    async loadDictionary(title?: string) {
+        let loadableDictionaryObs: Observable<LoadableDictionary>;
+        if (title) {
+            loadableDictionaryObs = this.getDictionary(title);
+        } else {
+            loadableDictionaryObs = this.getLoadableDictionary();
+        }
         const loadableDictionary = await loadableDictionaryObs.toPromise();
         this.dictionary = ValidWordService.loadableDictToDict(loadableDictionary);
     }
