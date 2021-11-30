@@ -156,7 +156,7 @@ export class ValidWordService {
         return matchWords;
     }
 
-    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand, playMode: string): number {
+    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand, playMode: string, newMap?: boolean): number {
         // create copy of board
         const usedPositionLocal = new Array<Letter[]>(NB_TILES);
         for (let i = 0; i < usedPositionLocal.length; i++) {
@@ -188,7 +188,9 @@ export class ValidWordService {
                 if (exists) {
                     // do nothing
                 } else {
-                    this.usedWords.set(this.fromLettersToString(array), arrayPosition);
+                    if (newMap) {
+                        // do nothing
+                    } else this.usedWords.set(this.fromLettersToString(array), arrayPosition);
                     totalPointsSum += this.wps.pointsWord(array, arrayPosition);
                 }
             } else {
@@ -199,7 +201,9 @@ export class ValidWordService {
         }
 
         if (this.verifyWord(this.letterService.fromWordToLetters(command.word), playMode)) {
-            this.usedWords.set(command.word, positionsWordCommand);
+            if (newMap) {
+                // do nothing
+            } else this.usedWords.set(command.word, positionsWordCommand);
             const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand);
             totalPointsSum += wordItselfPoints;
             return totalPointsSum;
