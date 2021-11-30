@@ -166,7 +166,7 @@ export class AdminPageComponent implements OnInit {
 
     deleteDic(dictionary: LoadableDictionary) {
         this.database.deleteDictionary(dictionary).subscribe(() => {
-            const index = this.dataSource.indexOf({ title: dictionary.title, description: dictionary.description });
+            const index = this.dataSource.indexOf(dictionary);
             console.log(index);
             this.dataSource.splice(index, 1);
             this.table.renderRows();
