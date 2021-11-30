@@ -287,7 +287,7 @@ export class ValidWordService {
 
         // check left side
 
-        while (currentPosition !== undefined && currentPosition.x >= MIN_LINES) {
+        while (currentPosition !== undefined && currentPosition.x > MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== NOT_A_LETTER) {
                 array.unshift(currentLetter);
@@ -321,7 +321,7 @@ export class ValidWordService {
         counter = 0;
 
         // check top side
-        while (currentPosition !== undefined && currentPosition.y >= MIN_LINES) {
+        while (currentPosition !== undefined && currentPosition.y > MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== NOT_A_LETTER) {
                 array.unshift(currentLetter);

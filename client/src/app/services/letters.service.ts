@@ -125,15 +125,15 @@ export class LettersService {
             if (
                 command.direction === 'h' &&
                 (!this.tileIsEmpty({ x: command.position.x + i, y: command.position.y }) ||
-                    (command.position.y - 1 < NB_TILES ? !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y + 1 }) : true) ||
-                    (command.position.y - 1 !== 0 ? !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y - 1 }) : true))
+                    (command.position.y - 1 < NB_TILES ? !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y + 1 }) : false) ||
+                    (command.position.y - 1 > 0 ? !this.tileIsEmpty({ x: command.position.x + i, y: command.position.y - 1 }) : false))
             )
                 return true;
             if (
                 command.direction === 'v' &&
                 (!this.tileIsEmpty({ x: command.position.x, y: command.position.y + i }) ||
-                    (command.position.x - 1 < NB_TILES ? !this.tileIsEmpty({ x: command.position.x - 1, y: command.position.y + i }) : true) ||
-                    (command.position.x - 1 !== 0 ? !this.tileIsEmpty({ x: command.position.x + 1, y: command.position.y + i }) : true))
+                    (command.position.x - 1 < NB_TILES ? !this.tileIsEmpty({ x: command.position.x - 1, y: command.position.y + i }) : false) ||
+                    (command.position.x - 1 > 0 ? !this.tileIsEmpty({ x: command.position.x + 1, y: command.position.y + i }) : false))
             )
                 return true;
         }
