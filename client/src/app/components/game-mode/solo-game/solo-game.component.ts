@@ -35,7 +35,7 @@ export class SoloGameComponent implements OnInit {
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
     lvls: string[] = LVL_JV;
     chosenMode: string = MODES[DEFAULT_MODE];
-    chosenDictionnary: string = DEFAULT_DICTIONNARY.title;
+    chosenDictionnary: string = '---- Selectionnez un dictionnaire ----';
     dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     updateDics: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     modes: string[] = MODES;
@@ -92,7 +92,6 @@ export class SoloGameComponent implements OnInit {
         });
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.generateObjectifs('soloGame');
         this.getDictionnaries(this.dictionnaries);
-        this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
     }
     openDialogOfVrUser(): void {
         this.dialogRef.open(ModalUserVsPlayerComponent);
@@ -144,13 +143,18 @@ export class SoloGameComponent implements OnInit {
 
         if (names.includes(this.chosenDictionnary)) {
             if (this.chosenDictionnary === 'dictionnaire principal') this.validWordService.loadDictionary();
-            else this.validWordService.loadDictionary(this.chosenDictionnary);
+            else if (this.chosenDictionnary === '---- Selectionnez un dictionnaire ----') {
+                this.snackBar.open('Veuillez choisir un dictionnaire', 'Fermer');
+                this.isDeleted = false;
+            } else this.validWordService.loadDictionary(this.chosenDictionnary);
             this.snackBar.dismiss();
-        } else if (!names.includes(this.chosenDictionnary) && !this.isNextBtnClicked) {
+        } else if (
+            !names.includes(this.chosenDictionnary) &&
+            !this.isNextBtnClicked &&
+            this.chosenDictionnary !== '---- Selectionnez un dictionnaire ----'
+        ) {
             this.isDeleted = true;
             this.snackBar.open('Ce dictionnaire a ete supprimé', 'Fermer');
-            console.log('dsjo');
-            
         }
     }
     enableBtn(): void {

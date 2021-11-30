@@ -1,8 +1,7 @@
-import { USER_NAME_RULES } from './../../../constants/constants';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { DictionaryPresentation } from '@app/classes/dictionary';
 import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
@@ -14,6 +13,7 @@ import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
+import { USER_NAME_RULES } from './../../../constants/constants';
 
 @Component({
     selector: 'app-create-multiplayer-game',
@@ -32,7 +32,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
     gameName: string = '';
     modes: string[] = MODES;
     chosenMode: string = MODES[DEFAULT_MODE];
-    chosenDictionnary: string = DEFAULT_DICTIONNARY.title;
+    chosenDictionnary: string = '---- Selectionnez un dictionnaire ----';
     dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     timeCounter: number = DEFAULT_TIME;
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
@@ -106,7 +106,6 @@ export class CreateMultiplayerGameComponent implements OnInit {
             this.multiplayerModeService.setGuestPlayerInfromation(this.guestName);
         });
         this.getDictionnaries();
-        this.chosenDictionnary = DEFAULT_DICTIONNARY.title;
     }
     randomBonusActivated(event: Event): void {
         this.chosenMode = (event.target as HTMLInputElement)?.value;
@@ -175,9 +174,16 @@ export class CreateMultiplayerGameComponent implements OnInit {
         }
 
         if (names.includes(this.chosenDictionnary)) {
-            this.database.sendChosenDic(this.chosenDictionnary).subscribe();
+            if (this.chosenDictionnary === '---- Selectionnez un dictionnaire ----') {
+                this.snackBar.open('Veuillez choisir un dictionnaire', 'Fermer');
+                this.isDeleted = false;
+            } else this.database.sendChosenDic(this.chosenDictionnary).subscribe();
             this.snackBar.dismiss();
-        } else if (!names.includes(this.chosenDictionnary) && !this.isNextBtnClicked) {
+        } else if (
+            !names.includes(this.chosenDictionnary) &&
+            !this.isNextBtnClicked &&
+            this.chosenDictionnary !== '---- Selectionnez un dictionnaire ----'
+        ) {
             this.isDeleted = true;
             this.snackBar.open('Ce dictionnaire a ete supprimé', 'Fermer');
         }

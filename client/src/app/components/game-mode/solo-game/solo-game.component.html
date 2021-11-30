@@ -72,9 +72,10 @@
                     </label>
                 </div>
             </div>
-            <h3 style="margin-bottom: 0;color:white">Dictionnaires :</h3>
+            <h3 style="margin-bottom: 0; color: white">Dictionnaires :</h3>
             <div class="form-group">
-                <select (change)="getDictionnariesDelete(); selectedDictionnary($event)" class="form-control">
+                <select (load)="selectedDictionnary($event)" (change)="getDictionnariesDelete(); selectedDictionnary($event)" class="form-control">
+                    <option selected="selected">---- Selectionnez un dictionnaire ----</option>
                     <option *ngFor="let d of dictionnaries">
                         {{ d.title }}
                     </option>
@@ -85,7 +86,19 @@
                 <mat-card-actions>
                     <div class="button-group">
                         <button mat-raised-button mat-dialog-close (click)="this.userService.isBonusBox = false">Annuler</button>
-                        <button mat-raised-button (click) = "enableBtn();" [disabled]="userFormGroup.controls.userName.invalid || isDeleted === true" mat-dialog-close type="submit">Suivant</button>
+                        <button
+                            mat-raised-button
+                            (click)="enableBtn()"
+                            [disabled]="
+                                userFormGroup.controls.userName.invalid ||
+                                isDeleted === true ||
+                                chosenDictionnary === '---- Selectionnez un dictionnaire ----'
+                            "
+                            mat-dialog-close
+                            type="submit"
+                        >
+                            Suivant
+                        </button>
                     </div>
                 </mat-card-actions>
             </p>

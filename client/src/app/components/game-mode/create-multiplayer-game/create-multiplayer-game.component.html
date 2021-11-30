@@ -62,30 +62,36 @@
             </div>
 
             <h3 style="margin-bottom: 0">Dictionnaires :</h3>
-       <div class = "form-group">
-           <select (change)="getDictionnariesDelete(); selectedDictionnary($event);" class = "form-control">
-               <option  *ngFor = "let d of dictionnaries">
-                   {{d.title}}
-               </option>
-           </select>
-       </div>
+            <div class="form-group">
+                <select (change)="getDictionnariesDelete(); selectedDictionnary($event)" class="form-control">
+                    <option selected="selected">---- Selectionnez un dictionnaire ----</option>
+                    <option *ngFor="let d of dictionnaries">
+                        {{ d.title }}
+                    </option>
+                </select>
+            </div>
 
             <p>
                 <mat-card-actions>
                     <div class="button-group">
                         <button mat-raised-button mat-dialog-close (click)="this.userService.isBonusBox = false">Annuler</button>
-                        <button mat-raised-button (click) = "enableBtn();" [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid || isDeleted === true" matStepperNext type="submit">
+                        <button
+                            mat-raised-button
+                            (click)="enableBtn()"
+                            [disabled]="
+                                firstFormGroup.controls.userNameMutiplayer.invalid ||
+                                isDeleted === true ||
+                                chosenDictionnary === '---- Selectionnez un dictionnaire ----'
+                            "
+                            matStepperNext
+                            type="submit"
+                        >
                             Suivant
                         </button>
                     </div>
                 </mat-card-actions>
             </p>
             <hr />
-
-            
-      
-
-           
         </form>
     </mat-step>
 
