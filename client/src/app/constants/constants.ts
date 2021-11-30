@@ -44,7 +44,7 @@ export const SIX_TURN = 6;
 // word-point-service
 export const BONUS_WORD_LENGTH = 7;
 export const BONUS_POINTS_50 = 25;
-export const MAX_LINES = 15;
+export const MAX_LINES = 14;
 export const MIN_LINES = 0;
 export const UNDEFINED_INDEX = -1;
 // grid-service
