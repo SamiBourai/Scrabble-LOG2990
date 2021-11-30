@@ -1,4 +1,3 @@
-import { DialogUpdatePlayerComponent } from './../../../modals/dialog-update-player/dialog-update-player.component';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,6 +29,7 @@ import { ValidWordService } from '@app/services/valid-word.service';
 import { saveAs } from 'file-saver';
 import { Observable } from 'rxjs';
 import { DictionaryPresentation, LoadableDictionary } from './../../../../classes/dictionary';
+import { DialogUpdatePlayerComponent } from './../../../modals/dialog-update-player/dialog-update-player.component';
 
 const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal', description: 'le dictionnaire par defaut' }];
 
@@ -167,6 +167,7 @@ export class AdminPageComponent implements OnInit {
     deleteDic(dictionary: LoadableDictionary) {
         this.database.deleteDictionary(dictionary).subscribe(() => {
             const index = this.dataSource.indexOf({ title: dictionary.title, description: dictionary.description });
+            console.log(index);
             this.dataSource.splice(index, 1);
             this.table.renderRows();
         });
