@@ -149,6 +149,8 @@ export class SoloGameComponent implements OnInit {
         } else if (!names.includes(this.chosenDictionnary) && !this.isNextBtnClicked) {
             this.isDeleted = true;
             this.snackBar.open('Ce dictionnaire a ete supprimé', 'Fermer');
+            console.log('dsjo');
+            
         }
     }
     enableBtn(): void {

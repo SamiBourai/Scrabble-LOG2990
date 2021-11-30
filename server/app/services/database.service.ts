@@ -35,7 +35,6 @@ export class DatabaseService {
         } catch {
             throw new Error('Database connection error');
         }
-        // this.addNewScore();
         return this.client;
     }
     async closeConnection(): Promise<void> {
@@ -99,6 +98,11 @@ export class DatabaseService {
         await this.db.collection(collectionName).deleteOne(player);
     }
 
+    async updatePlayer(collectionName: string, playerName: string, newPlayerName: string): Promise<void> {
+        const player: VirtualPlayer = { name: playerName };
+        await this.db.collection(collectionName).updateOne(player, { $set: { name: newPlayerName } });
+    }
+
     async removeAllPlayer(collectionName: string): Promise<void> {
         await this.db.collection(collectionName).deleteMany({});
     }
@@ -133,8 +137,6 @@ export class DatabaseService {
                 if (dic === `${oldName}.json`) found = true;
             });
             if (found) {
-                console.log('11111111111111');
-
                 await rename(`./assets/Dictionaries/${oldName}.json`, `./assets/Dictionaries/${title}.json`);
             }
         }

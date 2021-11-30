@@ -1,3 +1,4 @@
+import { DialogUpdatePlayerComponent } from './../../../modals/dialog-update-player/dialog-update-player.component';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
@@ -51,8 +52,6 @@ export class AdminPageComponent implements OnInit {
     arrayOfDictionnaries: LoadableDictionary[] = [];
     errorMessage: boolean = false;
 
-    index = 0;
-
     constructor(
         public userService: UserService,
         public database: DatabaseService,
@@ -81,19 +80,36 @@ export class AdminPageComponent implements OnInit {
         });
     }
 
-    updateRowData(element: DictionaryPresentation) {
+    openDialogPlayer(level: string, obj: string): void {
+        const dialogRef = this.dialog.open(DialogUpdatePlayerComponent, {
+            width: '250px',
+            data: obj,
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            const oldName = localStorage.getItem('oldPlayer') as string;
+            const newName = localStorage.getItem('newPlayer') as string;
+            if (level === 'beginner') {
+                if (this.verifyValidity(newName)) this.updatePlayerToDatabase(DATABASE_COLLECTION_VRNAMESBEG, oldName, newName);
+                this.getPlayersNamesBeg();
+            } else if (level === 'expert') {
+                if (this.verifyValidity(newName)) this.updatePlayerToDatabase(DATABASE_COLLECTION_VRNAMESEXP, oldName, newName);
+                this.getPlayersNamesExp();
+            }
+        });
+    }
+
+    updateRowData(element: DictionaryPresentation): void {
         const minusOne = -1;
         let oldName = localStorage.getItem('dic') as string;
         oldName = oldName.slice(1, minusOne);
         const tableName: DictionaryPresentation[] = [];
-
         this.dataSource = this.dataSource.filter((value) => {
             if (value.title === element.title || value.description === element.description) {
                 if (!this.isSameDictionnaryName(value.title, tableName)) {
                     for (const i of this.dataSource) {
                         tableName.push(i);
                     }
-
                     const dictionaryObs: Observable<LoadableDictionary> = this.database.getDictionary(element.title, oldName);
 
                     dictionaryObs.subscribe((data) => {
@@ -120,9 +136,8 @@ export class AdminPageComponent implements OnInit {
         });
     }
 
-    getPlayersNamesBeg() {
+    getPlayersNamesBeg(): void {
         const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESBEG);
-        // this.userService.vrPlayerNamesBeginner
         vrPlayerObs.subscribe((data) => {
             this.userService.vrPlayerNamesBeginner[1] = data.map((e) => {
                 return e.name;
@@ -130,7 +145,7 @@ export class AdminPageComponent implements OnInit {
         });
     }
 
-    getPlayersNamesExp() {
+    getPlayersNamesExp(): void {
         const vrPlayerObs: Observable<VirtualPlayer[]> = this.database.getAllPlayers(DATABASE_COLLECTION_VRNAMESEXP);
         vrPlayerObs.subscribe((data) => {
             this.userService.vrPlayerNamesExpert[1] = data.map((e) => {
@@ -292,7 +307,6 @@ export class AdminPageComponent implements OnInit {
         }
         return true;
     }
-
     private isSameDictionnaryName(name: string, tableName: DictionaryPresentation[]): boolean {
         const dictionnatyNames: string[] = [];
         for (const dic of tableName) {
@@ -301,7 +315,6 @@ export class AdminPageComponent implements OnInit {
         if (!dictionnatyNames.includes(name)) return false;
         return true;
     }
-
     private validateJson(data: string) {
         try {
             JSON.parse(data);
@@ -317,7 +330,13 @@ export class AdminPageComponent implements OnInit {
             this.getPlayersNamesExp();
         });
     }
-
+    private updatePlayerToDatabase(collectionName: string, oldPlayerName: string, newPlayerName: string): void {
+        const updatePlayerObs: Observable<number> = this.database.updatePlayer(collectionName, oldPlayerName, newPlayerName) as Observable<number>;
+        updatePlayerObs.subscribe(() => {
+            this.getPlayersNamesBeg();
+            this.getPlayersNamesExp();
+        });
+    }
     private openSnackBar(message: string, action: string): void {
         this.snackBar.open(message, action, { duration: MAX_TIME_SNACKBAR });
     }

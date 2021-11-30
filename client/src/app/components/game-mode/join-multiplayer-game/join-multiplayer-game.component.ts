@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageServer } from '@app/classes/message-server';
-import { MAX_LENGTH, MIN_LENGTH, ONE_SECOND_MS } from '@app/constants/constants';
+import { MAX_LENGTH, MIN_LENGTH, ONE_SECOND_MS, USER_NAME_RULES } from '@app/constants/constants';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
@@ -25,8 +25,7 @@ export class JoinMultiplayerGameComponent implements OnInit {
     isEmptyRoom: boolean = true;
     roomJoined: boolean = false;
     disableBtn: boolean = false;
-    toolTip: string =
-        "(1) Le nom ne doit pas comporter de caractère speciaux, Ex: #@*...! (2) Le nom ne doit pas contenir d'espace (3) Le nom doit avoir au min 8 caractere et max 15";
+    toolTip: string = USER_NAME_RULES;
 
     constructor(
         public userService: UserService,

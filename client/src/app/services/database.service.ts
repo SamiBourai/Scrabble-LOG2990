@@ -28,6 +28,7 @@ export class DatabaseService {
     private readonly GET_URL_ALL_PLAYERS: string = 'http://localhost:3000/api/database/vrNames';
     private readonly SEND_URL_ADD_PLAYER: string = 'http://localhost:3000/api/database/addPlayer';
     private readonly SEND_URL_REMOVE_PLAYER: string = 'http://localhost:3000/api/database/removePlayer';
+    private readonly SEND_URL_UPDATE_PLAYER: string = 'http://localhost:3000/api/database/updatePlayer';
     private readonly SEND_URL_REMOVE_ALL_PLAYER: string = 'http://localhost:3000/api/database/removeAllPlayer';
     private readonly SEND_URL_UPLOAD_DICTIONARY: string = 'http://localhost:3000/api/database/upload';
     private readonly SEND_URL_GET_DICTIONARY: string = 'http://localhost:3000/api/database/dictionary';
@@ -75,6 +76,15 @@ export class DatabaseService {
     removePlayer(collectionName: string, player: string): Observable<number> {
         const fullUrl = this.SEND_URL_REMOVE_PLAYER + '/' + collectionName + '/' + player;
         return this.http.delete<number>(fullUrl).pipe(
+            catchError((error: HttpErrorResponse) => {
+                return of(error.status);
+            }),
+        );
+    }
+
+    updatePlayer(collectionName: string, player: string, newPlayerName: string) {
+        const fullUrl = this.SEND_URL_UPDATE_PLAYER + '/' + collectionName + '/' + player + '/' + newPlayerName;
+        return this.http.patch(fullUrl, player).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
             }),

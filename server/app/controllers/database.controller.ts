@@ -55,7 +55,7 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
-        this.router.get('/vrNames/:collectionName', async (req: Request, res: Response, nex) => {
+        this.router.get('/vrNames/:collectionName', async (req: Request, res: Response) => {
             this.databaseService
                 .getAllPlayers(req.params.collectionName)
                 .then((virtualPlayers: VirtualPlayer[]) => {
@@ -80,6 +80,17 @@ export class DatabaseController {
         this.router.delete('/removePlayer/:collectionName/:player', async (req: Request, res: Response) => {
             this.databaseService
                 .removePlayer(req.params.collectionName, req.params.player)
+                .then(() => {
+                    res.sendStatus(CREATED_HTTP_STATUS).send();
+                })
+                .catch((error: Error) => {
+                    res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
+                });
+        });
+
+        this.router.patch('/updatePlayer/:collectionName/:player/:newPlayerName', async (req: Request, res: Response) => {
+            this.databaseService
+                .updatePlayer(req.params.collectionName, req.params.player, req.params.newPlayerName)
                 .then(() => {
                     res.sendStatus(CREATED_HTTP_STATUS).send();
                 })

@@ -74,7 +74,7 @@
                 <mat-card-actions>
                     <div class="button-group">
                         <button mat-raised-button mat-dialog-close (click)="this.userService.isBonusBox = false">Annuler</button>
-                        <button mat-raised-button [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid" matStepperNext type="submit">
+                        <button mat-raised-button (click) = "enableBtn();" [disabled]="firstFormGroup.controls.userNameMutiplayer.invalid || isDeleted === true" matStepperNext type="submit">
                             Suivant
                         </button>
                     </div>

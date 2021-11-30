@@ -58,7 +58,7 @@
                                        [removable]="false">{{name}}</mat-chip>
                                 <!-- New names -->
                                 <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[1]" [selectable]="selectable"
-                                       [removable]="removableBeg" [change] = "true" (removed)="remove(name, 'beginner')">
+                                       [removable]="removableBeg" [change] = "true" (click) = "openDialogPlayer('beginner',name)" (removed)="remove(name, 'beginner')">
                                 {{name}}
                                 <button matChipRemove *ngIf="removableBeg">
                                   <mat-icon>cancel</mat-icon>
@@ -86,7 +86,7 @@
                                        [removable]="false">{{name}}</mat-chip>
                                 <!-- New names -->
                                 <mat-chip *ngFor="let name of this.userService.vrPlayerNamesExpert[1]" [selectable]="selectable"
-                                       [removable]="removableExp" (removed)="remove(name, 'expert')">
+                                       [removable]="removableExp" (removed)="remove(name, 'expert')" (click) = "openDialogPlayer('expert',name)" >
                                 {{name}}
                                 <button matChipRemove *ngIf="removableExp">
                                   <mat-icon>cancel</mat-icon>

@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>modifier le nom du joueur virtuel</h1>
+<div mat-dialog-content>
+  <mat-form-field >
+    <input placeholder="entrez un nom" matInput [(ngModel)]="localData">
+  </mat-form-field>
+  
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doAction()">modifier</button>
+  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Annuler</button>
+</div>

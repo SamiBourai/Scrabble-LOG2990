@@ -34,6 +34,7 @@ import { VrUserComponent } from './components/users/vr-user/vr-user.component';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-word.service';
 import { WordPointsService } from './services/word-points.service';
+import { DialogUpdatePlayerComponent } from './components/modals/dialog-update-player/dialog-update-player.component';
 
 /**
  * Main module that is used in main.ts.
@@ -66,6 +67,7 @@ import { WordPointsService } from './services/word-points.service';
         ShowEndgameInfoComponent,
         ObjectifAchivedComponent,
         DialogBoxComponent,
+        DialogUpdatePlayerComponent,
     ],
     imports: [
         AppMaterialModule,
