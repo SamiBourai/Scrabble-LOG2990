@@ -1,6 +1,6 @@
 import { MousePosition } from '@app/classes/mouse-position';
 import { Vec2 } from '@app/classes/vec2';
-import { BOARD_WIDTH, EIGHTEEN_POINTS, FIVE, HAND_POSITION_START, LEFTSPACE, NB_TILES, SEVEN_POINTS, SIX } from './constants';
+import { BOARD_WIDTH, LEFTSPACE, NB_TILES } from './constants';
 
 export const RED_BOX: Vec2[] = [
     { x: 0, y: 0 },
@@ -140,42 +140,40 @@ export const DEFAULT_PINK_BOX: Vec2[] = [
     { x: 11, y: 11 },
     { x: 10, y: 10 },
 ];
-const NINE = 9;
-const TEN = 10;
-const ELEVEN = 11;
+
 export const EASEL_POSITIONS: MousePosition[] = [
     {
-        letterRange: { min: LEFTSPACE + HAND_POSITION_START * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + FIVE * (BOARD_WIDTH / NB_TILES) },
+        letterRange: { min: LEFTSPACE + 4 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 5 * (BOARD_WIDTH / NB_TILES) },
         index: 0,
         isClicked: false,
     },
     {
-        letterRange: { min: LEFTSPACE + FIVE * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + SIX * (BOARD_WIDTH / NB_TILES) },
+        letterRange: { min: LEFTSPACE + 5 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 6 * (BOARD_WIDTH / NB_TILES) },
         index: 1,
         isClicked: false,
     },
     {
-        letterRange: { min: LEFTSPACE + SIX * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + SEVEN_POINTS * (BOARD_WIDTH / NB_TILES) },
+        letterRange: { min: LEFTSPACE + 6 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 7 * (BOARD_WIDTH / NB_TILES) },
         index: 2,
         isClicked: false,
     },
     {
-        letterRange: { min: LEFTSPACE + SEVEN_POINTS * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + EIGHTEEN_POINTS * (BOARD_WIDTH / NB_TILES) },
+        letterRange: { min: LEFTSPACE + 7 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 8 * (BOARD_WIDTH / NB_TILES) },
         index: 3,
         isClicked: false,
     },
     {
-        letterRange: { min: LEFTSPACE + EIGHTEEN_POINTS * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + NINE * (BOARD_WIDTH / NB_TILES) },
+        letterRange: { min: LEFTSPACE + 8 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 9 * (BOARD_WIDTH / NB_TILES) },
         index: 4,
         isClicked: false,
     },
     {
-        letterRange: { min: LEFTSPACE + NINE * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + TEN * (BOARD_WIDTH / NB_TILES) },
+        letterRange: { min: LEFTSPACE + 9 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 10 * (BOARD_WIDTH / NB_TILES) },
         index: 5,
         isClicked: false,
     },
     {
-        letterRange: { min: LEFTSPACE + TEN * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + ELEVEN * (BOARD_WIDTH / NB_TILES) },
+        letterRange: { min: LEFTSPACE + 10 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 11 * (BOARD_WIDTH / NB_TILES) },
         index: 6,
         isClicked: false,
     },

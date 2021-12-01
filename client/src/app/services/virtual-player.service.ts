@@ -87,7 +87,6 @@ export class VirtualPlayerService {
                             break;
                     }
                 }, WAIT_TIME_3_SEC);
-
                 break;
             case 'exchangeLetters':
                 setTimeout(() => {

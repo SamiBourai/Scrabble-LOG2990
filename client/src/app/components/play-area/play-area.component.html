@@ -20,6 +20,7 @@
             Placer
         </button>
 
+        <button *ngIf="this.userService.endOfGame" mat-raised-button color="primary" (click)="openShowEasel()">AFFICHER FIN</button>
         <button #skipTurn mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">Passer</button>
         <br />
         <button
