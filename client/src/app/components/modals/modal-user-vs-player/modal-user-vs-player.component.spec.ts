@@ -13,7 +13,7 @@ import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { ModalUserVsPlayerComponent } from './modal-user-vs-player.component';
 
-describe('ModalUserVsPlayerComponent', () => {
+fdescribe('ModalUserVsPlayerComponent', () => {
     let component: ModalUserVsPlayerComponent;
     let fixture: ComponentFixture<ModalUserVsPlayerComponent>;
     let userServiceSpy: jasmine.SpyObj<UserService>;

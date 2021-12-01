@@ -12,13 +12,17 @@ import { JoinedUser, RealUser } from '@app/classes/user';
 import { of } from 'rxjs';
 import { GameTime } from './../classes/time';
 import { TimeService } from './time.service';
+import { UserService } from './user.service';
 
-describe('TimeService', () => {
+fdescribe('TimeService', () => {
     let service: TimeService;
+    let userService: jasmine.SpyObj<UserService>;
 
     beforeEach(() => {
+        userService = jasmine.createSpyObj('UserService', ['detectSkipTurnBtn', 'realUserTurnObs']);
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
+            providers: [{ provide: UserService, useValue: userService }],
         });
         service = TestBed.inject(TimeService);
     });
@@ -34,6 +38,14 @@ describe('TimeService', () => {
     });
 
     it('startTime', () => {
+        const s = 'user';
+        const spy = spyOn<any>(global, 'setInterval');
+        service.startTime(s);
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('startTime should clear interval in case it a already end game', () => {
+        // service.
         const s = 'user';
         const spy = spyOn<any>(global, 'setInterval');
         service.startTime(s);

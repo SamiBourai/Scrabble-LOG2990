@@ -1,15 +1,15 @@
-import { TestBed } from '@angular/core/testing';
-import { CommandManagerService } from './command-manager.service';
+// import { TestBed } from '@angular/core/testing';
+// import { CommandManagerService } from './command-manager.service';
 
-describe('CommandManagerService', () => {
-    let service: CommandManagerService;
+// describe('CommandManagerService', () => {
+//     let service: CommandManagerService;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({});
-        service = TestBed.inject(CommandManagerService);
-    });
+//     beforeEach(() => {
+//         TestBed.configureTestingModule({});
+//         service = TestBed.inject(CommandManagerService);
+//     });
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
-});
+//     it('should be created', () => {
+//         expect(service).toBeTruthy();
+//     });
+// });

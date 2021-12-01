@@ -247,6 +247,17 @@ export const DATABASE_COLLECTION_LOG2990 = 'scoreLog2990';
 export const DATABASE_COLLECTION_VRNAMESBEG = 'virtualPlayerBeg';
 export const DATABASE_COLLECTION_VRNAMESEXP = 'virtualPlayerExpert';
 
+export const SEND_URL = 'http://localhost:3000/api/database/addScore';
+export const GET_URL_ALL_DATA = 'http://localhost:3000/api/database/Scores';
+export const GET_URL_DEFAULT_DATA = 'http://localhost:3000/api/database/resetAllScores';
+export const GET_URL_ALL_PLAYERS = 'http://localhost:3000/api/database/vrNames';
+export const SEND_URL_ADD_PLAYER = 'http://localhost:3000/api/database/addPlayer';
+export const SEND_URL_REMOVE_PLAYER = 'http://localhost:3000/api/database/removePlayer';
+export const SEND_URL_REMOVE_ALL_PLAYER = 'http://localhost:3000/api/database/removeAllPlayer';
+export const SEND_URL_UPLOAD_DICTIONARY = 'http://localhost:3000/api/database/upload';
+export const SEND_URL_GET_DICTIONARY = 'http://localhost:3000/api/database/dictionary';
+export const SEND_URL_GET_DICTIONARIES = 'http://localhost:3000/api/database/dictionaries';
+
 // log2990Mode
 export const NUMBER_OF_SENTENCE = 12;
 export const TWO_SECOND_INTERVAL = 2300;
