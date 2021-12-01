@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModalScoresComponent } from './modal-scores.component';
@@ -9,7 +10,8 @@ describe('ModalScoresComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModalScoresComponent ]
+      declarations: [ ModalScoresComponent ],
+      imports: [HttpClientModule],
     })
     .compileComponents();
   });

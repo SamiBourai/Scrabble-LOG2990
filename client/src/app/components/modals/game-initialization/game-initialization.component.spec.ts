@@ -8,8 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MessageServer } from '@app/classes/message-server';
-import { TIME_CHOICE } from '@app/constants/constants';
+//import { MessageServer } from '@app/classes/message-server';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { UserService } from '@app/services/user.service';
@@ -58,89 +57,101 @@ describe('ModalUserNameComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should return on onClickInMinusButton', () => {
-        const event = new Event('click');
-        component.timeCounter = 0;
-        const x = 2;
-        component.onClickInMinusButton(event);
-        expect(x).toBe(2);
-    });
+    // it('should return on onClickInMinusButton', () => {
+    //     const event = new Event('click');
+    //     component.timeCounter = 0;
+    //     const x = 2;
+    //     component.onClickInMinusButton(event);
+    //     expect(x).toBe(2);
+    // });
 
-    it('should return on onClickInMinusButton < 0', () => {
-        const event = new Event('click');
-        component.timeCounter = -1;
-        component.onClickInMinusButton(event);
-        expect(component.timeCounter).toBe(0);
-    });
+    // it('should return on onClickInMinusButton < 0', () => {
+    //     const event = new Event('click');
+    //     component.timeCounter = -1;
+    //     component.onClickInMinusButton(event);
+    //     expect(component.timeCounter).toBe(0);
+    // });
 
-    it('should return on onClickInMinusButton > 0', () => {
-        const event = new Event('click');
-        component.timeCounter = 2;
-        component.onClickInMinusButton(event);
-        expect(component.timeCounter).toBe(1);
-    });
+    // it('should return on onClickInMinusButton > 0', () => {
+    //     const event = new Event('click');
+    //     component.timeCounter = 2;
+    //     component.onClickInMinusButton(event);
+    //     expect(component.timeCounter).toBe(1);
+    // });
 
-    it('onClickInAddButton ==', () => {
-        const event = new Event('click');
-        component.timeCounter = TIME_CHOICE.length;
-        const x = 2;
-        component.onClickInAddButton(event);
-        expect(x).toBe(2);
-    });
+    // it('onClickInAddButton ==', () => {
+    //     const event = new Event('click');
+    //     component.timeCounter = TIME_CHOICE.length;
+    //     const x = 2;
+    //     component.onClickInAddButton(event);
+    //     expect(x).toBe(2);
+    // });
 
-    it('onClickInAddButton >', () => {
-        const event = new Event('click');
-        component.timeCounter = 11;
-        component.onClickInAddButton(event);
-        expect(component.timeCounter).toBe(TIME_CHOICE.length);
-    });
+    // it('onClickInAddButton >', () => {
+    //     const event = new Event('click');
+    //     component.timeCounter = 11;
+    //     component.onClickInAddButton(event);
+    //     expect(component.timeCounter).toBe(TIME_CHOICE.length);
+    // });
 
-    it('onClickInAddButton <', () => {
-        const event = new Event('click');
-        component.timeCounter = 5;
-        component.onClickInAddButton(event);
-        expect(component.timeCounter).toBe(6);
-    });
+    // it('onClickInAddButton <', () => {
+    //     const event = new Event('click');
+    //     component.timeCounter = 5;
+    //     component.onClickInAddButton(event);
+    //     expect(component.timeCounter).toBe(6);
+    // });
 
     it('ngOninit soloGame', () => {
         component['userService'].playMode = 'soloGame';
         component.ngOnInit();
         expect(component.soloMode).toBeFalse();
     });
-    it('ngOninit create listen', () => {
-        const data: MessageServer = {
-            command: {
-                word: 'azzz',
-                direction: 'p',
-                position: { x: 1, y: 1 },
-            },
-            gameName: 'game000111',
-            timer: { sec: 30, min: 1, userTurn: true },
-            user: { name: 'abdel3234', score: 0 },
-            guestPlayer: { name: 'marouane3234', score: 45 },
-        };
+
+    it('ngOninit createMultiplayerGame', () => {
         component['userService'].playMode = 'createMultiplayerGame';
-        spyOn(component['formBuilder'], 'group');
-
         component.ngOnInit();
-        if (data.guestPlayer?.name) expect(component.guestName).toEqual('');
+        expect(component.createMultiplayerGame).toBeTrue();
     });
 
-    it('openDialog', () => {
-        const spy = spyOn(component['dialogRef'], 'open');
-        component.openDialogOfVrUser();
-        expect(spy).toHaveBeenCalled();
+    it('ngOninit joinMultiplayerGame', () => {
+        component['userService'].playMode = 'joinMultiplayerGame';
+        component.ngOnInit();
+        expect(component.joinMultiplayerGame).toBeTrue();
     });
+    // it('ngOninit create listen', () => {
+    //     const data: MessageServer = {
+    //         command: {
+    //             word: 'azzz',
+    //             direction: 'p',
+    //             position: { x: 1, y: 1 },
+    //         },
+    //         gameName: 'game000111',
+    //         timer: { sec: 30, min: 1, userTurn: true },
+    //         user: { name: 'abdel3234', score: 0 },
+    //         guestPlayer: { name: 'marouane3234', score: 45 },
+    //     };
+    //     component['userService'].playMode = 'createMultiplayerGame';
+    //     spyOn(component['formBuilder'], 'group');
 
-    it('should pass in solo mode on passInSoloMode', () => {
-        const spy = spyOn(component, 'openDialogOfVrUser');
-        component.passInSoloMode();
-        expect(spy).toHaveBeenCalled();
-    });
+    //     component.ngOnInit();
+    //     if (data.guestPlayer?.name) expect(component.guestName).toEqual('');
+    // });
 
-    it('should call storeNameInLocalStorage on onSubmitUserName', () => {
-        const storeNameInLocalStorageSpy = spyOn(component, 'storeNameInLocalStorage');
-        component.onSubmitUserName();
-        expect(storeNameInLocalStorageSpy).toHaveBeenCalled();
-    });
+    // it('openDialog', () => {
+    //     const spy = spyOn(component['dialogRef'], 'open');
+    //     component.openDialogOfVrUser();
+    //     expect(spy).toHaveBeenCalled();
+    // });
+
+    // it('should pass in solo mode on passInSoloMode', () => {
+    //     const spy = spyOn(component, 'openDialogOfVrUser');
+    //     component.passInSoloMode();
+    //     expect(spy).toHaveBeenCalled();
+    // });
+
+    // it('should call storeNameInLocalStorage on onSubmitUserName', () => {
+    //     const storeNameInLocalStorageSpy = spyOn(component, 'storeNameInLocalStorage');
+    //     component.onSubmitUserName();
+    //     expect(storeNameInLocalStorageSpy).toHaveBeenCalled();
+    // });
 });
