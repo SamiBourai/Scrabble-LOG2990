@@ -1,4 +1,4 @@
-import { Component, Inject, Optional } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -12,7 +12,7 @@ export class DialogUpdatePlayerComponent {
     constructor(
         public dialogRef: MatDialogRef<DialogUpdatePlayerComponent>,
 
-        @Optional() @Inject(MAT_DIALOG_DATA) public name: string,
+        @Inject(MAT_DIALOG_DATA) public name: string,
     ) {
         localStorage.setItem('oldPlayer', name);
         this.localData = name;

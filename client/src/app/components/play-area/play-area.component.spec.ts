@@ -8,7 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { EaselObject } from '@app/classes/easel-object';
-import { RealUser } from '@app/classes/user';
+import { JoinedUser, RealUser } from '@app/classes/user';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { MessageService } from '@app/services/message.service';
@@ -16,7 +16,7 @@ import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
-describe('PlayAreaComponent', () => {
+fdescribe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
 
@@ -45,10 +45,15 @@ describe('PlayAreaComponent', () => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        const userJ: JoinedUser = { name: 'bib', level: '2', round: '3', score: 8, guestPlayer: true, easel: new EaselObject(true) };
+        component['userService'].joinedUser = userJ;
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
+        
     });
 
     it('spaceEvent enter', () => {
@@ -183,4 +188,13 @@ describe('PlayAreaComponent', () => {
         component.ngOnInit();
         expect(spy).toHaveBeenCalled();
     });
+
+    it('openDialog', () => {
+        const spy = spyOn(component['dialogRef'], 'open');
+        component.openDialogOfVrUser();
+        expect(spy).toHaveBeenCalled();
+        
+    });
+
+    
 });
