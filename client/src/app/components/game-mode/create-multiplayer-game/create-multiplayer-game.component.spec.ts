@@ -2,11 +2,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { TIME_CHOICE } from '@app/constants/constants';
+import { MessageServer } from '@app/classes/message-server';
+import { DEFAULT_MODE, TIME_CHOICE } from '@app/constants/constants';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
+//import { observable } from 'rxjs';
 
 import { CreateMultiplayerGameComponent } from './create-multiplayer-game.component';
 
@@ -102,13 +104,30 @@ describe('CreateMultiplayerGameComponent', () => {
 
   it('should return isBonusBox true on randomBonusActivated', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const eventTest = new Event('click');
+  const pseudoEvent = {
+    target: {
+      value: component.modes[0]
+    }
+  }as unknown as Event;
   component.chosenMode = component.modes[0];
-  component.randomBonusActivated(eventTest);
-  expect(userServiceSpy.isBonusBox).toBeTrue();
+  component.randomBonusActivated(pseudoEvent);
+  expect(component['userService'].isBonusBox).toBeTrue();
 });
 
-  it('openDialog', () => {
+it('should return isBonusBox true on randomBonusActivated', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pseudoEvent = {
+      target: {
+        value: component.modes[DEFAULT_MODE]
+      }
+    }as unknown as Event;
+    component.chosenMode = component.modes[DEFAULT_MODE];
+    component.randomBonusActivated(pseudoEvent);
+    expect(component['userService'].isBonusBox).toBeFalse();
+  });
+
+
+it('openDialog', () => {
   const spy = spyOn(component['dialogRef'], 'open');
   component.openDialogOfVrUser();
   expect(spy).toHaveBeenCalled();
@@ -120,4 +139,60 @@ describe('CreateMultiplayerGameComponent', () => {
   expect(spy).toHaveBeenCalled();
 });
 
+it('createGame dans if', () => {
+    const game: MessageServer = {
+        user: { name: component.playerName },
+        gameName: component.gameName,
+        timeConfig: { min: component.time.min, sec: component.time.sec },
+        aleatoryBonus: component.userService.isBonusBox,
+        modeLog2990: component.objectifManagerService.log2990Mode,
+    };
+    const generateObkectifsSpy = spyOn(component['objectifManagerService'], 'generateObjectifs');
+    component['objectifManagerService'].log2990Mode = true;
+    component.createGame();
+    expect(generateObkectifsSpy).toHaveBeenCalled();
+    expect(game.objectifs).toBe(component['objectifManagerService'].choosedObjectifs);
+  });
+
+  it('createGame dans else', () => {
+    const game: MessageServer = {
+        user: { name: component.playerName },
+        gameName: component.gameName,
+        timeConfig: { min: component.time.min, sec: component.time.sec },
+        aleatoryBonus: component.userService.isBonusBox,
+        modeLog2990: component.objectifManagerService.log2990Mode,
+    };
+    component['objectifManagerService'].log2990Mode = false;
+    component.createGame();
+    expect(component['socketManagementService'].emit('createGame',game)).toHaveBeenCalled();
+    expect(component['userService'].realUser.name).toBe(component.playerName);
+    expect(component['userService'].gameName).toBe(component.gameName);
+  });
+
+  it('disconnectUser', () => {
+    // const game: MessageServer = {
+    //     user: { name: component.playerName },
+    //     gameName: component.gameName,
+    //     timeConfig: { min: component.time.min, sec: component.time.sec },
+    //     aleatoryBonus: component.userService.isBonusBox,
+    //     modeLog2990: component.objectifManagerService.log2990Mode,
+    // };
+    component.disconnectUser();
+    expect(component['socketManagementService'].emit('userCanceled',{gameName: component.gameName})).toHaveBeenCalled();
+  });
+
+  it('beginGame', () => {
+    // const game: MessageServer = {
+    //     user: { name: component.playerName },
+    //     gameName: component.gameName,
+    //     timeConfig: { min: component.time.min, sec: component.time.sec },
+    //     aleatoryBonus: component.userService.isBonusBox,
+    //     modeLog2990: component.objectifManagerService.log2990Mode,
+    // };
+    const pseudoBool= {
+        Boolean:false
+    }as unknown as boolean
+    component.beginGame(pseudoBool);
+    expect(component.disconnectUser).toHaveBeenCalled();
+  });
 });

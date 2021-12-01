@@ -74,7 +74,6 @@ export class JoinMultiplayerGameComponent implements OnInit {
     randomGame(){
         const randomGame = this.rooms[Math.floor(Math.random() * this.rooms.length)];
         this.joinGame(randomGame);
-        console.log('salut')
         this.disableBtn = true;
     }
 

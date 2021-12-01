@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ObjectifAchivedComponent } from './objectif-achived.component';
@@ -8,7 +9,8 @@ describe('ObjectifAchivedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ObjectifAchivedComponent ]
+      declarations: [ ObjectifAchivedComponent ],
+      imports: [HttpClientModule],
     })
     .compileComponents();
   });

@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ShowEndgameInfoComponent } from './show-endgame-info.component';
@@ -8,7 +9,8 @@ describe('ShowEndgameInfoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ShowEndgameInfoComponent ]
+      declarations: [ ShowEndgameInfoComponent ],
+      imports: [HttpClientModule],
     })
     .compileComponents();
   });

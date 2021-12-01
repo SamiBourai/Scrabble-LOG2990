@@ -5,7 +5,6 @@ import { TIME_CHOICE } from '@app/constants/constants';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
-
 import { SoloGameComponent } from './solo-game.component';
 
 describe('SoloGameComponent', () => {
@@ -19,9 +18,11 @@ describe('SoloGameComponent', () => {
   let virtualPlayerServiceSpy: jasmine.SpyObj<VirtualPlayerService>;
 
   beforeEach(() => {
-    userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers']);
+    userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','setVrName']);
     timeServiceSpy = jasmine.createSpyObj('TimeService', ['setGameTime']);
     virtualPlayerServiceSpy = jasmine.createSpyObj('VirtualPlayerService', ['expert']);
+    jasmine.getEnv().allowRespy(true);
+
 });
 
   beforeEach(async () => {
@@ -104,12 +105,59 @@ describe('SoloGameComponent', () => {
   expect(storeNameInLocalStorageSpy).toHaveBeenCalled();
 });
 
+  it('should call setItem on storeNameInLocalStorage', () => {
+  userServiceSpy.realUser.name = 'bob';
+  component.name = 'bob';
+  // const storeNameInLocalStorageSpy = spyOn(component, 'storeNameInLocalStorage');
+  component.storeNameInLocalStorage();
+  const spyLS= spyOn<any>(localStorage, 'setItem').and.returnValue(()=>{
+    return 'gaya';
+  });
+  expect(spyLS).toEqual(userServiceSpy.realUser.name);
+});
+  
+  it('should call setVrName on setLevelJv', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pseudoEvent = {
+    target: {
+      value: 'Expert'
+    }
+  }as unknown as Event;
+  component.setLevelJv(pseudoEvent);
+  expect(userServiceSpy.setVrName).toHaveBeenCalled();
+});
+
+it('should call setVrName on setLevelJv', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pseudoEvent = {
+    target: {
+      value: 'none'
+    }
+  }as unknown as Event;
+  component.setLevelJv(pseudoEvent);
+  expect(userServiceSpy.setVrName).toHaveBeenCalled();
+});
+
+  it('should return isBonusBox true on randomBonusActivated', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pseudoEvent = {
+    target: {
+      value: 'Aléatoire'
+    }
+  }as unknown as Event;
+  component.randomBonusActivated(pseudoEvent);
+  expect(userServiceSpy.isBonusBox).toBeTrue();
+});
+
 it('should return isBonusBox true on randomBonusActivated', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const eventTest = new Event('click');
-  component.chosenMode = component.modes[0];
-  component.randomBonusActivated(eventTest);
-  expect(userServiceSpy.isBonusBox).toBeTrue();
+  const pseudoEvent = {
+    target: {
+      value: 'Normal'
+    }
+  }as unknown as Event;
+  component.randomBonusActivated(pseudoEvent);
+  expect(userServiceSpy.isBonusBox).toBeFalse();
 });
 
 });
