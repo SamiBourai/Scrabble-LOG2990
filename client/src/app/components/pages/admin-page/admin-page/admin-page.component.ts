@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable } from '@angular/material/table';
 import { Score } from '@app/classes/score';
-import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { VirtualPlayer } from '@app/classes/virtual-players';
 import { DialogBoxComponent } from '@app/components/modals/dialog-box/dialog-box.component';
 import {
     CLOSE_SNACKBAR,
@@ -167,7 +167,7 @@ export class AdminPageComponent implements OnInit {
     deleteDic(dictionary: LoadableDictionary) {
         this.database.deleteDictionary(dictionary).subscribe(() => {
             const index = this.dataSource.indexOf(dictionary);
-            console.log(index);
+
             this.dataSource.splice(index, 1);
             this.table.renderRows();
         });

@@ -19,7 +19,7 @@ import {
     PARAMETERS_OF_SWAP,
     PLACE_LENGTH,
     SWAP_LENGTH,
-    UNDEFINED_INDEX
+    UNDEFINED_INDEX,
 } from './../constants/constants';
 
 @Injectable({

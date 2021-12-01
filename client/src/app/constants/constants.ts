@@ -34,6 +34,7 @@ export const FOURTH_NAME = 'Felix1234';
 export const FIFTH_NAME = 'Emmanuel1234';
 export const SIXTH_NAME = 'Halouf1234';
 export const MAX_PLAYER = 3;
+
 export const NUMBER_COMPARED = 20;
 export const NUMBER_TO_COMPARE = 10;
 export const MINUTE_TURN = 59;
@@ -285,3 +286,16 @@ export const REQUEST_SUCCESFULLY_EXECUTED = 'Requette effectuée avec succès !'
 export const DATA_RESET_SUCCESFULLY = 'Les données ont été réinitilisé avec succès !';
 export const NAME_COLUMN = 'name';
 export const SCORE_COLUMN = 'score';
+
+export const SEND_URL = 'http://localhost:3000/api/database/addScore';
+export const GET_URL_ALL_DATA = 'http://localhost:3000/api/database/Scores';
+export const GET_URL_DEFAULT_DATA = 'http://localhost:3000/api/database/resetAllScores';
+export const GET_URL_ALL_PLAYERS = 'http://localhost:3000/api/database/vrNames';
+export const SEND_URL_ADD_PLAYER = 'http://localhost:3000/api/database/addPlayer';
+export const SEND_URL_REMOVE_PLAYER = 'http://localhost:3000/api/database/removePlayer';
+export const SEND_URL_REMOVE_ALL_PLAYER = 'http://localhost:3000/api/database/removeAllPlayer';
+export const SEND_URL_UPLOAD_DICTIONARY = 'http://localhost:3000/api/database/upload';
+export const SEND_URL_GET_DICTIONARY = 'http://localhost:3000/api/database/dictionary';
+export const SEND_URL_GET_DICTIONARIES = 'http://localhost:3000/api/database/dictionaries';
+export const SEND_URL_UPDATE_PLAYER = 'http://localhost:3000/api/database/updatePlayer';
+export const SEND_URL_LOCAL_STORAGE = 'http://localhost:3000/api/database/localStorage';

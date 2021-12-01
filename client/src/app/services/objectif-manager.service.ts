@@ -17,7 +17,7 @@ import {
     POSITION_FILL_BOX_CONDITION,
     UNDEFINED_INDEX,
     WORD_LENGHT_FILL_BOX_CONDITION,
-    WORD_TO_PLACE_DEFINITION
+    WORD_TO_PLACE_DEFINITION,
 } from '@app/constants/constants';
 
 @Injectable({
@@ -83,7 +83,7 @@ export class ObjectifManagerService {
         this.objectifs = new Array<Objectifs>();
         this.choosedObjectifs = new Array<Objectifs>();
         this.passTurnCounter = 0;
-        this.bonusMultupticator = 0;
+        this.vrPassTurnCounter = 0;
         this.bonusMultupticator = 0;
         this.initializedGame = false;
         this.log2990Mode = false;
@@ -93,10 +93,10 @@ export class ObjectifManagerService {
             if (objectif.name === achivedObjectif.name) {
                 objectif.completed = true;
                 objectif.definition += '. (complété par votre adversaire)';
-                return "votre adversaire à complété l'objectif public qui consiste à " + objectif.definition ?? '';
+                return "votre adversaire à complété l'objectif public qui consiste à " + objectif.definition;
             }
         this.opponentPrivateObjectif = achivedObjectif;
-        return 'votre adversaire à complété son objectif privé qui consiste à ' + achivedObjectif.definition ?? '';
+        return 'votre adversaire à complété son objectif privé qui consiste à ' + achivedObjectif.definition;
     }
     updateScore(objectif: Objectifs, score: number): number {
         if (objectif.name === 'placeNumber') return score * this.bonusMultupticator;
@@ -121,8 +121,8 @@ export class ObjectifManagerService {
                 return numberOfLetters === EASEL_LENGTH;
             case 'placeXOrZ':
                 return chatCommand.word.includes('z') && chatCommand.word.includes('x');
-            case 'place4Consonants':
-                return this.is4ConsonantsPlaced(chatCommand);
+            case 'place3Consonants':
+                return this.is3ConsonantsPlaced(chatCommand);
             case 'wordToPlace':
                 return chatCommand.word === 'bonus';
             case 'placeInA1':
@@ -137,7 +137,7 @@ export class ObjectifManagerService {
         this.objectifs.push({ name: 'pass4Times', bonus: 15, completed: false, definition: PASS_4_TIMES_DEFINITION });
         this.objectifs.push({ name: 'exchangeAllLetters', bonus: 10, completed: false, definition: EXCHANGE_ALL_LETTERS_DEFINITION });
         this.objectifs.push({ name: 'placeXOrZ', bonus: 40, completed: false, definition: PLACE_X_OR_Z_DEFINITION });
-        this.objectifs.push({ name: 'place4Consonants', bonus: 10, completed: false, definition: PLACE_3_CONSONANTS_DEFINITION });
+        this.objectifs.push({ name: 'place3Consonants', bonus: 10, completed: false, definition: PLACE_3_CONSONANTS_DEFINITION });
         this.objectifs.push({ name: 'wordToPlace', bonus: 20, completed: false, definition: WORD_TO_PLACE_DEFINITION });
         this.objectifs.push({ name: 'placeInA1', bonus: 50, completed: false, definition: PLACE_IN_A1_DEFINITION });
         this.objectifs.push({ name: 'placeNumber', bonus: 1, completed: false, definition: PLACE_NUMBER_DEFINITION });
@@ -146,7 +146,7 @@ export class ObjectifManagerService {
         return (
             command.position.x === POSITION_FILL_BOX_CONDITION.x &&
             command.position.y === POSITION_FILL_BOX_CONDITION.y &&
-            command.word.length > WORD_LENGHT_FILL_BOX_CONDITION &&
+            command.word.length >= WORD_LENGHT_FILL_BOX_CONDITION &&
             command.direction === 'h'
         );
     }
@@ -155,7 +155,7 @@ export class ObjectifManagerService {
         else if (this.vrPassTurnCounter >= PASS_TURN_OBJECTIF_CONDITION && !this.userPlay) return true;
         return false;
     }
-    private is4ConsonantsPlaced(command: ChatCommand): boolean {
+    private is3ConsonantsPlaced(command: ChatCommand): boolean {
         let consonnantsCounter = 0;
         for (const letter of command.word) {
             if (

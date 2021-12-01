@@ -4,7 +4,16 @@ import { ChatCommand } from '@app/classes/chat-command';
 import { Dictionary, LoadableDictionary } from '@app/classes/dictionary';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { comparePositions, MAX_LINES, MIN_LINES, NB_TILES, NOT_A_LETTER } from '@app/constants/constants';
+import {
+    comparePositions,
+    MAX_LINES,
+    MIN_LINES,
+    NB_TILES,
+    NOT_A_LETTER,
+    SEND_URL_GET_DICTIONARY,
+    TWO_LETTER,
+    UNDEFINED_INDEX,
+} from '@app/constants/constants';
 import { decompress } from 'fzstd';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -19,7 +28,6 @@ export class ValidWordService {
     isWordValid: boolean = false;
     usedWords = new Map<string, Vec2[]>();
     private readonly utf8Decoder = new TextDecoder('UTF-8');
-    private readonly SEND_URL_GET_DICTIONARY: string = 'http://localhost:3000/api/database/dictionary';
 
     private dictionary: Dictionary;
 
@@ -38,12 +46,11 @@ export class ValidWordService {
             }
         }
         letterIndexes.push([tail, words.length]);
-        console.log({ title, description, words: letterIndexes.map(([t, h]) => new Set(words.slice(t, h))) } as Dictionary);
         return { title, description, words: letterIndexes.map(([t, h]) => new Set(words.slice(t, h))) } as Dictionary;
     }
 
     getDictionary(title: string, oldName?: string): Observable<LoadableDictionary> {
-        const fullUrl = this.SEND_URL_GET_DICTIONARY + '/' + title + '/' + (oldName ?? '');
+        const fullUrl = SEND_URL_GET_DICTIONARY + '/' + title + '/' + (oldName ?? '');
         return this.http.get<LoadableDictionary>(fullUrl);
     }
 
@@ -70,7 +77,7 @@ export class ValidWordService {
                     if (lastIsLetter) {
                         concat += '$)';
                         allRegEx.push(concat);
-                        concat = concat.slice(0, -2);
+                        concat = concat.slice(0, -TWO_LETTER);
                         let counterSpace = 0;
                         let j = i;
                         while (j < lett.length && lett[j] === NOT_A_LETTER) {
@@ -100,7 +107,7 @@ export class ValidWordService {
                                 }
                                 concat += '$)';
                                 allRegEx.push(concat);
-                                concat = concat.slice(0, -2);
+                                concat = concat.slice(0, -TWO_LETTER);
                                 if (j !== lett.length) {
                                     save += '.';
                                     concat = save;
@@ -128,7 +135,7 @@ export class ValidWordService {
         }
         if (regEx !== '') regEx += '|';
         for (const reg of allRegEx) regEx += reg + '|';
-        regEx = regEx.slice(0, -1);
+        regEx = regEx.slice(0, UNDEFINED_INDEX);
         return regEx;
     }
 
@@ -157,13 +164,11 @@ export class ValidWordService {
     }
 
     readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand, playMode: string, newMap?: boolean): number {
-        // create copy of board
         const usedPositionLocal = new Array<Letter[]>(NB_TILES);
         for (let i = 0; i < usedPositionLocal.length; i++) {
             usedPositionLocal[i] = usedPosition[i].slice();
         }
 
-        // positions of the word provided by the command
         const positionsWordCommand = this.convertIntoPositionArray(command, usedPositionLocal);
 
         let totalPointsSum = 0;
@@ -171,7 +176,6 @@ export class ValidWordService {
             const array: Letter[] = [];
             const arrayPosition: Vec2[] = [];
 
-            // get a merged word
             if (command.direction === 'v') {
                 this.checkSides(positionsWordCommand, array, arrayPosition, letterIndex, usedPositionLocal);
             } else if (command.direction === 'h') {
@@ -182,8 +186,6 @@ export class ValidWordService {
                 // only one letter
                 totalPointsSum += 0;
             } else if (this.verifyWord(array, playMode)) {
-                // word exists in the dictionnary
-                // check if this exact word was used before
                 const exists = this.checkIfWordIsUsed(array, arrayPosition);
                 if (exists) {
                     // do nothing
@@ -296,8 +298,6 @@ export class ValidWordService {
         }
         counter = 0;
 
-        // check left side
-
         while (currentPosition !== undefined && currentPosition.x > MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== NOT_A_LETTER) {
@@ -313,7 +313,6 @@ export class ValidWordService {
     }
 
     private checkBottomTopSide(positions: Vec2[], array: Letter[], arrayPosition: Vec2[], letterIndex: number, usedPosition: Letter[][]) {
-        // check bottom side
         positions = JSON.parse(JSON.stringify(positions));
         let counter = 1;
         const currentPosition = positions[letterIndex];
@@ -331,7 +330,6 @@ export class ValidWordService {
         }
         counter = 0;
 
-        // check top side
         while (currentPosition !== undefined && currentPosition.y > MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
             if (currentLetter !== NOT_A_LETTER) {

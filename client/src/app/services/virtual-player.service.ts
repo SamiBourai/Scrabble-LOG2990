@@ -272,6 +272,7 @@ export class VirtualPlayerService {
                                 break;
                             case false:
                                 if (this.vrPoints !== 0) {
+                                    this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame');
                                     this.placeWordSteps(tempCommand);
                                     found = true;
                                     return found;
@@ -285,6 +286,7 @@ export class VirtualPlayerService {
         if (maxPoint > 0) {
             this.easel.resetVariables();
             this.lettersService.wordIsPlacable(saveTempCommand, this.easel);
+            this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, saveTempCommand, 'soloGame');
             this.vrPoints = maxPoint;
             this.placeWordSteps(saveTempCommand);
             found = true;

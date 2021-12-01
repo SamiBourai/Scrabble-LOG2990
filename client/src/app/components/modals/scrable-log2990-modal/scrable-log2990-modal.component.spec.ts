@@ -5,13 +5,12 @@ import { SocketManagementService } from '@app/services/socket-management.service
 import { UserService } from '@app/services/user.service';
 import { ScrableLog2990ModalComponent } from './scrable-log2990-modal.component';
 
-
 describe('ScrableLog2990ModalComponent', () => {
     let component: ScrableLog2990ModalComponent;
     let fixture: ComponentFixture<ScrableLog2990ModalComponent>;
     const mockDialogRef = {
         open: jasmine.createSpy('open'),
-      };
+    };
     let userServiceSpy: jasmine.SpyObj<UserService>;
     let socketManagementServiceSpy: jasmine.SpyObj<SocketManagementService>;
     let objectifManagerServiceSpy: jasmine.SpyObj<ObjectifManagerService>;
@@ -19,7 +18,14 @@ describe('ScrableLog2990ModalComponent', () => {
     beforeEach(() => {
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'firstMode', 'realUser', 'joinedUser']);
         socketManagementServiceSpy = jasmine.createSpyObj('socketManagementService', ['emit', 'listen', 'getRooms', 'subscribe']);
-        objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['initializedGame', 'objectifAchived', 'objectifAchivedByOpponnent', 'choosedObjectifs', 'achivedObjectif', 'log2990Mode']);
+        objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', [
+            'initializedGame',
+            'objectifAchived',
+            'objectifAchivedByOpponnent',
+            'choosedObjectifs',
+            'achivedObjectif',
+            'log2990Mode',
+        ]);
     });
 
     beforeEach(async () => {

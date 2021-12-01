@@ -151,4 +151,36 @@ describe('PlayAreaComponent', () => {
         component.disableButton(event);
         expect(component['userService'].realUser.turnToPlay).toBeTrue();
     });
+    it('ngOnInit switch join', () => {
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser.easel = user.easel;
+        spyOn(component['userService'], 'getPlayerEasel');
+        spyOn(component['mouseHandlingService'], 'resetSteps');
+        spyOn(component['mouseHandlingService'], 'clearAll');
+        const spy = spyOn(component['multiplayer'], 'beginGame');
+        component.userService.playMode = 'joinMultiplayerGame';
+        component.ngOnInit();
+        expect(spy).toHaveBeenCalled();
+    });
+    it('ngOnInit switch', () => {
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser.easel = user.easel;
+        spyOn(component['userService'], 'getPlayerEasel');
+        spyOn(component['mouseHandlingService'], 'resetSteps');
+        spyOn(component['mouseHandlingService'], 'clearAll');
+        const spy = spyOn(component['multiplayer'], 'beginGame');
+        component.userService.playMode = 'createMultiplayerGame';
+        component.ngOnInit();
+        expect(spy).toHaveBeenCalled();
+    });
+    it('ngOnInit', () => {
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser.easel = user.easel;
+        spyOn(component['userService'], 'getPlayerEasel');
+        spyOn(component['mouseHandlingService'], 'resetSteps');
+        spyOn(component['mouseHandlingService'], 'clearAll');
+        const spy = spyOn(component, 'getRemainingLetter');
+        component.ngOnInit();
+        expect(spy).toHaveBeenCalled();
+    });
 });

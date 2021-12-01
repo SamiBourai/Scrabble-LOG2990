@@ -9,6 +9,8 @@ import {
     BOARD_WIDTH,
     CANEVAS_HEIGHT,
     CANEVAS_WIDTH,
+    HAND_POSITION_END,
+    HAND_POSITION_START,
     LEFTSPACE,
     NB_TILES,
     NOT_A_LETTER,
@@ -122,7 +124,10 @@ export class MouseHandelingService {
         const vec = this.easelLogic.showCoords(event);
         const rangeEasleValid =
             this.easelLogic.isBetween(RANGE_Y, vec.y) &&
-            this.easelLogic.isBetween({ min: LEFTSPACE + 4 * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + 11 * (BOARD_WIDTH / NB_TILES) }, vec.x);
+            this.easelLogic.isBetween(
+                { min: LEFTSPACE + HAND_POSITION_START * (BOARD_WIDTH / NB_TILES), max: LEFTSPACE + HAND_POSITION_END * (BOARD_WIDTH / NB_TILES) },
+                vec.x,
+            );
         const rangeSwapButtonValid = this.easelLogic.isBetween(SWAP_BUTTON_RANGE_X, vec.x) && this.easelLogic.isBetween(SWAP_BUTTON_RANGE_Y, vec.y);
         let easelIndex = 0;
         if (rangeEasleValid || rangeSwapButtonValid) {

@@ -21,8 +21,7 @@ export class DialogBoxComponent {
 
         @Optional() @Inject(MAT_DIALOG_DATA) public dictionnary: DictionaryPresentation,
     ) {
-        console.log(dictionnary);
-        localStorage.setItem('dic',JSON.stringify(dictionnary.title))
+        localStorage.setItem('dic', JSON.stringify(dictionnary.title));
         this.localData = dictionnary;
         this.action = this.localData.action as string;
     }

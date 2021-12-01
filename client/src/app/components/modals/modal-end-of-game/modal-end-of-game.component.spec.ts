@@ -1,9 +1,13 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable max-len */
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-//import { UserService } from '@app/services/user.service';
-//import { of } from 'rxjs';
-
+// import { UserService } from '@app/services/user.service';
+// import { of } from 'rxjs';
 import { ModalEndOfGameComponent } from './modal-end-of-game.component';
 
 describe('ModalEndOfGameComponent', () => {
@@ -13,7 +17,7 @@ describe('ModalEndOfGameComponent', () => {
 
     // beforeEach(() => {
     //     userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','setVrName']);
-    
+
     // });
 
     beforeEach(async () => {
@@ -41,15 +45,15 @@ describe('ModalEndOfGameComponent', () => {
     // });
 
     it('joinVrPlayer dans if', () => {
-        component['userService'].playMode = 'joinMultiplayerGame';
+        component.userService.playMode = 'joinMultiplayerGame';
         component.joinVrPlayer();
-        expect(component['userService'].setJoinAsReal()).toHaveBeenCalled();
+        expect(component.userService.setJoinAsReal()).toHaveBeenCalled();
     });
 
     it('joinVrPlayer else', () => {
-        component['userService'].playMode = 'none';
+        component.userService.playMode = 'none';
         component.joinVrPlayer();
-        expect(component['userService'].playMode).toBe('soloGame');
-        expect(component['userService'].endOfGame).toBeFalse();
+        expect(component.userService.playMode).toBe('soloGame');
+        expect(component.userService.endOfGame).toBeFalse();
     });
 });
