@@ -63,7 +63,7 @@ export class VirtualPlayerService {
                                     tempCommand,
                                     'soloGame',
                                 );
-                                this.placeWordSteps(tempCommand, word);
+                                this.placeWordSteps(tempCommand);
                                 break;
                             }
                             this.easel.resetVariables();
@@ -86,7 +86,6 @@ export class VirtualPlayerService {
                             this.skipTurn = false;
                             break;
                     }
-                    console.log('     ');
                 }, WAIT_TIME_3_SEC);
 
                 break;
@@ -112,14 +111,14 @@ export class VirtualPlayerService {
         this.played = true;
         this.skipTurn = false;
     }
-    placeWordSteps(tempCommand: ChatCommand, word: string) {
+    placeWordSteps(tempCommand: ChatCommand) {
         this.commandToSend =
             '!placer ' +
             String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
             tempCommand.position.x +
             tempCommand.direction +
             ' ' +
-            word;
+            tempCommand.word;
         this.commandObs.next(this.commandToSend);
         this.commandToSend = '';
         this.vrScoreObs.next(this.vrPoints);
@@ -251,26 +250,44 @@ export class VirtualPlayerService {
         let found = false;
         const regEx = new RegExp(this.validWordService.generateRegEx(lett));
         const words: string[] = this.generateWords(letterIngrid);
-
+        let maxPoint = 0;
+        let tempCommand: ChatCommand;
+        let saveTempCommand: ChatCommand = { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction };
         for (const word of words) {
             this.easel.resetVariables();
             if ((!this.expert ? this.fitsTheProb(word) : true) && regEx.test(word)) {
                 const pos = this.findPositionInRange(word, lett);
                 if (pos !== UNDEFINED_INDEX) {
-                    let tempCommand: ChatCommand;
                     if (direction === 'v') tempCommand = { word, position: { x: x + 1, y: pos + 1 }, direction };
                     else tempCommand = { word, position: { x: pos + 1, y: y + 1 }, direction };
 
                     if (this.lettersService.wordIsPlacable(tempCommand, this.easel)) {
-                        this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame');
-                        if (this.vrPoints !== 0) {
-                            this.placeWordSteps(tempCommand, word);
-                            found = true;
-                            return found;
+                        this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame', true);
+                        switch (this.expert) {
+                            case true:
+                                if (this.vrPoints > maxPoint) {
+                                    maxPoint = this.vrPoints;
+                                    saveTempCommand = tempCommand;
+                                }
+                                break;
+                            case false:
+                                if (this.vrPoints !== 0) {
+                                    this.placeWordSteps(tempCommand);
+                                    found = true;
+                                    return found;
+                                }
+                                break;
                         }
                     }
                 }
             }
+        }
+        if (maxPoint > 0) {
+            this.easel.resetVariables();
+            this.lettersService.wordIsPlacable(saveTempCommand, this.easel);
+            this.vrPoints = maxPoint;
+            this.placeWordSteps(saveTempCommand);
+            found = true;
         }
         return found;
     }

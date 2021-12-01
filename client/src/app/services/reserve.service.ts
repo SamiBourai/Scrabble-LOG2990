@@ -20,6 +20,7 @@ export class ReserveService {
         const save: Letter = this.getRandomKey(this.letters);
         const qty: number = (this.letters.get(save) ?? 0) - 1;
         this.letters.set(save, qty);
+        console.log(this.reserveSize);
         this.reserveSize--;
         this.sizeObs.next(this.reserveSize);
         return save;
