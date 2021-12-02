@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DatabaseService } from '@app/services/database.service';
+//import { DatabaseService } from '@app/services/database.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { UserService } from '@app/services/user.service';
 
@@ -11,14 +11,14 @@ import { UserService } from '@app/services/user.service';
 export class ModalEndOfGameComponent implements OnInit {
     gotWinner: boolean = false;
 
-    constructor(public multiplayerService: MultiplayerModeService, private userService: UserService, private databaseService: DatabaseService) {}
+    constructor(public multiplayerService: MultiplayerModeService, private userService: UserService/*, private databaseService: DatabaseService*/) {}
     ngOnInit(): void {
         this.multiplayerService.playerLeftObs.subscribe((response) => {
             this.gotWinner = response;
         });
     }
     setIsUserQuitGame(): void {
-        this.databaseService.addScores();
+        //this.databaseService.addScores();
         window.location.assign('/home');
     }
 
@@ -28,7 +28,9 @@ export class ModalEndOfGameComponent implements OnInit {
         this.userService.playMode = 'soloGame';
         this.userService.initiliseUsers(true);
         this.userService.endOfGame = false;
-        this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());
-        this.userService.gameModeObs.next(this.userService.playMode);
+        if(this.userService.realUserTurnObs && this.userService.gameModeObs) {
+            this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());
+            this.userService.gameModeObs.next(this.userService.playMode);
+        }
     }
 }

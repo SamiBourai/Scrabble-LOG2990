@@ -6,24 +6,42 @@
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { UserService } from '@app/services/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+//import { DatabaseService } from '@app/services/database.service';
+//import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
+import { UserService } from '@app/services/user.service';
 // import { of } from 'rxjs';
 import { ModalEndOfGameComponent } from './modal-end-of-game.component';
 
 describe('ModalEndOfGameComponent', () => {
     let component: ModalEndOfGameComponent;
     let fixture: ComponentFixture<ModalEndOfGameComponent>;
-    // let userServiceSpy: jasmine.SpyObj<UserService>;
+    let userServiceSpy: jasmine.SpyObj<UserService>;
+    //let multiplayerServiceSpy: jasmine.SpyObj<MultiplayerModeService>;
+    //let databaseServiceSpy: jasmine.SpyObj<DatabaseService>;
+    const mockDialogRef = {
+        open: jasmine.createSpy('open'),
+    };
 
-    // beforeEach(() => {
-    //     userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','setVrName']);
 
-    // });
+    beforeEach(() => {
+        userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','setVrName','setJoinAsReal', 'isPlayerTurn', 'endOfGame']);
+        //multiplayerServiceSpy = jasmine.createSpyObj('MultiplayerModeService', ['playerLeftObs', 'subscribe']);
+        //databaseServiceSpy = jasmine.createSpyObj('DatabaseService', []);
+        jasmine.getEnv().allowRespy(true);
+
+    });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [ModalEndOfGameComponent],
             imports: [HttpClientModule],
+            providers: [
+                { provide: MatSnackBar, useValue: mockDialogRef },
+                { provide: UserService, useValue: userServiceSpy },
+                //{ provide: MultiplayerModeService, useValue: multiplayerServiceSpy },
+                //{ provide: DatabaseService, useValue: databaseServiceSpy },
+            ],
         }).compileComponents();
     });
 
@@ -45,15 +63,18 @@ describe('ModalEndOfGameComponent', () => {
     // });
 
     it('joinVrPlayer dans if', () => {
-        component.userService.playMode = 'joinMultiplayerGame';
+        component['userService'].playMode = 'joinMultiplayerGame';
         component.joinVrPlayer();
-        expect(component.userService.setJoinAsReal()).toHaveBeenCalled();
+        const joinVrSpy = spyOn(component['userService'], 'setJoinAsReal');
+        expect(joinVrSpy).toHaveBeenCalled();
     });
 
     it('joinVrPlayer else', () => {
-        component.userService.playMode = 'none';
+        component['userService'].playMode = 'none';
         component.joinVrPlayer();
-        expect(component.userService.playMode).toBe('soloGame');
-        expect(component.userService.endOfGame).toBeFalse();
+        expect(component['userService'].playMode).toBe('soloGame');
+        expect(component['userService'].endOfGame).toBeFalse();
+        const joinVrSpy = spyOn(component['userService'].gameModeObs, 'next');
+        expect(joinVrSpy).toHaveBeenCalled();
     });
 });

@@ -56,64 +56,20 @@ describe('ModalUserNameComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // it('should return on onClickInMinusButton', () => {
-    //     const event = new Event('click');
-    //     component.timeCounter = 0;
-    //     const x = 2;
-    //     component.onClickInMinusButton(event);
-    //     expect(x).toBe(2);
-    // });
-
-    // it('should return on onClickInMinusButton < 0', () => {
-    //     const event = new Event('click');
-    //     component.timeCounter = -1;
-    //     component.onClickInMinusButton(event);
-    //     expect(component.timeCounter).toBe(0);
-    // });
-
-    // it('should return on onClickInMinusButton > 0', () => {
-    //     const event = new Event('click');
-    //     component.timeCounter = 2;
-    //     component.onClickInMinusButton(event);
-    //     expect(component.timeCounter).toBe(1);
-    // });
-
-    // it('onClickInAddButton ==', () => {
-    //     const event = new Event('click');
-    //     component.timeCounter = TIME_CHOICE.length;
-    //     const x = 2;
-    //     component.onClickInAddButton(event);
-    //     expect(x).toBe(2);
-    // });
-
-    // it('onClickInAddButton >', () => {
-    //     const event = new Event('click');
-    //     component.timeCounter = 11;
-    //     component.onClickInAddButton(event);
-    //     expect(component.timeCounter).toBe(TIME_CHOICE.length);
-    // });
-
-    // it('onClickInAddButton <', () => {
-    //     const event = new Event('click');
-    //     component.timeCounter = 5;
-    //     component.onClickInAddButton(event);
-    //     expect(component.timeCounter).toBe(6);
-    // });
-
     it('ngOninit soloGame', () => {
-        component['userService'].playMode = 'soloGame';
+        component['userService'].firstMode = 'soloGame';
         component.ngOnInit();
-        expect(component.soloMode).toBeFalse();
+        expect(component.soloMode).toBeTrue();
     });
 
     it('ngOninit createMultiplayerGame', () => {
-        component['userService'].playMode = 'createMultiplayerGame';
+        component['userService'].firstMode = 'createMultiplayerGame';
         component.ngOnInit();
         expect(component.createMultiplayerGame).toBeTrue();
     });
 
     it('ngOninit joinMultiplayerGame', () => {
-        component['userService'].playMode = 'joinMultiplayerGame';
+        component['userService'].firstMode = 'joinMultiplayerGame';
         component.ngOnInit();
         expect(component.joinMultiplayerGame).toBeTrue();
     });
@@ -134,23 +90,5 @@ describe('ModalUserNameComponent', () => {
 
     //     component.ngOnInit();
     //     if (data.guestPlayer?.name) expect(component.guestName).toEqual('');
-    // });
-
-    // it('openDialog', () => {
-    //     const spy = spyOn(component['dialogRef'], 'open');
-    //     component.openDialogOfVrUser();
-    //     expect(spy).toHaveBeenCalled();
-    // });
-
-    // it('should pass in solo mode on passInSoloMode', () => {
-    //     const spy = spyOn(component, 'openDialogOfVrUser');
-    //     component.passInSoloMode();
-    //     expect(spy).toHaveBeenCalled();
-    // });
-
-    // it('should call storeNameInLocalStorage on onSubmitUserName', () => {
-    //     const storeNameInLocalStorageSpy = spyOn(component, 'storeNameInLocalStorage');
-    //     component.onSubmitUserName();
-    //     expect(storeNameInLocalStorageSpy).toHaveBeenCalled();
     // });
 });

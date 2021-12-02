@@ -19,10 +19,11 @@ describe('JoinMultiplayerGameComponent', () => {
 
     beforeEach(() => {
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers']);
-        objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['setGameTime']);
+        objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['setGameTime', 'generateObjectifs']);
         formBuilderSpy = jasmine.createSpyObj('FormBuilder', ['setValue', 'group']);
         socketManagementServiceSpy = jasmine.createSpyObj('socketManagementService', ['emit', 'listen', 'getRooms']);
-        multiplayerModeServiceSpy = jasmine.createSpyObj('multiplayerModeService', ['setGuestPlayerInformation']);
+        multiplayerModeServiceSpy = jasmine.createSpyObj('multiplayerModeService', ['setGuestPlayerInformation', 'setGameInformations']);
+        jasmine.getEnv().allowRespy(true);
     });
 
     beforeEach(async () => {
@@ -63,8 +64,10 @@ describe('JoinMultiplayerGameComponent', () => {
         } as unknown as MessageServer;
         // objectifManagerServiceSpy.log2990Mode = true;
         component.objectifManagerService.log2990Mode = true;
+        const spy = spyOn(component['objectifManagerService'], 'generateObjectifs');
         component.joinGame(pseudoRoom);
-        expect(component.objectifManagerService.generateObjectifs(userServiceSpy.playMode)).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+        //expect(component.objectifManagerService.generateObjectifs(userServiceSpy.playMode)).toHaveBeenCalled();
     });
 
     it('joinGame else', () => {
@@ -75,5 +78,20 @@ describe('JoinMultiplayerGameComponent', () => {
         component.objectifManagerService.log2990Mode = false;
         component.joinGame(pseudoRoom);
         expect(component.roomJoined).toBeTrue();
+    });
+
+    // it('generateRooms if', () => {
+    //     component.roomJoined = true;
+    //     component.generateRooms();
+    //     expect()
+    // });
+
+    it('generateRooms else', () => {
+        component.roomJoined = false;
+        const spy = spyOn(component['socketManagementService'], 'emit');
+        const spy2 = spyOn(component['socketManagementService'], 'getRooms')
+        component.generateRooms();
+        expect(spy).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
     });
 });
