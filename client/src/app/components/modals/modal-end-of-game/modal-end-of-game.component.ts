@@ -22,7 +22,8 @@ export class ModalEndOfGameComponent implements OnInit {
     ngOnInit(): void {
         this.multiplayerService.playerLeftObs.subscribe((response) => {
             this.gotWinner = true;
-            this.validWordService.loadDictionary(response);
+            if (response === 'dictionnaire principal') this.validWordService.loadDictionary();
+            else this.validWordService.loadDictionary(response);
         });
     }
     setIsUserQuitGame(): void {
