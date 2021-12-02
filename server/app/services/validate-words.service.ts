@@ -11,17 +11,12 @@ export class ValidWordService {
     load: boolean = false;
     readonly utf8Decoder = new TextDecoder('UTF-8');
     private dictionary?: Set<string>[];
-    constructor() {
-        console.log(this.chosenDic);
-        // this.loadDictionary(this.chosenDic);
-    }
 
     async loadDictionary(file: string[]) {
         let words: string[] = [];
         if (file.length !== 0) words = await this.getWordsNotDefault(file[0]);
         else words = await this.getWords();
         const letterIndexes = new Array<number[]>();
-        console.log(words);
         let tailLetter = words[0].charCodeAt(0);
         let tail = 0;
         for (let head = 0; head < words.length; ++head) {
@@ -47,7 +42,6 @@ export class ValidWordService {
             const letter = i.charac;
             concatWord += letter;
         }
-        console.log(concatWord);
         const letterIndexInput = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
 
         return this.dictionary[letterIndexInput].has(concatWord);

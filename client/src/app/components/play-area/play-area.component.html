@@ -21,7 +21,6 @@
         </button>
 
         <button #skipTurn mat-raised-button color="primary" [disabled]="disableButton('passTurn')" (click)="detectSkipTurnBtn()">Passer</button>
-        <br />
         <button
             color="primary"
             mat-raised-button
@@ -31,7 +30,7 @@
             Echanger
         </button>
         <button mat-raised-button color="primary" [disabled]="disableButton('cancel')" (click)="mouseHandlingService.cancelByClick()">Annuler</button>
-        <br />
+        <br /><br />
         <button mat-raised-button color="primary" (click)="detectGameQuit()" (click)="openDialogOfVrUser()">Abandonner</button>
     </div>
 

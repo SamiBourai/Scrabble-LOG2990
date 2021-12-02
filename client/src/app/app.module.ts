@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GameInitializationComponent } from '@app/components/modals/game-initialization/game-initialization.component';
 import { ModalScrableClassiqueComponent } from '@app/components/modals/modal-scrable-classique/modal-scrable-classique.component';
-import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
 import { AppComponent } from '@app/components/pages/app/app.component';
 import { GamePageComponent } from '@app/components/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/components/pages/main-page/main-page.component';
@@ -21,6 +21,7 @@ import { CreateMultiplayerGameComponent } from './components/game-mode/create-mu
 import { JoinMultiplayerGameComponent } from './components/game-mode/join-multiplayer-game/join-multiplayer-game.component';
 import { SoloGameComponent } from './components/game-mode/solo-game/solo-game.component';
 import { DialogBoxComponent } from './components/modals/dialog-box/dialog-box.component';
+import { DialogUpdatePlayerComponent } from './components/modals/dialog-update-player/dialog-update-player.component';
 import { ModalEndOfGameComponent } from './components/modals/modal-end-of-game/modal-end-of-game.component';
 import { ModalScoresComponent } from './components/modals/modal-scores/modal-scores.component';
 import { ObjectifAchivedComponent } from './components/modals/objectif-achived/objectif-achived.component';
@@ -34,7 +35,6 @@ import { VrUserComponent } from './components/users/vr-user/vr-user.component';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-word.service';
 import { WordPointsService } from './services/word-points.service';
-import { DialogUpdatePlayerComponent } from './components/modals/dialog-update-player/dialog-update-player.component';
 
 /**
  * Main module that is used in main.ts.
@@ -54,7 +54,7 @@ import { DialogUpdatePlayerComponent } from './components/modals/dialog-update-p
         SidebarComponent,
         ModalScrableClassiqueComponent,
         GameInitializationComponent,
-        ModalUserVsPlayerComponent,
+        ViewModalComponent,
         RealPlayerComponent,
         VrUserComponent,
         JoinedUserComponent,

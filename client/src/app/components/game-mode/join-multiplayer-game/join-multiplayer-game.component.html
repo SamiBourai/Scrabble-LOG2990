@@ -41,7 +41,7 @@
         <div *ngIf="!isEmptyRoom; else elseBlock">
             <div *ngIf="!roomJoined; else elseBlock">
                 <mat-card-title>Cliquez sur la partie que vous voulez rejoindre</mat-card-title>
-                <table id="ht" align="center" width="400" class="table-striped table-hover">
+                <table id="ht" align="center" width="300px" class="table-striped table-hover">
                     <thead class="header">
                         <th class="contentCell">Nom du joueur</th>
                         <th class="contentCell">Nom de la partie</th>
@@ -68,7 +68,7 @@
             </ng-template>
         </div>
         <ng-template #elseBlock>
-            <mat-card-subtitle>Il n'y a pas de partie en ce moment !!</mat-card-subtitle>
+            <mat-card-subtitle>Il n'y a pas de partie en ce moment...</mat-card-subtitle>
         </ng-template>
         <p>
             <mat-card-actions

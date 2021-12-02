@@ -38,11 +38,6 @@ export class ReserveService {
 
         return NOT_A_LETTER;
     }
-
-    get size(): BehaviorSubject<number> {
-        return this.sizeObs;
-    }
-
     reFillReserve(lett: Letter) {
         this.letters.forEach((value, key) => {
             if (JSON.stringify(key) === JSON.stringify(lett)) {

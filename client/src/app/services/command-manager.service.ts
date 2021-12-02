@@ -10,13 +10,13 @@ import { ValidWordService } from './valid-word.service';
 })
 export class CommandManagerService {
     errorMessage: string = '';
-    wordIsValid: boolean = false;
     playerScore: number = 0;
     numberOfLettersToExchange: number = 0;
+    inputCommand: string = '';
     constructor(
         private socketManagementService: SocketManagementService,
         private validWordService: ValidWordService,
-        private lettersService: LettersService, // private mouseHandle: MouseHandelingService,
+        private lettersService: LettersService,
     ) {}
     verifyExchageCommand(reserveSize: number, playerEasel: EaselObject, lettersToExchange: string): boolean {
         if (reserveSize < EASEL_LENGTH) {
@@ -56,14 +56,12 @@ export class CommandManagerService {
         const points: number = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, command, playMode);
         const wordInDictionnay = this.validWordService.verifyWord(this.lettersService.fromWordToLetters(command.word), playMode);
         switch (true) {
-            case wordInDictionnay && points !== 0:
-                this.wordIsValid = true;
+            case !wordInDictionnay:
+                this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
                 break;
             case wordInDictionnay && points === 0:
                 this.errorMessage = 'les mots engendrés par votre placement ne sont pas dans le dictionnaire';
                 break;
-            default:
-                this.errorMessage = "votre mot n'est pas contenue dans le dictionnaire";
         }
         this.playerScore = points;
     }

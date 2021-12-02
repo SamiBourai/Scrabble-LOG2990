@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
 import { ShowEndgameInfoComponent } from '@app/components/modals/show-endgame-info/show-endgame-info.component';
+import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, UNDEFINED_INDEX } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';
@@ -143,7 +143,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
         this.gridCanvas.nativeElement.focus();
     }
     getRemainingLetter() {
-        this.numberOfLetterSubscription = this.reserveService.size.subscribe((res) => {
+        this.numberOfLetterSubscription = this.reserveService.sizeObs.subscribe((res) => {
             setTimeout(() => {
                 this.remainingLetters = res;
             }, 0);
@@ -162,7 +162,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     openDialogOfVrUser(): void {
-        this.dialogRef.open(ModalUserVsPlayerComponent, { disableClose: true });
+        this.dialogRef.open(ViewModalComponent, { disableClose: true });
     }
 
     quitGame() {

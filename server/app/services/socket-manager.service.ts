@@ -13,7 +13,7 @@ export class SocketManagerService {
     private games = new Map();
     private rooms = new Array<MessageClient>();
     constructor(private validWordService: ValidWordService) {}
-    initiliaseSocket(server: http.Server) {
+    initializeSocket(server: http.Server) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
     }
     handleSockets(): void {
@@ -44,7 +44,12 @@ export class SocketManagerService {
                 socket.join(game.gameName);
                 this.sio.to(game.gameName).emit('userJoined', game);
                 this.deleteRoom(game);
-                this.games.get(game.gameName).guestPlayer = { name: game.guestPlayer?.name, score: 0, easelLetters: EASEL_LENGTH };
+                this.games.get(game.gameName).guestPlayer = {
+                    name: game.guestPlayer?.name,
+                    score: 0,
+                    easelLetters: EASEL_LENGTH,
+                    socketId: socket.id,
+                };
             });
             socket.on('getAleatoryBonus', (message: MessageClient) => {
                 this.sio
@@ -136,27 +141,18 @@ export class SocketManagerService {
             });
             socket.on('guestLeftGame', (message: MessageClient) => {
                 message.winner = this.games.get(message.gameName).creatorPlayer.name;
-                setTimeout(() => {
-                    this.sio.to(message.gameName).emit('getWinner', message);
-                    this.games.get(message.gameName).timer.stopTimer = true;
-                    this.updateDeletedGames(message);
-                    socket.disconnect();
-                }, FIVE_SEC_MS);
+                this.sendWinner(message);
             });
             socket.on('userLeftGame', (message: MessageClient) => {
                 message.winner = this.games.get(message.gameName).guestPlayer.name;
-                setTimeout(() => {
-                    this.sio.to(message.gameName).emit('getWinner', message);
-                    this.games.get(message.gameName).timer.stopTimer = true;
-                    this.updateDeletedGames(message);
-                    socket.disconnect();
-                }, FIVE_SEC_MS);
+                this.sendWinner(message);
             });
             socket.on('userPassedInSoloMode', (message: MessageClient) => {
                 this.updateDeletedGames(message);
             });
             socket.on('userCanceled', (message: MessageClient) => {
                 this.updateDeletedGames(message);
+                socket.disconnect();
             });
             socket.on('verifyWord', (message: MessageClient) => {
                 const word: Letter[] = [];
@@ -165,21 +161,43 @@ export class SocketManagerService {
             });
 
             socket.on('disconnect', () => {
+                if (this.games.size > 0) {
+                    for (const [key, value] of this.games) {
+                        const message: MessageClient = { gameName: key };
+                        if (value.guestPlayer.socketId === socket.id) {
+                            message.easel = value.joinEasel;
+                            this.sendWinner(message);
+                        } else if (value.creatorPlayer.socketId === socket.id) {
+                            message.easel = value.creatorEasel;
+                            this.sendWinner(message);
+                        }
+                    }
+                }
                 socket.disconnect();
+                console.log('disconect');
             });
         });
         setInterval(() => {
             this.emitTime();
         }, ONE_SECOND_MS);
     }
-    deleteRoom(game: MessageClient) {
+    private sendWinner(message: MessageClient) {
+        setTimeout(() => {
+            if (this.games.has(message.gameName)) {
+                this.sio.to(message.gameName).emit('getWinner', message);
+                this.games.get(message.gameName).timer.stopTimer = true;
+                this.games.delete(message.gameName);
+            }
+        }, FIVE_SEC_MS);
+    }
+    private deleteRoom(game: MessageClient) {
         for (let i = 0; i < this.rooms.length; i++) {
             if (this.rooms[i].gameName === game.gameName) {
                 this.rooms.splice(i, 1);
             }
         }
     }
-    updateDeletedGames(message: MessageClient) {
+    private updateDeletedGames(message: MessageClient) {
         this.deleteRoom(message);
         this.games.delete(message.gameName);
     }

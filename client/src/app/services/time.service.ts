@@ -106,7 +106,7 @@ export class TimeService {
         this.timeVrPlayer = { min: gameTime.min, sec: gameTime.sec };
         this.timeSave = { min: gameTime.min, sec: gameTime.sec };
     }
-    trigerPassCommand(time: GameTime) {
+    private trigerPassCommand(time: GameTime) {
         if (time.sec === 0 && time.min === 0) {
             this.command = '!passer';
             this.commandObs.next(this.command);

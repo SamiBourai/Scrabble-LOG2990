@@ -17,7 +17,7 @@ import {
     TWELVE_POINTS,
     UNDEFINED_INDEX,
     WAIT_TIME_3_SEC,
-    ZERO_POINTS,
+    ZERO_POINTS
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';
@@ -47,6 +47,7 @@ export class VirtualPlayerService {
         private easelLogic: EaselLogiscticsService,
         private objectifMangerService: ObjectifManagerService,
     ) {}
+
     manageVrPlayerActions(): void {
         this.skipTurn = false;
         this.played = false;
@@ -161,27 +162,21 @@ export class VirtualPlayerService {
         }
     }
 
-    private caclculateGeneratedWordPoints(word: string): number {
+    private calculateGeneratedWordPoints(word: string): number {
         let points = 0;
         for (const point of this.lettersService.fromWordToLetters(word)) points += point.score;
         return points;
     }
     private fitsTheProb(word: string): boolean {
-        const points = this.caclculateGeneratedWordPoints(word);
+        const points = this.calculateGeneratedWordPoints(word);
 
         switch (this.probWordScore) {
             case '{0,6}':
-                if (points > ZERO_POINTS && points <= SIX_POINTS) {
-                    return true;
-                }
-                return false;
+                return points > ZERO_POINTS && points <= SIX_POINTS;
             case '{7,12}':
-                if (points >= SEVEN_POINTS && points <= TWELVE_POINTS) return true;
-                return false;
-
+                return points >= SEVEN_POINTS && points <= TWELVE_POINTS;
             case '{13,18}':
-                if (points >= THIRTEEN_POINTS && points <= EIGHTEEN_POINTS) return true;
-                return false;
+                return points >= THIRTEEN_POINTS && points <= EIGHTEEN_POINTS;
         }
         return false;
     }

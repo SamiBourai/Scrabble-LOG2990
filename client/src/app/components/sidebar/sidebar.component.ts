@@ -1,4 +1,4 @@
-import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
@@ -23,19 +23,19 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnInit, AfterViewChecked {
+export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     arrayOfMessages: string[] = [];
     arrayOfVrCommands: string[] = [];
     arrayOfReserveLetters: string[] = [];
     typeArea: string = '';
-    name: string;
-    nameVr: string;
+    name: string = '';
+    nameVr: string = '';
     errorMessage: string = '';
     isHelpActivated: boolean;
     form = new FormGroup({
         message: new FormControl(''),
     });
-    message: string;
+    message: string = '';
     isDebug: boolean = false;
     toggleReserve: boolean = false;
 
@@ -107,6 +107,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     ngAfterViewChecked(): void {
         this.changeDetectorRef.detectChanges();
     }
+    ngOnDestroy() {
+        this.reserveService.sizeObs.unsubscribe();
+        this.messageService.newTextMessageObs.unsubscribe();
+        this.mouseHandelingService.commandObs.unsubscribe();
+        this.virtualPlayerService.commandObs.unsubscribe();
+    }
     logMessage() {
         this.userService.getPlayerEasel().resetVariables();
         this.errorMessage = '';
@@ -120,12 +126,13 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 case false:
                     if (this.messageService.isSubstring(this.typeArea, ['!passer', '!placer', '!echanger'])) {
                         this.errorMessage = "ce n'est pas votre tour";
+                        this.typeArea = '';
                     }
                     break;
             }
         }
         this.name = this.userService.realUser.name;
-
+        this.nameVr = this.userService.vrUser.name;
         this.verifyInput();
         this.typeArea = '';
     }
@@ -165,9 +172,9 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 break;
             default:
                 this.placeInTempCanvas(this.messageService.command);
+                this.commandManagerService.inputCommand = this.typeArea;
                 setTimeout(() => {
                     this.commandManagerService.verifyWordsInDictionnary(this.messageService.command, this.userService.playMode);
-
                     this.placeWordIfValid();
                     this.mouseHandelingService.clearAll();
                 }, WAIT_TIME_3_SEC);
@@ -199,13 +206,18 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
             }
     }
     private placeWordIfValid() {
+        let messageUpdate = this.commandManagerService.inputCommand;
         if (this.commandManagerService.playerScore !== 0) {
             this.lettersService.placeLettersInScrable(this.messageService.command, this.userService.getPlayerEasel(), true);
+            this.userService.updateScore(this.commandManagerService.playerScore, this.lettersService.usedAllEaselLetters);
             this.verifyObjectifs('play');
+            this.userService.chatCommandToSend = this.messageService.command;
         } else {
             this.errorMessage = this.commandManagerService.errorMessage;
+            messageUpdate += ' (la validation du mot a échoué)';
+            this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
         }
-        this.endTurn('placer', this.commandManagerService.playerScore);
+        this.endTurn('placer', messageUpdate);
     }
     private exchangeCommand() {
         if (
@@ -215,41 +227,34 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 this.messageService.swapCommand(this.typeArea),
             )
         ) {
-            this.endTurn('exchange', UNDEFINED_INDEX);
+            this.endTurn('exchange', this.typeArea);
         } else {
             this.errorMessage = this.commandManagerService.errorMessage;
         }
     }
 
-    private endTurn(commandType: string, points: number) {
+    private endTurn(commandType: string, messageUpdate: string) {
         switch (commandType) {
             case 'exchange':
+                this.verifyObjectifs('exchange');
                 if (this.userService.playMode !== 'soloGame') {
                     setTimeout(() => {
                         this.userService.exchangeLetters = true;
                         this.userService.playedObs.next(this.userService.exchangeLetters);
                     }, ONE_SECOND_MS);
-                }
-                this.verifyObjectifs('exchange');
+                } else this.userService.userPlayed();
                 break;
             case 'placer':
-                if (this.errorMessage === '') {
-                    this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
-                    if (this.userService.playMode !== 'soloGame') {
-                        this.userService.chatCommandToSend = this.messageService.command;
-                        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
-                    }
-                } else {
-                    this.typeArea = this.typeArea + ' (la validation du mot a échoué)';
-                    this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
+                if (this.userService.playMode !== 'soloGame') {
                     this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+                } else {
+                    messageUpdate = this.typeArea;
+                    this.userService.userPlayed();
                 }
                 break;
         }
-        if (this.userService.playMode === 'soloGame') this.userService.userPlayed();
-
         this.userService.endOfGameCounter = 0;
-        this.updateMessageArray(this.typeArea);
+        this.updateMessageArray(messageUpdate);
     }
     private updateMessageArray(command: string): void {
         if (command !== '') {
@@ -258,12 +263,10 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                 if (this.userService.playMode === 'joinMultiplayerGame') command = this.userService.joinedUser.name + ' : ' + command;
                 if (this.userService.playMode === 'createMultiplayerGame') command = ' ' + this.userService.realUser.name + ' : ' + command;
                 this.arrayOfMessages.push(command);
-
                 this.messageService.textMessage = this.arrayOfMessages;
                 if (this.messageService.textMessageObs) this.messageService.textMessageObs.next(this.messageService.textMessage);
             }
             this.typeArea = '';
-            this.errorMessage = '';
         }
     }
     private verifyInput() {
@@ -285,8 +288,6 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     break;
             }
         }
-        this.nameVr = this.userService.vrUser.name;
-        this.name = this.userService.realUser.name;
     }
     private showReserve() {
         if (this.isDebug) {

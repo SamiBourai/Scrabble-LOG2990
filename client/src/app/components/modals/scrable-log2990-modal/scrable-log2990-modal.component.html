@@ -21,26 +21,40 @@
     </div>
 </div>
 
-<mat-card *ngIf="this.objectifManagerService.initializedGame && !objectifManagerService.objectifAchived">
+<mat-card *ngIf="this.objectifManagerService.initializedGame && !objectifManagerService.completedObjectif">
     <mat-card-title>Objectifs de la partie!</mat-card-title>
     <mat-tab-group>
         <mat-tab label="Publics">
             <div>
-                <p class="mb-4">1.{{ getObjectifs()[0] }}</p>
-                <p class="mb-4">2.{{ getObjectifs()[1] }}</p>
+                <div *ngIf="objectifManagerService.choosedObjectifs[0].completed; else objectif1NotAchived">
+                    <p class="mb-4"><del>1.{{ getObjectifs()[0] }}</del></p>
+                </div>
+                <ng-template #objectif1NotAchived>
+                    <p class="mb-4">1.{{ getObjectifs()[0] }}</p>
+                </ng-template>
+                <div *ngIf="objectifManagerService.choosedObjectifs[1].completed; else objectif2NotAchived ">
+                    <p class="mb-4"><del>2.{{ getObjectifs()[1] }}</del></p>
+                </div>
+                <ng-template #objectif2NotAchived>
+                    <p class="mb-4">2.{{ getObjectifs()[1] }}</p>
+                </ng-template>
             </div>
         </mat-tab>
         <mat-tab label="Privés">
             <div>
-                <p class="mb-4">{{ getObjectifs()[2] }}</p>
+                <div *ngIf="objectifManagerService.choosedObjectifs[2].completed; else objectif3NotAchived ">
+                    <p class="mb-4"><del>{{ getObjectifs()[2] }}</del></p>
+                </div>
+                <ng-template #objectif3NotAchived>
+                    <p class="mb-4">{{ getObjectifs()[2] }}</p>
+                </ng-template>
                 <p class="mb-4" *ngIf="this.objectifManagerService.opponentPrivateObjectif.completed">
-                    {{ this.objectifManagerService.opponentPrivateObjectif.definition }}. (objectif privé de votre adversaire)
+                    <del>{{ this.objectifManagerService.opponentPrivateObjectif.definition }}. (objectif privé de votre adversaire)</del>
                 </p>
             </div>
         </mat-tab>
     </mat-tab-group>
 </mat-card>
-
-<div *ngIf="objectifManagerService.objectifAchived">
+<div *ngIf="objectifManagerService.completedObjectif">
     <app-objectif-achived></app-objectif-achived>
 </div>

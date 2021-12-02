@@ -127,13 +127,11 @@ export class MultiplayerModeService {
         this.socketManagementService.reserveToJoinOnfirstTurn(this.userService.gameName);
     }
     setGuestPlayerInfromation(guestUserName: string) {
-        this.userService.initiliseUsers(false);
         this.userService.joinedUser.name = guestUserName;
         this.userService.joinedUser.guestPlayer = false;
     }
     setGameInformations(room: MessageServer, playerName: string) {
         this.socketManagementService.emit('joinRoom', { gameName: room.gameName, guestPlayer: { name: playerName } });
-        this.userService.initiliseUsers(false);
         this.userService.realUser.name = room.user?.name ?? 'default';
         this.userService.joinedUser.name = playerName;
         this.userService.joinedUser.guestPlayer = true;

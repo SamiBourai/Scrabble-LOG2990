@@ -35,13 +35,16 @@ hr {
 .vrCommand {
     color: green;
 }
-
+.input-group-text{
+    background-color: #2E4052;
+    color: white;
+}
 #hint {
     width: 100%;
-    position: absolute;
-    top: 95%;
+    position: relative;
+    top: 90%;
+    color: white;
 }
-
 #turn {
     color: red;
 }

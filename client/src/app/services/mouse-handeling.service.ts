@@ -11,6 +11,7 @@ import {
     CANEVAS_WIDTH,
     HAND_POSITION_END,
     HAND_POSITION_START,
+    H_ARROW,
     LEFTSPACE,
     NB_TILES,
     NOT_A_LETTER,
@@ -18,7 +19,7 @@ import {
     SWAP_BUTTON_RANGE_X,
     SWAP_BUTTON_RANGE_Y,
     TOPSPACE,
-    UNDEFINED_INDEX,
+    UNDEFINED_INDEX
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
@@ -76,7 +77,11 @@ export class MouseHandelingService {
 
         if ((this.tempCanvasService.previousTile.x !== NB_TILES && this.tempCanvasService.previousTile.y !== NB_TILES) || this.firstBorderLetter) {
             letter = this.easelLogic.tempGetLetter(key, this.userService.getPlayerEasel());
-            if (this.tempCanvasService.previousTile.x === NB_TILES || this.tempCanvasService.previousTile.y === NB_TILES)
+            if (
+                this.tempCanvasService.direction === H_ARROW
+                    ? this.tempCanvasService.previousTile.x === NB_TILES
+                    : this.tempCanvasService.previousTile.y === NB_TILES
+            )
                 this.firstBorderLetter = false;
         }
         if (letter !== NOT_A_LETTER) {

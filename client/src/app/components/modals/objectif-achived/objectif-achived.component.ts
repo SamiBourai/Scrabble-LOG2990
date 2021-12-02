@@ -10,7 +10,7 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./objectif-achived.component.scss'],
 })
 export class ObjectifAchivedComponent implements OnInit {
-    achivedObjectif: string = '';
+    diplayCompltedObjectif: string = '';
     constructor(
         public objectifManagerService: ObjectifManagerService,
         private socketManagementService: SocketManagementService,
@@ -18,15 +18,16 @@ export class ObjectifAchivedComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        if (this.objectifManagerService.achivedObjectif.name !== '' && !this.objectifManagerService.objectifAchivedByOpponnent)
+        if (this.objectifManagerService.completedObjectif && !this.objectifManagerService.objectifAchivedByOpponnent) {
             this.updateScore(this.objectifManagerService.achivedObjectif);
-        else if (this.objectifManagerService.objectifAchivedByOpponnent)
-            this.achivedObjectif = this.objectifManagerService.displayOppenentObjectifs(this.objectifManagerService.achivedObjectif);
+        } else if (this.objectifManagerService.objectifAchivedByOpponnent) {
+            this.diplayCompltedObjectif = this.objectifManagerService.displayOppenentObjectifs(this.objectifManagerService.achivedObjectif);
+        }
     }
     close() {
-        this.objectifManagerService.objectifAchived = false;
+        this.objectifManagerService.completedObjectif = false;
         this.objectifManagerService.achivedObjectif.name = '';
-        this.achivedObjectif = '';
+        this.diplayCompltedObjectif = '';
         this.objectifManagerService.objectifAchivedByOpponnent = false;
     }
     private updateScore(objectif: Objectifs) {
@@ -56,7 +57,7 @@ export class ObjectifAchivedComponent implements OnInit {
                 }
         }
         if (this.objectifManagerService.userPlay) {
-            this.achivedObjectif = 'vous avez réussi à ' + objectif.definition;
+            this.diplayCompltedObjectif = 'vous avez réussi à ' + objectif.definition;
         }
     }
 }

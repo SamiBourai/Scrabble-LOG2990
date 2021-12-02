@@ -204,29 +204,6 @@
 .loading-container {
     margin: 40px auto;
 }
-
-.loading {
-    border: 2px solid transparent;
-    border-color: transparent rgb(255, 255, 255) transparent rgb(255, 255, 255);
-    -moz-animation: rotate-loading 1.5s linear 0s infinite normal;
-    -moz-transform-origin: 50% 50%;
-    -o-animation: rotate-loading 1.5s linear 0s infinite normal;
-    -o-transform-origin: 50% 50%;
-    -webkit-animation: rotate-loading 1.5s linear 0s infinite normal;
-    -webkit-transform-origin: 50% 50%;
-    animation: rotate-loading 1.5s linear 0s infinite normal;
-    transform-origin: 50% 50%;
-}
-
-.loading-container:hover .loading,
-.loading-container .loading {
-    -webkit-transition: all 0.5s ease-in-out;
-    -moz-transition: all 0.5s ease-in-out;
-    -ms-transition: all 0.5s ease-in-out;
-    -o-transition: all 0.5s ease-in-out;
-    transition: all 0.5s ease-in-out;
-}
-
 #loading-text {
     -moz-animation: loading-text-opacity 2s linear 0s infinite normal;
     -o-animation: loading-text-opacity 2s linear 0s infinite normal;

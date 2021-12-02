@@ -268,7 +268,7 @@ describe('MouseHandelingService', () => {
         let x = false;
         service['allIsClickedToFalse']();
         for (const i of EASEL_POSITIONS) {
-            if (i.isClicked === true) x = true;
+            if (i.isClicked) x = true;
         }
         expect(x).toBeFalse();
     });

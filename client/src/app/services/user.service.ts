@@ -12,7 +12,7 @@ import {
     SIXTH_NAME,
     SIX_TURN,
     THIRD_NAME,
-    UNDEFINED_INDEX,
+    UNDEFINED_INDEX
 } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';
@@ -21,13 +21,7 @@ import { VirtualPlayerService } from './virtual-player.service';
     providedIn: 'root',
 })
 export class UserService {
-    // ici nous avons pas le choix que de declarer userNameLocalStorage as any, car local storage retourne string | null
-    // alors ici on deux option : c'est soit on
-    // Set strictNullChecks=false in tsconfig.json.
-    //  ou Declare your variable type as any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    userNameLocalStorage: any;
-    playMode: string;
+    playMode: string = '';
     realUser: RealUser;
     joinedUser: JoinedUser;
     vrUser: VrUser;
@@ -51,16 +45,15 @@ export class UserService {
     vrSkipingTurn: boolean;
     userSkipingTurn: boolean;
     realUserTurnObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    reInit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    vrPlayerNamesBeginner: string[][] = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []]; // admin ici pour nom vr user
+    vrPlayerNamesBeginner: string[][] = [[FIRST_NAME, SECOND_NAME, THIRD_NAME], []];
     vrPlayerNamesExpert: string[][] = [[FOURTH_NAME, FIFTH_NAME, SIXTH_NAME], []];
 
     endOfGameCounter: number = 0;
-    endOfGame: boolean;
+    endOfGame: boolean = false;
     endOfGameBehaviorSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     firstMode: string = '';
 
-    isUserResetData: boolean;
+    isUserResetData: boolean = false;
     isUserResetDataObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
     constructor(private messageService: MessageService, private virtualPlayer: VirtualPlayerService) {
         this.observableCommandToSend = this.commandtoSendObs.asObservable();
@@ -69,48 +62,38 @@ export class UserService {
 
         const first = this.chooseFirstToPlay();
         this.realUser = {
-            name: this.getUserName(),
+            name: localStorage.getItem('userName') as string,
             level: 'Joueur en ligne',
             round: '1 min',
             score: 0,
-            firstToPlay: first, // if true le realuser va commencer sinon c'est vrUser va commencer
+            firstToPlay: first,
             turnToPlay: first,
+            easel: new EaselObject(false),
+        };
+        this.vrUser = {
+            name: this.chooseRandomNameBeg(),
+            level: 'Débutant',
+            round: '1 min',
+            score: 0,
+            easel: new EaselObject(false),
+        };
+        this.joinedUser = {
+            name: 'default',
+            level: 'Joueur en ligne',
+            round: '1 min',
+            score: 0,
+            guestPlayer: false,
             easel: new EaselObject(false),
         };
         this.userSkipingTurn = false;
     }
-    initiliseUsers(soloMode: boolean) {
-        if (!soloMode)
-            this.joinedUser = {
-                name: 'default',
-                level: 'Joueur en ligne',
-                round: '1 min',
-                score: 0,
-                guestPlayer: false,
-                easel: new EaselObject(false),
-            };
-        else
-            this.vrUser = {
-                name: this.chooseRandomNameBeg(),
-                level: 'Débutant',
-                round: '1 min',
-                score: 0,
-                easel: new EaselObject(false),
-            };
-    }
     chooseFirstToPlay(): boolean {
         const randomIndex = Math.floor(Math.random() * PARAMETERS_OF_SWAP);
-        if (randomIndex < PARAMETERS_OF_SWAP / 2) {
-            return false;
-        } else {
-            return true;
-        }
+        return randomIndex < PARAMETERS_OF_SWAP / 2 ? false : true;
     }
 
     getPlayerEasel(): EaselObject {
-        if (this.playMode === 'joinMultiplayerGame') {
-            return this.joinedUser.easel;
-        } else return this.realUser.easel;
+        return this.playMode === 'joinMultiplayerGame' ? this.joinedUser.easel : this.realUser.easel;
     }
     getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
@@ -132,15 +115,6 @@ export class UserService {
         const randomInteger = this.getRandomInt(this.mergeBoth(this.vrPlayerNamesExpert).length);
         return this.mergeBoth(this.vrPlayerNamesExpert)[randomInteger];
     }
-    getUserName(): string {
-        this.userNameLocalStorage = localStorage.getItem('userName');
-        return this.userNameLocalStorage;
-    }
-
-    getVrUserName(): string {
-        this.userNameLocalStorage = localStorage.getItem('vrUserName');
-        return this.userNameLocalStorage;
-    }
     setVrName() {
         if (this.virtualPlayer.expert) {
             do {
@@ -158,7 +132,7 @@ export class UserService {
         if (!this.joinedUser.guestPlayer) return this.realUser.turnToPlay;
         else return !this.realUser.turnToPlay;
     }
-    detectSkipTurnBtn(): boolean {
+    detectSkipTurnBtn() {
         this.messageService.skipTurnIsPressed = true;
         if (this.playMode === 'soloGame') {
             this.realUser.turnToPlay = false;
@@ -168,7 +142,6 @@ export class UserService {
             this.passTurn = true;
             this.playedObs.next(this.passTurn);
         }
-        return true;
     }
     userPlayed() {
         this.endOfGameCounter = 0;
@@ -208,9 +181,6 @@ export class UserService {
             return true;
         } else if (this.playMode === 'joinMultiplayerGame' && this.realUser.turnToPlay) return false;
         else return this.realUser.turnToPlay;
-    }
-    get initArrayMessage(): Observable<boolean> {
-        return this.reInit;
     }
     updateScore(points: number, bonus: boolean) {
         if (this.playMode === 'joinMultiplayerGame') {

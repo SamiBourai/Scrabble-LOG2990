@@ -3,7 +3,7 @@ import {
     DATABASE_COLLECTION_CLASSIC,
     DATABASE_COLLECTION_LOG2990,
     NOT_FOUND_HTTP_STATUS,
-    NO_CONTENT_HTTP_STATUS,
+    NO_CONTENT_HTTP_STATUS
 } from '@app/classes/constants';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
@@ -169,7 +169,7 @@ export class DatabaseController {
             this.databaseService
                 .getChosenDic(req.params.chosenDictionary)
                 .then(() => {
-                    res.sendStatus(CREATED_HTTP_STATUS).send();
+                    res.json('Dictionary successfully loaded');
                 })
                 .catch((error: Error) => {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);

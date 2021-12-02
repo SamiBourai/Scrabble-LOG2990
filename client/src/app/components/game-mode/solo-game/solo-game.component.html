@@ -91,7 +91,7 @@
                             (click)="enableBtn()"
                             [disabled]="
                                 userFormGroup.controls.userName.invalid ||
-                                isDeleted === true ||
+                                isDeleted ||
                                 chosenDictionnary === '---- Selectionnez un dictionnaire ----'
                             "
                             mat-dialog-close

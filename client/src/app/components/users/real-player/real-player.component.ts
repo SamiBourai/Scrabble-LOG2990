@@ -21,8 +21,7 @@ export class RealPlayerComponent implements OnInit {
     ) {}
     ngOnInit() {
         this.userService.realUserTurnObs.subscribe(() => {
-            if (this.userService.isPlayerTurn() && !this.userService.endOfGame && this.userService.playMode === 'soloGame')
-                this.timeService.startTime('user');
+            if (this.isTimeStartableSoloMode()) this.timeService.startTime('user');
         });
 
         if (this.userService.playMode === 'createMultiplayerGame') {
@@ -47,5 +46,8 @@ export class RealPlayerComponent implements OnInit {
             });
             this.mutltiplayerModeService.endOfGame();
         }
+    }
+    isTimeStartableSoloMode(): boolean {
+        return this.userService.isPlayerTurn() && !this.userService.endOfGame && this.userService.playMode === 'soloGame';
     }
 }

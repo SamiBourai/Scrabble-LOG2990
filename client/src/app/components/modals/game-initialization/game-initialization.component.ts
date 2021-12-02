@@ -12,16 +12,18 @@ export class GameInitializationComponent implements OnInit {
     joinMultiplayerGame: boolean = false;
 
     constructor(public userService: UserService) {}
+
     ngOnInit(): void {
         this.userService.playMode = this.userService.firstMode;
         switch (this.userService.firstMode) {
             case 'soloGame':
                 this.soloMode = true;
-                this.userService.initiliseUsers(this.soloMode);
                 break;
+
             case 'createMultiplayerGame':
                 this.createMultiplayerGame = true;
                 break;
+
             case 'joinMultiplayerGame':
                 this.joinMultiplayerGame = true;
                 break;

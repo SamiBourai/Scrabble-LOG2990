@@ -7,16 +7,16 @@ span:nth-child(2n-1){background:rgb(0, 132, 255); animation:bar1 0.8s infinite e
 span:nth-child(2n){background:rgb(0, 255, 255);animation:bar2 0.8s infinite ease;}
 
 @keyframes bar1{
-0%{background:rgb(17, 0, 255)}100%{background:rgb(0, 255, 21)}
+0%{background:blanchedalmond}100%{background:#ff5800}
 }
 
 @keyframes bar2{
-0%{background:rgb(0, 255, 21)}100%{background:rgb(17, 0, 255)}
+0%{background:#ff5800}100%{background:blanchedalmond}
 }
 
 .congrats h2{clear:both;padding-top:15px; 
     padding-left:15px;
     font-family:verdana;
-    color: rgb(0, 0, 0);
+    color: blanchedalmond;
     font-size:1.25em;
 }

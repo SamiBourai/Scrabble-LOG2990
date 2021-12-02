@@ -11,12 +11,11 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 @Component({
     selector: 'app-modal-user-vs-player',
-    templateUrl: './modal-user-vs-player.component.html',
-    styleUrls: ['./modal-user-vs-player.component.scss'],
+    templateUrl: './ViewModal.component.html',
+    styleUrls: ['./ViewModal.component.scss'],
 })
-export class ModalUserVsPlayerComponent {
-    isUserReturnToMenu: boolean;
-    isUserAcceptQuit: boolean;
+export class ViewModalComponent {
+    isUserAcceptQuit: boolean = false;
     constructor(
         public userService: UserService,
         public timeService: TimeService,
@@ -28,12 +27,8 @@ export class ModalUserVsPlayerComponent {
         private objectifManagerService: ObjectifManagerService,
         public multiplayerService: MultiplayerModeService,
     ) {}
-
-    getNameFromLocalStorage() {
-        return this.userService.realUser.name;
-    }
     setIsUserQuitGame(): void {
-        this.getOne();
+        this.assignHome();
     }
     quitMultiPlayerGame() {
         switch (this.userService.playMode) {
@@ -52,10 +47,10 @@ export class ModalUserVsPlayerComponent {
                 });
                 break;
         }
-        this.getOne();
+        this.assignHome();
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
     }
-    getOne() {
+    private assignHome() {
         window.location.assign('/home');
     }
 }

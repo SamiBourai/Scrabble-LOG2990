@@ -21,8 +21,8 @@ export class ScrableLog2990ModalComponent implements OnInit {
 
     ngOnInit(): void {
         this.socketManagementService.listen('objectifAchived').subscribe((objectif: MessageServer) => {
-            if (objectif && !this.objectifManagerService.objectifAchived) {
-                this.objectifManagerService.objectifAchived = true;
+            if (objectif && !this.objectifManagerService.completedObjectif) {
+                this.objectifManagerService.completedObjectif = true;
                 this.objectifManagerService.objectifAchivedByOpponnent = true;
                 this.objectifManagerService.achivedObjectif = {
                     name: objectif.achivedObjectif?.name ?? '',

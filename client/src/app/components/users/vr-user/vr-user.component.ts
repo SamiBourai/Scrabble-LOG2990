@@ -10,9 +10,9 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./vr-user.component.scss'],
 })
 export class VrUserComponent implements OnInit, OnDestroy {
-    hasPlayed: boolean;
-    private scoreSubscription: Subscription;
-    private turnToPlaySubscription: Subscription;
+    hasPlayed: boolean = false;
+    private scoreSubscription = new Subscription();
+    private turnToPlaySubscription = new Subscription();
 
     constructor(public userService: UserService, public virtualPlayerService: VirtualPlayerService, public timeService: TimeService) {}
 

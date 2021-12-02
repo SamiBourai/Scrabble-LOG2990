@@ -3,8 +3,8 @@ import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Service } from 'typedi';
 import { NUMBER_TO_COMPARE } from './classes/constants';
-import { SocketManagerService } from './services/socket-manager.service';
 import { DatabaseService } from './services/database.service';
+import { SocketManagerService } from './services/socket-manager.service';
 
 @Service()
 export class Server {
@@ -12,7 +12,7 @@ export class Server {
     private static readonly baseDix: number = NUMBER_TO_COMPARE;
     private server: http.Server;
 
-    constructor(private readonly application: Application, private socketManager: SocketManagerService, private dataBaseService : DatabaseService) {}
+    constructor(private readonly application: Application, private socketManager: SocketManagerService, private dataBaseService: DatabaseService) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
         const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
@@ -28,7 +28,7 @@ export class Server {
         this.application.app.set('port', Server.appPort);
 
         this.server = http.createServer(this.application.app);
-        this.socketManager.initiliaseSocket(this.server);
+        this.socketManager.initializeSocket(this.server);
 
         this.socketManager.handleSockets();
 
@@ -37,11 +37,11 @@ export class Server {
         this.server.on('listening', () => this.onListening());
         try {
             await this.dataBaseService.start();
-            console.log("Database connection successful !");
-          } catch {
-            console.error("Database connection failed !");
+            console.log('Database connection successful !');
+        } catch {
+            console.error('Database connection failed !');
             process.exit(1);
-          }
+        }
     }
 
     private onError(error: NodeJS.ErrnoException): void {

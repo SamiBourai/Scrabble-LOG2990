@@ -325,7 +325,7 @@ describe('ObjectifManagerService', () => {
             { word: '', position: { x: 0, y: 1 }, direction: 'h' },
             0,
         );
-        expect(service.objectifAchived).toBeTruthy();
+        expect(service.completedObjectif).toBeTruthy();
     });
     it('should pass in updateObjectifs with vrPlayer play', () => {
         spyOn<any>(service, 'isObjectifAchived').and.returnValue(true);
@@ -340,7 +340,7 @@ describe('ObjectifManagerService', () => {
             { word: '', position: { x: 0, y: 1 }, direction: 'h' },
             0,
         );
-        expect(service.objectifAchived).toBeTruthy();
+        expect(service.completedObjectif).toBeTruthy();
     });
     it('should pass in isObjectifAchived and return true for pass4Times with undefind command', () => {
         service.userPlay = true;

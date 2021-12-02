@@ -12,6 +12,7 @@ export class ModalEndOfGameComponent implements OnInit {
     gotWinner: boolean = false;
 
     constructor(public multiplayerService: MultiplayerModeService, private userService: UserService, private databaseService: DatabaseService) {}
+
     ngOnInit(): void {
         this.multiplayerService.playerLeftObs.subscribe((response) => {
             this.gotWinner = response;
@@ -26,7 +27,6 @@ export class ModalEndOfGameComponent implements OnInit {
         if (this.userService.playMode === 'joinMultiplayerGame') this.userService.setJoinAsReal();
 
         this.userService.playMode = 'soloGame';
-        this.userService.initiliseUsers(true);
         this.userService.endOfGame = false;
         this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());
         this.userService.gameModeObs.next(this.userService.playMode);

@@ -11,11 +11,11 @@ import { MessageServer } from '@app/classes/message-server';
 import { RealUser } from '@app/classes/user';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
-import { ModalUserVsPlayerComponent } from './modal-user-vs-player.component';
+import { ViewModalComponent } from './ViewModal.component';
 
 describe('ModalUserVsPlayerComponent', () => {
-    let component: ModalUserVsPlayerComponent;
-    let fixture: ComponentFixture<ModalUserVsPlayerComponent>;
+    let component: ViewModalComponent;
+    let fixture: ComponentFixture<ViewModalComponent>;
     let userServiceSpy: jasmine.SpyObj<UserService>;
     let timeServiceSpy: jasmine.SpyObj<TimeService>;
 
@@ -27,7 +27,7 @@ describe('ModalUserVsPlayerComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            declarations: [ModalUserVsPlayerComponent],
+            declarations: [ViewModalComponent],
             providers: [
                 { provide: UserService, useValue: userServiceSpy },
                 { provide: TimeService, useValue: timeServiceSpy },
@@ -36,7 +36,7 @@ describe('ModalUserVsPlayerComponent', () => {
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ModalUserVsPlayerComponent);
+        fixture = TestBed.createComponent(ViewModalComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

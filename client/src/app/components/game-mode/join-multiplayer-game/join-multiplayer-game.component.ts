@@ -59,6 +59,7 @@ export class JoinMultiplayerGameComponent implements OnInit {
             });
         }, ONE_SECOND_MS);
     }
+
     joinGame(room: MessageServer): void {
         this.multiplayerModeService.setGameInformations(room, this.playerName);
         if (this.objectifManagerService.log2990Mode) {
@@ -67,6 +68,7 @@ export class JoinMultiplayerGameComponent implements OnInit {
         }
         this.roomJoined = true;
     }
+
     gameAccepted(): void {
         this.socketManagementService.listen('gameAccepted').subscribe((data) => {
             this.requestAccepted = data.gameAccepted ?? false;

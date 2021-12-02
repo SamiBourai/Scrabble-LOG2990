@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DictionaryPresentation } from '@app/classes/dictionary';
 import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
-import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
 import { DEFAULT_DICTIONNARY, DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
@@ -13,6 +13,7 @@ import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
+import { ValidWordService } from '@app/services/valid-word.service';
 import { USER_NAME_RULES } from './../../../constants/constants';
 
 @Component({
@@ -52,7 +53,9 @@ export class CreateMultiplayerGameComponent implements OnInit {
         public objectifManagerService: ObjectifManagerService,
         private database: DatabaseService,
         private snackBar: MatSnackBar,
+        private validWordService: ValidWordService,
     ) {}
+
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
         event.preventDefault();
@@ -66,6 +69,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
         }
         this.timeService.setGameTime(this.time);
     }
+
     @HostListener('document:click.addBtn', ['$event'])
     onClickInAddButton(event: Event) {
         event.preventDefault();
@@ -107,6 +111,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
         });
         this.getDictionnaries();
     }
+
     randomBonusActivated(event: Event): void {
         this.chosenMode = (event.target as HTMLInputElement)?.value;
         if (this.chosenMode === this.modes[0]) {
@@ -116,19 +121,17 @@ export class CreateMultiplayerGameComponent implements OnInit {
         this.chosenMode = this.modes[DEFAULT_MODE];
         this.userService.isBonusBox = false;
     }
+
     openDialogOfVrUser(): void {
-        this.dialogRef.open(ModalUserVsPlayerComponent);
+        this.dialogRef.open(ViewModalComponent);
     }
+
     passInSoloMode(): void {
         this.socketManagementService.emit('userPassedInSoloMode', { gameName: this.gameName });
-        // this.soloMode = true;
-        // this.createMultiplayerGame = false;
-        // this.name = this.userNameMutiplayer.value;
-        // this.chooseSoloMode = true;
         this.userService.playMode = 'soloGame';
-        this.userService.initiliseUsers(true);
         this.openDialogOfVrUser();
     }
+
     createGame(): void {
         const game: MessageServer = {
             user: { name: this.playerName },
@@ -137,17 +140,21 @@ export class CreateMultiplayerGameComponent implements OnInit {
             aleatoryBonus: this.userService.isBonusBox,
             modeLog2990: this.objectifManagerService.log2990Mode,
         };
+
         if (this.objectifManagerService.log2990Mode) {
             this.objectifManagerService.generateObjectifs(this.userService.playMode);
             game.objectifs = this.objectifManagerService.choosedObjectifs;
         }
+
         this.socketManagementService.emit('createGame', game);
         this.userService.realUser.name = this.playerName;
         this.userService.gameName = this.gameName;
     }
+
     disconnectUser(): void {
         this.socketManagementService.emit('userCanceled', { gameName: this.gameName });
     }
+
     beginGame(response: boolean): void {
         this.socketManagementService.emit('acceptGame', { gameName: this.gameName, gameAccepted: response });
         if (!response) {
@@ -177,7 +184,12 @@ export class CreateMultiplayerGameComponent implements OnInit {
             if (this.chosenDictionnary === '---- Selectionnez un dictionnaire ----') {
                 this.snackBar.open('Veuillez choisir un dictionnaire', 'Fermer');
                 this.isDeleted = false;
-            } else this.database.sendChosenDic(this.chosenDictionnary).subscribe();
+            } else {
+                this.database.sendChosenDic(this.chosenDictionnary).subscribe();
+                if (this.chosenDictionnary === 'dictionnaire principal') this.validWordService.loadDictionary();
+                else this.validWordService.loadDictionary(this.chosenDictionnary);
+            }
+
             this.snackBar.dismiss();
         } else if (
             !names.includes(this.chosenDictionnary) &&

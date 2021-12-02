@@ -18,8 +18,7 @@ import {
     MIN_SWAP_LENGTH,
     PARAMETERS_OF_SWAP,
     PLACE_LENGTH,
-    SWAP_LENGTH,
-    UNDEFINED_INDEX,
+    SWAP_LENGTH
 } from './../constants/constants';
 
 @Injectable({
@@ -51,35 +50,18 @@ export class MessageService {
     }
 
     isCommand(input: string): boolean {
-        return !(!input.includes('!') || input.indexOf('!') !== 0);
+        return input.indexOf('!') === 0;
     }
 
     isValid(command: string): boolean {
-        const containsPlace = this.containsPlaceCommand(command);
-        const containsSwap = this.containsSwapCommand(command);
+        const containsPlace = command.includes('!placer');
+        const containsSwap = command.includes('!echanger');
         if (containsPlace && command.length !== PLACE_LENGTH && this.placeCommand(command).length !== 0) {
             return true;
         } else if (containsSwap && command.length !== SWAP_LENGTH && this.swapCommand(command) !== '') {
             return true;
         } else if (this.isInside(command, this.arrayOfCommand)) {
             return true;
-        }
-        return false;
-    }
-
-    containsPlaceCommand(command: string): boolean {
-        if (!command.includes('!placer')) return false;
-        return true;
-    }
-
-    containsSwapCommand(command: string) {
-        if (command.includes('!echanger')) return true;
-        return false;
-    }
-
-    isInside(command: string, lookFor: string[]): boolean {
-        for (const commandToFind of lookFor) {
-            if (command === commandToFind) return true;
         }
         return false;
     }
@@ -149,9 +131,10 @@ export class MessageService {
         const ligne = asciiCode - CHAR_OFFSET;
         return ligne;
     }
-
-    removeDuplicate(array: string[], element: string) {
-        const index = array.indexOf(element, 0);
-        if (index > UNDEFINED_INDEX) array.splice(index, 1);
+    private isInside(command: string, lookFor: string[]): boolean {
+        for (const commandToFind of lookFor) {
+            if (command === commandToFind) return true;
+        }
+        return false;
     }
 }

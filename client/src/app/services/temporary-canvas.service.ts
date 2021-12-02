@@ -12,7 +12,7 @@ import {
     SIX,
     TOPSPACE,
     UNDEFINED_INDEX,
-    V_ARROW,
+    V_ARROW
 } from '@app/constants/constants';
 import { LettersService } from './letters.service';
 
@@ -25,7 +25,7 @@ export class TemporaryCanvasService {
     easelContext: CanvasRenderingContext2D;
     tempWord: string = '';
     previousTile: Vec2 = { x: -1, y: -1 };
-    private direction: string = H_ARROW;
+    direction: string = H_ARROW;
 
     constructor(private letterService: LettersService) {}
 
@@ -80,14 +80,6 @@ export class TemporaryCanvasService {
         } while (!this.letterService.tileIsEmpty(this.previousTile) && this.tempWord !== '');
         this.drawTileFocus(this.previousTile);
     }
-    decrementDirection() {
-        if (this.direction === H_ARROW && this.previousTile.x <= NB_TILES) this.previousTile.x--;
-        else if (this.direction === V_ARROW && this.previousTile.y <= NB_TILES) this.previousTile.y--;
-    }
-    incrementDirection() {
-        if (this.direction === H_ARROW && this.previousTile.x < NB_TILES) this.previousTile.x++;
-        else if (this.direction === V_ARROW && this.previousTile.y < NB_TILES) this.previousTile.y++;
-    }
     drawTileFocus(pos: Vec2): void {
         this.previousTile = { x: pos.x, y: pos.y };
         this.focusContext.font = 'bold 40px system-ui';
@@ -116,18 +108,10 @@ export class TemporaryCanvasService {
         this.direction = H_ARROW;
     }
     switchArrow() {
-        if (this.direction === H_ARROW) {
-            this.direction = V_ARROW;
-        } else {
-            this.direction = H_ARROW;
-        }
+        this.direction = this.direction === H_ARROW ? V_ARROW : H_ARROW;
     }
     getCommandDirection(): string {
-        if (this.direction === H_ARROW) {
-            return 'h';
-        } else {
-            return 'v';
-        }
+        return this.direction === H_ARROW ? 'h' : 'v';
     }
     setLetterClicked(index: number) {
         this.easelContext.beginPath();
@@ -193,5 +177,13 @@ export class TemporaryCanvasService {
                 BOARD_WIDTH / NB_TILES,
             );
         }
+    }
+    private decrementDirection() {
+        if (this.direction === H_ARROW && this.previousTile.x <= NB_TILES) this.previousTile.x--;
+        else if (this.direction === V_ARROW && this.previousTile.y <= NB_TILES) this.previousTile.y--;
+    }
+    private incrementDirection() {
+        if (this.direction === H_ARROW && this.previousTile.x < NB_TILES) this.previousTile.x++;
+        else if (this.direction === V_ARROW && this.previousTile.y < NB_TILES) this.previousTile.y++;
     }
 }

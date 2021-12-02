@@ -17,7 +17,7 @@ import {
     POSITION_FILL_BOX_CONDITION,
     UNDEFINED_INDEX,
     WORD_LENGHT_FILL_BOX_CONDITION,
-    WORD_TO_PLACE_DEFINITION,
+    WORD_TO_PLACE_DEFINITION
 } from '@app/constants/constants';
 
 @Injectable({
@@ -44,7 +44,7 @@ export class ObjectifManagerService {
         definition: '',
     };
     userPlay: boolean = false;
-    objectifAchived: boolean = false;
+    completedObjectif: boolean = false;
     objectifAchivedByOpponnent: boolean = false;
     verifyObjectifs(user: boolean, command?: ChatCommand, numberOfLetters?: number) {
         const undefinedCommand: ChatCommand = { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
@@ -106,7 +106,7 @@ export class ObjectifManagerService {
         if (this.isObjectifAchived(objectif.name, command, numberOfLetters)) {
             if (this.userPlay) objectif.completed = true;
             this.achivedObjectif = { name: objectif.name, bonus: objectif.bonus, definition: objectif.definition, completed: true };
-            this.objectifAchived = true;
+            this.completedObjectif = true;
         }
     }
     private isObjectifAchived(objectif: string, command?: ChatCommand, numberOfLetters?: number): boolean {

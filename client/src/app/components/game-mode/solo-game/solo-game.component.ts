@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DictionaryPresentation } from '@app/classes/dictionary';
 import { GameTime } from '@app/classes/time';
-import { ModalUserVsPlayerComponent } from '@app/components/modals/modal-user-vs-player/modal-user-vs-player.component';
+import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
 import { DatabaseService } from '@app/services/database.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { TimeService } from '@app/services/time.service';
@@ -20,7 +20,7 @@ import {
     MIN_LENGTH,
     MODES,
     TIME_CHOICE,
-    USER_NAME_RULES,
+    USER_NAME_RULES
 } from './../../../constants/constants';
 
 @Component({
@@ -68,6 +68,7 @@ export class SoloGameComponent implements OnInit {
         }
         this.timeService.setGameTime(this.time);
     }
+
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
         event.preventDefault();
@@ -81,6 +82,7 @@ export class SoloGameComponent implements OnInit {
         }
         this.timeService.setGameTime(this.time);
     }
+
     ngOnInit(): void {
         this.userFormGroup = new FormGroup({
             userName: new FormControl('', [
@@ -91,19 +93,24 @@ export class SoloGameComponent implements OnInit {
             ]),
         });
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.generateObjectifs('soloGame');
+
         this.getDictionnaries(this.dictionnaries);
     }
+
     openDialogOfVrUser(): void {
-        this.dialogRef.open(ModalUserVsPlayerComponent);
+        this.dialogRef.open(ViewModalComponent);
     }
+
     onSubmitUserName(): void {
         this.openDialogOfVrUser();
         this.storeNameInLocalStorage();
     }
+
     storeNameInLocalStorage(): void {
         this.userService.realUser.name = this.name;
         localStorage.setItem('userName', this.name);
     }
+
     setLevelJv(event: Event): void {
         if ((event.target as HTMLInputElement)?.value === 'Expert') {
             this.virtualPlayerService.expert = true;
@@ -113,12 +120,15 @@ export class SoloGameComponent implements OnInit {
             this.userService.setVrName();
         }
     }
+
     randomBonusActivated(event: Event): void {
         this.chosenMode = (event.target as HTMLInputElement)?.value;
+
         if (this.chosenMode === this.modes[0]) {
             this.userService.isBonusBox = true;
             return;
         }
+
         this.chosenMode = this.modes[DEFAULT_MODE];
         this.userService.isBonusBox = false;
     }
@@ -137,6 +147,7 @@ export class SoloGameComponent implements OnInit {
         this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
         const updatedDictionnariesInString = localStorage.getItem('updateDics') as string;
         const updatedDictionnaries: DictionaryPresentation[] = JSON.parse(updatedDictionnariesInString);
+
         for (const dic of updatedDictionnaries) {
             names.push(dic.title);
         }
@@ -147,6 +158,7 @@ export class SoloGameComponent implements OnInit {
                 this.snackBar.open('Veuillez choisir un dictionnaire', 'Fermer');
                 this.isDeleted = false;
             } else this.validWordService.loadDictionary(this.chosenDictionnary);
+
             this.snackBar.dismiss();
         } else if (
             !names.includes(this.chosenDictionnary) &&

@@ -11,7 +11,6 @@ export class Timer {
         this.timerObs.subscribe((timer) => {
             this.timeUser = timer;
         });
-        this.startTime();
     }
     startTime() {
         const intervalId = setInterval(() => {
@@ -26,6 +25,7 @@ export class Timer {
                 else this.creatorTurn = true;
             }
             if (this.stopTimer) {
+                this.timerObs.unsubscribe();
                 clearInterval(intervalId);
             } else this.timerObs.next(this.timeUser);
         }, ONE_SECOND_MS);
