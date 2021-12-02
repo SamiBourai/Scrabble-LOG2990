@@ -22,6 +22,7 @@ export class GameObject {
     arrayOfBonusBox = new Array<Vec2[]>();
     modeLog2990: boolean = false;
     objectifs = new Array<Objectifs>();
+    dictionnaryName: string = '';
     constructor(gameName: string, aleatoryBonus: boolean, creatorPlayer: Player, sec: number, min: number, modeLog2990: boolean) {
         this.gameName = gameName;
         this.aleatoryBonus = aleatoryBonus;

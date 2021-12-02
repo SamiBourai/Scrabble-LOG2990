@@ -33,6 +33,7 @@ export class SocketManagerService {
                     message.modeLog2990 ?? false,
                 );
                 if (message.modeLog2990) createdGame.objectifs = message.objectifs ?? createdGame.objectifs;
+                createdGame.dictionnaryName = message.dictionnaryName ?? '';
                 socket.join(message.gameName);
                 this.games.set(message.gameName, createdGame);
                 this.rooms.push(message);
@@ -174,7 +175,6 @@ export class SocketManagerService {
                     }
                 }
                 socket.disconnect();
-                console.log('disconect');
             });
         });
         setInterval(() => {
@@ -184,6 +184,8 @@ export class SocketManagerService {
     private sendWinner(message: MessageClient) {
         setTimeout(() => {
             if (this.games.has(message.gameName)) {
+                console.log(this.games.get(message.gameName).dictionnaryName);
+                message.dictionnaryName = this.games.get(message.gameName).dictionnaryName;
                 this.sio.to(message.gameName).emit('getWinner', message);
                 this.games.get(message.gameName).timer.stopTimer = true;
                 this.games.delete(message.gameName);
