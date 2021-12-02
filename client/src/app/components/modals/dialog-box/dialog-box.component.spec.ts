@@ -12,7 +12,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DialogBoxComponent } from './dialog-box.component';
 
-fdescribe('DialogBoxComponent', () => {
+describe('DialogBoxComponent', () => {
     let component: DialogBoxComponent;
     let fixture: ComponentFixture<DialogBoxComponent>;
     // const mockDialogRef = {

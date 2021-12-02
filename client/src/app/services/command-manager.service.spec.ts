@@ -9,7 +9,7 @@ import { TestBed } from '@angular/core/testing';
 import { EaselObject } from '@app/classes/easel-object';
 import { CommandManagerService } from './command-manager.service';
 
-fdescribe('CommandManagerService', () => {
+describe('CommandManagerService', () => {
     let service: CommandManagerService;
 
     beforeEach(() => {

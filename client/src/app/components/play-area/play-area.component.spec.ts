@@ -16,7 +16,7 @@ import { ReserveService } from '@app/services/reserve.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
-fdescribe('PlayAreaComponent', () => {
+describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
 

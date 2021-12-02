@@ -76,4 +76,11 @@ describe('JoinMultiplayerGameComponent', () => {
         component.joinGame(pseudoRoom);
         expect(component.roomJoined).toBeTrue();
     });
+
+    it('generateRooms', () => {
+        component.roomJoined = true;
+        const spy = spyOn<any>(global,'setInterval');
+        component.generateRooms();
+        expect(spy).toHaveBeenCalled();
+    });
 });

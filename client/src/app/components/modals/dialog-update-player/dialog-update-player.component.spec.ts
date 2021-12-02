@@ -11,7 +11,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogUpdatePlayerComponent } from './dialog-update-player.component';
 
-fdescribe('DialogUpdatePlayerComponent', () => {
+describe('DialogUpdatePlayerComponent', () => {
     let component: DialogUpdatePlayerComponent;
     let fixture: ComponentFixture<DialogUpdatePlayerComponent>;
 

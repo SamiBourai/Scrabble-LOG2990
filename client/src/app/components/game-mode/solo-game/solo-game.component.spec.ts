@@ -1,6 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+//import { DictionaryPresentation } from '@app/classes/dictionary';
+
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-duplicate-imports */
+/* eslint-disable @typescript-eslint/no-duplicate-imports */
+/* eslint-disable prettier/prettier */
+/* eslint-disable max-len */
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,6 +18,9 @@ import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
 import { SoloGameComponent } from './solo-game.component';
+import { RealUser } from '@app/classes/user';
+import { EaselObject } from '@app/classes/easel-object';
+
 
 describe('SoloGameComponent', () => {
     let component: SoloGameComponent;
@@ -27,6 +39,11 @@ describe('SoloGameComponent', () => {
         jasmine.getEnv().allowRespy(true);
     });
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const MatMock = {
+        open: () => {},
+    };
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SoloGameComponent],
@@ -36,6 +53,8 @@ describe('SoloGameComponent', () => {
                 { provide: UserService, useValue: userServiceSpy },
                 { provide: TimeService, useValue: timeServiceSpy },
                 { provide: VirtualPlayerService, useValue: virtualPlayerServiceSpy },
+                { provide: MatSnackBar, useValue: MatMock },
+                
             ],
         }).compileComponents();
     });
@@ -72,6 +91,15 @@ describe('SoloGameComponent', () => {
         expect(component.timeCounter).toBe(1);
     });
 
+    it('storeNameInLocalStorage',()=>{
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        const spy = spyOn<any>(localStorage,'setItem');
+        component.storeNameInLocalStorage();
+        expect(spy).toHaveBeenCalled();
+
+    });
+
     it('onClickInAddButton ==', () => {
         const event = new Event('click');
         component.timeCounter = TIME_CHOICE.length;
@@ -106,16 +134,7 @@ describe('SoloGameComponent', () => {
         expect(storeNameInLocalStorageSpy).toHaveBeenCalled();
     });
 
-    it('should call setItem on storeNameInLocalStorage', () => {
-        userServiceSpy.realUser.name = 'bob';
-        component.name = 'bob';
-        // const storeNameInLocalStorageSpy = spyOn(component, 'storeNameInLocalStorage');
-        component.storeNameInLocalStorage();
-        const spyLS = spyOn<any>(localStorage, 'setItem').and.returnValue(() => {
-            return 'gaya';
-        });
-        expect(spyLS).toEqual(userServiceSpy.realUser.name);
-    });
+    
 
     it('should call setVrName on setLevelJv', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,4 +179,31 @@ describe('SoloGameComponent', () => {
         component.randomBonusActivated(pseudoEvent);
         expect(userServiceSpy.isBonusBox).toBeFalse();
     });
+
+    it('selectedDictionnary',()=>{
+        const event:Event = new Event('change');
+        const spy = spyOn(component,'selectedDictionnary');
+       component.selectedDictionnary(event);
+       expect(spy).toHaveBeenCalled();
+    });
+
+    it('enableBtn',()=>{
+        component.isNextBtnClicked = true;
+        component.enableBtn();
+        expect(component.isNextBtnClicked).toBe(false);
+    });
+
+    it('getDictionnariesDelete',()=>{
+        component['updateDics'] = [{title:'allo',description:'bye'}];
+        component.getDictionnariesDelete();
+        expect(component['updateDics'].length).toBeGreaterThanOrEqual(1);
+    });
+
+    // it('getDictionnariesDelete localStorage',()=>{
+    //     component['updateDics'] = [{title:'allo',description:'bye'}];
+    //     const spy = spyOn(component['database'],'getMetaDictionary');
+    //     spyOn<any>(component['database'].getMetaDictionary,'subscribe')
+    //     component.getDictionnariesDelete();
+    //     expect(spy).toHaveBeenCalled();
+    // });
 });

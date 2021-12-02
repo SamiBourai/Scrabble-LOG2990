@@ -237,12 +237,12 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
                     this.userService.updateScore(points, this.lettersService.usedAllEaselLetters);
                     if (this.userService.playMode !== 'soloGame') {
                         this.userService.chatCommandToSend = this.messageService.command;
-                        this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+                        if (this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
                     }
                 } else {
                     this.typeArea = this.typeArea + ' (la validation du mot a échoué)';
                     this.userService.chatCommandToSend = { word: 'invalid', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: 'h' };
-                    this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+                    if (this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
                 }
                 break;
         }
@@ -300,10 +300,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     private reserveLettersQuantity() {
         let s: string;
         this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length);
-        this.reserveService.letters.forEach((value: number, key: Letter) => {
-            s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
-            this.arrayOfReserveLetters.push(s);
-        });
+        if (this.reserveService.letters)
+            this.reserveService.letters.forEach((value: number, key: Letter) => {
+                s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
+                this.arrayOfReserveLetters.push(s);
+            });
     }
     private verifyObjectifs(command: string) {
         if (this.objectifMangerService.log2990Mode) {
