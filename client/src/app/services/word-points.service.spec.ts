@@ -25,6 +25,7 @@ describe('WordPointsService', () => {
                 { x: 1, y: 0 },
                 { x: 2, y: 0 },
             ],
+            false,
         );
 
         expect(test).toEqual(15);
@@ -39,6 +40,7 @@ describe('WordPointsService', () => {
                 { x: 2, y: 1 },
                 { x: 3, y: 1 },
             ],
+            false,
         );
         expect(test).toEqual(12);
     });
@@ -52,6 +54,7 @@ describe('WordPointsService', () => {
                 { x: 2, y: 3 },
                 { x: 3, y: 3 },
             ],
+            false,
         );
         expect(test).toEqual(18);
     });
@@ -65,6 +68,7 @@ describe('WordPointsService', () => {
                 { x: 7, y: 1 },
                 { x: 8, y: 1 },
             ],
+            false,
         );
         expect(test).toEqual(12);
     });

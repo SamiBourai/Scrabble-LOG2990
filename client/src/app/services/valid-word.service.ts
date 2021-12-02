@@ -187,8 +187,11 @@ export class ValidWordService {
                 totalPointsSum += 0;
             } else if (this.verifyWord(array, playMode)) {
                 const exists = this.checkIfWordIsUsed(array, arrayPosition);
+
                 if (!exists) {
-                    if (!testPoint) this.usedWords.set(this.fromLettersToString(array), arrayPosition);
+                    if (!testPoint) {
+                        this.usedWords.set(this.fromLettersToString(array), arrayPosition);
+                    }
                     totalPointsSum += this.wps.pointsWord(array, arrayPosition, testPoint);
                 }
             } else {
@@ -278,23 +281,27 @@ export class ValidWordService {
         let counter = 1;
         positions = JSON.parse(JSON.stringify(positions));
         const currentPosition = positions[letterIndex];
-        while (currentPosition !== undefined && currentPosition.x < MAX_LINES) {
+
+        while (currentPosition !== undefined && currentPosition.x <= MAX_LINES) {
             const currentLetter: Letter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== NOT_A_LETTER) {
+
+            if (currentLetter && currentLetter !== NOT_A_LETTER) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
             } else {
                 currentPosition.x = positions[letterIndex].x - counter;
                 break;
             }
+
             currentPosition.x++;
             counter++;
         }
         counter = 0;
 
-        while (currentPosition !== undefined && currentPosition.x > MIN_LINES) {
+        while (currentPosition !== undefined && currentPosition.x >= MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== NOT_A_LETTER) {
+
+            if (currentLetter && currentLetter !== NOT_A_LETTER) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
             } else {
@@ -310,9 +317,9 @@ export class ValidWordService {
         positions = JSON.parse(JSON.stringify(positions));
         let counter = 1;
         const currentPosition = positions[letterIndex];
-        while (currentPosition !== undefined && currentPosition.y < MAX_LINES) {
+        while (currentPosition !== undefined && currentPosition.y <= MAX_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== NOT_A_LETTER) {
+            if (currentLetter && currentLetter !== NOT_A_LETTER) {
                 array.push(currentLetter);
                 arrayPosition.push({ x: currentPosition.x, y: currentPosition.y });
             } else {
@@ -324,9 +331,9 @@ export class ValidWordService {
         }
         counter = 0;
 
-        while (currentPosition !== undefined && currentPosition.y > MIN_LINES) {
+        while (currentPosition !== undefined && currentPosition.y >= MIN_LINES) {
             const currentLetter = usedPosition[currentPosition.y][currentPosition.x];
-            if (currentLetter !== NOT_A_LETTER) {
+            if (currentLetter && currentLetter !== NOT_A_LETTER) {
                 array.unshift(currentLetter);
                 arrayPosition.unshift({ x: currentPosition.x, y: currentPosition.y });
             } else {

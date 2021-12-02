@@ -19,7 +19,7 @@ import {
     SWAP_BUTTON_RANGE_X,
     SWAP_BUTTON_RANGE_Y,
     TOPSPACE,
-    UNDEFINED_INDEX
+    UNDEFINED_INDEX,
 } from '@app/constants/constants';
 import { BehaviorSubject } from 'rxjs';
 import { EaselLogiscticsService } from './easel-logisctics.service';
@@ -67,7 +67,8 @@ export class MouseHandelingService {
         }
     }
     deletPreviousLetter() {
-        if (this.tempCanvasService.tempWord !== '' && this.sideBarInputEnable) {
+        if (this.userService.getPlayerEasel().indexTempLetters.length > 0 && this.sideBarInputEnable) {
+            this.resetBoardLimit();
             this.tempCanvasService.removeLastLetter();
             this.easelLogic.replaceTempInEasel(this.userService.getPlayerEasel());
         }
@@ -75,14 +76,14 @@ export class MouseHandelingService {
     keyBoardEntryManage(key: string) {
         let letter: Letter = NOT_A_LETTER;
 
-        if ((this.tempCanvasService.previousTile.x !== NB_TILES && this.tempCanvasService.previousTile.y !== NB_TILES) || this.firstBorderLetter) {
+        if (
+            (this.tempCanvasService.direction === H_ARROW
+                ? this.tempCanvasService.previousTile.x !== NB_TILES
+                : this.tempCanvasService.previousTile.y !== NB_TILES) ||
+            this.firstBorderLetter
+        ) {
             letter = this.easelLogic.tempGetLetter(key, this.userService.getPlayerEasel());
-            if (
-                this.tempCanvasService.direction === H_ARROW
-                    ? this.tempCanvasService.previousTile.x === NB_TILES
-                    : this.tempCanvasService.previousTile.y === NB_TILES
-            )
-                this.firstBorderLetter = false;
+            this.resetBoardLimit();
         }
         if (letter !== NOT_A_LETTER) {
             this.inEasel = true;
@@ -117,6 +118,14 @@ export class MouseHandelingService {
             this.tempCanvasService.resetArrow();
             this.previousClick = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
         }
+    }
+    resetBoardLimit() {
+        if (
+            this.tempCanvasService.direction === H_ARROW
+                ? this.tempCanvasService.previousTile.x === NB_TILES
+                : this.tempCanvasService.previousTile.y === NB_TILES
+        )
+            this.firstBorderLetter = !this.firstBorderLetter;
     }
     resetSteps() {
         this.firstBorderLetter = true;
