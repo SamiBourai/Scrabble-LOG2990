@@ -14,7 +14,7 @@ import { BehaviorSubject } from 'rxjs';
 // import { of } from 'rxjs';
 import { ModalEndOfGameComponent } from './modal-end-of-game.component';
 
-fdescribe('ModalEndOfGameComponent', () => {
+describe('ModalEndOfGameComponent', () => {
     let component: ModalEndOfGameComponent;
     let fixture: ComponentFixture<ModalEndOfGameComponent>;
     let userServiceSpy: jasmine.SpyObj<UserService>;

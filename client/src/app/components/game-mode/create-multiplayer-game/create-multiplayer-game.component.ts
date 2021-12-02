@@ -53,6 +53,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
         private database: DatabaseService,
         private snackBar: MatSnackBar,
     ) {}
+
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
         event.preventDefault();
@@ -66,6 +67,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
         }
         this.timeService.setGameTime(this.time);
     }
+
     @HostListener('document:click.addBtn', ['$event'])
     onClickInAddButton(event: Event) {
         event.preventDefault();
@@ -105,7 +107,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
             this.guestName = room.guestPlayer?.name ?? 'default';
             this.multiplayerModeService.setGuestPlayerInfromation(this.guestName);
         });
-        this.getDictionnaries();
+        // this.getDictionnaries();
     }
     randomBonusActivated(event: Event): void {
         this.chosenMode = (event.target as HTMLInputElement)?.value;
