@@ -107,7 +107,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
             this.guestName = room.guestPlayer?.name ?? 'default';
             this.multiplayerModeService.setGuestPlayerInfromation(this.guestName);
         });
-        // this.getDictionnaries();
+        //this.getDictionnaries();
     }
     randomBonusActivated(event: Event): void {
         this.chosenMode = (event.target as HTMLInputElement)?.value;

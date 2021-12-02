@@ -30,7 +30,7 @@ fdescribe('CreateMultiplayerGameComponent', () => {
     // let formBuilderSpy: jasmine.SpyObj<FormBuilder>;
     // let socketManagementServiceSpy: jasmine.SpyObj<SocketManagementService>;
     //let multiplayerModeServiceSpy: jasmine.SpyObj<MultiplayerModeService>;
-    let dataBaseSpy: jasmine.SpyObj<DatabaseService>;
+    //let dataBaseSpy: jasmine.SpyObj<DatabaseService>;
     let objectifManagerServiceSpy: jasmine.SpyObj<ObjectifManagerService>;
     const mockDialogRef2 = {
         open: jasmine.createSpy('open'),
@@ -54,13 +54,22 @@ fdescribe('CreateMultiplayerGameComponent', () => {
         //emit: () => ''
     };
 
+    const mockDataBase = {
+        listen: (name: string) => {
+            return new BehaviorSubject(name).asObservable()
+        },
+
+        getMetaDictionary: () => '',
+        emit: () => ''
+    };
+
     beforeEach(() => {
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','realUser', 'gameName']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['setGameTime']);
         // formBuilderSpy = jasmine.createSpyObj('FormBuilder', ['setValue', 'group']);
         // socketManagementServiceSpy = jasmine.createSpyObj('socketManagementService', ['emit', 'listen', 'getRooms']);
         //multiplayerModeServiceSpy = jasmine.createSpyObj('multiplayerModeService', ['setGuestPlayerInformation']);
-        dataBaseSpy = jasmine.createSpyObj('DatabaseService', ['getMetaDictionary', 'sendChosenDic']);
+        //dataBaseSpy = jasmine.createSpyObj('DatabaseService', ['getMetaDictionary', 'sendChosenDic']);
         objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['log2990Mode', 'generateObjectifs', 'choosedObjectifs']);
         jasmine.getEnv().allowRespy(true);
     });
@@ -77,7 +86,7 @@ fdescribe('CreateMultiplayerGameComponent', () => {
                 { provide: TimeService, useValue: timeServiceSpy },
                 { provide: SocketManagementService, useValue: mockSocketManagementService },
                 { provide: MultiplayerModeService, useValue: mockMultiplayerModeService },
-                { provide: DatabaseService, useValue: dataBaseSpy },
+                { provide: DatabaseService, useValue: mockDataBase },
                 { provide: ObjectifManagerService, useValue: objectifManagerServiceSpy },
             ],
         }).compileComponents();
