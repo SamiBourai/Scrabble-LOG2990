@@ -11,6 +11,7 @@ import { JoinMultiplayerGameComponent } from './join-multiplayer-game.component'
 describe('JoinMultiplayerGameComponent', () => {
     let component: JoinMultiplayerGameComponent;
     let fixture: ComponentFixture<JoinMultiplayerGameComponent>;
+    //let userServiceSpy: UserService;
     let userServiceSpy: jasmine.SpyObj<UserService>;
     let objectifManagerServiceSpy: jasmine.SpyObj<ObjectifManagerService>;
     let formBuilderSpy: jasmine.SpyObj<FormBuilder>;
@@ -19,11 +20,12 @@ describe('JoinMultiplayerGameComponent', () => {
 
     beforeEach(() => {
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers']);
-        objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['setGameTime', 'generateObjectifs']);
+        objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['setGameTime', 'generateObjectifs', 'choosedObjectifs']);
         formBuilderSpy = jasmine.createSpyObj('FormBuilder', ['setValue', 'group']);
         socketManagementServiceSpy = jasmine.createSpyObj('socketManagementService', ['emit', 'listen', 'getRooms']);
         multiplayerModeServiceSpy = jasmine.createSpyObj('multiplayerModeService', ['setGuestPlayerInformation', 'setGameInformations']);
         jasmine.getEnv().allowRespy(true);
+        //userServiceSpy = TestBed.inject(UserService);
     });
 
     beforeEach(async () => {
@@ -94,4 +96,5 @@ describe('JoinMultiplayerGameComponent', () => {
         expect(spy).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
     });
+
 });

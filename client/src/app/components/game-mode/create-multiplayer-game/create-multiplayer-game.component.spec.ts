@@ -4,7 +4,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { EaselObject } from '@app/classes/easel-object';
 import { MessageServer } from '@app/classes/message-server';
+import { JoinedUser, RealUser } from '@app/classes/user';
 import { DEFAULT_MODE, TIME_CHOICE } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
@@ -65,6 +67,10 @@ describe('CreateMultiplayerGameComponent', () => {
         fixture = TestBed.createComponent(CreateMultiplayerGameComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+        component['userService'].realUser = user;
+        const userJ: JoinedUser = { name: 'bib', level: '2', round: '3', score: 8, guestPlayer: true, easel: new EaselObject(true) };
+        component['userService'].joinedUser = userJ;
     });
 
     it('should create', () => {
