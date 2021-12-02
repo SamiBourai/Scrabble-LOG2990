@@ -244,3 +244,16 @@ export const ALL_BONUS_BOX: Vec2[] = [
     { x: 11, y: 11 },
     { x: 10, y: 10 },
 ];
+export const PROBS: string[] = [
+    'placeWord',
+    'placeWord',
+    'placeWord',
+    'placeWord',
+    'placeWord',
+    'placeWord',
+    'placeWord',
+    'placeWord',
+    'passTurn',
+    'exchangeLetters',
+];
+export const POINTS_PROB: string[] = ['{0,6}', '{0,6}', '{0,6}', '{0,6}', '{7,12}', '{7,12}', '{7,12}', '{13,18}', '{13,18}', '{13,18}'];

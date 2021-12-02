@@ -3,8 +3,8 @@ import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/easel-object';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
+import { POINTS_PROB, PROBS } from '@app/constants/array-constant';
 import {
-    ASCI_CODE_A,
     DEFAULT_POS,
     EASEL_LENGTH,
     EIGHTEEN_POINTS,
@@ -18,7 +18,7 @@ import {
     TWELVE_POINTS,
     UNDEFINED_INDEX,
     WAIT_TIME_3_SEC,
-    ZERO_POINTS
+    ZERO_POINTS,
 } from '@app/constants/constants';
 import { ReserveService } from '@app/services/reserve.service';
 import { BehaviorSubject } from 'rxjs';
@@ -39,6 +39,13 @@ export class VirtualPlayerService {
     skipTurn: boolean = false;
     easel = new EaselObject(false);
     expert: boolean = false;
+    saveTempCommand: ChatCommand[] = [
+        { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+        { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+        { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+        { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+    ];
+    maxPoint: number[] = [0, 0, 0, 0];
     private probWordScore: string = '';
     private wordPlacedInScrable: boolean = false;
 
@@ -52,8 +59,7 @@ export class VirtualPlayerService {
     ) {}
 
     manageVrPlayerActions(): void {
-        this.skipTurn = false;
-        this.played = false;
+        this.resetVariables();
         switch (this.playProbabilty()) {
             case 'placeWord':
                 setTimeout(() => {
@@ -76,6 +82,7 @@ export class VirtualPlayerService {
                     } else {
                         this.getLetterForRange('h', this.lettersService.tiles);
                         if (!this.wordPlacedInScrable) this.getLetterForRange('v', this.lettersService.tiles);
+                        this.playMaxPoint();
                     }
                     switch (this.wordPlacedInScrable) {
                         case false:
@@ -107,7 +114,7 @@ export class VirtualPlayerService {
                 break;
         }
     }
-    tradeLetterSteps() {
+    private tradeLetterSteps() {
         this.commandToSend = '!echanger ';
         this.exchangeLettersInEasel();
         this.commandObs.next(this.commandToSend);
@@ -115,102 +122,11 @@ export class VirtualPlayerService {
         this.played = true;
         this.skipTurn = false;
     }
-    placeWordSteps(tempCommand: ChatCommand, alternatives?: ChatCommand[], maxPoint?: number[]) {
-        this.commandToSend =
-            '!placer ' +
-            String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
-            tempCommand.position.x +
-            tempCommand.direction +
-            ' ' +
-            tempCommand.word +
-            '  (' +
-            this.vrPoints +
-            ')<br/>';
-        if (alternatives && maxPoint) {
-            this.commandToSend += '**placement alternatifs:' + '<br/>';
-            for (let i = 1; i < alternatives.length; i++) {
-                if (alternatives[i].position.x === UNDEFINED_INDEX) break;
-                this.commandToSend +=
-                    '-----!placer ' +
-                    String.fromCharCode(ASCI_CODE_A + (alternatives[i].position.y - 1)) +
-                    alternatives[i].position.x +
-                    alternatives[i].direction +
-                    ' ' +
-                    alternatives[i].word +
-                    '  (' +
-                    maxPoint[i] +
-                    ')<br/>';
-            }
-        }
-        this.commandObs.next(this.commandToSend);
-        this.commandToSend = '';
-        this.vrScoreObs.next(this.vrPoints);
-        this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
-        this.wordPlacedInScrable = true;
-        this.easelLogic.refillEasel(this.easel, false);
-        if (this.objectifMangerService.log2990Mode) {
-            this.objectifMangerService.vrPassTurnCounter = 0;
-            this.objectifMangerService.verifyObjectifs(false, tempCommand);
-        }
-    }
-    private playProbabilty(): string {
-        const probability: string[] = [
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'placeWord',
-            'passTurn',
-            'exchangeLetters',
-        ];
-        const randomIndex = Math.floor(Math.random() * probability.length);
-        if (this.expert) {
-            return probability[0];
-        }
-        return probability[randomIndex];
-    }
-    private passTurnSteps() {
-        this.commandToSend = '!passer';
-        this.commandObs.next(this.commandToSend);
-        this.commandToSend = '';
-        this.played = true;
-        this.skipTurn = true;
-        if (this.objectifMangerService.log2990Mode) {
-            this.objectifMangerService.vrPassTurnCounter++;
-            this.objectifMangerService.verifyObjectifs(false);
-        }
-    }
-
-    private calculateGeneratedWordPoints(word: string): number {
-        let points = 0;
-        for (const point of this.lettersService.fromWordToLetters(word)) points += point.score;
-        return points;
-    }
-    private fitsTheProb(word: string): boolean {
-        const points = this.calculateGeneratedWordPoints(word);
-
-        switch (this.probWordScore) {
-            case '{0,6}':
-                return points > ZERO_POINTS && points <= SIX_POINTS;
-            case '{7,12}':
-                return points >= SEVEN_POINTS && points <= TWELVE_POINTS;
-            case '{13,18}':
-                return points >= THIRTEEN_POINTS && points <= EIGHTEEN_POINTS;
-        }
-        return false;
-    }
-
     private exchangeLettersInEasel(): void {
         let numberOfLettersToExchange = Math.floor(Math.random() * EASEL_LENGTH);
         if (this.expert) {
-            if (this.reserveService.reserveSize >= EASEL_LENGTH) {
-                numberOfLettersToExchange = EASEL_LENGTH;
-            } else {
-                numberOfLettersToExchange = this.reserveService.reserveSize;
-            }
+            if (this.reserveService.reserveSize >= EASEL_LENGTH) numberOfLettersToExchange = EASEL_LENGTH;
+            else numberOfLettersToExchange = this.reserveService.reserveSize;
         }
 
         for (let i = 0; i < numberOfLettersToExchange; i++) {
@@ -224,18 +140,103 @@ export class VirtualPlayerService {
             this.objectifMangerService.verifyObjectifs(false, undefined, numberOfLettersToExchange);
         }
     }
-    private generateProb(): void {
-        const probability: string[] = ['{0,6}', '{0,6}', '{0,6}', '{0,6}', '{7,12}', '{7,12}', '{7,12}', '{13,18}', '{13,18}', '{13,18}'];
-        const randomIndex = Math.floor(Math.random() * probability.length);
-        this.probWordScore = probability[randomIndex];
+
+    private placeWordSteps(tempCommand: ChatCommand, alternatives?: ChatCommand[], maxPoint?: number[]) {
+        this.commandToSend = this.wordPoints.buildPointCommandText(tempCommand, this.vrPoints);
+        if (alternatives && maxPoint) {
+            this.commandToSend += '**placement alternatifs:' + '<br/>';
+            for (let i = 1; i < alternatives.length; i++) {
+                if (alternatives[i].position.x === UNDEFINED_INDEX) break;
+                this.commandToSend += '-----'.concat(this.wordPoints.buildPointCommandText(alternatives[i], maxPoint[i]));
+            }
+        }
+        this.commandObs.next(this.commandToSend);
+        this.commandToSend = '';
+        this.vrScoreObs.next(this.vrPoints);
+        this.lettersService.placeLettersInScrable(tempCommand, this.easel, false);
+        this.wordPlacedInScrable = true;
+        this.easelLogic.refillEasel(this.easel, false);
+        if (this.objectifMangerService.log2990Mode) {
+            this.objectifMangerService.vrPassTurnCounter = 0;
+            this.objectifMangerService.verifyObjectifs(false, tempCommand);
+        }
     }
+    private passTurnSteps() {
+        this.commandToSend = '!passer';
+        this.commandObs.next(this.commandToSend);
+        this.commandToSend = '';
+        this.played = true;
+        this.skipTurn = true;
+        if (this.objectifMangerService.log2990Mode) {
+            this.objectifMangerService.vrPassTurnCounter++;
+            this.objectifMangerService.verifyObjectifs(false);
+        }
+    }
+
+    private resetVariables() {
+        this.skipTurn = false;
+        this.played = false;
+        this.saveTempCommand = [
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction: '' },
+        ];
+        this.maxPoint = [0, 0, 0, 0];
+    }
+    private playMaxPoint() {
+        if (this.maxPoint[0] > 0) {
+            this.easel.resetVariables();
+            this.lettersService.wordIsPlacable(this.saveTempCommand[0], this.easel);
+            this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(
+                this.lettersService.tiles,
+                this.saveTempCommand[0],
+                'soloGame',
+                false,
+            );
+            this.placeWordSteps(this.saveTempCommand[0], this.saveTempCommand, this.maxPoint);
+            this.wordPlacedInScrable = true;
+        }
+    }
+
+    private playProbabilty(): string {
+        const randomIndex = Math.floor(Math.random() * PROBS.length);
+        if (this.expert) {
+            return PROBS[0];
+        }
+        return PROBS[randomIndex];
+    }
+    private generateProb(): void {
+        const randomIndex = Math.floor(Math.random() * POINTS_PROB.length);
+        this.probWordScore = POINTS_PROB[randomIndex];
+    }
+    private generateWords(letter: Letter[]): string[] {
+        for (const lett of this.easel.easelLetters) {
+            letter.push(lett);
+        }
+        return this.validWordService.generateAllWordsPossible(letter);
+    }
+    private fitsTheProb(points: number): boolean {
+        switch (this.probWordScore) {
+            case '{0,6}':
+                return points > ZERO_POINTS && points <= SIX_POINTS;
+            case '{7,12}':
+                return points >= SEVEN_POINTS && points <= TWELVE_POINTS;
+            case '{13,18}':
+                return points >= THIRTEEN_POINTS && points <= EIGHTEEN_POINTS;
+        }
+        return false;
+    }
+
     private getLetterForRange(direction: string, tiles: Letter[][]): void {
         const lett: Letter[] = [];
         const letterIngrid: Letter[] = [];
         let notEmpty = false;
         let placed = false;
-        this.generateProb();
         let pos: Vec2 = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
+
+        this.generateProb();
+
         for (let i = 0; i < NB_TILES; i++) {
             for (let j = 0; j < NB_TILES; j++) {
                 if (direction === 'v') pos = { x: i, y: j };
@@ -248,9 +249,11 @@ export class VirtualPlayerService {
                 lett.push(tiles[pos.y][pos.x]);
             }
             if (notEmpty) placed = this.findValidWord(lett, letterIngrid, direction, pos.x, pos.y);
+
             notEmpty = false;
             letterIngrid.splice(0, letterIngrid.length);
             lett.splice(0, lett.length);
+
             if (placed) {
                 this.wordPlacedInScrable = true;
                 return;
@@ -259,31 +262,26 @@ export class VirtualPlayerService {
     }
 
     private findValidWord(lett: Letter[], letterIngrid: Letter[], direction: string, x: number, y: number): boolean {
-        let found = false;
+        const found = false;
         const regEx = new RegExp(this.validWordService.generateRegEx(lett));
         const words: string[] = this.generateWords(letterIngrid);
-        const maxPoint: number[] = [0, 0, 0, 0];
         let tempCommand: ChatCommand;
-        const saveTempCommand: ChatCommand[] = [
-            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
-            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
-            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
-            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
-        ];
+
         for (const word of words) {
             this.easel.resetVariables();
-            if ((!this.expert ? this.fitsTheProb(word) : true) && regEx.test(word)) {
+            if (regEx.test(word)) {
                 const pos = this.findPositionInRange(word, lett);
                 if (pos !== UNDEFINED_INDEX) {
                     tempCommand = { word, position: direction === 'v' ? { x: x + 1, y: pos + 1 } : { x: pos + 1, y: y + 1 }, direction };
+
                     if (this.lettersService.wordIsPlacable(tempCommand, this.easel)) {
                         this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame', true);
                         switch (this.expert) {
                             case true:
-                                this.wordPoints.handleBestPointsVP(this.vrPoints, tempCommand, maxPoint, saveTempCommand);
+                                this.wordPoints.handleBestPointsVP(this.vrPoints, tempCommand, this.maxPoint, this.saveTempCommand);
                                 break;
                             case false:
-                                if (this.vrPoints !== 0) {
+                                if (this.vrPoints !== 0 && this.fitsTheProb(this.vrPoints)) {
                                     this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame', false);
                                     this.placeWordSteps(tempCommand);
                                     return true;
@@ -294,20 +292,7 @@ export class VirtualPlayerService {
                 }
             }
         }
-        if (maxPoint[0] > 0) {
-            this.easel.resetVariables();
-            this.lettersService.wordIsPlacable(saveTempCommand[0], this.easel);
-            this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, saveTempCommand[0], 'soloGame', false);
-            this.placeWordSteps(saveTempCommand[0], saveTempCommand, maxPoint);
-            found = true;
-        }
         return found;
-    }
-    private generateWords(letter: Letter[]): string[] {
-        for (const lett of this.easel.easelLetters) {
-            letter.push(lett);
-        }
-        return this.validWordService.generateAllWordsPossible(letter);
     }
 
     private findPositionInRange(word: string, boarLetters: Letter[]): number {
