@@ -18,8 +18,7 @@ export class MultiplayerModeService {
     gameStarted: boolean = false;
     guestCommand: ChatCommand;
     first: boolean = true;
-    playerLeft: boolean = false;
-    playerLeftObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    playerLeftObs: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     constructor(
         private socketManagementService: SocketManagementService,
@@ -150,9 +149,9 @@ export class MultiplayerModeService {
     }
     playersLeftGamge() {
         this.socketManagementService.listen('getWinner').subscribe((data) => {
-            this.playerLeft = true;
             this.virtualPlayer.easel.easelLetters = data.easel ?? [];
-            this.playerLeftObs.next(this.playerLeft);
+            const dictionnaryName = data.dictionnaryName ?? '';
+            this.playerLeftObs.next(dictionnaryName);
         });
     }
 

@@ -139,6 +139,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
             timeConfig: { min: this.time.min, sec: this.time.sec },
             aleatoryBonus: this.userService.isBonusBox,
             modeLog2990: this.objectifManagerService.log2990Mode,
+            dictionnaryName: this.chosenDictionnary,
         };
 
         if (this.objectifManagerService.log2990Mode) {

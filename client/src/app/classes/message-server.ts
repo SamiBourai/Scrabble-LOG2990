@@ -28,4 +28,5 @@ export interface MessageServer {
     modeLog2990?: boolean;
     objectifs?: Objectifs[];
     achivedObjectif?: Objectifs;
+    dictionnaryName?: string;
 }

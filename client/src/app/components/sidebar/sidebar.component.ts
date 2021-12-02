@@ -67,6 +67,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
         if (this.virtualPlayerService.commandObs) {
             this.virtualPlayerService.commandObs.subscribe((res) => {
                 setTimeout(() => {
+                    res = ('[' + this.nameVr + ']' + ' ').concat(res);
                     this.arrayOfVrCommands.push(res);
                 }, 0);
             });
@@ -289,6 +290,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
             }
         }
     }
+
     private showReserve() {
         if (this.isDebug) {
             this.toggleReserve = !this.toggleReserve;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DatabaseService } from '@app/services/database.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { UserService } from '@app/services/user.service';
+import { ValidWordService } from '@app/services/valid-word.service';
 
 @Component({
     selector: 'app-modal-end-of-game',
@@ -11,11 +12,17 @@ import { UserService } from '@app/services/user.service';
 export class ModalEndOfGameComponent implements OnInit {
     gotWinner: boolean = false;
 
-    constructor(public multiplayerService: MultiplayerModeService, private userService: UserService, private databaseService: DatabaseService) {}
+    constructor(
+        public multiplayerService: MultiplayerModeService,
+        private userService: UserService,
+        private databaseService: DatabaseService,
+        private validWordService: ValidWordService,
+    ) {}
 
     ngOnInit(): void {
         this.multiplayerService.playerLeftObs.subscribe((response) => {
-            this.gotWinner = response;
+            this.gotWinner = true;
+            this.validWordService.loadDictionary(response);
         });
     }
     setIsUserQuitGame(): void {
@@ -25,7 +32,6 @@ export class ModalEndOfGameComponent implements OnInit {
 
     joinVrPlayer() {
         if (this.userService.playMode === 'joinMultiplayerGame') this.userService.setJoinAsReal();
-
         this.userService.playMode = 'soloGame';
         this.userService.endOfGame = false;
         this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());

@@ -179,6 +179,9 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
             else return this.userService.realUser.turnToPlay;
         }
     }
+    openShowEasel() {
+        this.dialogRef.open(ShowEndgameInfoComponent);
+    }
     isUserEaselEmpty() {
         this.turnToPlaySubscription = this.userService.realUserTurnObs.subscribe(() => {
             setTimeout(() => {
@@ -195,7 +198,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
                     }
 
                     this.userService.endOfGame = true;
-                    this.dialogRef.open(ShowEndgameInfoComponent);
+                    this.openShowEasel();
                 }
             }, 0);
         });
