@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/easel-object';
 import { Letter } from '@app/classes/letter';
+import { Vec2 } from '@app/classes/vec2';
 import {
     ASCI_CODE_A,
     DEFAULT_POS,
@@ -25,6 +26,7 @@ import { EaselLogiscticsService } from './easel-logisctics.service';
 import { LettersService } from './letters.service';
 import { ObjectifManagerService } from './objectif-manager.service';
 import { ValidWordService } from './valid-word.service';
+import { WordPointsService } from './word-points.service';
 @Injectable({ providedIn: 'root' })
 export class VirtualPlayerService {
     first: boolean = true;
@@ -37,7 +39,7 @@ export class VirtualPlayerService {
     skipTurn: boolean = false;
     easel = new EaselObject(false);
     expert: boolean = false;
-    private probWordScore: string;
+    private probWordScore: string = '';
     private wordPlacedInScrable: boolean = false;
 
     constructor(
@@ -46,6 +48,7 @@ export class VirtualPlayerService {
         private lettersService: LettersService,
         private easelLogic: EaselLogiscticsService,
         private objectifMangerService: ObjectifManagerService,
+        private wordPoints: WordPointsService,
     ) {}
     manageVrPlayerActions(): void {
         this.skipTurn = false;
@@ -62,6 +65,7 @@ export class VirtualPlayerService {
                                     this.lettersService.tiles,
                                     tempCommand,
                                     'soloGame',
+                                    false,
                                 );
                                 this.placeWordSteps(tempCommand);
                                 break;
@@ -110,14 +114,33 @@ export class VirtualPlayerService {
         this.played = true;
         this.skipTurn = false;
     }
-    placeWordSteps(tempCommand: ChatCommand) {
+    placeWordSteps(tempCommand: ChatCommand, alternatives?: ChatCommand[], maxPoint?: number[]) {
         this.commandToSend =
             '!placer ' +
             String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
             tempCommand.position.x +
             tempCommand.direction +
             ' ' +
-            tempCommand.word;
+            tempCommand.word +
+            '  (' +
+            this.vrPoints +
+            ')<br/>';
+        if (alternatives && maxPoint) {
+            this.commandToSend += '**placement alternatifs:' + '<br/>';
+            for (let i = 1; i < alternatives.length; i++) {
+                if (alternatives[i].position.x === UNDEFINED_INDEX) break;
+                this.commandToSend +=
+                    '-----!placer ' +
+                    String.fromCharCode(ASCI_CODE_A + (alternatives[i].position.y - 1)) +
+                    alternatives[i].position.x +
+                    alternatives[i].direction +
+                    ' ' +
+                    alternatives[i].word +
+                    '  (' +
+                    maxPoint[i] +
+                    ')<br/>';
+            }
+        }
         this.commandObs.next(this.commandToSend);
         this.commandToSend = '';
         this.vrScoreObs.next(this.vrPoints);
@@ -217,24 +240,19 @@ export class VirtualPlayerService {
         let notEmpty = false;
         let placed = false;
         this.generateProb();
-        let x = 0;
-        let y = 0;
+        let pos: Vec2 = { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX };
         for (let i = 0; i < NB_TILES; i++) {
             for (let j = 0; j < NB_TILES; j++) {
-                if (direction === 'v') {
-                    y = j;
-                    x = i;
-                } else {
-                    y = i;
-                    x = j;
-                }
-                if (tiles[y][x]?.charac !== NOT_A_LETTER.charac) {
+                if (direction === 'v') pos = { x: i, y: j };
+                else pos = { x: j, y: i };
+
+                if (tiles[pos.y][pos.x]?.charac !== NOT_A_LETTER.charac) {
                     notEmpty = true;
-                    letterIngrid.push(tiles[y][x]);
+                    letterIngrid.push(tiles[pos.y][pos.x]);
                 }
-                lett.push(tiles[y][x]);
+                lett.push(tiles[pos.y][pos.x]);
             }
-            if (notEmpty) placed = this.findValidWord(lett, letterIngrid, direction, x, y);
+            if (notEmpty) placed = this.findValidWord(lett, letterIngrid, direction, pos.x, pos.y);
             notEmpty = false;
             letterIngrid.splice(0, letterIngrid.length);
             lett.splice(0, lett.length);
@@ -249,32 +267,31 @@ export class VirtualPlayerService {
         let found = false;
         const regEx = new RegExp(this.validWordService.generateRegEx(lett));
         const words: string[] = this.generateWords(letterIngrid);
-        let maxPoint = 0;
+        const maxPoint: number[] = [0, 0, 0, 0];
         let tempCommand: ChatCommand;
-        let saveTempCommand: ChatCommand = { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction };
+        const saveTempCommand: ChatCommand[] = [
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
+            { word: '', position: { x: UNDEFINED_INDEX, y: UNDEFINED_INDEX }, direction },
+        ];
         for (const word of words) {
             this.easel.resetVariables();
             if ((!this.expert ? this.fitsTheProb(word) : true) && regEx.test(word)) {
                 const pos = this.findPositionInRange(word, lett);
                 if (pos !== UNDEFINED_INDEX) {
-                    if (direction === 'v') tempCommand = { word, position: { x: x + 1, y: pos + 1 }, direction };
-                    else tempCommand = { word, position: { x: pos + 1, y: y + 1 }, direction };
-
+                    tempCommand = { word, position: direction === 'v' ? { x: x + 1, y: pos + 1 } : { x: pos + 1, y: y + 1 }, direction };
                     if (this.lettersService.wordIsPlacable(tempCommand, this.easel)) {
                         this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame', true);
                         switch (this.expert) {
                             case true:
-                                if (this.vrPoints > maxPoint) {
-                                    maxPoint = this.vrPoints;
-                                    saveTempCommand = tempCommand;
-                                }
+                                this.wordPoints.handleBestPointsVP(this.vrPoints, tempCommand, maxPoint, saveTempCommand);
                                 break;
                             case false:
                                 if (this.vrPoints !== 0) {
-                                    this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame');
+                                    this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, tempCommand, 'soloGame', false);
                                     this.placeWordSteps(tempCommand);
-                                    found = true;
-                                    return found;
+                                    return true;
                                 }
                                 break;
                         }
@@ -282,12 +299,11 @@ export class VirtualPlayerService {
                 }
             }
         }
-        if (maxPoint > 0) {
+        if (maxPoint[0] > 0) {
             this.easel.resetVariables();
-            this.lettersService.wordIsPlacable(saveTempCommand, this.easel);
-            this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, saveTempCommand, 'soloGame');
-            this.vrPoints = maxPoint;
-            this.placeWordSteps(saveTempCommand);
+            this.lettersService.wordIsPlacable(saveTempCommand[0], this.easel);
+            this.vrPoints = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, saveTempCommand[0], 'soloGame', false);
+            this.placeWordSteps(saveTempCommand[0], saveTempCommand, maxPoint);
             found = true;
         }
         return found;

@@ -163,7 +163,7 @@ export class ValidWordService {
         return matchWords;
     }
 
-    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand, playMode: string, newMap?: boolean): number {
+    readWordsAndGivePointsIfValid(usedPosition: Letter[][], command: ChatCommand, playMode: string, testPoint: boolean): number {
         const usedPositionLocal = new Array<Letter[]>(NB_TILES);
         for (let i = 0; i < usedPositionLocal.length; i++) {
             usedPositionLocal[i] = usedPosition[i].slice();
@@ -187,13 +187,9 @@ export class ValidWordService {
                 totalPointsSum += 0;
             } else if (this.verifyWord(array, playMode)) {
                 const exists = this.checkIfWordIsUsed(array, arrayPosition);
-                if (exists) {
-                    // do nothing
-                } else {
-                    if (newMap) {
-                        // do nothing
-                    } else this.usedWords.set(this.fromLettersToString(array), arrayPosition);
-                    totalPointsSum += this.wps.pointsWord(array, arrayPosition);
+                if (!exists) {
+                    if (!testPoint) this.usedWords.set(this.fromLettersToString(array), arrayPosition);
+                    totalPointsSum += this.wps.pointsWord(array, arrayPosition, testPoint);
                 }
             } else {
                 totalPointsSum = 0;
@@ -203,10 +199,8 @@ export class ValidWordService {
         }
 
         if (this.verifyWord(this.letterService.fromWordToLetters(command.word), playMode)) {
-            if (newMap) {
-                // do nothing
-            } else this.usedWords.set(command.word, positionsWordCommand);
-            const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand);
+            if (!testPoint) this.usedWords.set(command.word, positionsWordCommand);
+            const wordItselfPoints = this.wps.pointsWord(this.letterService.fromWordToLetters(command.word), positionsWordCommand, testPoint);
             totalPointsSum += wordItselfPoints;
             return totalPointsSum;
         } else {

@@ -25,7 +25,7 @@ export class TemporaryCanvasService {
     easelContext: CanvasRenderingContext2D;
     tempWord: string = '';
     previousTile: Vec2 = { x: -1, y: -1 };
-    private direction: string = H_ARROW;
+    direction: string = H_ARROW;
 
     constructor(private letterService: LettersService) {}
 

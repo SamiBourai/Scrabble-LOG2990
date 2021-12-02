@@ -13,6 +13,7 @@ import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
+import { ValidWordService } from '@app/services/valid-word.service';
 import { USER_NAME_RULES } from './../../../constants/constants';
 
 @Component({
@@ -52,6 +53,8 @@ export class CreateMultiplayerGameComponent implements OnInit {
         public objectifManagerService: ObjectifManagerService,
         private database: DatabaseService,
         private snackBar: MatSnackBar,
+        private validWordService: ValidWordService,
+        private mutltiplayerModeService: MultiplayerModeService,
     ) {}
     @HostListener('document:click.minusBtn', ['$eventX'])
     onClickInMinusButton(event: Event) {
@@ -82,6 +85,13 @@ export class CreateMultiplayerGameComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.mutltiplayerModeService.playerLeftObs.subscribe((response) => {
+            console.log('dictionaryLoaded');
+            if (response === true) {
+                if (this.chosenDictionnary === 'dictionnaire principal') this.validWordService.loadDictionary();
+                else this.validWordService.loadDictionary(this.chosenDictionnary);
+            }
+        });
         this.userFormGroup = this.formBuilder.group({
             userName: new FormControl('', [
                 Validators.pattern('^[A-Za-z0-9]+$'),

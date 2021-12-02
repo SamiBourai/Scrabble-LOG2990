@@ -24,7 +24,6 @@ export class ModalEndOfGameComponent implements OnInit {
 
     joinVrPlayer() {
         if (this.userService.playMode === 'joinMultiplayerGame') this.userService.setJoinAsReal();
-
         this.userService.playMode = 'soloGame';
         this.userService.initiliseUsers(true);
         this.userService.endOfGame = false;

@@ -53,7 +53,7 @@ export class CommandManagerService {
         return false;
     }
     verifyWordsInDictionnary(command: ChatCommand, playMode: string) {
-        const points: number = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, command, playMode);
+        const points: number = this.validWordService.readWordsAndGivePointsIfValid(this.lettersService.tiles, command, playMode, false);
         const wordInDictionnay = this.validWordService.verifyWord(this.lettersService.fromWordToLetters(command.word), playMode);
         switch (true) {
             case wordInDictionnay && points !== 0:

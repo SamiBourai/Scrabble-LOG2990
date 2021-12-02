@@ -21,7 +21,7 @@
 
                     <div class="debugActive" *ngIf="isDebug">
                         <div *ngIf="userService.playMode === 'soloGame'">
-                            <p *ngFor="let cmd of arrayOfVrCommands">{{ '[' + nameVr + ']' + ' ' + cmd }}</p>
+                            <p *ngFor="let cmd of arrayOfVrCommands" [innerHTML]="cmd">{{ cmd }}</p>
                         </div>
                         <div *ngIf="toggleReserve">
                             <div *ngFor="let i of arrayOfReserveLetters">
