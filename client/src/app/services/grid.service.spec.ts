@@ -26,10 +26,10 @@ describe('GridService', () => {
         expect(service).toBeTruthy();
     });
     it(' width should return the width of the grid canvas', () => {
-        expect(service.width).toEqual(800);
+        expect(service.width).toEqual(600);
     });
     it(' height should return the height of the grid canvas', () => {
-        expect(service.height).toEqual(800);
+        expect(service.height).toEqual(600);
     });
 
     it(' drawGrid should color pixels on the canvas', () => {

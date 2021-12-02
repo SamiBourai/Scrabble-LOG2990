@@ -31,7 +31,7 @@ describe('TemporaryCanvasService', () => {
     it('decrementDirection', () => {
         service['direction'] = H_ARROW;
         service.previousTile.x = 13;
-        service.decrementDirection();
+        service['decrementDirection']();
         expect(service.previousTile.x).toBe(12);
     });
 
@@ -39,7 +39,7 @@ describe('TemporaryCanvasService', () => {
         service['direction'] = V_ARROW;
         // service.previousTile.x = 18;
         service.previousTile.y = 13;
-        service.decrementDirection();
+        service['decrementDirection']();
         expect(service.previousTile.y).toBe(12);
     });
 
@@ -47,21 +47,21 @@ describe('TemporaryCanvasService', () => {
         service['direction'] = 'abx';
         service.previousTile.x = 18;
         service.previousTile.y = 13;
-        service.decrementDirection();
+        service['decrementDirection']();
         expect(service.previousTile).toEqual({ x: 18, y: 13 });
     });
 
     it('incrementDiretion', () => {
         service['direction'] = H_ARROW;
         service.previousTile.x = 13;
-        service.incrementDirection();
+        service['incrementDirection']();
         expect(service.previousTile.x).toBe(14);
     });
 
     it('incrementDiretion else', () => {
         service['direction'] = V_ARROW;
         service.previousTile.y = 13;
-        service.incrementDirection();
+        service['incrementDirection']();
         expect(service.previousTile.y).toBe(14);
     });
 
@@ -69,7 +69,7 @@ describe('TemporaryCanvasService', () => {
         service['direction'] = 'abx';
         service.previousTile.x = 18;
         service.previousTile.y = 18;
-        service.incrementDirection();
+        service['incrementDirection']();
         expect(service.previousTile).toEqual({ x: 18, y: 18 });
     });
 
@@ -182,7 +182,7 @@ describe('TemporaryCanvasService', () => {
         const pos: Vec2 = { x: 2, y: 4 };
         service.previousTile = pos;
         const spy = spyOn<any>(service, 'drawRedFocus');
-        const spy1 = spyOn(service, 'incrementDirection');
+        const spy1 = spyOn<any>(service, 'incrementDirection');
         service.addLetterFromGrid(letter);
         expect(spy).toHaveBeenCalled();
         expect(spy1).toHaveBeenCalled();

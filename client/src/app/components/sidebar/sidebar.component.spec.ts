@@ -1,3 +1,6 @@
+/* eslint-disable no-duplicate-imports */
+/* eslint-disable @typescript-eslint/no-duplicate-imports */
+import { VrUser } from '@app/classes/user';
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-len */
 /* eslint-disable max-lines */
@@ -10,6 +13,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 // import { MessageServer } from '@app/classes/message-server';
 import { JoinedUser, RealUser } from '@app/classes/user';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { A, C } from '@app/constants/constants';
 // import { A, B } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
@@ -31,7 +35,7 @@ describe('SidebarComponent', () => {
 
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
-
+    
     beforeEach(() => {
         messageServiceSpy = jasmine.createSpyObj('MessageServiceSpy', [
             'isCommand',
@@ -101,24 +105,66 @@ describe('SidebarComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        component['userService'].realUser = user;
+        const userV: VrUser = { name: 'bob', level: '2', round: '3', score: 8,   easel: new EaselObject(true) };
         const userJ: JoinedUser = { name: 'bib', level: '2', round: '3', score: 8, guestPlayer: true, easel: new EaselObject(true) };
+        userJ.easel.easelLetters = [A,C];
+        userJ.easel.foundLetter = [false,false,false,true,false,false,false];
+        userJ.easel.indexTempLetters = [];
+        component['userService'].vrUser = userV;
+        component['userService'].realUser = user;
         component['userService'].joinedUser = userJ;
+        component.name = user.name;
+        component.nameVr = userJ.name;
+        if (component['userService'].playMode === 'joinMultiplayerGame') {
+            spyOn<any>(component['userService'],'getPlayerEasel').and.returnValue(userJ.easel);
+        } else spyOn<any>(component['userService'],'getPlayerEasel').and.returnValue(user.easel);
+         
+        
     });
 
     it('should create ', () => {
         expect(component).toBeTruthy();
+        
     });
 
     it('ngOnInit', () => {
+       
         component['userService'].playMode = 'multi';
         component['messageService'].newTextMessageObs = new BehaviorSubject<boolean>(true);
+        component['reserveService'].sizeObs = new BehaviorSubject<number>(2);
         const spy = spyOn<any>(component['messageService'].newTextMessageObs, 'subscribe');
         const spy1 = spyOn<any>(global, 'setTimeout');
+        const spy2 = spyOn<any>(component['reserveService'].sizeObs, 'subscribe');
+        component.toggleReserve = true;
+        
+        
         component.ngOnInit();
+        
         expect(spy).toHaveBeenCalled();
         expect(spy1).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+        
+        
     });
+
+    it('logMessage true',()=>{
+        spyOn<any>(component['messageService'],'isCommand').and.returnValue(true);
+        spyOn<any>(component['messageService'],'isValid').and.returnValue(true);
+        spyOn<any>(component['userService'],'isPlayerTurn').and.returnValue(true);
+        const spy1 = spyOn<any>(component,'manageCommands');
+        component.logMessage();
+        expect(spy1).toHaveBeenCalled();
+    });
+
+    it('logMessage false',()=>{
+        spyOn<any>(component['messageService'],'isCommand').and.returnValue(true);
+        spyOn<any>(component['messageService'],'isValid').and.returnValue(true);
+        spyOn<any>(component['userService'],'isPlayerTurn').and.returnValue(false);
+         spyOn<any>(component['messageService'],'isSubstring').and.returnValue(true);
+        component.logMessage();
+        expect(component.errorMessage).toBe("ce n'est pas votre tour");
+    });
+
     it('isSkipButtonClicked', () => {
         const spy1 = spyOn<any>(component, 'updateMessageArray');
         component['messageService'].skipTurnIsPressed = true;
@@ -155,6 +201,8 @@ describe('SidebarComponent', () => {
         component['placeWord']();
         expect(spy1).toHaveBeenCalled();
     });
+
+    
 
     it('placeWord switch', () => {
         const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
@@ -212,5 +260,159 @@ describe('SidebarComponent', () => {
         component['placeInTempCanvas'](cmd);
         expect(spy1).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
+    });
+
+    it('placeWordIfValid',()=>{
+        component['commandManagerService'].playerScore = 2;
+        const spy = spyOn<any>(component['lettersService'],'placeLettersInScrable');
+        spyOn<any>(component,'endTurn');
+        component['placeWordIfValid']();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('placeWordIfValid else',()=>{
+        component['commandManagerService'].playerScore = 0;
+        spyOn<any>(component,'endTurn');
+        component['placeWordIfValid']();
+        expect(component.errorMessage).toBe(component['commandManagerService'].errorMessage);
+    });
+
+    it('exchangeCommand',()=>{
+        spyOn<any>(component['commandManagerService'],'verifyExchageCommand').and.returnValue(true);
+        const spy = spyOn<any>(component,'endTurn');
+        component['exchangeCommand']();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('exchangeCommand else',()=>{
+        spyOn<any>(component['commandManagerService'],'verifyExchageCommand').and.returnValue(false);
+        component['exchangeCommand']();
+        expect(component.errorMessage).toBe(component['commandManagerService'].errorMessage);
+    });
+
+    it('endTurn ',()=>{
+        const cmd = 'exchange';
+        const msg = 'allo';
+        jasmine.clock().install();
+        component['userService'].playMode = 'dsds';
+         const spy = spyOn<any>(global,'setTimeout');
+        component['endTurn'](cmd,msg);
+        jasmine.clock().tick(1000);
+        expect(spy).toHaveBeenCalled();
+    });
+
+    
+
+    it('endTurn else ',()=>{
+        const cmd = 'placer';
+        const msg = 'allo';
+        component.errorMessage = 'fdf';
+        component['userService'].playMode = 'soloGame';
+        const spy = spyOn<any>(component['userService'],'userPlayed')
+        component['endTurn'](cmd,msg);
+         expect(spy).toHaveBeenCalled();
+        
+    });
+
+    it('verifyInput',()=>{
+        spyOn<any>(component['messageService'],'isCommand').and.returnValue(true);
+        spyOn<any>(component['messageService'],'isValid').and.returnValue(false);
+        spyOn<any>(component['userService'],'isPlayerTurn').and.returnValue(true);
+        component['verifyInput']();
+        expect(component.errorMessage).toBe('commande invalide');
+    });
+
+    it('verifyInput else debug',()=>{
+        spyOn<any>(component['messageService'],'isCommand').and.returnValue(true);
+        spyOn<any>(component['messageService'],'isValid').and.returnValue(true);
+        spyOn<any>(component['userService'],'isPlayerTurn').and.returnValue(true);
+        component.typeArea = '!debug';
+        component.isDebug = false;
+        component['verifyInput']();
+        expect(component.isDebug).toBe(true);
+        
+    });
+
+    it('verifyInput else reserve',()=>{
+        spyOn<any>(component['messageService'],'isCommand').and.returnValue(true);
+        spyOn<any>(component['messageService'],'isValid').and.returnValue(true);
+        spyOn<any>(component['userService'],'isPlayerTurn').and.returnValue(true);
+        component.typeArea = '!reserve';
+        const spy = spyOn<any>(component,'showReserve');
+        component['verifyInput']();
+        expect(spy).toHaveBeenCalled();
+        
+    });
+
+    it('verifyInput else aide',()=>{
+        spyOn<any>(component['messageService'],'isCommand').and.returnValue(true);
+        spyOn<any>(component['messageService'],'isValid').and.returnValue(true);
+        spyOn<any>(component['userService'],'isPlayerTurn').and.returnValue(true);
+        component.typeArea = '!aide';
+        component.isHelpActivated = false;
+        component['verifyInput']();
+        expect(component.isHelpActivated).toBe(true);
+        
+    });
+
+    it('verifyInput else default',()=>{
+        spyOn<any>(component['messageService'],'isCommand').and.returnValue(false);
+        spyOn<any>(component['messageService'],'isValid').and.returnValue(true);
+        spyOn<any>(component['userService'],'isPlayerTurn').and.returnValue(true);
+        component.typeArea = 'blba';
+        const spy = spyOn<any>(component,'updateMessageArray');
+        component['verifyInput']();
+        expect(spy).toHaveBeenCalled();
+        
+    });
+
+    it('showReserve',()=>{
+        component.isDebug = true;
+        component.toggleReserve = false;
+        const spy = spyOn<any>(component,'reserveLettersQuantity');
+        component['showReserve']();
+        expect(spy).toHaveBeenCalled();
+        expect(component.toggleReserve).toBe(true);
+    });
+
+    it('showReserve else',()=>{
+        component.isDebug = false;
+        component.toggleReserve = false;
+        component['showReserve']();
+        expect(component.errorMessage).toBe("vous n'êtes pas en mode debogage");
+    });
+
+    it('reserveLettersQuantity',()=>{
+        const spy = spyOn<any>(component.arrayOfReserveLetters,'splice');
+        component['reserveLettersQuantity']();
+         expect(spy).toHaveBeenCalled();
+         
+    });
+
+    it('verifyObjectifs',()=>{
+        component['objectifMangerService'].log2990Mode = true;
+        const cmd = 'pass';
+        const spy = spyOn<any>(component['objectifMangerService'],'verifyObjectifs');
+        component['verifyObjectifs'](cmd);
+        expect(spy).toHaveBeenCalled();
+         
+    });
+
+    it('verifyObjectifs play',()=>{
+        component['objectifMangerService'].log2990Mode = true;
+        const cmd = 'play';
+        const spy = spyOn<any>(component['objectifMangerService'],'verifyObjectifs');
+        component['verifyObjectifs'](cmd);
+        expect(spy).toHaveBeenCalled();
+         
+    });
+
+    it('verifyObjectifs exchange',()=>{
+        component['objectifMangerService'].log2990Mode = true;
+        const cmd = 'exchange';
+        const spy = spyOn<any>(component['objectifMangerService'],'verifyObjectifs');
+        component['verifyObjectifs'](cmd);
+        expect(spy).toHaveBeenCalled();
+         
     });
 });

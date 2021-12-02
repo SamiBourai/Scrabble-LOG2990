@@ -1,4 +1,4 @@
-import { Component, Inject, Optional } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DictionaryPresentation } from './../../../classes/dictionary';
 
@@ -19,7 +19,7 @@ export class DialogBoxComponent {
     constructor(
         public dialogRef: MatDialogRef<DialogBoxComponent>,
 
-        @Optional() @Inject(MAT_DIALOG_DATA) public dictionnary: DictionaryPresentation,
+        @Inject(MAT_DIALOG_DATA) public dictionnary: DictionaryPresentation,
     ) {
         localStorage.setItem('dic', JSON.stringify(dictionnary.title));
         this.localData = dictionnary;

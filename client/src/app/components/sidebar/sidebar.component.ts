@@ -247,7 +247,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
                 break;
             case 'placer':
                 if (this.userService.playMode !== 'soloGame') {
-                    this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
+                    if (this.userService.commandtoSendObs) this.userService.commandtoSendObs.next(this.userService.chatCommandToSend);
                 } else {
                     messageUpdate = this.typeArea;
                     this.userService.userPlayed();
@@ -303,10 +303,11 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     private reserveLettersQuantity() {
         let s: string;
         this.arrayOfReserveLetters.splice(0, this.arrayOfReserveLetters.length);
-        this.reserveService.letters.forEach((value: number, key: Letter) => {
-            s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
-            this.arrayOfReserveLetters.push(s);
-        });
+        if (this.reserveService.letters)
+            this.reserveService.letters.forEach((value: number, key: Letter) => {
+                s = JSON.stringify(key.charac.toUpperCase())[1] + ':   ' + JSON.stringify(value);
+                this.arrayOfReserveLetters.push(s);
+            });
     }
     private verifyObjectifs(command: string) {
         if (this.objectifMangerService.log2990Mode) {

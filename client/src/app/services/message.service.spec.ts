@@ -34,44 +34,44 @@ describe('MessageService', () => {
     });
 
     // test for containsPlaceCommand
-    it('confirm that a command contains the substring !placer return true', () => {
-        const command = '!placer h12h mot';
-        expect(service.containsPlaceCommand(command)).toBeTrue();
-    });
+    // it('confirm that a command contains the substring !placer return true', () => {
+    //     const command = '!placer h12h mot';
+    //     expect(service.containsPlaceCommand(command)).toBeTrue();
+    // });
 
-    it('confirm that a command that not contains the substring !placer return false', () => {
-        const command = 'placer h12h mot';
-        expect(service.containsPlaceCommand(command)).toBeFalse();
-    });
+    // it('confirm that a command that not contains the substring !placer return false', () => {
+    //     const command = 'placer h12h mot';
+    //     expect(service.containsPlaceCommand(command)).toBeFalse();
+    // });
 
     // test for containsSwapCommand
-    it('confirm that a command contains the substring !echanger return true', () => {
-        const command = '!echanger as';
-        expect(service.containsSwapCommand(command)).toBeTrue();
-    });
+    // it('confirm that a command contains the substring !echanger return true', () => {
+    //     const command = '!echanger as';
+    //     expect(service.containsSwapCommand(command)).toBeTrue();
+    // });
 
-    it('confirm that a command that not contains the substring !echanger return false', () => {
-        const command = 'echanger as';
-        expect(service.containsSwapCommand(command)).toBeFalse();
-    });
+    // it('confirm that a command that not contains the substring !echanger return false', () => {
+    //     const command = 'echanger as';
+    //     expect(service.containsSwapCommand(command)).toBeFalse();
+    // });
 
     // test for isInside
     it('confirm that the given command is inside the array of commands', () => {
         const command = '!passer';
         const arrayOfCommands = ['!passer', '!aide', '!debug'];
-        expect(service.isInside(command, arrayOfCommands)).toBeTrue();
+        expect(service['isInside'](command, arrayOfCommands)).toBeTrue();
     });
 
     it('confirm that the given command who is not inside the array of commands returns false', () => {
         const command = '!marouane';
         const arrayOfCommands = ['!passer', '!aide', '!debug'];
-        expect(service.isInside(command, arrayOfCommands)).toBeFalse();
+        expect(service['isInside'](command, arrayOfCommands)).toBeFalse();
     });
 
     it('confirm that the given command who is not inside the array of commands but looks like to one char returns false', () => {
         const command = '!passerr';
         const arrayOfCommands = ['!passer', '!aide', '!debug'];
-        expect(service.isInside(command, arrayOfCommands)).toBeFalse();
+        expect(service['isInside'](command, arrayOfCommands)).toBeFalse();
     });
 
     // test for placeCommand
@@ -117,9 +117,7 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return true;
         });
-        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
-            return true;
-        });
+       
         expect(service.isValid(command)).toBeTrue();
     });
 
@@ -128,12 +126,7 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return true;
         });
-        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
-            return false;
-        });
-        spyOn(service, 'containsSwapCommand').and.callFake(() => {
-            return true;
-        });
+        
         expect(service.isValid(command)).toBeTrue();
     });
 
@@ -142,13 +135,8 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return true;
         });
-        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
-            return false;
-        });
-        spyOn(service, 'containsSwapCommand').and.callFake(() => {
-            return false;
-        });
-        spyOn(service, 'isInside').and.callFake(() => {
+        
+        spyOn<any>(service, 'isInside').and.callFake(() => {
             return true;
         });
         expect(service.isValid(command)).toBeTrue();
@@ -159,13 +147,8 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return false;
         });
-        spyOn(service, 'containsPlaceCommand').and.callFake(() => {
-            return false;
-        });
-        spyOn(service, 'containsSwapCommand').and.callFake(() => {
-            return false;
-        });
-        spyOn(service, 'isInside').and.callFake(() => {
+        
+        spyOn<any>(service, 'isInside').and.callFake(() => {
             return false;
         });
         expect(service.isValid(command)).toBe(false);
