@@ -179,6 +179,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
                     this.placeWordIfValid();
                     this.mouseHandelingService.clearAll();
                 }, WAIT_TIME_3_SEC);
+                break;
         }
     }
     private placeInTempCanvas(command: ChatCommand) {

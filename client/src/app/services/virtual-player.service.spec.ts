@@ -1,9 +1,9 @@
-// /* eslint-disable prettier/prettier */
-// /* eslint-disable max-len */
-// /* eslint-disable max-lines */
-// /* eslint-disable @typescript-eslint/no-magic-numbers */
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// /* eslint-disable dot-notation */
+// // /* eslint-disable prettier/prettier */
+// // /* eslint-disable max-len */
+// // /* eslint-disable max-lines */
+// // /* eslint-disable @typescript-eslint/no-magic-numbers */
+// // /* eslint-disable @typescript-eslint/no-explicit-any */
+// // /* eslint-disable dot-notation */
 // import { HttpClientModule } from '@angular/common/http';
 // import { TestBed } from '@angular/core/testing';
 // import { EaselObject } from '@app/classes/easel-object';
@@ -15,7 +15,9 @@
 // import { VirtualPlayerService } from './virtual-player.service';
 // import SpyObj = jasmine.SpyObj;
 
-// describe('VirtualPlayerService', () => {
+
+
+// fdescribe('VirtualPlayerService', () => {
 //     let service: VirtualPlayerService;
 //     let validWordServiceSpy: SpyObj<ValidWordService>;
 //     let letterServiceSpy: SpyObj<LettersService>;
@@ -50,29 +52,29 @@
 //         TestBed.configureTestingModule({});
 //         service = TestBed.inject(VirtualPlayerService);
 //     });
-//     it('should be created', () => {
-//         expect(service).toBeTruthy();
-//     });
-//     it('should test the first case of the switch', (done) => {
-//         service.first = true;
-//         const words: string[] = ['je', 'le', 'appel', 'vendre'];
-//         service.easel = new EaselObject(false);
-//         for (let i = 0; i < 7; i++) {
-//             if (i % 3 === 0) {
-//                 service.easel.add(J, i);
-//             } else service.easel.add(E, i);
-//         }
+// //     it('should be created', () => {
+// //         expect(service).toBeTruthy();
+// //     });
+// //     it('should test the first case of the switch', (done) => {
+// //         service.first = true;
+// //         const words: string[] = ['je', 'le', 'appel', 'vendre'];
+// //         service.easel = new EaselObject(false);
+// //         for (let i = 0; i < 7; i++) {
+// //             if (i % 3 === 0) {
+// //                 service.easel.add(J, i);
+// //             } else service.easel.add(E, i);
+// //         }
 
-//         const generateAllWordsPossibleSpy = validWordServiceSpy.generateAllWordsPossible.and.returnValue(words);
-//         easelObjSpy.contains.and.returnValue(true);
-//         reserveServiceSpy.isReserveEmpty.and.returnValue(false);
-//         service.manageVrPlayerActions();
-//         setTimeout(() => {
-//             expect(service['wordPlacedInScrable']).toBeFalsy();
-//             expect(generateAllWordsPossibleSpy).toHaveBeenCalled();
-//             done();
-//         }, 3000);
-//     });
+//     //     const generateAllWordsPossibleSpy = validWordServiceSpy.generateAllWordsPossible.and.returnValue(words);
+//     //     easelObjSpy.contains.and.returnValue(true);
+//     //     reserveServiceSpy.isReserveEmpty.and.returnValue(false);
+//     //     service.manageVrPlayerActions();
+//     //     setTimeout(() => {
+//     //         expect(service['wordPlacedInScrable']).toBeFalsy();
+//     //         expect(generateAllWordsPossibleSpy).toHaveBeenCalled();
+//     //         done();
+//     //     }, 3000);
+//     // });
 //     it('should pass on place the word', (done) => {
 //         service.first = true;
 //         const words: string[] = ['je', 'le', 'appel', 'vendre'];
@@ -109,17 +111,7 @@
 //             done();
 //         }, 3000);
 //     });
-//     it('should calculate word score', () => {
-//         letterServiceSpy.fromWordToLetters.and.returnValue([A, A, A, A]);
-//         const score = service['caclculateGeneratedWordPoints']('aaaa');
-//         expect(score).toEqual(4);
-//     });
-//     it('should calculate word score', () => {
-//         letterServiceSpy.fromWordToLetters.and.returnValue([A, A, A, A]);
-//         const score = service['caclculateGeneratedWordPoints']('aaaa');
-//         expect(score).toEqual(4);
-//     });
-//     it('should pass on findPlacement', () => {
+//     it('should pass on findValidWord', () => {
 //         const letter: Letter[] = [];
 //         for (let i = 0; i < 15; i++) {
 //             if (i === 5) letter.push(A);
@@ -130,10 +122,10 @@
 //         const words: string[] = ['je', 'le', 'appel', 'vendre'];
 //         validWordServiceSpy.generateAllWordsPossible.and.returnValue(words);
 //         letterServiceSpy.fromWordToLetters.and.returnValue([V, E, N, D, R, E]);
-//         service['findPlacement'](letter, letInGrid, 'v', 7, 8);
+//         service['findValidWord'](letter, letInGrid, 'v', 7, 8);
 //         expect(service['wordPlacedInScrable']).toBeFalsy();
 //     });
-//     it('should pass on findPlacement second if with vertical', () => {
+//     it('should pass on findValidWord second if with vertical', () => {
 //         const letter: Letter[] = [];
 //         for (let i = 0; i < 15; i++) {
 //             if (i === 9) letter.push(L);
@@ -151,7 +143,7 @@
 //             '(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?.?.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?$)|(^.?.?.?.?.?.?.?.?.?l{1}$)|(^.?.?.?.?.?.?.?.?.?l{1}.?.?.?.?.?$)',
 //         );
 //         letterServiceSpy.fromWordToLetters.and.returnValue([V, E, N, D, R, E]);
-//         service['findPlacement'](letter, letInGrid, 'v', 7, 8);
+//         service['findValidWord'](letter, letInGrid, 'v', 7, 8);
 //         expect(findPlacementSpy).toBeTruthy();
 //     });
 //     it('should pass on findPlacement second if with horizontal', () => {
@@ -173,7 +165,7 @@
 //         );
 //         letterServiceSpy.fromWordToLetters.and.returnValue([V, E, N, D, R, E]);
 
-//         service['findPlacement'](letter, letInGrid, 'h', 7, 8);
+//         service['findValidWord'](letter, letInGrid, 'h', 7, 8);
 //         expect(findPlacementSpy).toBeTruthy();
 //     });
 //     it('should generateProb {0,6} ', () => {
@@ -185,42 +177,42 @@
 //         const letters = [A, A, A];
 //         letterServiceSpy.fromWordToLetters.and.returnValue(letters);
 //         service['probWordScore'] = '{0,6}';
-//         const fits = service['fitsTheProb']('aaa');
+//         const fits = service['fitsTheProb'](3);
 //         expect(fits).toEqual(true);
 //     });
 //     it('should fitTheProb {0,6} false ', () => {
 //         const letters = [X, X, X, X, X, X, X];
 //         letterServiceSpy.fromWordToLetters.and.returnValue(letters);
 //         service['probWordScore'] = '{0,6}';
-//         const fits = service['fitsTheProb']('xxxxxxx');
+//         const fits = service['fitsTheProb'](1000);
 //         expect(fits).toEqual(false);
 //     });
 //     it('should fitTheProb {7,12} false ', () => {
 //         const letters = [X, A, A];
 //         letterServiceSpy.fromWordToLetters.and.returnValue(letters);
 //         service['probWordScore'] = '{7,12}';
-//         const fits = service['fitsTheProb']('xaa');
+//         const fits = service['fitsTheProb'](12);
 //         expect(fits).toEqual(true);
 //     });
 //     it('should fitTheProb {7,12} false ', () => {
 //         const letters = [X, X, X, X, X, X, X];
 //         letterServiceSpy.fromWordToLetters.and.returnValue(letters);
 //         service['probWordScore'] = '{7,12}';
-//         const fits = service['fitsTheProb']('xxxxxxx');
+//         const fits = service['fitsTheProb'](1000);
 //         expect(fits).toEqual(false);
 //     });
 //     it('should fitTheProb {13,18} true ', () => {
 //         const letters = [X, A, A, A, A, A];
 //         letterServiceSpy.fromWordToLetters.and.returnValue(letters);
 //         service['probWordScore'] = '{13,18}';
-//         const fits = service['fitsTheProb']('xaaaaa');
+//         const fits = service['fitsTheProb'](15);
 //         expect(fits).toEqual(true);
 //     });
 //     it('should fitTheProb {13,18} false ', () => {
 //         const letters = [X, X, X, X, X, X, X];
 //         letterServiceSpy.fromWordToLetters.and.returnValue(letters);
 //         service['probWordScore'] = '{13,18}';
-//         const fits = service['fitsTheProb']('xxxxxxx');
+//         const fits = service['fitsTheProb'](10000);
 //         expect(fits).toEqual(false);
 //     });
 //     it('should find position when word fits', () => {
@@ -242,7 +234,7 @@
 //             NOT_A_LETTER,
 //             NOT_A_LETTER,
 //         ];
-//         const posInit = service['placeVrLettersInScrable'](word, testTab);
+//         const posInit = service['findPositionInRange'](word, testTab);
 //         expect(posInit).toEqual(8);
 //     });
 //     it('should be not be able to place a word next to a letter', () => {
@@ -264,7 +256,7 @@
 //             NOT_A_LETTER,
 //             P,
 //         ];
-//         const posInit = service['placeVrLettersInScrable'](word, testTab);
+//         const posInit = service['findPositionInRange'](word, testTab);
 //         expect(posInit).toEqual(-1);
 //     });
 //     it('should pass on getLetterForRange ', () => {
