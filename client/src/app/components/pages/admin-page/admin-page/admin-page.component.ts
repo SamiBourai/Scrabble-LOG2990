@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -38,7 +38,7 @@ const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal
     templateUrl: './admin-page.component.html',
     styleUrls: ['./admin-page.component.scss'],
 })
-export class AdminPageComponent implements OnInit {
+export class AdminPageComponent implements OnInit,AfterViewInit {
     @ViewChild(MatTable, { static: true }) table: MatTable<unknown>;
     @ViewChild('fileInput', { static: false }) private fileInput: ElementRef<HTMLInputElement>;
     selectable = true;
@@ -63,6 +63,9 @@ export class AdminPageComponent implements OnInit {
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
+        
+    }
+    ngAfterViewInit(){
         this.getDictionaries();
     }
 
@@ -160,8 +163,8 @@ export class AdminPageComponent implements OnInit {
             data.forEach((dic) => {
                 this.dataSource.push({ title: dic.title, description: dic.description });
             });
+            this.table.renderRows();
         });
-        this.table.renderRows();
     }
 
     deleteDic(dictionary: LoadableDictionary) {
