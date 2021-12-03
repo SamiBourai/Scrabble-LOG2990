@@ -25,13 +25,6 @@ describe('UserService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('initiliseUsers', () => {
-        const booleanF = false;
-        const booleanT = true;
-        service.initiliseUsers(booleanF);
-        service.initiliseUsers(booleanT);
-    });
-
     it('chooseFirstToPlay', () => {
         const spy = spyOn<any>(Math, 'floor');
         service.chooseFirstToPlay();
@@ -236,10 +229,6 @@ describe('UserService', () => {
         expect(x).toEqual(service.realUser.turnToPlay);
     });
 
-    it('initArrayMessage', () => {
-        const i = service.initArrayMessage;
-        expect(i).toEqual(service.reInit);
-    });
 
     it('updateScore', () => {
         service.playMode = 'joinMultiplayerGame';

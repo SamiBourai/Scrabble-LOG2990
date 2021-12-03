@@ -6,9 +6,7 @@
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { EaselObject } from '@app/classes/easel-object';
 import { MessageServer } from '@app/classes/message-server';
-import { RealUser } from '@app/classes/user';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { ViewModalComponent } from './ViewModal.component';
@@ -45,12 +43,12 @@ describe('ModalUserVsPlayerComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('getNameFromLocalStorage', () => {
-        const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        component['userService'].realUser = user;
-        const name = component.getNameFromLocalStorage();
-        expect(name).toBe(component['userService'].realUser.name);
-    });
+    // it('getNameFromLocalStorage', () => {
+    //     const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
+    //     component['userService'].realUser = user;
+    //     const name = component.getNameFromLocalStorage();
+    //     expect(name).toBe(component['userService'].realUser.name);
+    // });
 
     it('setIsUserQuitGame', () => {
         const spy = spyOn<any>(component, 'getOne').and.callFake(() => {

@@ -111,7 +111,7 @@ export class MultiplayerModeService {
     }
 
     sendReserve() {
-        this.socketManagementService.reserveToserver(
+        this.socketManagementService.reserveToServer(
             'updateReserveInServer',
             this.userService.gameName,
             this.reserveService.letters,

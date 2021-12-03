@@ -11,6 +11,7 @@ import { UserService } from '@app/services/user.service';
 })
 export class ObjectifAchivedComponent implements OnInit {
     diplayCompltedObjectif: string = '';
+
     constructor(
         public objectifManagerService: ObjectifManagerService,
         private socketManagementService: SocketManagementService,
@@ -24,11 +25,12 @@ export class ObjectifAchivedComponent implements OnInit {
             this.diplayCompltedObjectif = this.objectifManagerService.displayOppenentObjectifs(this.objectifManagerService.achivedObjectif);
         }
     }
+
     close() {
-        this.objectifManagerService.completedObjectif = false;
         this.objectifManagerService.achivedObjectif.name = '';
         this.diplayCompltedObjectif = '';
         this.objectifManagerService.objectifAchivedByOpponnent = false;
+        this.objectifManagerService.completedObjectif = false;
     }
     private updateScore(objectif: Objectifs) {
         switch (this.userService.playMode) {
@@ -55,6 +57,7 @@ export class ObjectifAchivedComponent implements OnInit {
                     this.userService.vrUser.score = this.objectifManagerService.updateScore(objectif, this.userService.vrUser.score);
                     this.objectifManagerService.displayOppenentObjectifs(this.objectifManagerService.achivedObjectif);
                 }
+                break;
         }
         if (this.objectifManagerService.userPlay) {
             this.diplayCompltedObjectif = 'vous avez réussi à ' + objectif.definition;
