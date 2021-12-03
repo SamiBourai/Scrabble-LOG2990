@@ -1,6 +1,5 @@
 /* eslint-disable no-duplicate-imports */
 /* eslint-disable @typescript-eslint/no-duplicate-imports */
-import { VrUser } from '@app/classes/user';
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-len */
 /* eslint-disable max-lines */
@@ -9,9 +8,7 @@ import { VrUser } from '@app/classes/user';
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { Letter } from '@app/classes/letter';
-// import { MessageServer } from '@app/classes/message-server';
-import { JoinedUser, RealUser } from '@app/classes/user';
+import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { A, C } from '@app/constants/constants';
 // import { A, B } from '@app/constants/constants';
@@ -201,7 +198,6 @@ describe('SidebarComponent', () => {
         component['placeWord']();
         expect(spy1).toHaveBeenCalled();
     });
-
     
 
     it('placeWord switch', () => {
@@ -298,9 +294,9 @@ describe('SidebarComponent', () => {
          const spy = spyOn<any>(global,'setTimeout');
         component['endTurn'](cmd,msg);
         jasmine.clock().tick(1000);
+        jasmine.clock().uninstall();
         expect(spy).toHaveBeenCalled();
     });
-
     
 
     it('endTurn else ',()=>{
@@ -308,7 +304,7 @@ describe('SidebarComponent', () => {
         const msg = 'allo';
         component.errorMessage = 'fdf';
         component['userService'].playMode = 'soloGame';
-        const spy = spyOn<any>(component['userService'],'userPlayed')
+        const spy = spyOn<any>(component['userService'],'userPlayed');
         component['endTurn'](cmd,msg);
          expect(spy).toHaveBeenCalled();
         

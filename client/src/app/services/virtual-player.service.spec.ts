@@ -9,12 +9,13 @@ import { TestBed } from '@angular/core/testing';
 import { ChatCommand } from '@app/classes/chat-command';
 import { EaselObject } from '@app/classes/easel-object';
 import { Letter } from '@app/classes/letter';
-import { A, B, C, D, E, F, G, H, I, J, K, L, M, N, NB_TILES, NOT_A_LETTER, P, R, S, T, UNDEFINED_INDEX, V, X } from '@app/constants/constants';
+import { A, D, E, I, J, L, M, N, NB_TILES, NOT_A_LETTER, P, R, S, T, UNDEFINED_INDEX, V, X } from '@app/constants/constants';
 import { ValidWordService } from '@app/services/valid-word.service';
 import { LettersService } from './letters.service';
 import { ObjectifManagerService } from './objectif-manager.service';
 import { ReserveService } from './reserve.service';
 import { VirtualPlayerService } from './virtual-player.service';
+import { WordPointsService } from './word-points.service';
 import SpyObj = jasmine.SpyObj;
 
 describe('VirtualPlayerService', () => {
@@ -24,6 +25,7 @@ describe('VirtualPlayerService', () => {
     let reserveServiceSpy: SpyObj<ReserveService>;
     let easelObjSpy: SpyObj<EaselObject>;
     let obectifServiceSpy: SpyObj<ObjectifManagerService>;
+    let wordPointSpy: SpyObj<WordPointsService>;
 
     beforeEach(() => {
         validWordServiceSpy = jasmine.createSpyObj('validWordServiceSpy', [
@@ -42,7 +44,8 @@ describe('VirtualPlayerService', () => {
         ]);
         obectifServiceSpy = jasmine.createSpyObj('obectifServiceSpy', ['log2990Mode', 'vrPassTurnCounter', 'verifyObjectifs']);
         easelObjSpy = jasmine.createSpyObj('easelObjSpy', ['contains', 'refillEasel', 'resetVariables']);
-        reserveServiceSpy = jasmine.createSpyObj('reserveService ', ['getRandomLetter', 'isReserveEmpty', 'reFillReserve']);
+        reserveServiceSpy = jasmine.createSpyObj('reserveServiceSpy', ['getRandomLetter', 'isReserveEmpty', 'reFillReserve']);
+        wordPointSpy = jasmine.createSpyObj('wordPointSpy',['buildPointCommandText','handleBestPointsVP']);
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
@@ -52,6 +55,7 @@ describe('VirtualPlayerService', () => {
                 { provide: ReserveService, useValue: reserveServiceSpy },
                 { provide: EaselObject, useValue: easelObjSpy },
                 { provide: ObjectifManagerService, useValue: obectifServiceSpy },
+                { provide: WordPointsService, useValue: wordPointSpy },
             ],
         }).compileComponents();
         TestBed.configureTestingModule({});
@@ -136,6 +140,7 @@ describe('VirtualPlayerService', () => {
         letterServiceSpy.tileIsEmpty.and.returnValue(true);
         spyOn<any>(service, 'playProbabilty').and.returnValue('placeWord');
         const tradeStepSpy = spyOn<any>(service, 'tradeLetterSteps').and.callThrough();
+        obectifServiceSpy.verifyObjectifs.and.stub();
         validWordServiceSpy.generateAllWordsPossible.and.returnValue(words);
         easelObjSpy.contains.and.returnValue(false);
         service.manageVrPlayerActions();
@@ -360,13 +365,6 @@ describe('VirtualPlayerService', () => {
         const posInit = service['findPositionInRange'](word, testTab);
         expect(posInit).toEqual(8);
     });
-    it('should find position on 0', () => {
-        const word = 'abcdefghijklmn';
-        const testTab: Letter[] = [NOT_A_LETTER, B, C, D, E, F, G, H, I, J, K, L, M, N, NOT_A_LETTER];
-        const posInit = service['findPositionInRange'](word, testTab);
-        expect(posInit).toEqual(0);
-    });
-    
     it('should be not be able to place a word next to a letter', () => {
         const word = 'mounib';
         const testTab: Letter[] = [
@@ -459,6 +457,7 @@ describe('VirtualPlayerService', () => {
         obectifServiceSpy.log2990Mode = false;
         spyOn<any>(service, 'playProbabilty').and.returnValue('exchangeLetters');
         const passTurnStepsSpy = spyOn<any>(service, 'passTurnSteps').and.callThrough();
+        obectifServiceSpy.verifyObjectifs.and.stub();
         reserveServiceSpy.reserveSize = 5;
         service.manageVrPlayerActions();
         setTimeout(() => {
