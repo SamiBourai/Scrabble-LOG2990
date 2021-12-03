@@ -44,7 +44,8 @@ describe('MouseHandelingService', () => {
     });
 
     it('deletePreviousLetter', () => {
-        service['tempCanvasService'].tempWord = 'abc';
+        service['userService'].getPlayerEasel().indexTempLetters.length = 2;
+        service['sideBarInputEnable'] = true;
         const spy = spyOn<any>(service['tempCanvasService'], 'removeLastLetter');
         service.deletPreviousLetter();
         expect(spy).toHaveBeenCalled();

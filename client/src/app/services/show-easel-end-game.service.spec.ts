@@ -8,6 +8,10 @@ import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ShowEaselEndGameService } from './show-easel-end-game.service';
 import { A, C } from '@app/constants/constants';
 
+
+const mockCanvas = {
+    getContext: jasmine.createSpy('getContext'),
+};
 describe('ShowEaselEndGameService', () => {
     let service: ShowEaselEndGameService;
     let ctxStub: CanvasRenderingContext2D;
@@ -15,7 +19,9 @@ describe('ShowEaselEndGameService', () => {
     const CANVAS_HEIGHT = 600;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            providers:[{provide:HTMLCanvasElement, useValue:mockCanvas},]
+        });
         service = TestBed.inject(ShowEaselEndGameService);
         ctxStub = CanvasTestHelper.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
     // eslint-disable-next-line @typescript-eslint/semi
@@ -44,5 +50,22 @@ describe('ShowEaselEndGameService', () => {
             expect(spy1).not.toHaveBeenCalled();
             
         });
+
+        it('drawHands',()=>{
+            const spy = spyOn<any>(service,'drawHand');
+            service.drawHands();
+            expect(spy).toHaveBeenCalled();
+        });
+
+        // it('setCanvasElements',()=>{
+        //     const e1 = ctxStub as unknown as ElementRef<HTMLCanvasElement>;
+        //     const e2 = ctxStub as unknown as ElementRef<HTMLCanvasElement>;
+        //     spyOn<any>(e1.nativeElement,'getContext').and.callThrough();
+        //     service.setCanvasElements(e1,e2);
+           
+            
+        // });
+
+        
     });
 

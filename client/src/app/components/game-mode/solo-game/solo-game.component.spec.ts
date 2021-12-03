@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
@@ -29,6 +30,7 @@ describe('SoloGameComponent', () => {
     const mockDic = mockDictionaries;
     const mockDialogRef2 = {
         open: jasmine.createSpy('open'),
+        dismiss: jasmine.createSpy('dismiss')
     };
     let userServiceSpy: jasmine.SpyObj<UserService>;
     let timeServiceSpy: jasmine.SpyObj<TimeService>;
@@ -209,5 +211,26 @@ describe('SoloGameComponent', () => {
         spyOn(component['database'], 'getMetaDictionary').and.returnValue(of(mockDic).pipe(delay(1)));
         component.getDictionnariesDelete();
         expect(component['updateDics'].length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('selectedFile', () => {
+        const event = new Event('change');
+        component.chosenDictionnary = 'dictionnaire principal';
+         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
+         const spy = spyOn<any>(component['validWordService'],'loadDictionary');
+        component['selectedDictionnary'](event);
+        expect(event).toBeInstanceOf(Event);
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('selectedFile selectionnez', () => {
+        const event = new Event('change');
+        component.chosenDictionnary = '---- Selectionnez un dictionnaire ----';
+         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
+         const spy = spyOn<any>(component['snackBar'],'dismiss');
+        component['selectedDictionnary'](event);
+        expect(event).toBeInstanceOf(Event);
+        expect(spy).toHaveBeenCalled();
+        
     });
 });

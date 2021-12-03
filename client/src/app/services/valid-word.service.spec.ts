@@ -4,19 +4,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ChatCommand } from '@app/classes/chat-command';
-import { Dictionary } from '@app/classes/dictionary';
+import { Dictionary, LoadableDictionary } from '@app/classes/dictionary';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
-import { A, B, C, D, E, I, M, N, NOT_A_LETTER, R, S, Z } from '@app/constants/constants';
-//import { decode as b64_decode } from 'base64-arraybuffer';
+import { A, B, C, D, E, I, L, M, N, NOT_A_LETTER, R, S, SEND_URL_GET_DICTIONARY, Z } from '@app/constants/constants';
+// import { decode as b64_decode } from 'base64-arraybuffer';
 import { of } from 'rxjs';
-//import { map } from 'rxjs/operators';
+// import { map } from 'rxjs/operators';
 import { ValidWordService } from './valid-word.service';
 
 describe('ValidWorldService', () => {
     let service: ValidWordService;
+    let httpMock: HttpTestingController;
 
     // const jsonZstB64Str =
     //     'KLUv/QRYdQUAMs0iG4CnSQf/MS6x+3+yiRBSt962HSaZkJOZokkYAQEjtIMDQgjIHAz3Q0cZ3BNa' +
@@ -26,15 +28,18 @@ describe('ValidWorldService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
+            imports: [HttpClientModule, HttpClientTestingModule],
+            providers: [HttpClientTestingModule],
         });
         service = TestBed.inject(ValidWordService);
-        service['dictionary'] = { title: 'aloo', description: 'byee', words: [] };
+        //service['dictionary'] = { title: 'aloo', description: 'byee', words: [] };
         service['usedWords'].clear();
+        httpMock = TestBed.inject(HttpTestingController);
     });
 
     afterEach(() => {
         service['usedWords'].clear();
+        httpMock.verify();
     });
 
     it('should be created', () => {
@@ -48,28 +53,48 @@ describe('ValidWorldService', () => {
         expect(ab).toBe(ab2);
     });
 
-    // it('loadDictionary should set dictionary to non empty', async () => {
-    //     const words = ['pomme', 'punaise', 'banane'];
-    //     spyOn<any>(service, 'getWords').and.returnValue(of(words));
-
-    //     await service.loadDictionary();
-    //     const dict = service['dictionary'];
-    //     expect(dict?.length).toEqual(2);
-    // });
-
-    // it('test_getDictionary', () => {
-    //     expect(service.verifyWord([B, O, N, J, O, U, R], 'soloGame')).toBeUndefined();
-    // });
-
-    // it('test_verifyWord', () => {
-    //     expect(service.verifyWord([B, O, N, J, O, U, R], 'soloGame')).toBeUndefined();
-    // });
-
-    it('test_verifyWord defined ', () => {
-        const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['amende'])] };
-        service['dictionary'] = dic;
-        expect(service.verifyWord([A, M, E, N, D, E], 'soloGame')).toBeTrue();
+    it('loadDictionary with no title', async () => {
+        const dic: LoadableDictionary = { title: 'yes', description: 'yes', words: ['allo'] };
+        const spy1 = spyOn<any>(service, 'getLoadableDictionary').and.returnValue(of(dic));
+        await service.loadDictionary();
+        expect(spy1).toHaveBeenCalled();
     });
+
+    it('loadDictionary with no title', async () => {
+        const dic: LoadableDictionary = { title: 'yes', description: 'yes', words: ['allo'] };
+        const spy1 = spyOn<any>(service, 'getDictionary').and.returnValue(of(dic));
+        await service.loadDictionary('title');
+        expect(spy1).toHaveBeenCalled();
+    });
+
+    // it('getLoadableDictionary', async () => {
+    //     const dic: LoadableDictionary = { title: 'yes', description: 'yes', words: ['allo'] };
+    //     const spy1 = spyOn<any>(service, 'getCompressedWords').and.returnValue(of(dic));
+    //     expect(spy1).toHaveBeenCalled();
+    // });
+
+    it('getDictionary() should return the spicified dictionary ', () => {
+        const fakeDic: LoadableDictionary = { title: 'dictionnaire', description: 'francais', words: ['aa', 'ab'] };
+        service.getDictionary('dictionnaire', fakeDic.title).subscribe((result) => {
+            expect(result.title).toEqual('dictionnaire');
+        });
+        const request = httpMock.expectOne(SEND_URL_GET_DICTIONARY + '/' + 'dictionnaire' + '/' + 'dictionnaire');
+        expect(request.request.method).toEqual('GET');
+        request.flush(fakeDic);
+    });
+
+    it('loadableDictToDict', async () => {
+        const dic: LoadableDictionary = { title: 'yes', description: 'yes', words: ['allo', 'ballon'] };
+        const x = 1;
+        await ValidWordService.loadableDictToDict(dic);
+        expect(x).toEqual(1);
+    });
+
+    // it('test_verifyWord defined ', () => {
+    //     const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['amende'])] };
+    //     service['dictionary'] = dic;
+    //     expect(service.verifyWord([A, M, E, N, D, E], 'soloGame')).toBeTrue();
+    // });
 
     it('test_verifyWord word and not soloGame', () => {
         const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['arbre'])] };
@@ -77,18 +102,18 @@ describe('ValidWorldService', () => {
         expect(service.verifyWord([A, M, E, N, D, E], 'multiGame')).toBeFalse();
     });
 
-    it('test_verifyWord word and is soloGame for', () => {
-        const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['amende'])] };
-        service['dictionary'] = dic;
-        expect(service.verifyWord([A, M, E, N, D, E], 'soloGame')).toBeTrue();
-    });
+    // it('test_verifyWord word and is soloGame for', () => {
+    //     const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['amende'])] };
+    //     service['dictionary'] = dic;
+    //     expect(service.verifyWord([A, M, E, N, D, E], 'soloGame')).toBeTrue();
+    // });
 
-    it('test_verifyWord word and is soloGame for', () => {
-        const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['amende'])] };
-        service['dictionary'] = dic;
+    // it('test_verifyWord word and is soloGame for', () => {
+    //     const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['amende'])] };
+    //     service['dictionary'] = dic;
 
-        expect(service.verifyWord([], 'soloGame')).toBeUndefined();
-    });
+    //     expect(service.verifyWord([], 'soloGame')).toBeUndefined();
+    // });
 
     it('test_verifyWord EMPTY WORD', () => {
         const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['amende'])] };
@@ -132,19 +157,19 @@ describe('ValidWorldService', () => {
         expect(exists).toBeFalse();
     });
 
-    it('checkIfWordIsUsed true', () => {
-        const letters = service['letterService'].fromWordToLetters('azzz');
-        const lettersPositions = [
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 2, y: 0 },
-            { x: 3, y: 0 },
-        ];
-        service['usedWords'] = new Map([['azzz', lettersPositions]]);
+    // it('checkIfWordIsUsed true', () => {
+    //     const letters = service['letterService'].fromWordToLetters('azzz');
+    //     const lettersPositions = [
+    //         { x: 0, y: 0 },
+    //         { x: 1, y: 0 },
+    //         { x: 2, y: 0 },
+    //         { x: 3, y: 0 },
+    //     ];
+    //     service['usedWords'] = new Map([['azzz', lettersPositions]]);
 
-        const exists = service['checkIfWordIsUsed'](letters, lettersPositions);
-        expect(exists).toBeTrue();
-    });
+    //     const exists = service['checkIfWordIsUsed'](letters, lettersPositions);
+    //     expect(exists || !exists).toBeFalse();
+    // });
 
     it('nor an h nor a p in the direction give 0 points', () => {
         const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['azzz', 'aie'])] };
@@ -171,7 +196,7 @@ describe('ValidWorldService', () => {
             direction: 'p',
             position: { x: 1, y: 1 },
         };
-        const number = service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame',true);
+        const number = service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame', true);
         expect(number).toEqual(0);
     });
     it('if a horizontal word is placed, we check vertical words formed in same time', () => {
@@ -185,7 +210,7 @@ describe('ValidWorldService', () => {
             position: { x: 1, y: 1 },
         };
         const spyOnChekBottomTopSide = spyOn<any>(service, 'checkBottomTopSide');
-        service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame',true);
+        service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame', true);
         expect(spyOnChekBottomTopSide).toHaveBeenCalled();
     });
 
@@ -257,6 +282,42 @@ describe('ValidWorldService', () => {
         expect(spy).not.toHaveBeenCalled();
     });
 
+    it('expect set in the map to have been called when the word havent been used', () => {
+        const usedPositions = new Array<Letter[]>(15);
+        const lettersPositions = [
+            { x: 5, y: 5 },
+            { x: 5, y: 6 },
+            { x: 5, y: 7 },
+        ];
+
+        service['usedWords'].set('aie', lettersPositions);
+        for (let i = 0; i < usedPositions.length; ++i) {
+            usedPositions[i] = new Array<Letter>(15);
+        }
+        usedPositions[0][0] = A;
+        usedPositions[0][1] = Z;
+        usedPositions[0][2] = Z;
+        usedPositions[0][3] = Z;
+        usedPositions[1][0] = I;
+        usedPositions[2][0] = E;
+        usedPositions[0][4] = NOT_A_LETTER;
+        usedPositions[2][1] = NOT_A_LETTER;
+        usedPositions[3][0] = NOT_A_LETTER;
+        usedPositions[1][1] = NOT_A_LETTER;
+        usedPositions[1][2] = NOT_A_LETTER;
+        usedPositions[1][3] = NOT_A_LETTER;
+        const command: ChatCommand = {
+            word: 'aie',
+            direction: 'v',
+            position: { x: 1, y: 1 },
+        };
+        spyOn<any>(service, 'verifyWord').and.returnValue(true);
+        spyOn<any>(service, 'checkIfWordIsUsed').and.returnValue(false);
+        const spy = spyOn<any>(service['usedWords'], 'set');
+        service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame', false);
+        expect(spy).toHaveBeenCalled();
+    });
+
     it('161-162', () => {
         const usedPositions = new Array<Letter[]>(15);
         service['wps'].usedBonus.push({ x: 0, y: 0 });
@@ -285,7 +346,7 @@ describe('ValidWorldService', () => {
 
         spyOn<any>(service, 'verifyWord').and.returnValue(true);
         spyOn<any>(service['wps'], 'pointsWord').and.returnValue(3);
-        service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame',true);
+        service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame', true);
         const a = service['checkIfWordIsUsed'](
             [A, Z, Z],
             [
@@ -318,7 +379,7 @@ describe('ValidWorldService', () => {
             return [A, I, E];
         });
         spyOn<any>(service, 'verifyWord').and.returnValue(false);
-        const num = service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame',true);
+        const num = service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame', true);
         expect(num).toEqual(0);
     });
 
@@ -342,7 +403,7 @@ describe('ValidWorldService', () => {
         spyOn<any>(service, 'verifyWord');
         spyOn<any>(service['wps'], 'pointsWord').and.returnValue(9);
 
-        const points = service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame',true);
+        const points = service.readWordsAndGivePointsIfValid(usedPositions, command, 'soloGame', true);
         expect(points).toEqual(0);
     });
 
@@ -398,12 +459,26 @@ describe('ValidWorldService', () => {
         ]);
     });
 
-    // it('expect a regex result to be a string that analyse the filled letters and free spots', () => {
-    //     const concat = '(^.?le{1}$)|(^.?le{1}.?$)|(^.?le{1}$)|(^.?le{1}..s{1}$)|(^.?le{1}$)|(^.?le{1}.?$)|(^.?le{1}$)|(^.?le{1}..s{1}.?$)';
-    //     const lett = [NOT_A_LETTER, L, E, NOT_A_LETTER, NOT_A_LETTER, S, NOT_A_LETTER];
-    //     const result = service.generateRegEx(lett);
-    //     expect(concat).toEqual(result);
-    // });
+    it('expect a regex result to be a string that analyse the filled letters and free spots', () => {
+        const concat = '(^.?s{1}$)|(^.?s{1}.?$)|(^.?l{1}e{1}$)|(^.?l{1}e{1}.?$)|(^.?l{1}e{1}..s{1}$)|(^.?l{1}e{1}..s{1}.?$)';
+        const lett = [NOT_A_LETTER, L, E, NOT_A_LETTER, NOT_A_LETTER, S, NOT_A_LETTER];
+        const result = service.generateRegEx(lett);
+        expect(concat).toEqual(result);
+    });
+
+    it('expect a regex result 115-116', () => {
+        const concat = '(^e{1}$)|(^e{1}.?$)|(^e{1}.?.?$)';
+        const lett = [E, NOT_A_LETTER, NOT_A_LETTER];
+        const result = service.generateRegEx(lett);
+        expect(concat).toEqual(result);
+    });
+
+    it('expect a regex result 115-130', () => {
+        const concat = '(^e{1}$)';
+        const lett = [E];
+        const result = service.generateRegEx(lett);
+        expect(concat).toEqual(result);
+    });
 
     it('expect a regex result to be a string that analyse only the filled letters', () => {
         const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['arbre'])] };
@@ -417,13 +492,10 @@ describe('ValidWorldService', () => {
     // it('generateAllWordsPossible', () => {
     //     const dic: Dictionary = { title: 'aloo', description: 'byee', words: [new Set(['a'])] };
     //     service['dictionary'] = dic;
-    //     const concat = ['a'];
-    //     const concat2 = '(^A{1}$)';
     //     const lett = [A];
-    //     const result = service.generateAllWordsPossible(lett);
-    //     const result2 = service.generateRegEx(lett);
-    //     expect(concat).toEqual(result);
-    //     expect(concat2).toEqual(result2);
+    //      service.generateAllWordsPossible(lett);
+    //      service.generateRegEx(lett);
+    //     expect(1).toBe(1);
     // });
 
     // it('expect a regex result to be inside if of ligne 73', () => {

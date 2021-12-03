@@ -38,7 +38,7 @@ const ELEMENT_DATA: DictionaryPresentation[] = [{ title: 'dictionnaire principal
     templateUrl: './admin-page.component.html',
     styleUrls: ['./admin-page.component.scss'],
 })
-export class AdminPageComponent implements OnInit,AfterViewInit {
+export class AdminPageComponent implements OnInit, AfterViewInit {
     @ViewChild(MatTable, { static: true }) table: MatTable<unknown>;
     @ViewChild('fileInput', { static: false }) private fileInput: ElementRef<HTMLInputElement>;
     selectable = true;
@@ -63,9 +63,8 @@ export class AdminPageComponent implements OnInit,AfterViewInit {
     ngOnInit(): void {
         this.getPlayersNamesBeg();
         this.getPlayersNamesExp();
-        
     }
-    ngAfterViewInit(){
+    ngAfterViewInit() {
         this.getDictionaries();
     }
 

@@ -1,5 +1,3 @@
-
-
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-duplicate-imports */

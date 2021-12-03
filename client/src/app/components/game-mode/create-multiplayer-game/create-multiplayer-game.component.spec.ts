@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+/* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -5,7 +9,7 @@ import { FormBuilder } from '@angular/forms';
 // import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { LoadableDictionary } from '@app/classes/dictionary';
+import { DictionaryPresentation, LoadableDictionary } from '@app/classes/dictionary';
 import { EaselObject } from '@app/classes/easel-object';
 //import { MessageServer } from '@app/classes/message-server';
 import { JoinedUser, RealUser } from '@app/classes/user';
@@ -16,25 +20,28 @@ import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { delay } from 'rxjs/operators';
 // import { observable } from 'rxjs';
 import { CreateMultiplayerGameComponent } from './create-multiplayer-game.component';
-
+const mockDictionaries = [
+    { title: 'aloo', description: 'bye', words: ['moi', 'toi'] },
+    { title: 'crSieste', description: 'SIII', words: ['lui', 'elle'] },
+];
 describe('CreateMultiplayerGameComponent', () => {
     let component: CreateMultiplayerGameComponent;
     let fixture: ComponentFixture<CreateMultiplayerGameComponent>;
+    const mockDic = mockDictionaries;
     const mockDialogRef = {
         open: jasmine.createSpy('open'),
     };
     let userServiceSpy: jasmine.SpyObj<UserService>;
     let timeServiceSpy: jasmine.SpyObj<TimeService>;
-    // let formBuilderSpy: jasmine.SpyObj<FormBuilder>;
-    // let socketManagementServiceSpy: jasmine.SpyObj<SocketManagementService>;
-    //let multiplayerModeServiceSpy: jasmine.SpyObj<MultiplayerModeService>;
     let dataBaseSpy: jasmine.SpyObj<DatabaseService>;
     let objectifManagerServiceSpy: jasmine.SpyObj<ObjectifManagerService>;
     const mockDialogRef2 = {
         open: jasmine.createSpy('open'),
+        dismiss: jasmine.createSpy('dismiss')
     };
     let getMetaDictionarySubject: Subject<LoadableDictionary[]>;
 
@@ -48,31 +55,14 @@ describe('CreateMultiplayerGameComponent', () => {
     };
 
     const mockMultiplayerModeService = {
-        // listen: (name: string) => {
-        //     return new BehaviorSubject(name).asObservable()
-        // },
-
         setGuestPlayerInfromation: () => '',
-        //emit: () => ''
     };
-
-    // const mockDataBase = {
-    //     listen: (name: string) => {
-    //         return new BehaviorSubject(name).asObservable()
-    //     },
-
-    //     getMetaDictionary: () => '',
-    //     emit: () => ''
-    // };
 
     beforeEach(() => {
         getMetaDictionarySubject = new Subject<LoadableDictionary[]>();
         // getMetaDictionarySubject.next([]);
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','realUser', 'gameName']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['setGameTime']);
-        // formBuilderSpy = jasmine.createSpyObj('FormBuilder', ['setValue', 'group']);
-        // socketManagementServiceSpy = jasmine.createSpyObj('socketManagementService', ['emit', 'listen', 'getRooms']);
-        //multiplayerModeServiceSpy = jasmine.createSpyObj('multiplayerModeService', ['setGuestPlayerInformation']);
         dataBaseSpy = jasmine.createSpyObj('DatabaseService', ['getMetaDictionary', 'sendChosenDic']);
         dataBaseSpy.getMetaDictionary.and.returnValue(getMetaDictionarySubject);
         objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['log2990Mode', 'generateObjectifs', 'choosedObjectifs']);
@@ -192,13 +182,6 @@ describe('CreateMultiplayerGameComponent', () => {
     });
 
     it('createGame dans if', () => {
-        // const game: MessageServer = {
-        //     user: { name: component.playerName },
-        //     gameName: component.gameName,
-        //     timeConfig: { min: component.time.min, sec: component.time.sec },
-        //     aleatoryBonus: component.userService.isBonusBox,
-        //     modeLog2990: component.objectifManagerService.log2990Mode,
-        // };
         const generateObkectifsSpy = spyOn(component.objectifManagerService, 'generateObjectifs');
         component.objectifManagerService.log2990Mode = true;
         component.createGame();
@@ -208,54 +191,76 @@ describe('CreateMultiplayerGameComponent', () => {
     });
 
     it('createGame dans else', () => {
-        // const game: MessageServer = {
-        //     user: { name: component.playerName },
-        //     gameName: component.gameName,
-        //     timeConfig: { min: component.time.min, sec: component.time.sec },
-        //     aleatoryBonus: component.userService.isBonusBox,
-        //     modeLog2990: component.objectifManagerService.log2990Mode,
-        // };
         component.objectifManagerService.log2990Mode = false;
         const spy = spyOn(component['socketManagementService'], 'emit');
         component.createGame();
-        // const emitSpy = spyOn(component['socketManagementService'], 'emit');
-        // expect(emitSpy).toHaveBeenCalled();     
-        // expect(component['socketManagementService'].emit('createGame', game)).toHaveBeenCalled();
         expect(spy).toHaveBeenCalled();
         expect(component.userService.realUser.name).toBe(component.playerName);
         expect(component.userService.gameName).toBe(component.gameName);
     });
 
     it('disconnectUser', () => {
-        // const game: MessageServer = {
-        //     user: { name: component.playerName },
-        //     gameName: component.gameName,
-        //     timeConfig: { min: component.time.min, sec: component.time.sec },
-        //     aleatoryBonus: component.userService.isBonusBox,
-        //     modeLog2990: component.objectifManagerService.log2990Mode,
-        // };
         const spy = spyOn(component['socketManagementService'], 'emit');
         component.disconnectUser();
         expect(spy).toHaveBeenCalled();
-        //expect(component['socketManagementService'].emit('userCanceled', { gameName: component.gameName })).toHaveBeenCalled();
     });
 
     it('beginGame', () => {
-        // const game: MessageServer = {
-        //     user: { name: component.playerName },
-        //     gameName: component.gameName,
-        //     timeConfig: { min: component.time.min, sec: component.time.sec },
-        //     aleatoryBonus: component.userService.isBonusBox,
-        //     modeLog2990: component.objectifManagerService.log2990Mode,
-        // };
-        // const pseudoBool = {
-        //     boolean: false,
-        // } as unknown as boolean;
         const bool: boolean = false;
-        //const spy = spyOn(component, 'disconnectUser');
         const spy = spyOn(component['socketManagementService'], 'emit');
         component.beginGame(bool);
         expect(spy).toHaveBeenCalled();
-        //expect(spy).toHaveBeenCalled();
+    });
+
+    it('enableBtn', () => {
+        component.isNextBtnClicked = true;
+        component.enableBtn();
+        expect(component.isNextBtnClicked).toBe(false);
+    });
+
+    it('getDictionnaries', () => {
+        const dics: DictionaryPresentation[] = [
+            { title: 'allo', description: 'bye' },
+            { title: 'siii', description: 'taaas' },
+        ];
+        spyOn(component['database'], 'getMetaDictionary').and.returnValue(of(mockDic).pipe(delay(1)));
+        component.getDictionnaries();
+        expect(dics.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('getDictionnariesDelete', () => {
+        component['updateDics'] = [{ title: 'allo', description: 'bye' }];
+        component.getDictionnariesDelete();
+        expect(component['updateDics'].length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('getDictionnariesDelete localStorage', () => {
+        component['updateDics'] = [{ title: 'allo', description: 'bye' }];
+        spyOn(component['database'], 'getMetaDictionary').and.returnValue(of(mockDic).pipe(delay(1)));
+        component.getDictionnariesDelete();
+        expect(component['updateDics'].length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('selectedFile', () => {
+        const event = new Event('change');
+        component.chosenDictionnary = 'dictionnaire principal';
+         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
+         spyOn<any>(component['database'],'sendChosenDic').and.returnValue(of().pipe(delay(1)));
+         const spy = spyOn<any>(component['validWordService'],'loadDictionary');
+        component['selectedDictionnary'](event);
+        expect(event).toBeInstanceOf(Event);
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('selectedFile selectionnez', () => {
+        const event = new Event('change');
+        component.chosenDictionnary = '---- Selectionnez un dictionnaire ----';
+         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
+         spyOn<any>(component['database'],'sendChosenDic').and.returnValue(of().pipe(delay(1)));
+         const spy = spyOn<any>(component['snackBar'],'dismiss');
+        component['selectedDictionnary'](event);
+        expect(event).toBeInstanceOf(Event);
+        expect(spy).toHaveBeenCalled();
+        
     });
 });

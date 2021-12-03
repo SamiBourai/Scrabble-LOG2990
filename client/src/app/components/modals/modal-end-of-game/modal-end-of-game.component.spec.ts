@@ -7,8 +7,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-//import { DatabaseService } from '@app/services/database.service';
-//import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { UserService } from '@app/services/user.service';
 import { BehaviorSubject } from 'rxjs';
 // import { of } from 'rxjs';
@@ -18,8 +16,6 @@ describe('ModalEndOfGameComponent', () => {
     let component: ModalEndOfGameComponent;
     let fixture: ComponentFixture<ModalEndOfGameComponent>;
     let userServiceSpy: jasmine.SpyObj<UserService>;
-    //let multiplayerServiceSpy: jasmine.SpyObj<MultiplayerModeService>;
-    //let databaseServiceSpy: jasmine.SpyObj<DatabaseService>;
     const mockDialogRef = {
         open: jasmine.createSpy('open'),
     };
@@ -27,8 +23,6 @@ describe('ModalEndOfGameComponent', () => {
 
     beforeEach(() => {
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','setVrName','setJoinAsReal', 'isPlayerTurn', 'endOfGame']);
-        //multiplayerServiceSpy = jasmine.createSpyObj('MultiplayerModeService', ['playerLeftObs', 'subscribe']);
-        //databaseServiceSpy = jasmine.createSpyObj('DatabaseService', []);
         jasmine.getEnv().allowRespy(true);
 
     });

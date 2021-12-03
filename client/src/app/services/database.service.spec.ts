@@ -25,7 +25,7 @@ import {
     SEND_URL_UPDATE_PLAYER,
     SEND_URL_UPLOAD_DICTIONARY,
 } from '@app/constants/constants';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { DatabaseService } from './database.service';
 import { ObjectifManagerService } from './objectif-manager.service';
 import { UserService } from './user.service';
@@ -37,6 +37,7 @@ describe('DatabaseService', () => {
     let objectifService: ObjectifManagerService;
     let userService: jasmine.SpyObj<UserService>;
     let loadableDic: LoadableDictionary;
+    let loadableDicTab: LoadableDictionary[];
     // MatSnackBarModule
 
     beforeEach(() => {
@@ -52,6 +53,7 @@ describe('DatabaseService', () => {
         snackBar = TestBed.inject(MatSnackBar);
         objectifService = TestBed.inject(ObjectifManagerService);
         loadableDic = { title: 'dictionnaire', description: 'francais', words: ['aa', 'ab'] };
+        loadableDicTab = [{ title: 'dictionnaire', description: 'francais', words: ['aa', 'ab'] }];
     });
     afterEach(() => {
         httpMock.verify();
@@ -202,47 +204,79 @@ describe('DatabaseService', () => {
     });
 
     it('getDictionary() should return the spicified dictionary ', () => {
-        // const fakeDic: LoadableDictionary = { title: 'izi', description: 'francais', words: ['aa', 'ab'] };
-        service.getDictionary('dictionnaire', loadableDic.title).subscribe((result) => {
-            expect(result.title).toEqual('dictionnaire');
+        const fakeDic: LoadableDictionary = { title: 'izi', description: 'francais', words: ['aa', 'ab'] };
+        service.getDictionary('dictionnaire', fakeDic.title).subscribe((result) => {
+            expect(result.title).toEqual('izi');
         });
-        const request = httpMock.expectOne(SEND_URL_GET_DICTIONARY + '/' + 'dictionnaire' + '/' + 'dictionnaire');
+        const request = httpMock.expectOne(SEND_URL_GET_DICTIONARY + '/' + 'dictionnaire' + '/' + 'izi');
         expect(request.request.method).toEqual('GET');
-        request.flush(loadableDic);
+        request.flush(fakeDic);
+    });
+
+    it('getDictionary() should return the spicified dictionary whithout the old name', () => {
+        const fakeDic: LoadableDictionary = { title: 'izi', description: 'francais', words: ['aa', 'ab'] };
+        service.getDictionary('dictionnaire').subscribe((result) => {
+            expect(result.title).toEqual('izi');
+        });
+        const request = httpMock.expectOne(SEND_URL_GET_DICTIONARY + '/' + 'dictionnaire' + '/' + '');
+        expect(request.request.method).toEqual('GET');
+        request.flush(fakeDic);
     });
 
     it('getMetaDictionary() should return all ditionry words ', () => {
-        // const fakeDic: LoadableDictionary = { title: 'test', description: 'francais', words: ['aa', 'ab'] };
         service.getMetaDictionary().subscribe((result) => {
-            expect(result[0].title).toEqual('dictionnaire');
+            expect(result[0].title).toEqual(loadableDicTab[0].title);
         });
         const request = httpMock.expectOne(SEND_URL_GET_DICTIONARIES);
         expect(request.request.method).toEqual('GET');
-        request.flush(loadableDic);
+        request.flush(loadableDicTab);
     });
 
     it('addScores() should call sendScore and open snackbar', () => {
-        // const obs: Observable<number> = new Observable<number>();
-        // const fakeScore: Score = { name: 'test', score: 10 };
         objectifService.log2990Mode = true;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
         const spy = spyOn(service, 'sendScore').and.returnValue(of());
         spyOn(snackBar, 'open');
-        // const spyX = spyOn(service, 'openSnackBar');
 
-        // expect(spyOnSendScore).toHaveBeenCalled();
         service.addScores();
         expect(spy).toHaveBeenCalled();
-        // expect(service.openSnackBar(SCORE_HAS_BEEN_SAVED, CLOSE_SNACKBAR)).toHaveBeenCalled();
     });
-    it('addScores() should call sendScore and open snackbar whith another mode', () => {
+    it('addScores() should call sendScore and open snackbar whith another mode', (done) => {
         objectifService.log2990Mode = false;
+        // const obs: Observable<number> = new Observable<number>();
+        const bhObs = new BehaviorSubject(0);
 
-        const spy = spyOn(service, 'sendScore').and.returnValue(of());
-        spyOn(snackBar, 'open');
+        const spy = spyOn(service, 'sendScore').and.returnValue(bhObs.asObservable());
+        // spyOn(snackBar, 'open');
+        const spyX = spyOn(snackBar, 'open');
         service.addScores();
-        expect(spy).toHaveBeenCalled();
+        bhObs.next(1);
+
+        // service['openSnackBar']('Hello', 'Fermer');
+        setTimeout(() => {
+            expect(spy).toHaveBeenCalled();
+            expect(spyX).toHaveBeenCalled();
+            done();
+        }, 200);
+    });
+
+    it('addScores() should call sendScore and fref open snackbar whith another mode', (done) => {
+        objectifService.log2990Mode = false;
+        // const obs: Observable<number> = new Observable<number>();
+        const bhObs = new BehaviorSubject(0);
+
+        const spy = spyOn(service, 'sendScore').and.returnValue(bhObs.asObservable());
+        // spyOn(snackBar, 'open');
+        const spyX = spyOn(snackBar, 'open');
+        service.addScores();
+        bhObs.error(5);
+
+        // service['openSnackBar']('Hello', 'Fermer');
+        setTimeout(() => {
+            expect(spy).toHaveBeenCalled();
+            expect(spyX).toHaveBeenCalled();
+            done();
+        }, 100);
     });
 
     it('should test if open snackBar work', () => {

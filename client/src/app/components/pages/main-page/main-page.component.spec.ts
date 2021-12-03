@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -54,4 +56,25 @@ describe('MainPageComponent', () => {
     //     component.openDialog();
     //     expect(mockDialogRef.open).toHaveBeenCalled();
     // });
+
+    it('should call basicGet when calling sendTimeToServer', () => {
+        component.getMessagesFromServer();
+        expect(communicationServiceSpy.basicGet).toHaveBeenCalled();
+    });
+
+    it('should call open when calling openStartGameModal', () => {
+        component.openStartGameModal();
+        expect(component['dialogRef'].open).toHaveBeenCalled();
+    });
+
+    it('should call open when calling openScoreModal', () => {
+        component.openScoreModal();
+        expect(component['dialogRef'].open).toHaveBeenCalled();
+    });
+
+    it('should call open when calling openScrableLog2990Modal', () => {
+        component.openScrableLog2990Modal();
+        expect(component['dialogRef'].open).toHaveBeenCalled();
+    });
+
 });

@@ -484,7 +484,7 @@ describe('LettersService', () => {
     it('word in board limits should return true because the command direction is not valid and postion + woed length >board limits', () => {
         const vec2: Vec2 = { x: 5, y: 5 };
         const command: ChatCommand = { word: 'sas', position: vec2, direction: 'x' };
-        expect(service.wordInBoardLimits(command)).toBeTruthy();
+        expect(service.wordInBoardLimits(command)).toBeFalsy();
     });
 
     it('253', () => {

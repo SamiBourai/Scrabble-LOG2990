@@ -35,7 +35,9 @@ export class ModalEndOfGameComponent implements OnInit {
         if (this.userService.playMode === 'joinMultiplayerGame') this.userService.setJoinAsReal();
         this.userService.playMode = 'soloGame';
         this.userService.endOfGame = false;
-        this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());
-        this.userService.gameModeObs.next(this.userService.playMode);
+        if (this.userService.realUserTurnObs && this.userService.gameModeObs) {
+            this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());
+            this.userService.gameModeObs.next(this.userService.playMode);
+        }
     }
 }

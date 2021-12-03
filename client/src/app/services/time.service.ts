@@ -89,7 +89,7 @@ export class TimeService {
         }
         this.socketManagementService.listen('updateTime').subscribe((data) => {
             if (data.timer?.userTurn) {
-                this.timeUser = { min: data.timer?.min, sec: data.timer?.sec };
+                this.timeUser = { min: data.timer.min, sec: data.timer.sec };
                 this.timeGuestPlayer = data.timeConfig ?? this.timeUser;
                 this.userService.realUser.turnToPlay = true;
                 this.trigerPassCommand(this.timeUser);
