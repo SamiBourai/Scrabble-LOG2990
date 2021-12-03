@@ -11,8 +11,8 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
 @Component({
     selector: 'app-modal-user-vs-player',
-    templateUrl: './ViewModal.component.html',
-    styleUrls: ['./ViewModal.component.scss'],
+    templateUrl: './view-modal.component.html',
+    styleUrls: ['./view-modal.component.scss'],
 })
 export class ViewModalComponent {
     isUserAcceptQuit: boolean = false;
@@ -28,7 +28,7 @@ export class ViewModalComponent {
         public multiplayerService: MultiplayerModeService,
     ) {}
     setIsUserQuitGame(): void {
-        this.assignHome();
+        window.location.assign('/home');
     }
     quitMultiPlayerGame() {
         switch (this.userService.playMode) {
@@ -47,10 +47,7 @@ export class ViewModalComponent {
                 });
                 break;
         }
-        this.assignHome();
+        this.setIsUserQuitGame();
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
-    }
-    private assignHome() {
-        window.location.assign('/home');
     }
 }

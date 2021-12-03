@@ -3,7 +3,7 @@ import {
     DATABASE_COLLECTION_CLASSIC,
     DATABASE_COLLECTION_LOG2990,
     NOT_FOUND_HTTP_STATUS,
-    NO_CONTENT_HTTP_STATUS
+    NO_CONTENT_HTTP_STATUS,
 } from '@app/classes/constants';
 import { Score } from '@app/classes/score';
 import { VirtualPlayer } from '@app/classes/virtualPlayers';
@@ -29,7 +29,7 @@ export class DatabaseController {
                     res.json(this.databaseService.arrayOfAllClassicGameScores);
                 } else if (req.params.collectionName === DATABASE_COLLECTION_LOG2990) {
                     res.json(this.databaseService.arrayOfAllLog2990GameScores);
-                }
+                } else res.json('hello');
             } catch (error) {
                 res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
             }
@@ -142,6 +142,10 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
+        // jfndsjnfsdnfkjsdnfdsf
+        // dsfdsfdsfdsdsf
+        // fdsfdsfdsfdsfds
+        // fsdfdsfds
 
         this.router.get('/dictionary/:title/:oldName?', async (req: Request, res: Response) => {
             this.databaseService
@@ -169,7 +173,7 @@ export class DatabaseController {
             this.databaseService
                 .getChosenDic(req.params.chosenDictionary)
                 .then(() => {
-                    res.json('Dictionary successfully loaded');
+                    res.sendStatus(CREATED_HTTP_STATUS).send();
                 })
                 .catch((error: Error) => {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
