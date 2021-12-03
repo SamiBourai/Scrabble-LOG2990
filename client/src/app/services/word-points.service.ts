@@ -3,7 +3,7 @@ import { ChatCommand } from '@app/classes/chat-command';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { AZUR_BOX, BLUE_BOX, PINK_BOX, RED_BOX } from '@app/constants/array-constant';
-import { comparePositions } from '@app/constants/constants';
+import { ASCI_CODE_A, comparePositions } from '@app/constants/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -51,6 +51,19 @@ export class WordPointsService {
             maxPoint[3] = points;
             commands[3] = command;
         }
+    }
+    buildPointCommandText(tempCommand: ChatCommand, points: number): string {
+        return (
+            '!placer ' +
+            String.fromCharCode(ASCI_CODE_A + (tempCommand.position.y - 1)) +
+            tempCommand.position.x +
+            tempCommand.direction +
+            ' ' +
+            tempCommand.word +
+            '  (' +
+            points +
+            ')<br/>'
+        );
     }
     private wordBonus(position: Vec2[], wordMultiplier: number, letterIndex: number, newBonus: boolean) {
         for (const i of RED_BOX) {
