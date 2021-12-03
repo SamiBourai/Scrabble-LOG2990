@@ -17,7 +17,7 @@ import {
     POSITION_FILL_BOX_CONDITION,
     UNDEFINED_INDEX,
     WORD_LENGHT_FILL_BOX_CONDITION,
-    WORD_TO_PLACE_DEFINITION
+    WORD_TO_PLACE_DEFINITION,
 } from '@app/constants/constants';
 
 @Injectable({
@@ -95,7 +95,12 @@ export class ObjectifManagerService {
                 objectif.definition += '. (complété par votre adversaire)';
                 return "votre adversaire à complété l'objectif public qui consiste à " + objectif.definition;
             }
-        this.opponentPrivateObjectif = achivedObjectif;
+        this.opponentPrivateObjectif = {
+            name: achivedObjectif.name,
+            bonus: achivedObjectif.bonus,
+            definition: achivedObjectif.definition,
+            completed: true,
+        };
         return 'votre adversaire à complété son objectif privé qui consiste à ' + achivedObjectif.definition;
     }
     updateScore(objectif: Objectifs, score: number): number {

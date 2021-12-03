@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 type CallbackSignature = (...params: any) => {};
 
 export class SocketMock {
@@ -16,5 +17,15 @@ export class SocketMock {
 
     emit(event: string, ...params: any): void {
         return;
+    }
+
+    peerSideEmit(event: string, ...params: any) {
+        if (!this.callbacks.has(event)) {
+            return;
+        }
+
+        for (const callback of this.callbacks.get(event)!) {
+            callback(params);
+        }
     }
 }

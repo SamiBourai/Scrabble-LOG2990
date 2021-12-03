@@ -13,7 +13,7 @@ import { UserService } from './user.service';
     providedIn: 'root',
 })
 export class SocketManagementService {
-    first: boolean = true;
+    private first: boolean = true;
     private socket: Socket;
     constructor(private reserveService: ReserveService, private easelLogic: EaselLogiscticsService, private userService: UserService) {
         this.socket = io(environment.serverUrl) as unknown as Socket;
@@ -33,18 +33,11 @@ export class SocketManagementService {
             });
         });
     }
-    validateWord(eventName: string): Observable<MessageServer> {
-        return new Observable<MessageServer>((subscriber) => {
-            this.socket.on(eventName, (data: MessageServer) => {
-                subscriber.next(data);
-            });
-        });
-    }
     emit(eventName: string, message?: MessageServer) {
         this.socket.emit(eventName, message);
     }
 
-    reserveToserver(eventName: string, gameName: string, map: Map<Letter, number>, size: number, easel: Letter[]) {
+    reserveToServer(eventName: string, gameName: string, map: Map<Letter, number>, size: number, easel: Letter[]) {
         this.socket.emit(eventName, gameName, JSON.stringify(Array.from(map)), size, easel);
     }
     reserveToClient() {
@@ -62,7 +55,7 @@ export class SocketManagementService {
                 this.reserveService.redefineReserve(map, size);
                 this.easelLogic.fillEasel(this.userService.joinedUser.easel, true);
                 this.userService.realUser.easel.easelLetters = easel;
-                this.reserveToserver(
+                this.reserveToServer(
                     'updateReserveInServer',
                     gameName,
                     this.reserveService.letters,

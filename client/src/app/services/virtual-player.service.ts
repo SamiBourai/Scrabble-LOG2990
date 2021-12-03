@@ -29,11 +29,9 @@ import { ValidWordService } from './valid-word.service';
 import { WordPointsService } from './word-points.service';
 @Injectable({ providedIn: 'root' })
 export class VirtualPlayerService {
-    first: boolean = true;
     commandToSend: string = '';
     commandObs = new BehaviorSubject<string>('');
     vrPoints: number = 0;
-    isDicFille: boolean = false;
     vrScoreObs = new BehaviorSubject<number>(0);
     played: boolean = false;
     skipTurn: boolean = false;
@@ -242,7 +240,7 @@ export class VirtualPlayerService {
                 if (direction === 'v') pos = { x: i, y: j };
                 else pos = { x: j, y: i };
 
-                if (tiles[pos.y][pos.x]?.charac !== NOT_A_LETTER.charac) {
+                if (tiles[pos.y][pos.x].charac !== NOT_A_LETTER.charac) {
                     notEmpty = true;
                     letterIngrid.push(tiles[pos.y][pos.x]);
                 }

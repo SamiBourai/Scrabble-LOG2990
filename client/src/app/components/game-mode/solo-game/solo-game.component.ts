@@ -20,7 +20,7 @@ import {
     MIN_LENGTH,
     MODES,
     TIME_CHOICE,
-    USER_NAME_RULES
+    USER_NAME_RULES,
 } from './../../../constants/constants';
 
 @Component({

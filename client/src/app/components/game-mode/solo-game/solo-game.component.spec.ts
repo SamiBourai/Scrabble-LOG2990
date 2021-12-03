@@ -16,7 +16,10 @@ import { delay } from 'rxjs/operators';
 // eslint-disable-next-line no-restricted-imports
 import { DictionaryPresentation } from '../../../../../../server/app/classes/dictionary';
 import { SoloGameComponent } from './solo-game.component';
-const mockDictionaries = [{title:'aloo',description:'bye',words:['moi','toi']},{title:'crSieste',description:'SIII',words:['lui','elle']}];
+const mockDictionaries = [
+    { title: 'aloo', description: 'bye', words: ['moi', 'toi'] },
+    { title: 'crSieste', description: 'SIII', words: ['lui', 'elle'] },
+];
 describe('SoloGameComponent', () => {
     let component: SoloGameComponent;
     let fixture: ComponentFixture<SoloGameComponent>;

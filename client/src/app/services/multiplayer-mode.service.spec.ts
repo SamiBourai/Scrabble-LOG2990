@@ -299,7 +299,7 @@ describe('MultiplayerModeService', () => {
     });
 
     it('sendReserve', () => {
-        const spy = spyOn<any>(service['socketManagementService'], 'reserveToserver');
+        const spy = spyOn<any>(service['socketManagementService'], 'reserveToServer');
         service.sendReserve();
         expect(spy).toHaveBeenCalled();
     });
@@ -320,7 +320,7 @@ describe('MultiplayerModeService', () => {
         // spyOn<any>(service['socketManagementService'], 'reserveToserver');
         // service.setGuestPlayerInfromation('abdel1232');
         // const spy = spyOn<any>(service['userService'], 'initiliseUsers');
-        const p = 'allo'
+        const p = 'allo';
         service.setGuestPlayerInfromation(p);
         expect(service['userService'].joinedUser.name).toBe(p);
     });
