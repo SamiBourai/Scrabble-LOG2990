@@ -1,3 +1,7 @@
+import { DictionaryPresentation } from './../../../../../../server/app/classes/dictionary';
+import { delay } from 'rxjs/operators';
+//import { fakeAsync } from '@angular/core/testing';
+//import { DatabaseService } from './../../../../../../server/app/services/database.service';
 //import { DictionaryPresentation } from '@app/classes/dictionary';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -11,7 +15,7 @@
 /* eslint-disable dot-notation */
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {  ComponentFixture,   TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { TIME_CHOICE } from '@app/constants/constants';
 import { TimeService } from '@app/services/time.service';
@@ -20,11 +24,13 @@ import { VirtualPlayerService } from '@app/services/virtual-player.service';
 import { SoloGameComponent } from './solo-game.component';
 import { RealUser } from '@app/classes/user';
 import { EaselObject } from '@app/classes/easel-object';
+import { of } from 'rxjs';
 
-
+const mockDictionaries = [{title:'aloo',description:'bye',words:['moi','toi']},{title:'crSieste',description:'SIII',words:['lui','elle']}];
 describe('SoloGameComponent', () => {
     let component: SoloGameComponent;
     let fixture: ComponentFixture<SoloGameComponent>;
+    const mockDic = mockDictionaries;
     const mockDialogRef = {
         open: jasmine.createSpy('open'),
     };
@@ -36,6 +42,7 @@ describe('SoloGameComponent', () => {
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers', 'setVrName']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['setGameTime']);
         virtualPlayerServiceSpy = jasmine.createSpyObj('VirtualPlayerService', ['expert']);
+        
         jasmine.getEnv().allowRespy(true);
     });
 
@@ -55,6 +62,7 @@ describe('SoloGameComponent', () => {
                 { provide: VirtualPlayerService, useValue: virtualPlayerServiceSpy },
                 { provide: MatSnackBar, useValue: MatMock },
                 
+                
             ],
         }).compileComponents();
     });
@@ -63,6 +71,7 @@ describe('SoloGameComponent', () => {
         fixture = TestBed.createComponent(SoloGameComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        
     });
 
     it('should create', () => {
@@ -133,7 +142,6 @@ describe('SoloGameComponent', () => {
         component.onSubmitUserName();
         expect(storeNameInLocalStorageSpy).toHaveBeenCalled();
     });
-
     
 
     it('should call setVrName on setLevelJv', () => {
@@ -179,18 +187,19 @@ describe('SoloGameComponent', () => {
         component.randomBonusActivated(pseudoEvent);
         expect(userServiceSpy.isBonusBox).toBeFalse();
     });
-
-    it('selectedDictionnary',()=>{
-        const event:Event = new Event('change');
-        const spy = spyOn(component,'selectedDictionnary');
-       component.selectedDictionnary(event);
-       expect(spy).toHaveBeenCalled();
-    });
+    
 
     it('enableBtn',()=>{
         component.isNextBtnClicked = true;
         component.enableBtn();
         expect(component.isNextBtnClicked).toBe(false);
+    });
+
+    it('getDictionnaries',()=>{
+        const dics:DictionaryPresentation[] = [{title:'allo',description:'bye'},{title:'siii',description:'taaas'}];
+        spyOn(component['database'],'getMetaDictionary').and.returnValue(of(mockDic).pipe(delay(1)));
+        component.getDictionnaries(dics);
+        expect(dics.length).toBeGreaterThanOrEqual(2);
     });
 
     it('getDictionnariesDelete',()=>{
@@ -199,11 +208,15 @@ describe('SoloGameComponent', () => {
         expect(component['updateDics'].length).toBeGreaterThanOrEqual(1);
     });
 
-    // it('getDictionnariesDelete localStorage',()=>{
-    //     component['updateDics'] = [{title:'allo',description:'bye'}];
-    //     const spy = spyOn(component['database'],'getMetaDictionary');
-    //     spyOn<any>(component['database'].getMetaDictionary,'subscribe')
-    //     component.getDictionnariesDelete();
-    //     expect(spy).toHaveBeenCalled();
-    // });
+    it('getDictionnariesDelete localStorage',()=>{
+        component['updateDics'] = [{title:'allo',description:'bye'}];
+          spyOn(component['database'],'getMetaDictionary').and.returnValue(of(mockDic).pipe(delay(1)));
+        component.getDictionnariesDelete();
+        expect(component['updateDics'].length).toBeGreaterThanOrEqual(1);
+        
+    });
+
+    
 });
+
+
