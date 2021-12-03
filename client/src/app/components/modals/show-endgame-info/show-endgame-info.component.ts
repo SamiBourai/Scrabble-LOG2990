@@ -17,14 +17,14 @@ export class ShowEndgameInfoComponent implements AfterViewInit {
     constructor(private showEasel: ShowEaselEndGameService, public userService: UserService, private virtualPlayer: VirtualPlayerService) {}
 
     ngAfterViewInit(): void {
-        this.showEasel.easelOneCtx = this.easelOne.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.showEasel.easelTwoCtx = this.easelTwo.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.showEasel.setCanvasElements(this.easelOne, this.easelTwo);
         this.showEasel.drawEasel(this.userService.realUser.easel, this.showEasel.easelOneCtx);
-        if (this.userService.playMode === 'soloGame') this.showEasel.drawEasel(this.virtualPlayer.easel, this.showEasel.easelTwoCtx);
-        else this.showEasel.drawEasel(this.userService.joinedUser.easel, this.showEasel.easelTwoCtx);
-
-        this.showEasel.drawHand(this.showEasel.easelTwoCtx);
-        this.showEasel.drawHand(this.showEasel.easelOneCtx);
+        if (this.userService.playMode === 'soloGame') {
+            this.showEasel.drawEasel(this.virtualPlayer.easel, this.showEasel.easelTwoCtx);
+        } else {
+            this.showEasel.drawEasel(this.userService.joinedUser.easel, this.showEasel.easelTwoCtx);
+        }
+        this.showEasel.drawHands();
     }
 
     get width(): number {

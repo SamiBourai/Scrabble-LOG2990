@@ -27,7 +27,7 @@ describe('ShowEaselEndGameService', () => {
         it('drawHand', () => {
             const c = ctxStub;
             const spy = spyOn<any>(c, 'beginPath');
-            service.drawHand(c);
+            service['drawHand'](c);
             expect(spy).toHaveBeenCalled();
         });
 
