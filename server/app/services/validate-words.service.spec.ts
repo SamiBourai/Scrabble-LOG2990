@@ -57,6 +57,7 @@ describe('ValidWordService', () => {
 
         await validateWordService.getCompressedWords();
         expect(stub.calledOnce).to.be.true;
+        stub.restore();
     });
 
     it('get words sould return allumette', async () => {
@@ -65,11 +66,34 @@ describe('ValidWordService', () => {
         expect(getW[0]).to.equal('allumette');
     });
 
-    it('loadDictionary should set dictionary to non empty', async () => {
-        const words = ['pomme', 'punaise', 'banane'];
-        Sinon.replace(validateWordService, 'getWords', async () => Promise.resolve(words));
-        await validateWordService.loadDictionary();
-        const dict = validateWordService['dictionary'];
-        expect(dict?.length).to.equal(2);
+    it('getNotCompresseWord() should return an array buffer', async () => {
+        const loadableDictionary = { word: 'allumette' };
+        const strifiedWord = JSON.stringify(loadableDictionary);
+        await fs.writeFile('./assets/Dictionaries/sami.json', strifiedWord);
+        const stub = Sinon.stub(fs, 'readFile');
+        await validateWordService.getNotCompressedWords('sami');
+        expect(stub.calledOnce).to.be.true;
+        await fs.unlink('./assets/Dictionaries/sami.json');
+        stub.restore();
     });
+
+    it('getWordsNotDefault() should return a stringfied word', async () => {
+        const loadableDictionary = { word: 'allumette' };
+        const strifiedWord = JSON.stringify(loadableDictionary);
+        await fs.writeFile('./assets/Dictionaries/file1.json', strifiedWord);
+        Sinon.replace(validateWordService, 'getNotCompressedWords', async () => Promise.resolve(Buffer.from(jsonZstB64Str, 'base64')));
+        await validateWordService.getWordsNotDefault('file1').then(async (wordX) => {
+            return expect(wordX).to.equal('allumette');
+        });
+        // expect().to.equal('allumette');
+        await fs.unlink('./assets/Dictionaries/file1.json');
+    });
+
+    // it('loadDictionary should set dictionary to non empty', async () => {
+    //     const words = ['pomme', 'punaise', 'banane'];
+    //     Sinon.replace(validateWordService, 'getWords', async () => Promise.resolve(words));
+    //     await validateWordService.loadDictionary(['dictionnaire', 'ditionnaire2']);
+    //     const dict = validateWordService['dictionary'];
+    //     expect(dict?.length).to.equal(2);
+    // });
 });

@@ -2,7 +2,7 @@ import { Letter } from './letters';
 import { Score } from './score';
 import { Vec2 } from './vec2';
 
-export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
+// export const comparePositions = (a: Vec2, b: Vec2) => a.x === b.x && a.y === b.y;
 
 // user-service
 export const NUMBER_COMPARED = 20;
@@ -333,6 +333,7 @@ export const OK_HTTP_STATUS = 200;
 export const CREATED_HTTP_STATUS = 201;
 export const NO_CONTENT_HTTP_STATUS = 204;
 export const NOT_FOUND_HTTP_STATUS = 404;
+export const BAD_REQUEST = 404;
 
 // database
 export const DATABASE_COLLECTION_CLASSIC = 'Score';

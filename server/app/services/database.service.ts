@@ -116,12 +116,11 @@ export class DatabaseService {
     }
 
     async deleteFile(fileName: string) {
-        await unlink(`./assets/Dictionaries/${fileName}.json`);
+        unlink(`./assets/Dictionaries/${fileName}.json`);
     }
 
     async deleteAllFile() {
         const testFolder = './assets/Dictionaries';
-
         const files = await readdir(testFolder);
         for (const file of files) {
             await unlink(`./assets/Dictionaries/${file}`);
