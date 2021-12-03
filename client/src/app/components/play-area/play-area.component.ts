@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ShowEndgameInfoComponent } from '@app/components/modals/show-endgame-info/show-endgame-info.component';
-import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
+import { ViewModalComponent } from '@app/components/modals/view-modal/view-modal.component';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, UNDEFINED_INDEX } from '@app/constants/constants';
 import { EaselLogiscticsService } from '@app/services/easel-logisctics.service';
 import { GridService } from '@app/services/grid.service';

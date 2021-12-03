@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GameInitializationComponent } from '@app/components/modals/game-initialization/game-initialization.component';
 import { ModalScrableClassiqueComponent } from '@app/components/modals/modal-scrable-classique/modal-scrable-classique.component';
-import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
+import { ViewModalComponent } from '@app/components/modals/view-modal/view-modal.component';
 import { AppComponent } from '@app/components/pages/app/app.component';
 import { GamePageComponent } from '@app/components/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/components/pages/main-page/main-page.component';
@@ -31,7 +31,6 @@ import { AdminPageComponent } from './components/pages/admin-page/admin-page/adm
 import { JoinedUserComponent } from './components/users/joined-user/joined-user.component';
 import { RealPlayerComponent } from './components/users/real-player/real-player.component';
 import { VrUserComponent } from './components/users/vr-user/vr-user.component';
-// import { CommandService } from './services/command.service';
 import { MessageService } from './services/message.service';
 import { ValidWordService } from './services/valid-word.service';
 import { WordPointsService } from './services/word-points.service';

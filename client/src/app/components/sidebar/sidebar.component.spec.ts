@@ -1,13 +1,5 @@
-//import { VirtualPlayerService } from '@app/services/virtual-player.service';
+// import { VirtualPlayerService } from '@app/services/virtual-player.service';
 
-
-import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
-import { CommandManagerService } from '@app/services/command-manager.service';
-import { ObjectifManagerService } from '@app/services/objectif-manager.service';
-import { EaselLogiscticsService } from './../../services/easel-logisctics.service';
-/* eslint-disable no-duplicate-imports */
-/* eslint-disable @typescript-eslint/no-duplicate-imports */
-import { VrUser } from '@app/classes/user';
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-len */
 /* eslint-disable max-lines */
@@ -16,19 +8,23 @@ import { VrUser } from '@app/classes/user';
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { Letter } from '@app/classes/letter';
-// import { MessageServer } from '@app/classes/message-server';
-import { JoinedUser, RealUser } from '@app/classes/user';
+/* eslint-disable no-duplicate-imports */
+/* eslint-disable @typescript-eslint/no-duplicate-imports */
+import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { A, C } from '@app/constants/constants';
+import { CommandManagerService } from '@app/services/command-manager.service';
 // import { A, B } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
+import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ReserveService } from '@app/services/reserve.service';
+import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
-//import { BehaviorSubject } from 'rxjs';
+// import { BehaviorSubject } from 'rxjs';
 // import { BehaviorSubject, of } from 'rxjs';
 import { EaselObject } from './../../classes/easel-object';
+import { EaselLogiscticsService } from './../../services/easel-logisctics.service';
 import { ValidWordService } from './../../services/valid-word.service';
 
 import SpyObj = jasmine.SpyObj;
@@ -39,17 +35,15 @@ describe('SidebarComponent', () => {
     let userServiceSpy: SpyObj<UserService>;
     let validWordServiceSpy: SpyObj<ValidWordService>;
     let reserveServiceSpy: SpyObj<ReserveService>;
-    let easelLogiscticsServiceSpy:SpyObj<EaselLogiscticsService>;
-    let objectifMangerServiceSpy:SpyObj<ObjectifManagerService>;
-    let commandManagerServiceSpy:SpyObj<CommandManagerService>;
+    let easelLogiscticsServiceSpy: SpyObj<EaselLogiscticsService>;
+    let objectifMangerServiceSpy: SpyObj<ObjectifManagerService>;
+    let commandManagerServiceSpy: SpyObj<CommandManagerService>;
     let tempCanvasServiceSpy: SpyObj<TemporaryCanvasService>;
-    //let virtualPlayerServiceSpy: SpyObj<VirtualPlayerService>;
-    
-   
+    // let virtualPlayerServiceSpy: SpyObj<VirtualPlayerService>;
 
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
-    
+
     beforeEach(() => {
         messageServiceSpy = jasmine.createSpyObj('MessageServiceSpy', [
             'isCommand',
@@ -99,10 +93,15 @@ describe('SidebarComponent', () => {
         validWordServiceSpy = jasmine.createSpyObj('validWordServiceSpy', ['readWordsAndGivePointsIfValid', 'verifyWord']);
         easelLogiscticsServiceSpy = jasmine.createSpyObj('easelLogiscticsServiceSpy', ['tempGetLetter']);
         objectifMangerServiceSpy = jasmine.createSpyObj('objectifMangerServiceSpy', ['verifyObjectifs']);
-        commandManagerServiceSpy = jasmine.createSpyObj('commandManagerServiceSpy', ['verifyCommand','verifyWordsInDictionnary','verifyExchageCommand','validateWord']);
-        tempCanvasServiceSpy = jasmine.createSpyObj('tempCanvasServiceSpy', ['drawLetter','drawRedFocus']);
-        //virtualPlayerServiceSpy = jasmine.createSpyObj('virtualPlayerServiceSpy', ['manageVrPlayerActions','tradeLetterSteps','exchangeLettersInEasel','placeWordSteps','passTurnSteps','resetVariables','playProbabilty','generateProb','generateWords']);
-        
+        commandManagerServiceSpy = jasmine.createSpyObj('commandManagerServiceSpy', [
+            'verifyCommand',
+            'verifyWordsInDictionnary',
+            'verifyExchageCommand',
+            'validateWord',
+        ]);
+        tempCanvasServiceSpy = jasmine.createSpyObj('tempCanvasServiceSpy', ['drawLetter', 'drawRedFocus']);
+        // virtualPlayerServiceSpy = jasmine.createSpyObj('virtualPlayerServiceSpy', ['manageVrPlayerActions','tradeLetterSteps','exchangeLettersInEasel','placeWordSteps','passTurnSteps','resetVariables','playProbabilty','generateProb','generateWords']);
+
         jasmine.getEnv().allowRespy(true);
     });
 
@@ -118,9 +117,8 @@ describe('SidebarComponent', () => {
                 { provide: ReserveService, useValue: reserveServiceSpy },
                 { provide: EaselLogiscticsService, useValue: easelLogiscticsServiceSpy },
                 { provide: ObjectifManagerService, useValue: objectifMangerServiceSpy },
-                //{ provide: VirtualPlayerService, useValue: virtualPlayerServiceSpy },
-                
-                
+                // { provide: VirtualPlayerService, useValue: virtualPlayerServiceSpy },
+
                 { provide: CommandManagerService, useValue: commandManagerServiceSpy },
                 { provide: TemporaryCanvasService, useValue: tempCanvasServiceSpy },
             ],
@@ -132,10 +130,10 @@ describe('SidebarComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         const user: RealUser = { name: 'bob', level: '2', round: '3', score: 8, firstToPlay: true, turnToPlay: true, easel: new EaselObject(true) };
-        const userV: VrUser = { name: 'bob', level: '2', round: '3', score: 8,   easel: new EaselObject(true) };
+        const userV: VrUser = { name: 'bob', level: '2', round: '3', score: 8, easel: new EaselObject(true) };
         const userJ: JoinedUser = { name: 'bib', level: '2', round: '3', score: 8, guestPlayer: true, easel: new EaselObject(true) };
-        userJ.easel.easelLetters = [A,C];
-        userJ.easel.foundLetter = [false,false,false,true,false,false,false];
+        userJ.easel.easelLetters = [A, C];
+        userJ.easel.foundLetter = [false, false, false, true, false, false, false];
         userJ.easel.indexTempLetters = [];
         userServiceSpy.vrUser = userV;
         userServiceSpy.realUser = user;
@@ -143,19 +141,16 @@ describe('SidebarComponent', () => {
         component.name = user.name;
         component.nameVr = userJ.name;
         if (userServiceSpy.playMode === 'joinMultiplayerGame') {
-            spyOn<any>(userServiceSpy,'getPlayerEasel').and.returnValue(userJ.easel);
-        } else spyOn<any>(userServiceSpy,'getPlayerEasel').and.returnValue(user.easel);
-         
-        
+            spyOn<any>(userServiceSpy, 'getPlayerEasel').and.returnValue(userJ.easel);
+        } else spyOn<any>(userServiceSpy, 'getPlayerEasel').and.returnValue(user.easel);
     });
 
     it('should create ', () => {
         expect(component).toBeTruthy();
-        
     });
 
     // it('ngOnInit', () => {
-       
+
     //     userServiceSpy.playMode = 'multi';
     //     messageServiceSpy.newTextMessageObs = new BehaviorSubject<boolean>(true);
     //     reserveServiceSpy.sizeObs = new BehaviorSubject<number>(2);
@@ -163,31 +158,29 @@ describe('SidebarComponent', () => {
     //     const spy1 = spyOn<any>(global, 'setTimeout');
     //     const spy2 = spyOn<any>(reserveServiceSpy.sizeObs, 'subscribe');
     //     component.toggleReserve = true;
-        
-        
+
     //     component.ngOnInit();
-        
+
     //     expect(spy).toHaveBeenCalled();
     //     expect(spy1).toHaveBeenCalled();
     //     expect(spy2).toHaveBeenCalled();
-        
-        
+
     // });
 
-    it('logMessage true',()=>{
-        spyOn<any>(messageServiceSpy,'isCommand').and.returnValue(true);
-        spyOn<any>(messageServiceSpy,'isValid').and.returnValue(true);
-        spyOn<any>(userServiceSpy,'isPlayerTurn').and.returnValue(true);
-        const spy1 = spyOn<any>(component,'manageCommands');
+    it('logMessage true', () => {
+        spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);
+        spyOn<any>(messageServiceSpy, 'isValid').and.returnValue(true);
+        spyOn<any>(userServiceSpy, 'isPlayerTurn').and.returnValue(true);
+        const spy1 = spyOn<any>(component, 'manageCommands');
         component.logMessage();
         expect(spy1).toHaveBeenCalled();
     });
 
-    it('logMessage false',()=>{
-        spyOn<any>(messageServiceSpy,'isCommand').and.returnValue(true);
-        spyOn<any>(messageServiceSpy,'isValid').and.returnValue(true);
-        spyOn<any>(userServiceSpy,'isPlayerTurn').and.returnValue(false);
-         spyOn<any>(messageServiceSpy,'isSubstring').and.returnValue(true);
+    it('logMessage false', () => {
+        spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);
+        spyOn<any>(messageServiceSpy, 'isValid').and.returnValue(true);
+        spyOn<any>(userServiceSpy, 'isPlayerTurn').and.returnValue(false);
+        spyOn<any>(messageServiceSpy, 'isSubstring').and.returnValue(true);
         component.logMessage();
         expect(component.errorMessage).toBe("ce n'est pas votre tour");
     });
@@ -228,8 +221,6 @@ describe('SidebarComponent', () => {
     //     component['placeWord']();
     //     expect(spy1).toHaveBeenCalled();
     // });
-
-    
 
     // it('placeWord switch', () => {
     //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
@@ -328,8 +319,6 @@ describe('SidebarComponent', () => {
     //     expect(spy).toHaveBeenCalled();
     // });
 
-    
-
     // it('endTurn else ',()=>{
     //     const cmd = 'placer';
     //     const msg = 'allo';
@@ -338,108 +327,100 @@ describe('SidebarComponent', () => {
     //     const spy = spyOn<any>(userServiceSpy,'userPlayed')
     //     component['endTurn'](cmd,msg);
     //      expect(spy).toHaveBeenCalled();
-        
+
     // });
 
-    it('verifyInput',()=>{
-        spyOn<any>(messageServiceSpy,'isCommand').and.returnValue(true);
-        spyOn<any>(messageServiceSpy,'isValid').and.returnValue(false);
-        spyOn<any>(userServiceSpy,'isPlayerTurn').and.returnValue(true);
+    it('verifyInput', () => {
+        spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);
+        spyOn<any>(messageServiceSpy, 'isValid').and.returnValue(false);
+        spyOn<any>(userServiceSpy, 'isPlayerTurn').and.returnValue(true);
         component['verifyInput']();
         expect(component.errorMessage).toBe('commande invalide');
     });
 
-    it('verifyInput else debug',()=>{
-        spyOn<any>(messageServiceSpy,'isCommand').and.returnValue(true);
-        spyOn<any>(messageServiceSpy,'isValid').and.returnValue(true);
-        spyOn<any>(userServiceSpy,'isPlayerTurn').and.returnValue(true);
+    it('verifyInput else debug', () => {
+        spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);
+        spyOn<any>(messageServiceSpy, 'isValid').and.returnValue(true);
+        spyOn<any>(userServiceSpy, 'isPlayerTurn').and.returnValue(true);
         component.typeArea = '!debug';
         component.isDebug = false;
         component['verifyInput']();
         expect(component.isDebug).toBe(true);
-        
     });
 
-    it('verifyInput else reserve',()=>{
-        spyOn<any>(messageServiceSpy,'isCommand').and.returnValue(true);
-        spyOn<any>(messageServiceSpy,'isValid').and.returnValue(true);
-        spyOn<any>(userServiceSpy,'isPlayerTurn').and.returnValue(true);
+    it('verifyInput else reserve', () => {
+        spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);
+        spyOn<any>(messageServiceSpy, 'isValid').and.returnValue(true);
+        spyOn<any>(userServiceSpy, 'isPlayerTurn').and.returnValue(true);
         component.typeArea = '!reserve';
-        const spy = spyOn<any>(component,'showReserve');
+        const spy = spyOn<any>(component, 'showReserve');
         component['verifyInput']();
         expect(spy).toHaveBeenCalled();
-        
     });
 
-    it('verifyInput else aide',()=>{
-        spyOn<any>(messageServiceSpy,'isCommand').and.returnValue(true);
-        spyOn<any>(messageServiceSpy,'isValid').and.returnValue(true);
-        spyOn<any>(userServiceSpy,'isPlayerTurn').and.returnValue(true);
+    it('verifyInput else aide', () => {
+        spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);
+        spyOn<any>(messageServiceSpy, 'isValid').and.returnValue(true);
+        spyOn<any>(userServiceSpy, 'isPlayerTurn').and.returnValue(true);
         component.typeArea = '!aide';
         component.isHelpActivated = false;
         component['verifyInput']();
         expect(component.isHelpActivated).toBe(true);
-        
     });
 
-    it('verifyInput else default',()=>{
-        spyOn<any>(messageServiceSpy,'isCommand').and.returnValue(false);
-        spyOn<any>(messageServiceSpy,'isValid').and.returnValue(true);
-        spyOn<any>(userServiceSpy,'isPlayerTurn').and.returnValue(true);
+    it('verifyInput else default', () => {
+        spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(false);
+        spyOn<any>(messageServiceSpy, 'isValid').and.returnValue(true);
+        spyOn<any>(userServiceSpy, 'isPlayerTurn').and.returnValue(true);
         component.typeArea = 'blba';
-        const spy = spyOn<any>(component,'updateMessageArray');
+        const spy = spyOn<any>(component, 'updateMessageArray');
         component['verifyInput']();
         expect(spy).toHaveBeenCalled();
-        
     });
 
-    it('showReserve',()=>{
+    it('showReserve', () => {
         component.isDebug = true;
         component.toggleReserve = false;
-        const spy = spyOn<any>(component,'reserveLettersQuantity');
+        const spy = spyOn<any>(component, 'reserveLettersQuantity');
         component['showReserve']();
         expect(spy).toHaveBeenCalled();
         expect(component.toggleReserve).toBe(true);
     });
 
-    it('showReserve else',()=>{
+    it('showReserve else', () => {
         component.isDebug = false;
         component.toggleReserve = false;
         component['showReserve']();
         expect(component.errorMessage).toBe("vous n'êtes pas en mode debogage");
     });
 
-    it('reserveLettersQuantity',()=>{
-        const spy = spyOn<any>(component.arrayOfReserveLetters,'splice');
+    it('reserveLettersQuantity', () => {
+        const spy = spyOn<any>(component.arrayOfReserveLetters, 'splice');
         component['reserveLettersQuantity']();
-         expect(spy).toHaveBeenCalled();
-         
+        expect(spy).toHaveBeenCalled();
     });
 
-    it('verifyObjectifs',()=>{
+    it('verifyObjectifs', () => {
         component['objectifMangerService'].log2990Mode = true;
         const cmd = 'pass';
-        const spy = spyOn<any>(component['objectifMangerService'],'verifyObjectifs');
+        const spy = spyOn<any>(component['objectifMangerService'], 'verifyObjectifs');
         component['verifyObjectifs'](cmd);
         expect(spy).toHaveBeenCalled();
-         
     });
 
-    it('verifyObjectifs play',()=>{
+    it('verifyObjectifs play', () => {
         component['objectifMangerService'].log2990Mode = true;
         const cmd = 'play';
-        const spy = spyOn<any>(component['objectifMangerService'],'verifyObjectifs');
+        const spy = spyOn<any>(component['objectifMangerService'], 'verifyObjectifs');
         component['verifyObjectifs'](cmd);
         expect(spy).toHaveBeenCalled();
-         
     });
 
-    it('verifyObjectifs exchange',()=>{
+    it('verifyObjectifs exchange', () => {
         component['objectifMangerService'].log2990Mode = true;
         const cmd = 'exchange';
-        const spy = spyOn<any>(component['objectifMangerService'],'verifyObjectifs');
+        const spy = spyOn<any>(component['objectifMangerService'], 'verifyObjectifs');
         component['verifyObjectifs'](cmd);
         expect(spy).toHaveBeenCalled();
-         
     });
 });

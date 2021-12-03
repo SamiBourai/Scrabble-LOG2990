@@ -20,11 +20,17 @@ describe('ModalEndOfGameComponent', () => {
         open: jasmine.createSpy('open'),
     };
 
-
     beforeEach(() => {
-        userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','setVrName','setJoinAsReal', 'isPlayerTurn', 'endOfGame']);
+        userServiceSpy = jasmine.createSpyObj('UserService', [
+            'playMode',
+            'isBonusBox',
+            'initiliseUsers',
+            'setVrName',
+            'setJoinAsReal',
+            'isPlayerTurn',
+            'endOfGame',
+        ]);
         jasmine.getEnv().allowRespy(true);
-
     });
 
     beforeEach(async () => {
@@ -34,8 +40,6 @@ describe('ModalEndOfGameComponent', () => {
             providers: [
                 { provide: MatSnackBar, useValue: mockDialogRef },
                 { provide: UserService, useValue: userServiceSpy },
-                //{ provide: MultiplayerModeService, useValue: multiplayerServiceSpy },
-                //{ provide: DatabaseService, useValue: databaseServiceSpy },
             ],
         }).compileComponents();
     });
@@ -74,6 +78,4 @@ describe('ModalEndOfGameComponent', () => {
         // const joinVrSpy = spyOn(component['userService'].gameModeObs, 'next');
         // expect(joinVrSpy).toHaveBeenCalled();
     });
-
-    
 });

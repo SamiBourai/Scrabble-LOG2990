@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DictionaryPresentation, LoadableDictionary } from '@app/classes/dictionary';
 import { EaselObject } from '@app/classes/easel-object';
-//import { MessageServer } from '@app/classes/message-server';
 import { JoinedUser, RealUser } from '@app/classes/user';
 import { DEFAULT_MODE, TIME_CHOICE } from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
@@ -24,6 +23,7 @@ import { BehaviorSubject, of, Subject } from 'rxjs';
 import { delay } from 'rxjs/operators';
 // import { observable } from 'rxjs';
 import { CreateMultiplayerGameComponent } from './create-multiplayer-game.component';
+
 const mockDictionaries = [
     { title: 'aloo', description: 'bye', words: ['moi', 'toi'] },
     { title: 'crSieste', description: 'SIII', words: ['lui', 'elle'] },
@@ -41,17 +41,17 @@ describe('CreateMultiplayerGameComponent', () => {
     let objectifManagerServiceSpy: jasmine.SpyObj<ObjectifManagerService>;
     const mockDialogRef2 = {
         open: jasmine.createSpy('open'),
-        dismiss: jasmine.createSpy('dismiss')
+        dismiss: jasmine.createSpy('dismiss'),
     };
     let getMetaDictionarySubject: Subject<LoadableDictionary[]>;
 
     const mockSocketManagementService = {
         listen: (name: string) => {
-            return new BehaviorSubject(name).asObservable()
+            return new BehaviorSubject(name).asObservable();
         },
 
         setGuestPlayerInfromation: () => '',
-        emit: () => ''
+        emit: () => '',
     };
 
     const mockMultiplayerModeService = {
@@ -61,7 +61,7 @@ describe('CreateMultiplayerGameComponent', () => {
     beforeEach(() => {
         getMetaDictionarySubject = new Subject<LoadableDictionary[]>();
         // getMetaDictionarySubject.next([]);
-        userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','realUser', 'gameName']);
+        userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers', 'realUser', 'gameName']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['setGameTime']);
         dataBaseSpy = jasmine.createSpyObj('DatabaseService', ['getMetaDictionary', 'sendChosenDic']);
         dataBaseSpy.getMetaDictionary.and.returnValue(getMetaDictionarySubject);
@@ -244,9 +244,9 @@ describe('CreateMultiplayerGameComponent', () => {
     it('selectedFile', () => {
         const event = new Event('change');
         component.chosenDictionnary = 'dictionnaire principal';
-         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
-         spyOn<any>(component['database'],'sendChosenDic').and.returnValue(of().pipe(delay(1)));
-         const spy = spyOn<any>(component['validWordService'],'loadDictionary');
+        spyOn<any>(Array.prototype, 'includes').and.returnValue(true);
+        spyOn<any>(component['database'], 'sendChosenDic').and.returnValue(of().pipe(delay(1)));
+        const spy = spyOn<any>(component['validWordService'], 'loadDictionary');
         component['selectedDictionnary'](event);
         expect(event).toBeInstanceOf(Event);
         expect(spy).toHaveBeenCalled();
@@ -255,12 +255,11 @@ describe('CreateMultiplayerGameComponent', () => {
     it('selectedFile selectionnez', () => {
         const event = new Event('change');
         component.chosenDictionnary = '---- Selectionnez un dictionnaire ----';
-         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
-         spyOn<any>(component['database'],'sendChosenDic').and.returnValue(of().pipe(delay(1)));
-         const spy = spyOn<any>(component['snackBar'],'dismiss');
+        spyOn<any>(Array.prototype, 'includes').and.returnValue(true);
+        spyOn<any>(component['database'], 'sendChosenDic').and.returnValue(of().pipe(delay(1)));
+        const spy = spyOn<any>(component['snackBar'], 'dismiss');
         component['selectedDictionnary'](event);
         expect(event).toBeInstanceOf(Event);
         expect(spy).toHaveBeenCalled();
-        
     });
 });

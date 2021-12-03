@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DictionaryPresentation } from '@app/classes/dictionary';
 import { GameTime } from '@app/classes/time';
-import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
+import { ViewModalComponent } from '@app/components/modals/view-modal/view-modal.component';
 import { DatabaseService } from '@app/services/database.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { TimeService } from '@app/services/time.service';

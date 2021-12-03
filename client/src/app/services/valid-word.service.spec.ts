@@ -32,7 +32,7 @@ describe('ValidWorldService', () => {
             providers: [HttpClientTestingModule],
         });
         service = TestBed.inject(ValidWordService);
-        //service['dictionary'] = { title: 'aloo', description: 'byee', words: [] };
+        // service['dictionary'] = { title: 'aloo', description: 'byee', words: [] };
         service['usedWords'].clear();
         httpMock = TestBed.inject(HttpTestingController);
     });

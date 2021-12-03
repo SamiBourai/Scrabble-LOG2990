@@ -225,7 +225,7 @@ describe('TimeService', () => {
         service.timeUser = time;
 
         service.startTime(s);
-        
+
         expect(service.timeUser).toEqual(time);
     });
 
@@ -246,10 +246,9 @@ describe('TimeService', () => {
         service['userService'].realUserTurnObs = new BehaviorSubject<boolean>(false);
         const time: GameTime = { min: 0, sec: 1 };
         service.timeVrPlayer = time;
-        const spy = spyOn<any>(service['userService'],'checkForSixthSkip');
+        const spy = spyOn<any>(service['userService'], 'checkForSixthSkip');
         service.startTime(s);
         expect(spy).not.toHaveBeenCalled();
-       
     });
 
     it('trigerPassCommand should send !passer', () => {
@@ -258,8 +257,4 @@ describe('TimeService', () => {
         service['trigerPassCommand'](g);
         expect(service.command).toEqual('!passer');
     });
-
-
-
-    
 });

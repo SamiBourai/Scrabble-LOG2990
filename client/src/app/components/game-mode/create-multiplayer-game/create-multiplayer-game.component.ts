@@ -5,8 +5,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DictionaryPresentation } from '@app/classes/dictionary';
 import { MessageServer } from '@app/classes/message-server';
 import { GameTime } from '@app/classes/time';
-import { ViewModalComponent } from '@app/components/modals/view-modal/ViewModal.component';
-import { DEFAULT_DICTIONNARY, DEFAULT_MODE, DEFAULT_TIME, MAX_LENGTH, MIN_LENGTH, MODES, TIME_CHOICE } from '@app/constants/constants';
+import { ViewModalComponent } from '@app/components/modals/view-modal/view-modal.component';
+import {
+    DEFAULT_DICTIONNARY,
+    DEFAULT_MODE,
+    DEFAULT_TIME,
+    MAX_LENGTH,
+    MIN_LENGTH,
+    MODES,
+    TIME_CHOICE,
+    USER_NAME_RULES,
+} from '@app/constants/constants';
 import { DatabaseService } from '@app/services/database.service';
 import { MultiplayerModeService } from '@app/services/multiplayer-mode.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
@@ -14,7 +23,6 @@ import { SocketManagementService } from '@app/services/socket-management.service
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
 import { ValidWordService } from '@app/services/valid-word.service';
-import { USER_NAME_RULES } from './../../../constants/constants';
 
 @Component({
     selector: 'app-create-multiplayer-game',

@@ -117,7 +117,7 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return true;
         });
-       
+
         expect(service.isValid(command)).toBeTrue();
     });
 
@@ -126,7 +126,7 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return true;
         });
-        
+
         expect(service.isValid(command)).toBeTrue();
     });
 
@@ -135,7 +135,7 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return true;
         });
-        
+
         spyOn<any>(service, 'isInside').and.callFake(() => {
             return true;
         });
@@ -147,7 +147,7 @@ describe('MessageService', () => {
         spyOn(service, 'isCommand').and.callFake(() => {
             return false;
         });
-        
+
         spyOn<any>(service, 'isInside').and.callFake(() => {
             return false;
         });

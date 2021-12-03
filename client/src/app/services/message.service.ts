@@ -18,7 +18,7 @@ import {
     MIN_SWAP_LENGTH,
     PARAMETERS_OF_SWAP,
     PLACE_LENGTH,
-    SWAP_LENGTH
+    SWAP_LENGTH,
 } from './../constants/constants';
 
 @Injectable({

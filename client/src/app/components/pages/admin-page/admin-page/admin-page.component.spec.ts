@@ -1,4 +1,4 @@
-import { DictionaryPresentation } from './../../../../classes/dictionary';
+/* eslint-disable max-lines */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Overlay } from '@angular/cdk/overlay';
@@ -9,7 +9,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable } from '@angular/material/table';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Dictionary, LoadableDictionary } from '@app/classes/dictionary';
+import { Dictionary, DictionaryPresentation, LoadableDictionary } from '@app/classes/dictionary';
 import { VirtualPlayer } from '@app/classes/virtual-players';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { ValidWordService } from '@app/services/valid-word.service';
@@ -256,7 +256,7 @@ describe('AdminPageComponent', () => {
     });
 
     it('removeAllPlayerToDatabase', () => {
-        //const x = true;
+        // const x = true;
         const collectionName = 'vrBeg';
         spyOn<any>(component.database, 'removeAllPlayer').and.returnValue(
             of(() => {
@@ -265,7 +265,7 @@ describe('AdminPageComponent', () => {
             }),
         );
         component['removeAllPlayerToDatabase'](collectionName);
-       // expect(x).toBeTrue();
+        // expect(x).toBeTrue();
     });
 
     it('verifyValidity true', () => {

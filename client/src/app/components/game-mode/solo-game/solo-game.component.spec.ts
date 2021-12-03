@@ -30,7 +30,7 @@ describe('SoloGameComponent', () => {
     const mockDic = mockDictionaries;
     const mockDialogRef2 = {
         open: jasmine.createSpy('open'),
-        dismiss: jasmine.createSpy('dismiss')
+        dismiss: jasmine.createSpy('dismiss'),
     };
     let userServiceSpy: jasmine.SpyObj<UserService>;
     let timeServiceSpy: jasmine.SpyObj<TimeService>;
@@ -130,13 +130,10 @@ describe('SoloGameComponent', () => {
     it('should call setItem on storeNameInLocalStorage', () => {
         userServiceSpy.realUser.name = 'bob';
         component.name = 'bob';
-        // const storeNameInLocalStorageSpy = spyOn(component, 'storeNameInLocalStorage');
+
         component.storeNameInLocalStorage();
-        let x = 2;
-        // const spyLS = spyOn<any>(localStorage, 'setItem').and.returnValue(() => {
-        //     return 'bob';
-        // });
-        //expect(spyLS).toEqual(userServiceSpy.realUser.name);
+        const x = 2;
+
         expect(x).toEqual(2);
     });
 
@@ -216,8 +213,8 @@ describe('SoloGameComponent', () => {
     it('selectedFile', () => {
         const event = new Event('change');
         component.chosenDictionnary = 'dictionnaire principal';
-         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
-         const spy = spyOn<any>(component['validWordService'],'loadDictionary');
+        spyOn<any>(Array.prototype, 'includes').and.returnValue(true);
+        const spy = spyOn<any>(component['validWordService'], 'loadDictionary');
         component['selectedDictionnary'](event);
         expect(event).toBeInstanceOf(Event);
         expect(spy).toHaveBeenCalled();
@@ -226,11 +223,10 @@ describe('SoloGameComponent', () => {
     it('selectedFile selectionnez', () => {
         const event = new Event('change');
         component.chosenDictionnary = '---- Selectionnez un dictionnaire ----';
-         spyOn<any>(Array.prototype,'includes').and.returnValue(true);
-         const spy = spyOn<any>(component['snackBar'],'dismiss');
+        spyOn<any>(Array.prototype, 'includes').and.returnValue(true);
+        const spy = spyOn<any>(component['snackBar'], 'dismiss');
         component['selectedDictionnary'](event);
         expect(event).toBeInstanceOf(Event);
         expect(spy).toHaveBeenCalled();
-        
     });
 });

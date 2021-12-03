@@ -12,7 +12,7 @@ import {
     SIXTH_NAME,
     SIX_TURN,
     THIRD_NAME,
-    UNDEFINED_INDEX
+    UNDEFINED_INDEX,
 } from '@app/constants/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MessageService } from './message.service';

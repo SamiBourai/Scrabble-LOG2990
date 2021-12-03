@@ -227,8 +227,7 @@ export class ValidWordService {
             }
 
             const letterIndexInput = concatWord.charCodeAt(0) - 'a'.charCodeAt(0);
-            console.log('allo' + this.dictionary.words[letterIndexInput]);
-            
+
             return this.dictionary.words[letterIndexInput].has(concatWord);
         }
     }
