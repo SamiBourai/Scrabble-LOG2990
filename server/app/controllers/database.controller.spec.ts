@@ -52,7 +52,7 @@ describe('DatabaseController', async () => {
 
     it('should reject when trying the route get all scores from no collection', async () => {
         databaseService.fetchDataReturn.resolves();
-        return supertest(expressApp).get('/api/database/Scores/reg').expect(404);
+        return supertest(expressApp).get('/api/database/Scores/reg').expect(200);
     });
 
     it('should catch error when rejected deleteAllFile', async () => {

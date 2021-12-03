@@ -1,5 +1,4 @@
 import {
-    BAD_REQUEST,
     CREATED_HTTP_STATUS,
     DATABASE_COLLECTION_CLASSIC,
     DATABASE_COLLECTION_LOG2990,
@@ -28,10 +27,12 @@ export class DatabaseController {
                 await this.databaseService.fetchDataReturn(req.params.collectionName);
                 if (req.params.collectionName === DATABASE_COLLECTION_CLASSIC) {
                     res.json(this.databaseService.arrayOfAllClassicGameScores);
+                    // res.sendStatus(CREATED_HTTP_STATUS).send();
                 } else if (req.params.collectionName === DATABASE_COLLECTION_LOG2990) {
                     res.json(this.databaseService.arrayOfAllLog2990GameScores);
-                }
-                res.sendStatus(BAD_REQUEST).send();
+                    // res.sendStatus(CREATED_HTTP_STATUS).send();
+                } else res.json('hello');
+                // res.sendStatus(CONTINUE).send();
                 // res.status(NOT_FOUND_HTTP_STATUS).send();
             } catch (error) {
                 res.status(NOT_FOUND_HTTP_STATUS).send(error.message);

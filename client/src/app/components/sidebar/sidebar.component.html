@@ -81,7 +81,9 @@
 
                     <input formControlName="message" maxlength="512" [(ngModel)]="typeArea" #message type="text" class="form-control" autofocus />
 
-                    <button mat-raised-button (click)="logMessage()">Ok</button>
+                    <button mat-raised-button (click)="logMessage()" style="color: white; background-color: #ff5800; border-radius: 4px">
+                        Envoyer
+                    </button>
                     <mat-hint id="hint" align="end">{{ message.value.length }} / 512 </mat-hint>
                 </div>
             </div>

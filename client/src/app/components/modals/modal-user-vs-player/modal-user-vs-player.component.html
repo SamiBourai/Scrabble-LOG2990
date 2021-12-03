@@ -38,16 +38,13 @@
     <mat-card-subtitle>Si oui vous serez déclaré perdant !</mat-card-subtitle>
     <br />
     <hr />
-    <mat-card-actions>
-        <div class="button-group">
-            <p>
-                <mat-card-actions>
-                    <div class="div">
-                        <button mat-raised-button mat-dialog-close>Reprendre la partie</button>
-                        <button mat-raised-button (click)="quitMultiPlayerGame()" (click)="isUserAcceptQuit = true">Abandonner la partie</button>
-                    </div>
-                </mat-card-actions>
-            </p>
-        </div>
-    </mat-card-actions>
+
+    <div class="button-group">
+        <mat-card-actions>
+            <div class="div">
+                <button mat-raised-button mat-dialog-close>Reprendre la partie</button>
+                <button mat-raised-button (click)="quitMultiPlayerGame()" (click)="isUserAcceptQuit = true">Abandonner</button>
+            </div>
+        </mat-card-actions>
+    </div>
 </div>

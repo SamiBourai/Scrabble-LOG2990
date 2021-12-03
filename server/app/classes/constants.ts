@@ -334,6 +334,7 @@ export const CREATED_HTTP_STATUS = 201;
 export const NO_CONTENT_HTTP_STATUS = 204;
 export const NOT_FOUND_HTTP_STATUS = 404;
 export const BAD_REQUEST = 404;
+export const CONTINUE = 100;
 
 // database
 export const DATABASE_COLLECTION_CLASSIC = 'Score';

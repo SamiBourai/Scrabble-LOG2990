@@ -199,6 +199,29 @@ describe('database service', () => {
             assert(spyX.calledOnce);
         });
         await databaseService.deleteAllFile();
+        spy.restore();
+    });
+    it('should writefile infreferferfre assert/Dictionnaries diratory', async () => {
+        const loadableDictionary: LoadableDictionary = {
+            title: 'sami',
+            description: 'francais',
+            words: ['sami', 'aa'],
+        };
+        const spy = sinon.stub(fs, 'writeFile').returns();
+
+        const spyX = sinon.spy(databaseService, 'dictMetadata');
+        await databaseService.uploadFile(loadableDictionary);
+        const err1 = new Error('erreeur');
+        try {
+            spy.args[0][2](err1);
+        } catch (err) {
+            expect(err).equal(err1);
+        }
+
+        assert(spy.calledOnce);
+        assert(spyX.calledOnce);
+        spy.restore();
+        await databaseService.deleteAllFile();
     });
 
     // it('writeFile() should throw an error', async () => {
@@ -207,10 +230,10 @@ describe('database service', () => {
     //         description: '',
     //         words: ['', ''],
     //     };
-    //     // sinon.stub(fs, 'writeFile').rejects(new Error());
+    // sinon.stub(fs, 'writeFile').rejects(new Error());
 
     //     // const spy = sinon.spy(fs, 'writeFile');
-    //     // const spyX = sinon.spy(databaseService, 'dictMetadata');
+    // const spyX = sinon.spy(databaseService, 'dictMetadata');
     //     // await databaseService.uploadFile(loadableDictionary);
     //     // await unlink('./assets/Dictionaries/sami.json');
     //     // assert(spy.calledOnce);

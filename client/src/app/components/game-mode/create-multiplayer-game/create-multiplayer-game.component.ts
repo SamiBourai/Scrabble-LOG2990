@@ -32,7 +32,7 @@ export class CreateMultiplayerGameComponent implements OnInit {
     gameName: string = '';
     modes: string[] = MODES;
     chosenMode: string = MODES[DEFAULT_MODE];
-    chosenDictionnary: string = '---- Selectionnez un dictionnaire ----';
+    chosenDictionnary: string = '---- Séléctionnez un dictionnaire ----';
     dictionnaries: DictionaryPresentation[] = [DEFAULT_DICTIONNARY];
     timeCounter: number = DEFAULT_TIME;
     time: GameTime = TIME_CHOICE[DEFAULT_TIME];
@@ -121,10 +121,6 @@ export class CreateMultiplayerGameComponent implements OnInit {
     }
     passInSoloMode(): void {
         this.socketManagementService.emit('userPassedInSoloMode', { gameName: this.gameName });
-        // this.soloMode = true;
-        // this.createMultiplayerGame = false;
-        // this.name = this.userNameMutiplayer.value;
-        // this.chooseSoloMode = true;
         this.userService.playMode = 'soloGame';
         this.userService.initiliseUsers(true);
         this.openDialogOfVrUser();
