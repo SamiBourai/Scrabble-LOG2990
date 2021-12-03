@@ -56,6 +56,14 @@ describe('ModalEndOfGameComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('setIsUserQuitGame', () => {
+        const spy = spyOn(component['databaseService'], 'addScores');
+        const spy2 = spyOn(component, 'assign');
+        component.setIsUserQuitGame();
+        expect(spy).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+    });
+
     // it('ngOnInit', () => {
     //     const data = true;
     //     const spy = spyOn<any>(component.multiplayerService, 'winnerOfGame').and.returnValue(of(data));

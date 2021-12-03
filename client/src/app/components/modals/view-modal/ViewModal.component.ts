@@ -28,7 +28,7 @@ export class ViewModalComponent {
         public multiplayerService: MultiplayerModeService,
     ) {}
     setIsUserQuitGame(): void {
-        this.assignHome();
+        window.location.assign('/home');
     }
     quitMultiPlayerGame() {
         switch (this.userService.playMode) {
@@ -47,10 +47,7 @@ export class ViewModalComponent {
                 });
                 break;
         }
-        this.assignHome();
+        this.setIsUserQuitGame();
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
-    }
-    private assignHome() {
-        window.location.assign('/home');
     }
 }

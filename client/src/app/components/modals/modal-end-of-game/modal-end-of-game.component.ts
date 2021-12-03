@@ -28,14 +28,20 @@ export class ModalEndOfGameComponent implements OnInit {
     }
     setIsUserQuitGame(): void {
         this.databaseService.addScores();
-        window.location.assign('/home');
+        this.assign();
     }
 
     joinVrPlayer() {
         if (this.userService.playMode === 'joinMultiplayerGame') this.userService.setJoinAsReal();
         this.userService.playMode = 'soloGame';
         this.userService.endOfGame = false;
-        this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());
-        this.userService.gameModeObs.next(this.userService.playMode);
+        if(this.userService.realUserTurnObs && this.userService.gameModeObs) {
+            this.userService.realUserTurnObs.next(this.userService.isPlayerTurn());
+            this.userService.gameModeObs.next(this.userService.playMode);
+        }
     }
+
+    assign() {
+        window.location.assign('/home');
+    }   
 }
