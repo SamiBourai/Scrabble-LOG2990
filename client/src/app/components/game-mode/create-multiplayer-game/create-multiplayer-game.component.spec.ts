@@ -5,6 +5,7 @@ import { FormBuilder } from '@angular/forms';
 // import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoadableDictionary } from '@app/classes/dictionary';
 import { EaselObject } from '@app/classes/easel-object';
 //import { MessageServer } from '@app/classes/message-server';
 import { JoinedUser, RealUser } from '@app/classes/user';
@@ -15,11 +16,11 @@ import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { SocketManagementService } from '@app/services/socket-management.service';
 import { TimeService } from '@app/services/time.service';
 import { UserService } from '@app/services/user.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 // import { observable } from 'rxjs';
 import { CreateMultiplayerGameComponent } from './create-multiplayer-game.component';
 
-fdescribe('CreateMultiplayerGameComponent', () => {
+describe('CreateMultiplayerGameComponent', () => {
     let component: CreateMultiplayerGameComponent;
     let fixture: ComponentFixture<CreateMultiplayerGameComponent>;
     const mockDialogRef = {
@@ -30,11 +31,12 @@ fdescribe('CreateMultiplayerGameComponent', () => {
     // let formBuilderSpy: jasmine.SpyObj<FormBuilder>;
     // let socketManagementServiceSpy: jasmine.SpyObj<SocketManagementService>;
     //let multiplayerModeServiceSpy: jasmine.SpyObj<MultiplayerModeService>;
-    //let dataBaseSpy: jasmine.SpyObj<DatabaseService>;
+    let dataBaseSpy: jasmine.SpyObj<DatabaseService>;
     let objectifManagerServiceSpy: jasmine.SpyObj<ObjectifManagerService>;
     const mockDialogRef2 = {
         open: jasmine.createSpy('open'),
     };
+    let getMetaDictionarySubject: Subject<LoadableDictionary[]>;
 
     const mockSocketManagementService = {
         listen: (name: string) => {
@@ -54,22 +56,25 @@ fdescribe('CreateMultiplayerGameComponent', () => {
         //emit: () => ''
     };
 
-    const mockDataBase = {
-        listen: (name: string) => {
-            return new BehaviorSubject(name).asObservable()
-        },
+    // const mockDataBase = {
+    //     listen: (name: string) => {
+    //         return new BehaviorSubject(name).asObservable()
+    //     },
 
-        getMetaDictionary: () => '',
-        emit: () => ''
-    };
+    //     getMetaDictionary: () => '',
+    //     emit: () => ''
+    // };
 
     beforeEach(() => {
+        getMetaDictionarySubject = new Subject<LoadableDictionary[]>();
+        // getMetaDictionarySubject.next([]);
         userServiceSpy = jasmine.createSpyObj('UserService', ['playMode', 'isBonusBox', 'initiliseUsers','realUser', 'gameName']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['setGameTime']);
         // formBuilderSpy = jasmine.createSpyObj('FormBuilder', ['setValue', 'group']);
         // socketManagementServiceSpy = jasmine.createSpyObj('socketManagementService', ['emit', 'listen', 'getRooms']);
         //multiplayerModeServiceSpy = jasmine.createSpyObj('multiplayerModeService', ['setGuestPlayerInformation']);
-        //dataBaseSpy = jasmine.createSpyObj('DatabaseService', ['getMetaDictionary', 'sendChosenDic']);
+        dataBaseSpy = jasmine.createSpyObj('DatabaseService', ['getMetaDictionary', 'sendChosenDic']);
+        dataBaseSpy.getMetaDictionary.and.returnValue(getMetaDictionarySubject);
         objectifManagerServiceSpy = jasmine.createSpyObj('ObjectifManagerService', ['log2990Mode', 'generateObjectifs', 'choosedObjectifs']);
         jasmine.getEnv().allowRespy(true);
     });
@@ -86,7 +91,7 @@ fdescribe('CreateMultiplayerGameComponent', () => {
                 { provide: TimeService, useValue: timeServiceSpy },
                 { provide: SocketManagementService, useValue: mockSocketManagementService },
                 { provide: MultiplayerModeService, useValue: mockMultiplayerModeService },
-                { provide: DatabaseService, useValue: mockDataBase },
+                { provide: DatabaseService, useValue: dataBaseSpy },
                 { provide: ObjectifManagerService, useValue: objectifManagerServiceSpy },
             ],
         }).compileComponents();

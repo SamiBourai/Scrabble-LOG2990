@@ -17,14 +17,21 @@ export class ShowEndgameInfoComponent implements AfterViewInit {
     constructor(private showEasel: ShowEaselEndGameService, public userService: UserService, private virtualPlayer: VirtualPlayerService) {}
 
     ngAfterViewInit(): void {
-        this.showEasel.easelOneCtx = this.easelOne.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.showEasel.easelTwoCtx = this.easelTwo.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        // console.log('This is a test' , this.easelOne.nativeElement)
+        // console.log('This is a test' , this.easelTwo.nativeElement)
+        this.showEasel.setCanvasElements(this.easelOne, this.easelTwo);
+        // this.showEasel.easelOneCtx = this.easelOne.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        // this.showEasel.easelTwoCtx = this.easelTwo.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.showEasel.drawEasel(this.userService.realUser.easel, this.showEasel.easelOneCtx);
-        if (this.userService.playMode === 'soloGame') this.showEasel.drawEasel(this.virtualPlayer.easel, this.showEasel.easelTwoCtx);
-        else this.showEasel.drawEasel(this.userService.joinedUser.easel, this.showEasel.easelTwoCtx);
-
-        this.showEasel.drawHand(this.showEasel.easelTwoCtx);
-        this.showEasel.drawHand(this.showEasel.easelOneCtx);
+        if (this.userService.playMode === 'soloGame') {
+            this.showEasel.drawEasel(this.virtualPlayer.easel, this.showEasel.easelTwoCtx);
+        }
+        else {
+            this.showEasel.drawEasel(this.userService.joinedUser.easel, this.showEasel.easelTwoCtx);
+        }
+        this.showEasel.drawHands();
+        // this.showEasel.drawHand(this.showEasel.easelTwoCtx);
+        // this.showEasel.drawHand(this.showEasel.easelOneCtx);
     }
 
     get width(): number {

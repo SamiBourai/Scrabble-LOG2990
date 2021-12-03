@@ -9,7 +9,12 @@ export class ShowEaselEndGameService {
     easelOneCtx: CanvasRenderingContext2D;
     easelTwoCtx: CanvasRenderingContext2D;
 
-    drawHand(ctx: CanvasRenderingContext2D) {
+    drawHands(): void {
+        this.drawHand(this.easelOneCtx)
+        this.drawHand(this.easelTwoCtx)
+    }
+
+     private drawHand(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 5;
@@ -38,5 +43,10 @@ export class ShowEaselEndGameService {
             }
             counter++;
         }
+    }
+
+    setCanvasElements(easelOne:any, easelTwo:any): void {
+        this.easelOneCtx = easelOne.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.easelTwoCtx = easelTwo.nativeElement.getContext('2d') as CanvasRenderingContext2D;
     }
 }

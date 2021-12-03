@@ -80,4 +80,5 @@ describe('ModalEndOfGameComponent', () => {
         // const joinVrSpy = spyOn(component['userService'].gameModeObs, 'next');
         // expect(joinVrSpy).toHaveBeenCalled();
     });
+
 });

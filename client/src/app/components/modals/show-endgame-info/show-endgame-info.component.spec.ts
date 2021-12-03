@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+//import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ShowEaselEndGameService } from '@app/services/show-easel-end-game.service';
 import { UserService } from '@app/services/user.service';
 import { VirtualPlayerService } from '@app/services/virtual-player.service';
@@ -11,10 +12,20 @@ describe('ShowEndgameInfoComponent', () => {
     let userServiceSpy: jasmine.SpyObj<UserService>;
     let showEaselspy: jasmine.SpyObj<ShowEaselEndGameService>;
     let virtualPlayerSpy: jasmine.SpyObj<VirtualPlayerService>;
+    // const mockShowEaselEndGameService = {
+    //     // listen: (name: string) => {
+    //     //     return new BehaviorSubject(name).asObservable()
+    //     // },
+    //     drawHand : () => '',
+    //     drawEasel : () => '',
+    //     getContext : () => '',
+    //     //emit: () => ''
+    // };
 
     beforeEach(() => {
         userServiceSpy = jasmine.createSpyObj('UserService', ['realUser', 'playMode', 'joinedUser']);
-        showEaselspy = jasmine.createSpyObj('ShowEaselEndGameService', ['easelOneCtx', 'easelTwoCtx', 'drawHand']);
+        // const nativeElement = jasmine.createSpyObj('nativeElement', ['getContext']);
+        showEaselspy = jasmine.createSpyObj('ShowEaselEndGameService', ['easelOneCtx', 'easelTwoCtx', 'drawHands', 'drawEasel', 'setCanvasElements']);
         virtualPlayerSpy = jasmine.createSpyObj('VirtualPlayerService', ['easel', '']);
         jasmine.getEnv().allowRespy(true);
     });
@@ -34,6 +45,12 @@ describe('ShowEndgameInfoComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ShowEndgameInfoComponent);
         component = fixture.componentInstance;
+        //const canvasSize = component['canvasSize'];
+        const nativeElement = jasmine.createSpyObj('nativeElement', ['getContext']);
+        const test = jasmine.createSpyObj('EaselOne', [], {nativeElement: nativeElement})
+        const test2 = jasmine.createSpyObj('EaselTwo', [], {nativeElement: nativeElement})
+        component['easelOne'] = test;
+        component['easelTwo'] = test2;
         fixture.detectChanges();
     });
 
@@ -45,14 +62,16 @@ describe('ShowEndgameInfoComponent', () => {
         component['userService'].playMode = 'soloGame';
         //const spy = spyOn(component['showEasel'], 'drawEasel');
         component.ngAfterViewInit();
-        expect(component['showEasel'].drawEasel(component['virtualPlayer'].easel, component['showEasel'].easelTwoCtx)).toHaveBeenCalled();
+        // expect(component['showEasel'].drawEasel(component['virtualPlayer'].easel, component['showEasel'].easelTwoCtx)).toHaveBeenCalled();
+        expect(showEaselspy.drawEasel).toHaveBeenCalled();
     });
-
+    
     it('ngOnInit else', () => {
         component['userService'].playMode = 'none';
         //const spy = spyOn(component['showEasel'], 'drawEasel');
         component.ngAfterViewInit();
-        expect(component['showEasel'].drawEasel(component['userService'].joinedUser.easel, component['showEasel'].easelTwoCtx)).toHaveBeenCalled();
+        expect(showEaselspy.drawEasel).toHaveBeenCalled();
+        // expect(component['showEasel'].drawEasel(component['userService'].joinedUser.easel, component['showEasel'].easelTwoCtx)).toHaveBeenCalled();
     });
 
     
