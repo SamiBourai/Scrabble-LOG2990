@@ -167,7 +167,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
 
     quitGame() {
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
-        window.location.assign('/home');
     }
     disableButton(event: string): boolean {
         if (event !== 'passTurn') {

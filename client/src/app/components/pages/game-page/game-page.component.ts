@@ -52,6 +52,5 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this.endOfGameSubscription.unsubscribe();
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
-        if (this.assign) window.location.assign('/home');
     }
 }

@@ -27,6 +27,7 @@ import {
 } from '@app/constants/constants';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { ObjectifManagerService } from './objectif-manager.service';
 import { UserService } from './user.service';
 
@@ -51,20 +52,20 @@ export class DatabaseService {
     }
 
     getAllScores(collectionName: string): Observable<Score[]> {
-        const fullUrl = GET_URL_ALL_DATA + '/' + collectionName;
+        const fullUrl = environment.serverUrl + GET_URL_ALL_DATA + '/' + collectionName;
         return this.http.get<Score[]>(fullUrl);
     }
     resetAllScores(collectionName: string): Observable<Score[]> {
-        const fullUrl: string = GET_URL_DEFAULT_DATA + '/' + collectionName;
+        const fullUrl: string = environment.serverUrl + GET_URL_DEFAULT_DATA + '/' + collectionName;
         return this.http.get<Score[]>(fullUrl);
     }
     getAllPlayers(collectionName: string): Observable<VirtualPlayer[]> {
-        const fullUrl: string = GET_URL_ALL_PLAYERS + '/' + collectionName;
+        const fullUrl: string = environment.serverUrl + GET_URL_ALL_PLAYERS + '/' + collectionName;
         return this.http.get<VirtualPlayer[]>(fullUrl);
     }
 
     sendPlayer(collectionName: string, player: string): Observable<number> {
-        const fullUrl = SEND_URL_ADD_PLAYER + '/' + collectionName + '/' + player;
+        const fullUrl = environment.serverUrl + SEND_URL_ADD_PLAYER + '/' + collectionName + '/' + player;
         return this.http.post<number>(fullUrl, player).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
@@ -73,7 +74,7 @@ export class DatabaseService {
     }
 
     removePlayer(collectionName: string, player: string): Observable<number> {
-        const fullUrl = SEND_URL_REMOVE_PLAYER + '/' + collectionName + '/' + player;
+        const fullUrl = environment.serverUrl + SEND_URL_REMOVE_PLAYER + '/' + collectionName + '/' + player;
         return this.http.delete<number>(fullUrl).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
@@ -82,7 +83,7 @@ export class DatabaseService {
     }
 
     updatePlayer(collectionName: string, player: string, newPlayerName: string) {
-        const fullUrl = SEND_URL_UPDATE_PLAYER + '/' + collectionName + '/' + player + '/' + newPlayerName;
+        const fullUrl = environment.serverUrl + SEND_URL_UPDATE_PLAYER + '/' + collectionName + '/' + player + '/' + newPlayerName;
         return this.http.patch(fullUrl, player).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
@@ -91,7 +92,7 @@ export class DatabaseService {
     }
 
     removeAllPlayer(collectionName: string): Observable<number> {
-        const fullUrl = SEND_URL_REMOVE_ALL_PLAYER + '/' + collectionName;
+        const fullUrl = environment.serverUrl + SEND_URL_REMOVE_ALL_PLAYER + '/' + collectionName;
         return this.http.delete<number>(fullUrl).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
@@ -100,7 +101,7 @@ export class DatabaseService {
     }
 
     sendDictionary(file: LoadableDictionary): Observable<number> {
-        const fullUrl = SEND_URL_UPLOAD_DICTIONARY;
+        const fullUrl = environment.serverUrl + SEND_URL_UPLOAD_DICTIONARY;
         return this.http.post<number>(fullUrl, file).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);
@@ -109,27 +110,27 @@ export class DatabaseService {
     }
 
     deleteDictionary(fileName: LoadableDictionary) {
-        const fullUrl = SEND_URL_GET_DICTIONARY + '/' + fileName.title;
+        const fullUrl = environment.serverUrl + SEND_URL_GET_DICTIONARY + '/' + fileName.title;
         return this.http.delete(fullUrl);
     }
 
     deleteAllDictionaries() {
-        const fullUrl = SEND_URL_GET_DICTIONARIES;
+        const fullUrl = environment.serverUrl + SEND_URL_GET_DICTIONARIES;
         return this.http.delete(fullUrl);
     }
 
     getDictionary(title: string, oldName?: string): Observable<LoadableDictionary> {
-        const fullUrl = SEND_URL_GET_DICTIONARY + '/' + title + '/' + (oldName ?? '');
+        const fullUrl = environment.serverUrl + SEND_URL_GET_DICTIONARY + '/' + title + '/' + (oldName ?? '');
         return this.http.get<LoadableDictionary>(fullUrl);
     }
 
     getMetaDictionary(): Observable<LoadableDictionary[]> {
-        const fullUrl = SEND_URL_GET_DICTIONARIES;
+        const fullUrl = environment.serverUrl + SEND_URL_GET_DICTIONARIES;
         return this.http.get<LoadableDictionary[]>(fullUrl);
     }
 
     sendChosenDic(chosenDictionnary: string): Observable<string> {
-        const fullUrl = SEND_URL_LOCAL_STORAGE + '/' + chosenDictionnary;
+        const fullUrl = environment.serverUrl + SEND_URL_LOCAL_STORAGE + '/' + chosenDictionnary;
         return this.http.post<string>(fullUrl, chosenDictionnary);
     }
     addScores(): void {
