@@ -28,7 +28,7 @@ export class ViewModalComponent {
         public multiplayerService: MultiplayerModeService,
     ) {}
     setIsUserQuitGame(): void {
-        window.location.assign('/home');
+        window.location.assign('/log2990/20213/equipe-303/log2990-303/#/home');
     }
     quitMultiPlayerGame() {
         switch (this.userService.playMode) {
