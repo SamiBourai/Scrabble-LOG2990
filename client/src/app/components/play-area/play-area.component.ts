@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ShowEndgameInfoComponent } from '@app/components/modals/show-endgame-info/show-endgame-info.component';
 import { ViewModalComponent } from '@app/components/modals/view-modal/view-modal.component';
 import { CANEVAS_HEIGHT, CANEVAS_WIDTH, UNDEFINED_INDEX } from '@app/constants/constants';
@@ -54,6 +55,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
         public reserveService: ReserveService,
         private socketManagerService: SocketManagementService,
         public virtualPlayerService: VirtualPlayerService,
+        public router: Router,
     ) {
         if (this.userService.playMode !== 'joinMultiplayerGame') {
             if (this.userService.playMode === 'soloGame') {
@@ -167,6 +169,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnDestroy {
 
     quitGame() {
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
+        window.location.assign('/log2990/20213/equipe-303/log2990-303/#/home');
     }
     disableButton(event: string): boolean {
         if (event !== 'passTurn') {
