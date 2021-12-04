@@ -211,6 +211,12 @@ describe('CreateMultiplayerGameComponent', () => {
         component.beginGame(bool);
         expect(spy).toHaveBeenCalled();
     });
+    it('beginGame', () => {
+        const bool: boolean = true;
+        const spy = spyOn(component['socketManagementService'], 'emit');
+        component.beginGame(bool);
+        expect(spy).toHaveBeenCalled();
+    });
 
     it('enableBtn', () => {
         component.isNextBtnClicked = true;

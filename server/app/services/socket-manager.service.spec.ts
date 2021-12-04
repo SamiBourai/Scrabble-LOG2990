@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-import { A, B, C, LETTERS_RESERVE_QTY } from '@app/classes/constants';
+import { A, B, C, D, E, F, G, LETTERS_RESERVE_QTY, NOT_A_LETTER } from '@app/classes/constants';
 import { GameObject } from '@app/classes/game-object';
 import { Letter } from '@app/classes/letters';
 import { MessageClient } from '@app/classes/message-client';
@@ -43,6 +43,7 @@ describe('SocketManagerService', () => {
         winner: 'guest',
         guestPlayer: { name: 'sami', score: 10, easelLetters: 7 },
         word: letter,
+        modeLog2990: true,
     };
     const arrayOfMessage: string[] = ['salut', 'yofsds', 'edjeiufre'];
     const sioToStubed = {
@@ -589,15 +590,124 @@ describe('SocketManagerService', () => {
         spy.restore();
     });
 
-    // it('test set interval who calls emitime', (done) => {
-    //     // setTimeout(()=>{
-    //     //     done()
-    //     // }, 1000)
-    // });
+    it(' generateAllroom() should generate all room in case its log 2990 is true', () => {
+        // eslint-disable-next-line dot-notation
+        const messagesClient2: MessageClient = {
+            gameName: 'test',
+            aleatoryBonus: false,
+            user: { name: 'sami', score: 10, easelLetters: 7 },
+            timeConfig: { sec: 0, min: 0 },
+            command: { word: 'je', position: { x: 0, y: 0 }, direction: 'v', gameName: 'test' },
+            arrayOfBonusBox: vec2,
+            timer: { sec: 5, min: 1, userTurn: false },
+            passTurn: true,
+            reserve: 'x1',
+            reserveSize: 86,
+            winner: 'guest',
+            guestPlayer: { name: 'sami', score: 10, easelLetters: 7 },
+            word: letter,
+            modeLog2990: true,
+        };
 
-    // it('should increase position', function () {
-    //     socketManagerService['emitTime'];
-    //     this.clock.tick(101);
-    //     expect(socketManagerService['emitTime']).equal(thing.position, 10);
-    // });
+        socketManagerService['rooms'].push(messagesClient2);
+
+        const room = socketManagerService['generateRooms'](messagesClient2);
+        expect(room[0].modeLog2990).to.equal(true);
+        socketManagerService['rooms'] = [];
+    });
+
+    it(' generateAllroom() should generate all room in case its log 2990 is false', () => {
+        // eslint-disable-next-line dot-notation
+        const messagesClient2: MessageClient = {
+            gameName: 'test',
+            aleatoryBonus: false,
+            user: { name: 'sami', score: 10, easelLetters: 7 },
+            timeConfig: { sec: 0, min: 0 },
+            command: { word: 'je', position: { x: 0, y: 0 }, direction: 'v', gameName: 'test' },
+            arrayOfBonusBox: vec2,
+            timer: { sec: 5, min: 1, userTurn: false },
+            passTurn: true,
+            reserve: 'x1',
+            reserveSize: 86,
+            winner: 'guest',
+            guestPlayer: { name: 'sami', score: 10, easelLetters: 7 },
+            word: letter,
+            modeLog2990: false,
+        };
+
+        socketManagerService['rooms'].push(messagesClient2);
+
+        const room = socketManagerService['generateRooms'](messagesClient2);
+        expect(room[0].modeLog2990).to.equal(false);
+        socketManagerService['rooms'] = [];
+    });
+
+    it(' generateAllroom() should generate all room in case its log 2990 is note the same so not be added', () => {
+        // eslint-disable-next-line dot-notation
+        const messagesClient2: MessageClient = {
+            gameName: 'test',
+            aleatoryBonus: false,
+            user: { name: 'sami', score: 10, easelLetters: 7 },
+            timeConfig: { sec: 0, min: 0 },
+            command: { word: 'je', position: { x: 0, y: 0 }, direction: 'v', gameName: 'test' },
+            arrayOfBonusBox: vec2,
+            timer: { sec: 5, min: 1, userTurn: false },
+            passTurn: true,
+            reserve: 'x1',
+            reserveSize: 86,
+            winner: 'guest',
+            guestPlayer: { name: 'sami', score: 10, easelLetters: 7 },
+            word: letter,
+            modeLog2990: false,
+        };
+        const messagesClient3: MessageClient = {
+            gameName: 'test',
+            aleatoryBonus: false,
+            user: { name: 'sami', score: 10, easelLetters: 7 },
+            timeConfig: { sec: 0, min: 0 },
+            command: { word: 'je', position: { x: 0, y: 0 }, direction: 'v', gameName: 'test' },
+            arrayOfBonusBox: vec2,
+            timer: { sec: 5, min: 1, userTurn: false },
+            passTurn: true,
+            reserve: 'x1',
+            reserveSize: 86,
+            winner: 'guest',
+            guestPlayer: { name: 'sami', score: 10, easelLetters: 7 },
+            word: letter,
+            modeLog2990: true,
+        };
+
+        socketManagerService['rooms'].push(messagesClient2);
+
+        const room = socketManagerService['generateRooms'](messagesClient3);
+        expect(room.length).to.equal(0);
+        socketManagerService['rooms'] = [];
+    });
+    it(' getEaselLength() should get essel length of 7', () => {
+        // eslint-disable-next-line dot-notation
+        const easel: Letter[] = [B, C, D, E, F, G, A];
+        const numberReturned = socketManagerService['getEaselLength'](easel);
+        expect(numberReturned).to.equal(7);
+        // socketManagerService['rooms'] = [];
+    });
+    it(' getEaselLength() should get essel length of 0', () => {
+        // eslint-disable-next-line dot-notation
+        const easel: Letter[] = [NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER];
+        const numberReturned = socketManagerService['getEaselLength'](easel);
+        expect(numberReturned).to.equal(0);
+    });
+
+    it(' getEaselLength() should get essel length when thre is 2 not letter', () => {
+        // eslint-disable-next-line dot-notation
+        const easel: Letter[] = [A, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER, NOT_A_LETTER];
+        const numberReturned = socketManagerService['getEaselLength'](easel);
+        expect(numberReturned).to.equal(1);
+    });
+
+    it(' getEaselLength() should get essel length when easel is empty', () => {
+        // eslint-disable-next-line dot-notation
+        const easel: Letter[] = [];
+        const numberReturned = socketManagerService['getEaselLength'](easel);
+        expect(numberReturned).to.equal(7);
+    });
 });

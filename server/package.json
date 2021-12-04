@@ -12,7 +12,7 @@
         "coverage": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' nyc mocha --config=.mocharc.json --node-env=test --exit"
     },
     "nyc": {
-        "check-coverage": true,
+        "check-coverage": false,
         "per-file": true,
         "include": [
             "app/**/*.ts"

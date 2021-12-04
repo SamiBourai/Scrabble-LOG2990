@@ -27,7 +27,6 @@ export class ModalScoresComponent implements OnInit, OnDestroy {
     arrayOfScoresLog2990Mode: Score[];
     isPlayerAdd: boolean;
     private unsubscribeFromGet1: Subscription;
-    // private unsubscribeFromGet2: Subscription;
     constructor(private databaseService: DatabaseService, private snackBar: MatSnackBar) {}
 
     ngOnInit() {
@@ -36,7 +35,6 @@ export class ModalScoresComponent implements OnInit, OnDestroy {
     }
     ngOnDestroy(): void {
         this.unsubscribeFromGet1.unsubscribe();
-        // this.unsubscribeFromGet2.unsubscribe();
     }
 
     private openSnackBar(message: string, action: string): void {

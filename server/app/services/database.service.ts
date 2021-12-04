@@ -1,4 +1,3 @@
-// import { injectable } from "inversify";
 import { BEST_SCORES, DEFAULT_SCORE, MAX_OCCURANCY } from '@app/classes/constants';
 import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
@@ -7,11 +6,9 @@ import { PathLike, writeFile } from 'fs';
 import { readdir, readFile, rename, unlink } from 'fs/promises';
 import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
-// import { map } from 'rxjs';
 import { Service } from 'typedi';
 import { ValidWordService } from './validate-words.service';
 
-// CHANGE the URL for your database information
 const DATABASE_URL = 'mongodb+srv://equipe303:equipe303@clusterscore.6eoob.mongodb.net/scrabble2990?retryWrites=true&w=majority';
 const DATABASE_NAME = 'scrabble2990';
 const DATABASE_COLLECTION_CLASSIC = 'Score';
@@ -56,7 +53,6 @@ export class DatabaseService {
     async addNewScore(score: Score, collectionName: string): Promise<void> {
         const scoreX: Score = { name: score.name, score: score.score };
         await this.db.collection(collectionName).insertOne(scoreX);
-        // this.sortAllScores(collectionName);
     }
     async sortAllScores(collectionName: string): Promise<void> {
         this.db.collection(collectionName).find({}).sort({ score: -1 });

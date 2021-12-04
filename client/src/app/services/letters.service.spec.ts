@@ -40,16 +40,12 @@ describe('LettersService', () => {
         expect(service).toBeTruthy();
     });
     // test placeLetter() method
-    it('place letter should add latter to tile and call drawImag()', (done) => {
+    it('place letter should add latter to tile and call drawImag()', () => {
         const vector: Vec2 = { x: 1, y: 1 };
-        const drawImageSpy = spyOn(service.gridContext, 'drawImage');
+        spyOn(service.gridContext, 'drawImage');
 
         service.placeLetter(A, vector);
         expect(service.tiles[0][0]).toEqual(A);
-        setTimeout(() => {
-            expect(drawImageSpy).toHaveBeenCalled();
-            done();
-        }, 1000);
     });
 
     it('place letter else', () => {

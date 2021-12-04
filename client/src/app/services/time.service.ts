@@ -16,8 +16,7 @@ export class TimeService {
     timeGuestPlayer: GameTime = { min: 0, sec: MINUTE_TURN };
     timeStarted: boolean = false;
     command: string = '';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    intervalIdX: any;
+    intervalIdX: ReturnType<typeof setInterval>;
     commandObs = new BehaviorSubject<string>('');
     constructor(
         private userService: UserService,

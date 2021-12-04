@@ -6,8 +6,8 @@
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-/* eslint-disable no-duplicate-imports */
-/* eslint-disable @typescript-eslint/no-duplicate-imports */
+import { ChatCommand } from '@app/classes/chat-command';
+import { Letter } from '@app/classes/letter';
 import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { A, C } from '@app/constants/constants';
@@ -142,9 +142,9 @@ describe('SidebarComponent', () => {
     });
 
     it('ngOnInit', () => {
-        userServiceSpy.playMode = 'multi';
-        messageServiceSpy.newTextMessageObs = new BehaviorSubject<boolean>(true);
-        reserveServiceSpy.sizeObs = new BehaviorSubject<number>(2);
+        component['userService'].playMode = 'multi';
+        component['messageService'].newTextMessageObs = new BehaviorSubject<boolean>(true);
+        component['reserveService'].sizeObs = new BehaviorSubject<number>(2);
         const spy = spyOn<any>(messageServiceSpy.newTextMessageObs, 'subscribe');
         const spy1 = spyOn<any>(global, 'setTimeout');
         const spy2 = spyOn<any>(reserveServiceSpy.sizeObs, 'subscribe');
@@ -155,6 +155,19 @@ describe('SidebarComponent', () => {
         expect(spy).toHaveBeenCalled();
         expect(spy1).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
+    });
+    it('ngOnInit with sizeObs defined ', (done) => {
+        component['userService'].playMode = 'soloGame';
+        component['messageService'].newTextMessageObs = new BehaviorSubject<boolean>(true);
+        component['reserveService'].sizeObs = new BehaviorSubject<number>(2);
+        userServiceSpy.isPlayerTurn.and.returnValue(true);
+        const spy2 = spyOn<any>(component, 'manageCommands');
+        component.ngOnInit();
+        setTimeout(() => {
+            expect(reserveServiceSpy.sizeObs).toBeDefined();
+            expect(spy2).not.toHaveBeenCalled();
+            done();
+        }, 0);
     });
 
     it('logMessage true', () => {
@@ -184,9 +197,17 @@ describe('SidebarComponent', () => {
 
     it('manageCommands placer', () => {
         component.typeArea = '!placer';
-        const spy1 = spyOn<any>(commandManagerServiceSpy, 'verifyCommand');
+        commandManagerServiceSpy.verifyCommand.and.returnValue(true);
+        const spy = spyOn<any>(component, 'placeWord');
         component['manageCommands']();
-        expect(spy1).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+    });
+    it('manageCommands placer with false verify command', () => {
+        component.typeArea = '!placer';
+        commandManagerServiceSpy.verifyCommand.and.returnValue(false);
+        const spy = spyOn<any>(component, 'placeWord');
+        component['manageCommands']();
+        expect(spy).not.toHaveBeenCalled();
     });
 
     it('manageCommands echanger', () => {
@@ -232,101 +253,101 @@ describe('SidebarComponent', () => {
         }, 3000);
     });
 
-    // it('placeWord switch 2', () => {
-    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-    //     messageServiceSpy.command = cmd;
-    //     userServiceSpy.playMode = 'fdfdf';
-    //     spyOn<any>(component, 'placeInTempCanvas');
-    //     const spy1 = spyOn<any>(component, 'placeInTempCanvas');
-    //     component['placeWord']();
-    //     expect(spy1).toHaveBeenCalled();
-    // });
+    it('placeInTempCanvas with direction h', () => {
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        messageServiceSpy.command = cmd;
+        letterServiceSpy.tileIsEmpty.and.returnValue(true);
+        component['placeInTempCanvas'](cmd);
+        expect(tempCanvasServiceSpy.drawLetter).toHaveBeenCalled();
+    });
+    it('placeInTempCanvas with direction h', () => {
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        messageServiceSpy.command = cmd;
+        letterServiceSpy.tileIsEmpty.and.returnValue(true);
+        component['placeInTempCanvas'](cmd);
+        expect(tempCanvasServiceSpy.drawLetter).toHaveBeenCalled();
+    });
+    it('placeInTempCanvas with direction v', () => {
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'v' };
+        messageServiceSpy.command = cmd;
+        letterServiceSpy.tileIsEmpty.and.returnValue(true);
+        component['placeInTempCanvas'](cmd);
+        expect(tempCanvasServiceSpy.drawLetter).toHaveBeenCalled();
+    });
+    it('placeWordIfValid', () => {
+        commandManagerServiceSpy.playerScore = 2;
+        const spy = spyOn<any>(letterServiceSpy, 'placeLettersInScrable');
+        spyOn<any>(component, 'verifyObjectifs');
+        spyOn<any>(component, 'endTurn');
+        component['placeWordIfValid']();
+        expect(spy).toHaveBeenCalled();
+    });
+    it('placeWordIfValid else', () => {
+        commandManagerServiceSpy.playerScore = 0;
+        spyOn<any>(component, 'endTurn');
+        component['placeWordIfValid']();
+        expect(component.errorMessage).toBe(commandManagerServiceSpy.errorMessage);
+    });
+    it('exchangeCommand', () => {
+        spyOn<any>(commandManagerServiceSpy, 'verifyExchageCommand').and.returnValue(true);
+        const spy = spyOn<any>(component, 'endTurn');
+        component['exchangeCommand']();
+        expect(spy).toHaveBeenCalled();
+    });
+    it('exchangeCommand else', () => {
+        spyOn<any>(commandManagerServiceSpy, 'verifyExchageCommand').and.returnValue(false);
+        commandManagerServiceSpy.errorMessage = 'kk';
+        component['exchangeCommand']();
+        expect(component.errorMessage).toBe('kk');
+    });
+    it('endTurn with exchange', (done) => {
+        const cmd = 'exchange';
+        const msg = 'allo';
+        userServiceSpy.playMode = 'dsds';
+        userServiceSpy.playedObs = new BehaviorSubject<boolean>(true);
+        spyOn<any>(component, 'verifyObjectifs');
+        component['endTurn'](cmd, msg);
+        setTimeout(() => {
+            expect(userServiceSpy.exchangeLetters).toBeTruthy();
+            done();
+        }, 3000);
+    });
+    it('endTurn with exchange else', () => {
+        const cmd = 'exchange';
+        const msg = 'allo';
+        userServiceSpy.playMode = 'soloGame';
+        userServiceSpy.playedObs = new BehaviorSubject<boolean>(true);
+        spyOn<any>(component, 'verifyObjectifs');
+        component['endTurn'](cmd, msg);
+        expect(userServiceSpy.userPlayed).toHaveBeenCalled();
+    });
+    it('endTurn placer first switch ', () => {
+        const cmd = 'placer';
+        const msg = 'allo';
+        userServiceSpy.commandtoSendObs = new BehaviorSubject<ChatCommand>({} as ChatCommand);
+        component.errorMessage = 'fdf';
+        userServiceSpy.playMode = 'jhdsk';
+        component['endTurn'](cmd, msg);
+        expect(userServiceSpy.commandtoSendObs).toBeDefined();
+    });
+    it('endTurn else ', () => {
+        const cmd = 'placer';
+        const msg = 'allo';
+        component.errorMessage = 'fdf';
+        userServiceSpy.playMode = 'soloGame';
+        const spy = spyOn<any>(userServiceSpy, 'userPlayed');
+        component['endTurn'](cmd, msg);
+        expect(spy).toHaveBeenCalled();
+    });
 
-    // it('placeInTempCanvas', () => {
-    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-    //     messageServiceSpy.command = cmd;
-
-    //     const spy1 = spyOn<any>(tempCanvasServiceSpy, 'drawRedFocus');
-
-    //     component['placeInTempCanvas'](cmd);
-    //     expect(spy1).toHaveBeenCalled();
-    // });
-
-    // it('placeInTempCanvas if', () => {
-    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-    //     messageServiceSpy.command = cmd;
-    //     spyOn<any>(easelLogiscticsServiceSpy, 'tempGetLetter');
-    //     spyOn<any>(tempCanvasServiceSpy, 'drawRedFocus');
-    //     spyOn<any>(letterServiceSpy, 'tileIsEmpty').and.returnValue(true);
-    //     const spy1 = spyOn<any>(tempCanvasServiceSpy, 'drawLetter');
-
-    //     component['placeInTempCanvas'](cmd);
-    //     expect(spy1).toHaveBeenCalled();
-    // });
-
-    // it('placeInTempCanvas else', () => {
-    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'v' };
-    //     messageServiceSpy.command = cmd;
-    //     spyOn<any>(easelLogiscticsServiceSpy, 'tempGetLetter');
-    //     spyOn<any>(tempCanvasServiceSpy, 'drawRedFocus');
-    //     spyOn<any>(letterServiceSpy, 'tileIsEmpty').and.returnValue(true);
-    //     const spy1 = spyOn<any>(tempCanvasServiceSpy, 'drawRedFocus');
-    //     const spy2 = spyOn<any>(tempCanvasServiceSpy, 'drawLetter');
-
-    //     component['placeInTempCanvas'](cmd);
-    //     expect(spy1).toHaveBeenCalled();
-    //     expect(spy2).toHaveBeenCalled();
-    // });
-
-    // it('placeWordIfValid',()=>{
-    //     commandManagerServiceSpy.playerScore = 2;
-    //     const spy = spyOn<any>(letterServiceSpy,'placeLettersInScrable');
-    //     spyOn<any>(component,'endTurn');
-    //     component['placeWordIfValid']();
-    //     expect(spy).toHaveBeenCalled();
-    // });
-
-    // it('placeWordIfValid else',()=>{
-    //     commandManagerServiceSpy.playerScore = 0;
-    //     spyOn<any>(component,'endTurn');
-    //     component['placeWordIfValid']();
-    //     expect(component.errorMessage).toBe(commandManagerServiceSpy.errorMessage);
-    // });
-
-    // it('exchangeCommand',()=>{
-    //     spyOn<any>(commandManagerServiceSpy,'verifyExchageCommand').and.returnValue(true);
-    //     const spy = spyOn<any>(component,'endTurn');
-    //     component['exchangeCommand']();
-    //     expect(spy).toHaveBeenCalled();
-    // });
-
-    // it('exchangeCommand else',()=>{
-    //     spyOn<any>(commandManagerServiceSpy,'verifyExchageCommand').and.returnValue(false);
-    //     component['exchangeCommand']();
-    //     expect(component.errorMessage).toBe(commandManagerServiceSpy.errorMessage);
-    // });
-
-    // it('endTurn ',()=>{
-    //     const cmd = 'exchange';
-    //     const msg = 'allo';
-    //     jasmine.clock().install();
-    //     userServiceSpy.playMode = 'dsds';
-    //      const spy = spyOn<any>(global,'setTimeout');
-    //     component['endTurn'](cmd,msg);
-    //     jasmine.clock().tick(1000);
-    //     expect(spy).toHaveBeenCalled();
-    // });
-
-    // it('endTurn else ',()=>{
-    //     const cmd = 'placer';
-    //     const msg = 'allo';
-    //     component.errorMessage = 'fdf';
-    //     userServiceSpy.playMode = 'soloGame';
-    //     const spy = spyOn<any>(userServiceSpy,'userPlayed')
-    //     component['endTurn'](cmd,msg);
-    //      expect(spy).toHaveBeenCalled();
-
-    // });
+    it('reserveLettersQuantity with reserveletter pass', () => {
+        spyOn<any>(component.arrayOfReserveLetters, 'splice');
+        const spy1 = spyOn<any>(component.arrayOfReserveLetters, 'push');
+        reserveServiceSpy.letters = new Map<Letter, number>();
+        reserveServiceSpy.letters.set(A, 3);
+        component['reserveLettersQuantity']();
+        expect(spy1).toHaveBeenCalled();
+    });
 
     it('verifyInput', () => {
         spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);

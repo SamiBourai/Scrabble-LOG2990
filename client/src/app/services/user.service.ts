@@ -197,7 +197,7 @@ export class UserService {
             level: this.joinedUser.level,
             round: this.joinedUser.round,
             score: this.joinedUser.score,
-            firstToPlay: true, // if true le realuser va commencer sinon c'est vrUser va commencer
+            firstToPlay: true,
             turnToPlay: this.isPlayerTurn(),
             easel: this.getPlayerEasel(),
         };

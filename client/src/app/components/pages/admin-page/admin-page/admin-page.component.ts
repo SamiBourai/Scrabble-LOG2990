@@ -52,13 +52,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit {
     arrayOfDictionnaries: LoadableDictionary[] = [];
     errorMessage: boolean = false;
 
-    constructor(
-        public userService: UserService,
-        public database: DatabaseService,
-        private snackBar: MatSnackBar,
-        // public scoresService: ScoresService,
-        public dialog: MatDialog,
-    ) {}
+    constructor(public userService: UserService, public database: DatabaseService, private snackBar: MatSnackBar, public dialog: MatDialog) {}
 
     ngOnInit(): void {
         this.getPlayersNamesBeg();

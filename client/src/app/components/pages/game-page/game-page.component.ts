@@ -16,6 +16,7 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     soloMode: boolean = true;
     playersInGamePage: boolean = false;
     event: unknown;
+    assign: boolean = true;
 
     private endOfGameSubscription = new Subscription();
 
@@ -51,6 +52,6 @@ export class GamePageComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this.endOfGameSubscription.unsubscribe();
         if (this.objectifManagerService.log2990Mode) this.objectifManagerService.resetObjectifs();
-        window.location.assign('/home');
+        if (this.assign) window.location.assign('/home');
     }
 }

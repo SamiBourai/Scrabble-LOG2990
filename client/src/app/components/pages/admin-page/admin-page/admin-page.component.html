@@ -2,115 +2,156 @@
     <div class="admin_container">
         <div class="containerBox">
             <mat-tab-group>
-
                 <mat-tab label="Paramètres des dictionnaires">
                     <div class="segment">
+                        <button class="uploadButton" type="button" mat-raised-button (click)="fileInput.click()">
+                            Téléverser un dictionnaire JSON...
+                        </button>
+                        <input hidden type="file" (change)="onFileSelected()" #fileInput />
 
-                        <button class="uploadButton" type="button" mat-raised-button (click)="fileInput.click()">Téléverser un dictionnaire JSON...</button>
-                        <input hidden type="file" (change)="onFileSelected()" #fileInput>
+                        <div>
+                            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                                <ng-container matColumnDef="titre">
+                                    <th mat-header-cell *matHeaderCellDef>titre</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.title }}</td>
+                                </ng-container>
 
-                      <div>
-                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                          <ng-container matColumnDef="titre">
-                            <th mat-header-cell *matHeaderCellDef> titre </th>
-                            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
-                          </ng-container>
+                                <ng-container matColumnDef="description">
+                                    <th mat-header-cell *matHeaderCellDef>description</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+                                </ng-container>
 
-                          <ng-container matColumnDef="description">
-                            <th mat-header-cell *matHeaderCellDef> description </th>
-                            <td mat-cell *matCellDef="let element"> {{element.description}} </td>
-                          </ng-container>
+                                <ng-container matColumnDef="modifier">
+                                    <th mat-header-cell *matHeaderCellDef>modifier</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <button mat-stroked-button color="primary" (click)="openDialog('modifier', element)">modifier</button>
+                                    </td>
+                                </ng-container>
 
-                          <ng-container matColumnDef="modifier">
-                            <th mat-header-cell *matHeaderCellDef> modifier </th>
-                            <td mat-cell *matCellDef="let element"> <button mat-stroked-button color="primary" (click) = "openDialog('modifier',element)">modifier</button> </td>
-                          </ng-container>
+                                <ng-container matColumnDef="telecharger">
+                                    <th mat-header-cell *matHeaderCellDef>telecharger</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <button
+                                            mat-mini-fab
+                                            color="primary"
+                                            (click)="download(element)"
+                                            aria-label="Example icon button with a bookmark icon"
+                                        >
+                                            <mat-icon>cloud_download</mat-icon>
+                                        </button>
+                                    </td>
+                                </ng-container>
 
-
-                          <ng-container matColumnDef="telecharger">
-                            <th mat-header-cell *matHeaderCellDef> telecharger </th>
-                            <td mat-cell *matCellDef="let element"> <button mat-mini-fab color="primary" (click) = "download(element)" aria-label="Example icon button with a bookmark icon">
-                              <mat-icon>cloud_download</mat-icon>
-                            </button> </td>
-                          </ng-container>
-
-                          <ng-container matColumnDef="supprimer">
-                            <th mat-header-cell *matHeaderCellDef> supprimer </th>
-                            <td mat-cell *matCellDef="let element"> <button mat-flat-button color="warn" (click)="deleteDic(element)">Supprimer</button> </td>
-                          </ng-container>
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                        </table>
-                      </div>
+                                <ng-container matColumnDef="supprimer">
+                                    <th mat-header-cell *matHeaderCellDef>supprimer</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <button mat-flat-button color="warn" (click)="deleteDic(element)">Supprimer</button>
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                            </table>
+                        </div>
                     </div>
-
                 </mat-tab>
 
                 <mat-tab label="Paramètres des Joueurs Virtuels">
                     <div class="segment">
-
                         <!-- Name of beginner VP -->
                         <mat-form-field class="VPBeg-names-chiplist" appearance="fill">
                             <mat-label>Liste de noms du joueur virtuel débutant</mat-label>
-                            <mat-chip-list  #chipListBeg aria-label="Names selection">
+                            <mat-chip-list #chipListBeg aria-label="Names selection">
                                 <!-- The default names -->
-                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[0]" [selectable]="selectable"
-                                       [removable]="false">{{name}}</mat-chip>
+                                <mat-chip
+                                    *ngFor="let name of this.userService.vrPlayerNamesBeginner[0]"
+                                    [selectable]="selectable"
+                                    [removable]="false"
+                                    >{{ name }}</mat-chip
+                                >
                                 <!-- New names -->
-                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesBeginner[1]" [selectable]="selectable"
-                                       [removable]="removableBeg" [change] = "true" (click) = "openDialogPlayer('beginner',name)" (removed)="remove(name, 'beginner')">
-                                {{name}}
-                                <button matChipRemove *ngIf="removableBeg">
-                                  <mat-icon>cancel</mat-icon>
-                                </button>
-                              </mat-chip>
-                              <input placeholder="Nouveau nom..."
-                                     [matChipInputFor]="chipListBeg"
-                                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                                     [matChipInputAddOnBlur]="addOnBlur"
-                                     (matChipInputTokenEnd)="add($event, 'beginner')">
-
+                                <mat-chip
+                                    *ngFor="let name of this.userService.vrPlayerNamesBeginner[1]"
+                                    [selectable]="selectable"
+                                    [removable]="removableBeg"
+                                    [change]="true"
+                                    (click)="openDialogPlayer('beginner', name)"
+                                    (removed)="remove(name, 'beginner')"
+                                >
+                                    {{ name }}
+                                    <button matChipRemove *ngIf="removableBeg">
+                                        <mat-icon>cancel</mat-icon>
+                                    </button>
+                                </mat-chip>
+                                <input
+                                    placeholder="Nouveau nom..."
+                                    [matChipInputFor]="chipListBeg"
+                                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                    [matChipInputAddOnBlur]="addOnBlur"
+                                    (matChipInputTokenEnd)="add($event, 'beginner')"
+                                />
                             </mat-chip-list>
-                          </mat-form-field>
-                          <mat-divider></mat-divider>
+                        </mat-form-field>
+                        <mat-divider></mat-divider>
 
-                          <!-- <div id="turn" *ngIf=errorMessage class="alert alert-danger">
-                            ce nom est deja dans la liste
-                        </div> -->
-                          <!-- Name of expert VP -->
-                          <mat-form-field class="VPExp-names-chiplist" appearance="fill">
+                        <!-- <div id="turn" *ngIf=errorMessage class="alert alert-danger">
+                          ce nom est deja dans la liste
+                      </div> -->
+                        <!-- Name of expert VP -->
+                        <mat-form-field class="VPExp-names-chiplist" appearance="fill">
                             <mat-label>Liste de noms du joueur virtuel expert</mat-label>
                             <mat-chip-list #chipListExp aria-label="Names selection">
                                 <!-- The default names -->
-                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesExpert[0]" [selectable]="selectable"
-                                       [removable]="false">{{name}}</mat-chip>
+                                <mat-chip
+                                    *ngFor="let name of this.userService.vrPlayerNamesExpert[0]"
+                                    [selectable]="selectable"
+                                    [removable]="false"
+                                    >{{ name }}</mat-chip
+                                >
                                 <!-- New names -->
-                                <mat-chip *ngFor="let name of this.userService.vrPlayerNamesExpert[1]" [selectable]="selectable"
-                                       [removable]="removableExp" (removed)="remove(name, 'expert')" (click) = "openDialogPlayer('expert',name)" >
-                                {{name}}
-                                <button matChipRemove *ngIf="removableExp">
-                                  <mat-icon>cancel</mat-icon>
-                                </button>
-                              </mat-chip>
-                              <input placeholder="Nouveau nom..."
-                                     [matChipInputFor]="chipListExp"
-                                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                                     [matChipInputAddOnBlur]="addOnBlur"
-                                     (matChipInputTokenEnd)="add($event, 'expert')">
+                                <mat-chip
+                                    *ngFor="let name of this.userService.vrPlayerNamesExpert[1]"
+                                    [selectable]="selectable"
+                                    [removable]="removableExp"
+                                    (removed)="remove(name, 'expert')"
+                                    (click)="openDialogPlayer('expert', name)"
+                                >
+                                    {{ name }}
+                                    <button matChipRemove *ngIf="removableExp">
+                                        <mat-icon>cancel</mat-icon>
+                                    </button>
+                                </mat-chip>
+                                <input
+                                    placeholder="Nouveau nom..."
+                                    [matChipInputFor]="chipListExp"
+                                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                    [matChipInputAddOnBlur]="addOnBlur"
+                                    (matChipInputTokenEnd)="add($event, 'expert')"
+                                />
                             </mat-chip-list>
-                          </mat-form-field>
+                        </mat-form-field>
                     </div>
                 </mat-tab>
 
                 <mat-tab label="Paramètres de réinitialisation">
                     <div class="segment">
-                        <button class="uploadButton" mat-flat-button color="warn" (click)="resetDictionaries()">Riénitiliser les dictionnaires</button>
-                        <button class="uploadButton" mat-flat-button color="warn" (click)="resetVPNames()">Riénitiliser les noms des joueurs virtuels</button>
-                        <button class="uploadButton" mat-flat-button color="warn" (click)="userService.isUserResetDataObs.next(true)" >Riénitiliser les meilleurs scores</button>
+                        <button class="uploadButton" mat-flat-button color="warn" (click)="resetDictionaries()">
+                            Riénitiliser les dictionnaires
+                        </button>
+                        <button class="uploadButton" mat-flat-button color="warn" (click)="resetVPNames()">
+                            Riénitiliser les noms des joueurs virtuels
+                        </button>
+                        <button
+                            class="uploadButton"
+                            mat-flat-button
+                            color="warn"
+                            (click)="resetScores('Score')"
+                            (click)="resetScores('scoreLog2990')"
+                        >
+                            Riénitiliser les meilleurs scores
+                        </button>
                     </div>
                 </mat-tab>
-
-              </mat-tab-group>
+            </mat-tab-group>
         </div>
         <div>
             <button mat-stroked-button routerLink="/home" routerLinkActive="active">Admin</button>

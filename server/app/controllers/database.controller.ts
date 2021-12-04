@@ -142,10 +142,6 @@ export class DatabaseController {
                     res.status(NOT_FOUND_HTTP_STATUS).send(error.message);
                 });
         });
-        // jfndsjnfsdnfkjsdnfdsf
-        // dsfdsfdsfdsdsf
-        // fdsfdsfdsfdsfds
-        // fsdfdsfds
 
         this.router.get('/dictionary/:title/:oldName?', async (req: Request, res: Response) => {
             this.databaseService

@@ -19,6 +19,7 @@ import {
     PARAMETERS_OF_SWAP,
     PLACE_LENGTH,
     SWAP_LENGTH,
+    UNDEFINED_INDEX,
 } from './../constants/constants';
 
 @Injectable({
@@ -31,14 +32,14 @@ export class MessageService {
     skipTurnIsPressed: boolean = false;
     textMessage: string[] = [];
     textMessageObs: BehaviorSubject<string[]> = new BehaviorSubject<string[]>({} as string[]);
-    observableTextMessage: Observable<string[]>;
+    observableTextMessage: Observable<string[]> = new Observable<string[]>();
     newTextMessage: boolean = false;
     newTextMessageObs: BehaviorSubject<boolean> = new BehaviorSubject<boolean>({} as boolean);
-    observableNewTextMessage: Observable<boolean>;
-    private line: string;
-    private column: number;
-    private orientation: string;
-    private word: string;
+    observableNewTextMessage: Observable<boolean> = new Observable<boolean>();
+    private line: string = '';
+    private column: number = UNDEFINED_INDEX;
+    private orientation: string = '';
+    private word: string = '';
     private possibleLineValues: string = 'abcdefghijklmno';
     private possibleColumnValues: number[] = [];
     private possibleOrientationValues: string = 'hv';

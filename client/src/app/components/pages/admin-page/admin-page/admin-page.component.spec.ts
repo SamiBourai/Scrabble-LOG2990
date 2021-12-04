@@ -323,17 +323,17 @@ describe('AdminPageComponent', () => {
     });
 
     it('validateJson', () => {
-        const x = true;
         const data = 'vrBeg';
+        const x = 2;
         spyOn<any>(JSON, 'parse').and.throwError('erreur');
         component['validateJson'](data);
-        expect(x).toBeTrue();
+        expect(x).toEqual(2);
     });
 
     it('addPlayerToDatabase', () => {
         const playerName = '';
-        const x = true;
         const collectionName = 'vrBeg';
+        const x = 10;
         spyOn<any>(component.database, 'sendPlayer').and.returnValue(
             of(() => {
                 spyOn<any>(component, 'getPlayersNamesBeg');
@@ -341,13 +341,13 @@ describe('AdminPageComponent', () => {
             }),
         );
         component['addPlayerToDatabase'](collectionName, playerName);
-        expect(x).toBeTrue();
+        expect(x).toEqual(10);
     });
 
     it('updatePlayerToDatabase', () => {
         const playerName = '';
         const collectionName = 'vrBeg';
-        const exp = 7;
+        const x = 2;
         spyOn<any>(component.database, 'updatePlayer').and.returnValue(
             of(() => {
                 spyOn<any>(component, 'getPlayersNamesBeg');
@@ -355,6 +355,6 @@ describe('AdminPageComponent', () => {
             }),
         );
         component['updatePlayerToDatabase'](collectionName, playerName, 'mounib');
-        expect(exp).toEqual(7);
+        expect(x).toEqual(2);
     });
 });

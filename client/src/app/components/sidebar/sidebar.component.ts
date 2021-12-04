@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit, AfterViewChecked, OnDestroy {
     name: string = '';
     nameVr: string = '';
     errorMessage: string = '';
-    isHelpActivated: boolean;
+    isHelpActivated: boolean = false;
     form = new FormGroup({
         message: new FormControl(''),
     });
