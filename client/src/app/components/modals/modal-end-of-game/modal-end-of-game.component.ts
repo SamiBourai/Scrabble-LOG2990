@@ -28,7 +28,7 @@ export class ModalEndOfGameComponent implements OnInit {
     }
     setIsUserQuitGame(): void {
         this.databaseService.addScores();
-        window.location.assign('/log2990/20213/equipe-303/log2990-303/#/home');
+        window.location.assign('/home');
     }
 
     joinVrPlayer() {
