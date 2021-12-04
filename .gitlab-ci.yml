@@ -152,7 +152,7 @@ deploy:server:
     script:
         - 'which ssh-agent || (apt-get update -qq && apt-get install -qq openssh-client )'
         - eval $(ssh-agent -s)
-        - ssh-add <(echo "$EC2_PEM_FILE_CONTENT"| base64 --decode))
+        - ssh-add <(echo "$EC2_PEM_FILE_CONTENT"| base64 --decode)
         - mkdir -p ~/.ssh
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
         - |
