@@ -182,9 +182,10 @@ export class CreateMultiplayerGameComponent implements OnInit {
     selectedDictionnary(event: Event): void {
         this.isDeleted = false;
         const names = [];
+        let updatedDictionnaries: DictionaryPresentation[] = [];
         this.chosenDictionnary = (event.target as HTMLInputElement)?.value;
         const updatedDictionnariesInString = localStorage.getItem('updateDics') as string;
-        const updatedDictionnaries: DictionaryPresentation[] = JSON.parse(updatedDictionnariesInString);
+        updatedDictionnaries = JSON.parse(updatedDictionnariesInString) ?? [];
         for (const dic of updatedDictionnaries) {
             names.push(dic.title);
         }

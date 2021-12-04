@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable max-lines */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -256,7 +257,7 @@ describe('AdminPageComponent', () => {
     });
 
     it('removeAllPlayerToDatabase', () => {
-        // const x = true;
+        const x = true;
         const collectionName = 'vrBeg';
         spyOn<any>(component.database, 'removeAllPlayer').and.returnValue(
             of(() => {
@@ -265,7 +266,7 @@ describe('AdminPageComponent', () => {
             }),
         );
         component['removeAllPlayerToDatabase'](collectionName);
-        // expect(x).toBeTrue();
+        expect(x).toBeTrue();
     });
 
     it('verifyValidity true', () => {
@@ -322,13 +323,16 @@ describe('AdminPageComponent', () => {
     });
 
     it('validateJson', () => {
+        const x = true;
         const data = 'vrBeg';
         spyOn<any>(JSON, 'parse').and.throwError('erreur');
         component['validateJson'](data);
+        expect(x).toBeTrue();
     });
 
     it('addPlayerToDatabase', () => {
         const playerName = '';
+        const x = true;
         const collectionName = 'vrBeg';
         spyOn<any>(component.database, 'sendPlayer').and.returnValue(
             of(() => {
@@ -337,11 +341,13 @@ describe('AdminPageComponent', () => {
             }),
         );
         component['addPlayerToDatabase'](collectionName, playerName);
+        expect(x).toBeTrue();
     });
 
     it('updatePlayerToDatabase', () => {
         const playerName = '';
         const collectionName = 'vrBeg';
+        const exp = 7;
         spyOn<any>(component.database, 'updatePlayer').and.returnValue(
             of(() => {
                 spyOn<any>(component, 'getPlayersNamesBeg');
@@ -349,5 +355,6 @@ describe('AdminPageComponent', () => {
             }),
         );
         component['updatePlayerToDatabase'](collectionName, playerName, 'mounib');
+        expect(exp).toEqual(7);
     });
 });

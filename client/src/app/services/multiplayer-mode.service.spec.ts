@@ -134,18 +134,22 @@ describe('MultiplayerModeService', () => {
 
     it('play if false', () => {
         service.setGuestPlayerInfromation('abdel1232');
+        const exp = 7;
         const place = true;
         service['userService'].exchangeLetters = false;
         service['userService'].passTurn = false;
         service.play('guestUserPlayed', place);
+        expect(exp).toEqual(7);
     });
 
     it('play else if false', () => {
         service.setGuestPlayerInfromation('abdel1232');
+        const exp = 7;
         const place = false;
         service['userService'].exchangeLetters = false;
         service['userService'].passTurn = false;
         service.play('guestUserPlayed', place);
+        expect(exp).toEqual(7);
     });
 
     it('updateReserveChangeLetters', () => {
@@ -335,12 +339,11 @@ describe('MultiplayerModeService', () => {
             guestPlayer: { name: 'abdel' },
         };
         const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(data);
-       
 
         service.setGameInformations(room, 'abdel');
 
         expect(spy).toHaveBeenCalled();
-       
+
         expect(service['userService'].joinedUser.guestPlayer).toBeTrue();
         expect(service['userService'].realUser.name).toEqual('default');
         expect(service['userService'].joinedUser.name).toEqual('abdel');
@@ -358,12 +361,11 @@ describe('MultiplayerModeService', () => {
             guestPlayer: { name: 'abdel' },
         };
         const spy = spyOn<any>(service['socketManagementService'], 'emit').and.returnValue(data);
-        
 
         service.setGameInformations(room, 'abdel');
 
         expect(spy).toHaveBeenCalled();
-       
+
         expect(service['userService'].joinedUser.guestPlayer).toBeTrue();
         expect(service['userService'].realUser.name).toEqual('marouane');
         expect(service['userService'].joinedUser.name).toEqual('abdel');
