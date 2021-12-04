@@ -1,6 +1,7 @@
 import { Letter } from '@app/classes/letter';
 import { GameTime } from '@app/classes/time';
 import { Vec2 } from '@app/classes/vec2';
+import { environment } from 'src/environments/environment';
 import { DictionaryPresentation } from './../../../../server/app/classes/dictionary';
 import { Pair } from './../classes/pair';
 
@@ -287,15 +288,15 @@ export const DATA_RESET_SUCCESFULLY = 'Les données ont été réinitilisé avec
 export const NAME_COLUMN = 'name';
 export const SCORE_COLUMN = 'score';
 
-export const SEND_URL = 'http://localhost:3000/api/database/addScore';
-export const GET_URL_ALL_DATA = 'http://localhost:3000/api/database/Scores';
-export const GET_URL_DEFAULT_DATA = 'http://localhost:3000/api/database/resetAllScores';
-export const GET_URL_ALL_PLAYERS = 'http://localhost:3000/api/database/vrNames';
-export const SEND_URL_ADD_PLAYER = 'http://localhost:3000/api/database/addPlayer';
-export const SEND_URL_REMOVE_PLAYER = 'http://localhost:3000/api/database/removePlayer';
-export const SEND_URL_REMOVE_ALL_PLAYER = 'http://localhost:3000/api/database/removeAllPlayer';
-export const SEND_URL_UPLOAD_DICTIONARY = 'http://localhost:3000/api/database/upload';
-export const SEND_URL_GET_DICTIONARY = 'http://localhost:3000/api/database/dictionary';
-export const SEND_URL_GET_DICTIONARIES = 'http://localhost:3000/api/database/dictionaries';
-export const SEND_URL_UPDATE_PLAYER = 'http://localhost:3000/api/database/updatePlayer';
-export const SEND_URL_LOCAL_STORAGE = 'http://localhost:3000/api/database/localStorage';
+export const SEND_URL = environment.serverUrl + '/api/database/addScore';
+export const GET_URL_ALL_DATA = environment.serverUrl + '/api/database/Scores';
+export const GET_URL_DEFAULT_DATA = environment.serverUrl + '/api/database/resetAllScores';
+export const GET_URL_ALL_PLAYERS = environment.serverUrl + '/api/database/vrNames';
+export const SEND_URL_ADD_PLAYER = environment.serverUrl + '/api/database/addPlayer';
+export const SEND_URL_REMOVE_PLAYER = environment.serverUrl + '/api/database/removePlayer';
+export const SEND_URL_REMOVE_ALL_PLAYER = environment.serverUrl + '/api/database/removeAllPlayer';
+export const SEND_URL_UPLOAD_DICTIONARY = environment.serverUrl + '/api/database/upload';
+export const SEND_URL_GET_DICTIONARY = environment.serverUrl + '/api/database/dictionary';
+export const SEND_URL_GET_DICTIONARIES = environment.serverUrl + '/api/database/dictionaries';
+export const SEND_URL_UPDATE_PLAYER = environment.serverUrl + '/api/database/updatePlayer';
+export const SEND_URL_LOCAL_STORAGE = environment.serverUrl + '/api/database/localStorage';
