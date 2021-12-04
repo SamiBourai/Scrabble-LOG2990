@@ -1,5 +1,3 @@
-// import { VirtualPlayerService } from '@app/services/virtual-player.service';
-
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-len */
 /* eslint-disable max-lines */
@@ -14,15 +12,13 @@ import { JoinedUser, RealUser, VrUser } from '@app/classes/user';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { A, C } from '@app/constants/constants';
 import { CommandManagerService } from '@app/services/command-manager.service';
-// import { A, B } from '@app/constants/constants';
 import { LettersService } from '@app/services/letters.service';
 import { MessageService } from '@app/services/message.service';
 import { ObjectifManagerService } from '@app/services/objectif-manager.service';
 import { ReserveService } from '@app/services/reserve.service';
 import { TemporaryCanvasService } from '@app/services/temporary-canvas.service';
 import { UserService } from '@app/services/user.service';
-// import { BehaviorSubject } from 'rxjs';
-// import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { EaselObject } from './../../classes/easel-object';
 import { EaselLogiscticsService } from './../../services/easel-logisctics.service';
 import { ValidWordService } from './../../services/valid-word.service';
@@ -39,13 +35,12 @@ describe('SidebarComponent', () => {
     let objectifMangerServiceSpy: SpyObj<ObjectifManagerService>;
     let commandManagerServiceSpy: SpyObj<CommandManagerService>;
     let tempCanvasServiceSpy: SpyObj<TemporaryCanvasService>;
-    // let virtualPlayerServiceSpy: SpyObj<VirtualPlayerService>;
 
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
 
     beforeEach(() => {
-        messageServiceSpy = jasmine.createSpyObj('MessageServiceSpy', [
+        messageServiceSpy = jasmine.createSpyObj('messageServiceSpy', [
             'isCommand',
             'containsSwapCommand',
             'isValid',
@@ -57,7 +52,7 @@ describe('SidebarComponent', () => {
             'removeDuplicate',
         ]);
 
-        userServiceSpy = jasmine.createSpyObj('UserServiceSpy', [
+        userServiceSpy = jasmine.createSpyObj('userServiceSpy', [
             'detectSkipTurnBtn',
             'getNameCurrentPlayer',
             'getUserName',
@@ -91,7 +86,7 @@ describe('SidebarComponent', () => {
         reserveServiceSpy = jasmine.createSpyObj('reserveServiceSpy', ['reserveSize', 'isReserveEmpty']);
 
         validWordServiceSpy = jasmine.createSpyObj('validWordServiceSpy', ['readWordsAndGivePointsIfValid', 'verifyWord']);
-        easelLogiscticsServiceSpy = jasmine.createSpyObj('easelLogiscticsServiceSpy', ['tempGetLetter']);
+        easelLogiscticsServiceSpy = jasmine.createSpyObj('easelLogiscticsServiceSpy', ['tempGetLetter', 'placeEaselLetters']);
         objectifMangerServiceSpy = jasmine.createSpyObj('objectifMangerServiceSpy', ['verifyObjectifs']);
         commandManagerServiceSpy = jasmine.createSpyObj('commandManagerServiceSpy', [
             'verifyCommand',
@@ -99,8 +94,7 @@ describe('SidebarComponent', () => {
             'verifyExchageCommand',
             'validateWord',
         ]);
-        tempCanvasServiceSpy = jasmine.createSpyObj('tempCanvasServiceSpy', ['drawLetter', 'drawRedFocus']);
-        // virtualPlayerServiceSpy = jasmine.createSpyObj('virtualPlayerServiceSpy', ['manageVrPlayerActions','tradeLetterSteps','exchangeLettersInEasel','placeWordSteps','passTurnSteps','resetVariables','playProbabilty','generateProb','generateWords']);
+        tempCanvasServiceSpy = jasmine.createSpyObj('tempCanvasServiceSpy', ['drawLetter', 'drawRedFocus', 'clearLayers', 'focusContext']);
 
         jasmine.getEnv().allowRespy(true);
     });
@@ -117,8 +111,6 @@ describe('SidebarComponent', () => {
                 { provide: ReserveService, useValue: reserveServiceSpy },
                 { provide: EaselLogiscticsService, useValue: easelLogiscticsServiceSpy },
                 { provide: ObjectifManagerService, useValue: objectifMangerServiceSpy },
-                // { provide: VirtualPlayerService, useValue: virtualPlayerServiceSpy },
-
                 { provide: CommandManagerService, useValue: commandManagerServiceSpy },
                 { provide: TemporaryCanvasService, useValue: tempCanvasServiceSpy },
             ],
@@ -149,23 +141,21 @@ describe('SidebarComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // it('ngOnInit', () => {
+    it('ngOnInit', () => {
+        userServiceSpy.playMode = 'multi';
+        messageServiceSpy.newTextMessageObs = new BehaviorSubject<boolean>(true);
+        reserveServiceSpy.sizeObs = new BehaviorSubject<number>(2);
+        const spy = spyOn<any>(messageServiceSpy.newTextMessageObs, 'subscribe');
+        const spy1 = spyOn<any>(global, 'setTimeout');
+        const spy2 = spyOn<any>(reserveServiceSpy.sizeObs, 'subscribe');
+        component.toggleReserve = true;
 
-    //     userServiceSpy.playMode = 'multi';
-    //     messageServiceSpy.newTextMessageObs = new BehaviorSubject<boolean>(true);
-    //     reserveServiceSpy.sizeObs = new BehaviorSubject<number>(2);
-    //     const spy = spyOn<any>(messageServiceSpy.newTextMessageObs, 'subscribe');
-    //     const spy1 = spyOn<any>(global, 'setTimeout');
-    //     const spy2 = spyOn<any>(reserveServiceSpy.sizeObs, 'subscribe');
-    //     component.toggleReserve = true;
+        component.ngOnInit();
 
-    //     component.ngOnInit();
-
-    //     expect(spy).toHaveBeenCalled();
-    //     expect(spy1).toHaveBeenCalled();
-    //     expect(spy2).toHaveBeenCalled();
-
-    // });
+        expect(spy).toHaveBeenCalled();
+        expect(spy1).toHaveBeenCalled();
+        expect(spy2).toHaveBeenCalled();
+    });
 
     it('logMessage true', () => {
         spyOn<any>(messageServiceSpy, 'isCommand').and.returnValue(true);
@@ -213,26 +203,34 @@ describe('SidebarComponent', () => {
         expect(spy1).toHaveBeenCalled();
     });
 
-    // it('placeWord', () => {
-    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-    //     messageServiceSpy.command = cmd;
-    //     spyOn<any>(component, 'placeInTempCanvas');
-    //     const spy1 = spyOn<any>(commandManagerServiceSpy, 'validateWord');
-    //     component['placeWord']();
-    //     expect(spy1).toHaveBeenCalled();
-    // });
+    it('placeWord should pass on soloMode', () => {
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        messageServiceSpy.command = cmd;
+        userServiceSpy.playMode = 'soloGame';
+        commandManagerServiceSpy.validateWord.and.stub();
+        const spy1 = spyOn<any>(component, 'placeWordIfValid').and.stub();
 
-    // it('placeWord switch', () => {
-    //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
-    //     messageServiceSpy.command = cmd;
-    //     userServiceSpy.playMode = 'soloGame';
-    //     spyOn<any>(component, 'placeInTempCanvas');
-    //     const spy1 = spyOn<any>(component, 'placeWordIfValid');
-    //     const spy2 = spyOn<any>(commandManagerServiceSpy, 'verifyWordsInDictionnary');
-    //     component['placeWord']();
-    //     expect(spy1).toHaveBeenCalled();
-    //     expect(spy2).not.toHaveBeenCalled();
-    // });
+        component['placeWord']();
+        expect(spy1).toHaveBeenCalled();
+    });
+
+    it('placeWord switch default', (done) => {
+        const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };
+        messageServiceSpy.command = cmd;
+        userServiceSpy.playMode = 'default';
+        spyOn<any>(component, 'placeInTempCanvas').and.callFake(() => {
+            return;
+        });
+        const spy1 = spyOn<any>(component, 'placeWordIfValid');
+        commandManagerServiceSpy.verifyWordsInDictionnary.and.stub();
+        spyOn<any>(component['mouseHandelingService'], 'clearAll').and.stub();
+
+        component['placeWord']();
+        setTimeout(() => {
+            expect(spy1).toHaveBeenCalled();
+            done();
+        }, 3000);
+    });
 
     // it('placeWord switch 2', () => {
     //     const cmd = { word: 'mot', position: { x: 8, y: 8 }, direction: 'h' };

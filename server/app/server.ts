@@ -37,9 +37,7 @@ export class Server {
         this.server.on('listening', () => this.onListening());
         try {
             await this.dataBaseService.start();
-            console.log('Database connection successful !');
         } catch {
-            console.error('Database connection failed !');
             process.exit(1);
         }
     }

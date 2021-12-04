@@ -15,4 +15,3 @@ export interface LoadableDictionary {
     description: string;
     words: string[];
 }
-

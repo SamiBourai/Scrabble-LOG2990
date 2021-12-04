@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-duplicate-imports */
 /* eslint-disable import/no-duplicates */
@@ -12,7 +13,7 @@
 import { DATABASE_COLLECTION_LOG2990, DATABASE_COLLECTION_VRNAMESBEG } from '@app/classes/constants';
 import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
-import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { VirtualPlayer } from '@app/classes/virtual-players';
 import { expect } from 'chai';
 import * as fs from 'fs';
 import { readdir, unlink, writeFile } from 'fs/promises';

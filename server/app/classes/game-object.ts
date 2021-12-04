@@ -2,7 +2,7 @@ import { EASEL_LENGTH, LETTERS_RESERVE_QTY, PARAMETERS_OF_SWAP, RESERVE_SIZE } f
 import { Player } from '@app/classes/players';
 import { Timer } from '@app/classes/timer';
 import { Letter } from './letters';
-import { Objectifs } from './Objectifs';
+import { Objectifs } from './objectifs';
 import { Vec2 } from './vec2';
 
 export class GameObject {

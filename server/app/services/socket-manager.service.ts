@@ -184,7 +184,6 @@ export class SocketManagerService {
     private sendWinner(message: MessageClient) {
         setTimeout(() => {
             if (this.games.has(message.gameName)) {
-                console.log(this.games.get(message.gameName).dictionnaryName);
                 message.dictionnaryName = this.games.get(message.gameName).dictionnaryName;
                 this.sio.to(message.gameName).emit('getWinner', message);
                 this.games.get(message.gameName).timer.stopTimer = true;

@@ -2,7 +2,7 @@
 import { BEST_SCORES, DEFAULT_SCORE, MAX_OCCURANCY } from '@app/classes/constants';
 import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
-import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { VirtualPlayer } from '@app/classes/virtual-players';
 import { PathLike, writeFile } from 'fs';
 import { readdir, readFile, rename, unlink } from 'fs/promises';
 import { Db, MongoClient } from 'mongodb';

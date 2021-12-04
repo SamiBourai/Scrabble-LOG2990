@@ -1,6 +1,6 @@
 import { ChatCommand } from './chat-command';
 import { Letter } from './letters';
-import { Objectifs } from './Objectifs';
+import { Objectifs } from './objectifs';
 import { Vec2 } from './vec2';
 export interface MessageClient {
     gameName: string;

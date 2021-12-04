@@ -6,7 +6,7 @@ import {
     NO_CONTENT_HTTP_STATUS,
 } from '@app/classes/constants';
 import { Score } from '@app/classes/score';
-import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { VirtualPlayer } from '@app/classes/virtual-players';
 import { DatabaseService } from '@app/services/database.service';
 import { Request, Response, Router } from 'express';
 import { Service } from 'typedi';

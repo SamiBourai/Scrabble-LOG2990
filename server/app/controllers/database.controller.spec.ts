@@ -6,7 +6,7 @@
 import { Application } from '@app/app';
 import { LoadableDictionary } from '@app/classes/dictionary';
 import { Score } from '@app/classes/score';
-import { VirtualPlayer } from '@app/classes/virtualPlayers';
+import { VirtualPlayer } from '@app/classes/virtual-players';
 import { DatabaseService } from '@app/services/database.service';
 import { createStubInstance, SinonStubbedInstance } from 'sinon';
 import { Container } from 'typedi';
