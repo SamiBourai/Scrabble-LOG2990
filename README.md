@@ -1,3 +1,4 @@
+[![Board Status](https://dev.azure.com/samibourai/624ed109-97a1-4a9f-8b78-1d1e40a7322a/ccf67bd3-ca87-4c21-b9a1-727cac4f73de/_apis/work/boardbadge/913b583f-d544-4065-af7d-39888e1cff4e)](https://dev.azure.com/samibourai/624ed109-97a1-4a9f-8b78-1d1e40a7322a/_boards/board/t/ccf67bd3-ca87-4c21-b9a1-727cac4f73de/Microsoft.RequirementCategory)
 # LOG2990 - Code de base
 
 Code de base à utiliser pour démarrer le développement de votre projet.
